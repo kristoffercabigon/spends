@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('permanent_source', function (Blueprint $table) {
+        Schema::create('living_arrangement_list', function (Blueprint $table) {
             $table->id();
-            $table->integer('senior_id')->constrained('seniors');
-            $table->tinyInteger('permanent_source')->default(0);
-            $table->string('if_yes')->nullable();
+            $table->string('type_of_living_arrangement_list');
             $table->timestamps();
         });
     }
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permanent_source');
+        Schema::dropIfExists('living_arrangement');
     }
 };

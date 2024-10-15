@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Seniors;
 use Carbon\Carbon;
 
-
 class SeniorsController extends Controller
 {
     public function index()
@@ -21,16 +20,29 @@ class SeniorsController extends Controller
 
     public function create()
     {
-        return view('seniors.create')->with('title', 'SPENDS: Register ');
+
+        $sexes = DB::table('sex')->get();
+        $citizenship = DB::table('citizenship')->get();
+        $civil_status = DB::table('civil_status')->get();
+        $barangay = DB::table('barangay')->get();  
+
+        return view('seniors.create')->with([
+            'title' => 'SPENDS: Register',
+            'sexes' => $sexes,
+            'citizenship' => $citizenship,
+            'civil_status' => $civil_status,
+            'barangay' => $barangay
+        ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            "first_name" => ['required', 'min:4'],
-            "last_name" => ['required', 'min:4'],
+            "first_name" => ['required', 'min:4', 'max:60'],
+            "last_name" => ['required', 'min:4', 'max:30'],
             "middle_name" => ['nullable'],
             "suffix" => ['nullable'],
+            "citizenship_id" => ['required'],
             "birthdate" => ['required', function ($age, $value, $fail) {
                 $age = Carbon::parse($value)->age;
                 if ($age < 60) {
@@ -39,22 +51,12 @@ class SeniorsController extends Controller
             }],
             "age" => ['required'],
             "birthplace" => ['required'],
-            "sex" => ['required'],
-            "civil_status" => ['required'],
-            "employment_status" => ['required'],
-            "religion" => ['required'],
-            "blood_type" => ['required'],
+            "sex_id" => ['required'],
+            "civil_status_id" => ['required'],
             "address" => ['required'],
-            "barangay" => ['required'],
-            "telephone_number" => ['nullable'],
-            "mobile_number" => ['required'],
-            "existing_email" => ['nullable'],
-            "gsis_number" => ['nullable'],
-            "sss_number" => ['nullable'],
-            "tin_number" => ['nullable'],
-            "philhealth_number" => ['nullable'],
+            "barangay_id" => ['required'],
             "email" => ['required', 'email', Rule::unique('seniors', 'email')],
-            "password" => 'required|confirmed|min:6',
+            "password" => 'required|confirmed|min:8|max:16',
             "valid_id" => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
             "profile_picture" => 'nullable|mimes:jpeg,png,bmp,tiff|max:4096',
         ]);

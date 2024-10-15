@@ -9,11 +9,11 @@ class SourceSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('source')->insert([
-            ['source' => 'GSIS'],
-            ['source' => 'SSS'],
-            ['source' => 'AFPSLAI'],
-            ['source' => 'Others'],
+        DB::table('source_list')->insert([
+            ['source_list' => 'GSIS'],
+            ['source_list' => 'SSS'],
+            ['source_list' => 'AFPSLAI'],
+            ['source_list' => 'Others'],
         ]);
     }
 }

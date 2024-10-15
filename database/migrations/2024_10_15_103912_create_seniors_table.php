@@ -12,28 +12,30 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('seniors', function (Blueprint $table) {
-            $table->senior_id();
+            $table->id(); // Creates an auto-incrementing primary key called 'id'
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
             $table->string('suffix')->nullable();
-            $table->string('citizenship_id');
+            $table->foreignId('citizenship_id')->constrained('citizenship'); 
             $table->string('address');
-            $table->string('barangay_id');
+            $table->foreignId('barangay_id')->constrained('barangay'); 
             $table->date('birthdate');
             $table->integer('age');
             $table->string('birthplace');
-            $table->string('sex_id');
-            $table->string('civil_status_id');
+            $table->foreignId('sex_id')->constrained('sex'); 
+            $table->foreignId('civil_status_id')->constrained('civil_status');
             $table->string('valid_id')->nullable();
             $table->string('profile_picture')->nullable();
-            $table->string('indigency');
-            $table->string('signature');
-            $table->string('hospitalized');
+            $table->string('indigency')->nullable();
+            $table->string('signature')->nullable();
+            $table->integer('regular_support');
+            $table->integer('hospitalized_6');
             $table->string('email')->unique();
             $table->string('password');
             $table->timestamps();
         });
+
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
@@ -56,7 +58,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('seniors'); 
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
     }

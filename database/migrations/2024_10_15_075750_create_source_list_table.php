@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('source', function (Blueprint $table) {
+        Schema::create('source_list', function (Blueprint $table) {
             $table->id();
-            $table->integer('senior_id');
-            $table->string('source');
-            $table->string('others_remark');
+            $table->string('source_list');
             $table->timestamps();
         });
     }

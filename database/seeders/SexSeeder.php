@@ -13,7 +13,7 @@ class SexSeeder extends Seeder
 
         foreach ($sexOptions as $sex) {
             DB::table('sex')->insert([
-                'sex_name' => $sex,
+                'sex' => $sex,
             ]);
         }
     }

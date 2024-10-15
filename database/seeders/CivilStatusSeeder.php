@@ -13,7 +13,7 @@ class CivilStatusSeeder extends Seeder
 
         foreach ($statuses as $status) {
             DB::table('civil_status')->insert([
-                'status_name' => $status,
+                'civil_status' => $status,
             ]);
         }
     }

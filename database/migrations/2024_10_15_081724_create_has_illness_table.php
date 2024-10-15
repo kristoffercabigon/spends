@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('has_illness', function (Blueprint $table) {
             $table->id();
-            $table->integer('senior_id');
+            $table->integer('senior_id')->constrained('seniors');
             $table->tinyInteger('has_illness')->default(0);
-            $table->string('if_yes');
+            $table->string('if_yes')->nullable();
             $table->timestamps();
         });
     }

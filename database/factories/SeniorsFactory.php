@@ -189,7 +189,7 @@ class SeniorsFactory extends Factory
         $phase = 'Phase ' . $this->faker->numberBetween(1, 10);
         $block = 'Block ' . $this->faker->numberBetween(1, 90);
         $lot = 'Lot ' . $this->faker->numberBetween(1, 90);
-        $barangayNo = $this->faker->numberBetween(165, 188);
+        $barangayNo = $this->faker->numberBetween(1, 29);
         $filipinoStreet = $this->faker->randomElement($filipinoStreet);
         $address = "{$houseNumber} {$phase} {$block} {$lot} {$filipinoStreet}, Brgy. {$barangayNo}, Caloocan City";
 
@@ -382,56 +382,29 @@ class SeniorsFactory extends Factory
             'Soriano',
         ];
 
-        $barangayNo = [
-            'Barangay 165',
-            'Barangay 166',
-            'Barangay 167',
-            'Barangay 168',
-            'Barangay 169',
-            'Barangay 170',
-            'Barangay 171',
-            'Barangay 172',
-            'Barangay 173',
-            'Barangay 174',
-            'Barangay 175',
-            'Barangay 176-A',
-            'Barangay 176-B',
-            'Barangay 176-C',
-            'Barangay 176-D',
-            'Barangay 176-E',
-            'Barangay 176-F',
-            'Barangay 177',
-            'Barangay 178',
-            'Barangay 179',
-            'Barangay 180',
-            'Barangay 181',
-            'Barangay 182',
-            'Barangay 183',
-            'Barangay 184',
-            'Barangay 185',
-            'Barangay 186',
-            'Barangay 187',
-            'Barangay 188'
-        ];
-
         $isMale = $this->faker->boolean();
         $firstName = $isMale ? $this->faker->randomElement($maleNames) : $this->faker->randomElement($femaleNames);
-        $sex = $isMale ? 'Male' : 'Female';
+        $sex = $isMale ? 1 : 2;
 
         return [
             'first_name' => $firstName,
             'middle_name' => $this->faker->randomElement($filipinoLastNames),
             'last_name' => $this->faker->randomElement($filipinoLastNames),
             'suffix' => $this->faker->suffix(),
+            'citizenship_id' => $this->faker->numberBetween(1, 191),
             'birthdate' => $birthdate,
             'age' => $age,
             'birthplace' => $this->faker->randomElement($philippineCities),
-            'sex' => $sex,
-            'civil_status' => $this->faker->randomElement(['Single', 'Married', 'Widowed', 'Divorced']),
+            'sex_id' => $sex,
+            'civil_status_id' => $this->faker->numberBetween(1, 4),
             'address' => $address,
-            'barangay' => $barangayNo,
+            'barangay_id' => $barangayNo,
             'valid_id' => null,
             'profile_picture' => null,
+            'indigency' => null,
+            'signature' => null,
+            'regular_support' => $this->faker->numberBetween(0, 1),
+            'hospitalized_6' => $this->faker->numberBetween(0, 1),
 
             'email' => strtolower($firstName . '.' . $this->faker->randomNumber(3) . '.' . $this->faker->randomElement($filipinoLastNames) . '@example.com'),
             'password' => Hash::make('password'),

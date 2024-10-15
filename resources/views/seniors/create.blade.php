@@ -132,7 +132,7 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
                             <div class="relative">
                                 <label class="text-sm mb-2 block 
                                     @error('birthdate') text-red-700 dark:text-red-500 
@@ -185,7 +185,7 @@
                                     @error('age') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
                                     @elseif(old('age')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
                                     @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Age will be calculated automatically" readonly />
+                                    placeholder="Age" readonly />
                                 @if(old('age'))
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3 top-1/2 transform -translate-y-1/2">
                                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -226,24 +226,29 @@
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
                             </div>
+                        </div>
 
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
                             <div class="relative">
                                 <label class="text-sm mb-2 block 
-                                    @error('sex') text-red-700 dark:text-red-500 
-                                    @elseif(old('sex')) text-green-700 dark:text-green-500 
+                                    @error('sex_id') text-red-700 dark:text-red-500 
+                                    @elseif(old('sex_id')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
                                     Sex/ Kasarian
                                 </label>
-                                <select name="sex" 
+                                <select name="sex_id" 
                                     class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
-                                    @error('sex') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
-                                    @elseif(old('sex')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
+                                    @error('sex_id') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
+                                    @elseif(old('sex_id')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
                                     @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror">
                                     <option value="" disabled selected>Select sex</option>
-                                    <option value="male" {{ old('sex') == 'male' ? 'selected' : '' }}>Male</option>
-                                    <option value="female" {{ old('sex') == 'female' ? 'selected' : '' }}>Female</option>
+                                    @foreach($sexes as $sex)
+                                        <option value="{{ $sex->id }}" {{ old('sex_id') == $sex->id ? 'selected' : '' }}>
+                                            {{ $sex->sex }}
+                                        </option>
+                                    @endforeach
                                 </select>
-                                @if(old('sex'))
+                                @if(old('sex_id'))
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3 top-1/2 transform -translate-y-1/2">
                                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -251,35 +256,66 @@
                                     </span>
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @endif
-                                @error('sex')
+                                @error('sex_id')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @enderror
                             </div>
-                        </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
                             <div class="relative">
                                 <label class="text-sm mb-2 block 
-                                    @error('civil_status') text-red-700 dark:text-red-500 
-                                    @elseif(old('civil_status')) text-green-700 dark:text-green-500 
+                                    @error('civil_status_id') text-red-700 dark:text-red-500 
+                                    @elseif(old('civil_status_id')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
                                     Civil Status
                                 </label>
-                                <select name="civil_status" 
+                                <select name="civil_status_id" 
                                     class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md transition-all 
-                                    @error('civil_status') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
-                                    @elseif(old('civil_status')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
+                                    @error('civil_status_id') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
+                                    @elseif(old('civil_status_id')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
                                     @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror">
                                     <option value="" disabled selected>Select civil status</option>
-                                    <option value="single" {{ old('civil_status') == 'single' ? 'selected' : '' }}>Single</option>
-                                    <option value="married" {{ old('civil_status') == 'married' ? 'selected' : '' }}>Married</option>
-                                    <option value="divorced" {{ old('civil_status') == 'divorced' ? 'selected' : '' }}>Divorced</option>
-                                    <option value="widowed" {{ old('civil_status') == 'widowed' ? 'selected' : '' }}>Widowed</option>
+                                    @foreach($civil_status as $civil_status1) 
+                                        <option value="{{ $civil_status1->id }}" {{ old('civil_status_id') == $civil_status1->id ? 'selected' : '' }}>
+                                            {{ $civil_status1->civil_status }}
+                                        </option>
+                                    @endforeach
                                 </select>
-                                @if(old('civil_status'))
+                                @if(old('civil_status_id'))
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @endif
-                                @error('civil_status')
+                                @error('civil_status_id')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="relative">
+                                <label class="text-sm mb-2 block 
+                                    @error('citizenship_id') text-red-700 dark:text-red-500 
+                                    @elseif(old('citizenship_id')) text-green-700 dark:text-green-500 
+                                    @else text-gray-800 @enderror">
+                                    Citizenship / Nasyonalidad
+                                </label>
+                                <select name="citizenship_id" 
+                                    class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
+                                    @error('citizenship_id') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
+                                    @elseif(old('citizenship_id')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
+                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror">
+                                    <option value="" disabled selected>Select citizenship</option>
+                                    @foreach($citizenship as $citizenship1)
+                                        <option value="{{ $citizenship1->id }}" {{ old('citizenship_id') == $citizenship1->id ? 'selected' : '' }}>
+                                            {{ $citizenship1->citizenship_name }} 
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @if(old('citizenship_id'))
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 top-1/2 transform -translate-y-1/2">
+                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </span>
+                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
+                                @endif
+                                @error('citizenship_id')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -315,120 +351,33 @@
 
                             <div class="relative">
                                 <label class="text-sm mb-2 block 
-                                    @error('barangay') text-red-700 dark:text-red-500 
-                                    @elseif(old('barangay')) text-green-700 dark:text-green-500 
+                                    @error('barangay_id') text-red-700 dark:text-red-500 
+                                    @elseif(old('barangay_id')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
                                     Barangay
                                 </label>
-                                <input name="barangay" type="text" 
+                                <select name="barangay_id" 
                                     class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md transition-all 
-                                    @error('barangay') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                    @elseif(old('barangay')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Enter barangay" value="{{ old('barangay') }}" />
-                                @if(old('barangay'))
+                                    @error('barangay_id') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
+                                    @elseif(old('barangay_id')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
+                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror">
+                                    <option value="" disabled selected>Select barangay</option>
+                                    @foreach($barangay as $barangay1)
+                                        <option value="{{ $barangay1->id }}" {{ old('barangay_id') == $barangay1->id ? 'selected' : '' }}>
+                                            {{ $barangay1->barangay_no }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @if(old('barangay_id'))
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3">
                                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                         </svg>
                                     </span>
-                                @endif
-                                @error('barangay')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @elseif(old('barangay'))
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="text-xl font-bold mt-8 leading-tight tracking-tight text-gray-900 md:text-xl">
-                            <p class="text-left">
-                                Contact Information
-                            </p>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-                            <div>
-                                <label class="text-sm mb-2 block 
-                                    @error('telephone_number') text-red-700 dark:text-red-500 
-                                    @elseif(old('telephone_number')) text-green-700 dark:text-green-500 
-                                    @else text-gray-800 @enderror">
-                                    Telephone Number / Telepono
-                                </label>
-                                <input name="telephone_number" type="tel" 
-                                    class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md transition-all 
-                                    @error('telephone_number') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                    @elseif(old('telephone_number')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Enter telephone number" value="{{ old('telephone_number') }}" />
-                                
-                                @if(old('telephone_number'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
                                 @endif
-                                @error('telephone_number')
+                                @error('barangay_id')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @elseif(old('telephone_number'))
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @enderror
-                            </div>
-                            
-                            <div>
-                                <label class="text-sm mb-2 block 
-                                    @error('mobile_number') text-red-700 dark:text-red-500 
-                                    @elseif(old('mobile_number')) text-green-700 dark:text-green-500 
-                                    @else text-gray-800 @enderror">
-                                    Mobile Number
-                                </label>
-                                <input name="mobile_number" type="tel" 
-                                    class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md transition-all 
-                                    @error('mobile_number') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                    @elseif(old('mobile_number')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Enter mobile number" value="{{ old('mobile_number') }}" />
-                                
-                                @if(old('mobile_number'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                @endif
-                                @error('mobile_number')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @elseif(old('mobile_number'))
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @enderror
-                            </div>
-                            
-                            <div>
-                                <label class="text-sm mb-2 block 
-                                    @error('existing_email') text-red-700 dark:text-red-500 
-                                    @elseif(old('existing_email')) text-green-700 dark:text-green-500 
-                                    @else text-gray-800 @enderror">
-                                    Email Address
-                                </label>
-                                <input name="existing_email" type="email" 
-                                    class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md transition-all 
-                                    @error('existing_email') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                    @elseif(old('existing_email')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Enter email" value="{{ old('existing_email') }}" />
-                                
-                                @if(old('existing_email'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                @endif
-                                @error('existing_email')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @elseif(old('existing_email'))
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
                             </div>
                         </div>
@@ -496,121 +445,6 @@
                                 @enderror
                             </div>
                         </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
-                            <div>
-                                <label class="text-sm mb-2 block 
-                                    @error('gsis_number') text-red-700 dark:text-red-500 
-                                    @elseif(old('gsis_number')) text-green-700 dark:text-green-500 
-                                    @else text-gray-800 @enderror">
-                                    GSIS Number
-                                </label>
-                                <input name="gsis_number" type="text" 
-                                    class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
-                                    @error('gsis_number') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                    @elseif(old('gsis_number')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Enter GSIS Number" value="{{ old('gsis_number') }}" />
-                                
-                                @if(old('gsis_number'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                @endif
-                                @error('gsis_number')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @elseif(old('gsis_number'))
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label class="text-sm mb-2 block 
-                                    @error('sss_number') text-red-700 dark:text-red-500 
-                                    @elseif(old('sss_number')) text-green-700 dark:text-green-500 
-                                    @else text-gray-800 @enderror">
-                                    SSS Number
-                                </label>
-                                <input name="sss_number" type="text" 
-                                    class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
-                                    @error('sss_number') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                    @elseif(old('sss_number')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Enter SSS Number" value="{{ old('sss_number') }}" />
-                                
-                                @if(old('sss_number'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                @endif
-                                @error('sss_number')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @elseif(old('sss_number'))
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label class="text-sm mb-2 block 
-                                    @error('tin_number') text-red-700 dark:text-red-500 
-                                    @elseif(old('tin_number')) text-green-700 dark:text-green-500 
-                                    @else text-gray-800 @enderror">
-                                    TIN Number
-                                </label>
-                                <input name="tin_number" type="text" 
-                                    class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
-                                    @error('tin_number') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                    @elseif(old('tin_number')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Enter TIN Number" value="{{ old('tin_number') }}" />
-                                
-                                @if(old('tin_number'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                @endif
-                                @error('tin_number')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @elseif(old('tin_number'))
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label class="text-sm mb-2 block 
-                                    @error('philhealth_number') text-red-700 dark:text-red-500 
-                                    @elseif(old('philhealth_number')) text-green-700 dark:text-green-500 
-                                    @else text-gray-800 @enderror">
-                                    Philhealth Number
-                                </label>
-                                <input name="philhealth_number" type="text" 
-                                    class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
-                                    @error('philhealth_number') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                    @elseif(old('philhealth_number')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Enter Philhealth Number" value="{{ old('philhealth_number') }}" />
-                                
-                                @if(old('philhealth_number'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                @endif
-                                @error('philhealth_number')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @elseif(old('philhealth_number'))
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @enderror
-                            </div>
-                        </div>
-
 
                         <div class="text-xl font-bold mt-8 leading-tight tracking-tight text-gray-900 md:text-xl">
                             <p class="text-left">

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('family_composition', function (Blueprint $table) {
             $table->id();
-            $table->integer('senior_id');
+            $table->integer('senior_id')->constrained('seniors');
             $table->string('name');
             $table->string('relationship');
             $table->integer('age');

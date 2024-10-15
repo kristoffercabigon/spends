@@ -9,12 +9,12 @@ class LivingArrangementSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('living_arrangement')->insert([
-            ['type_of_living_arrangement' => 'Owned'],
-            ['type_of_living_arrangement' => 'Living Alone'],
-            ['type_of_living_arrangement' => 'Living with Relatives'],
-            ['type_of_living_arrangement' => 'Rent'],
-            ['type_of_living_arrangement' => 'Others'],
+        DB::table('living_arrangement_list')->insert([
+            ['type_of_living_arrangement_list' => 'Owned'],
+            ['type_of_living_arrangement_list' => 'Living Alone'],
+            ['type_of_living_arrangement_list' => 'Living with Relatives'],
+            ['type_of_living_arrangement_list' => 'Rent'],
+            ['type_of_living_arrangement_list' => 'Others'],
         ]);
     }
 }

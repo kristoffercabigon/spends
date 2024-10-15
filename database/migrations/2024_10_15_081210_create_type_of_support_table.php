@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('type_of_support', function (Blueprint $table) {
             $table->id();
-            $table->integer('senior_id');
+            $table->integer('senior_id')->constrained('seniors');
             $table->string('if_cash')->nullable();
             $table->string('specific_support')->nullable();
             $table->timestamps();

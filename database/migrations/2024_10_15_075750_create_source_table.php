@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('source', function (Blueprint $table) {
             $table->id();
+            $table->integer('senior_id');
+            $table->string('source');
+            $table->string('others_remark');
             $table->timestamps();
         });
     }

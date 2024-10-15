@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('permanent_source', function (Blueprint $table) {
             $table->id();
+            $table->integer('senior_id');
+            $table->tinyInteger('permanent_source')->default(0);
+            $table->string('if_yes');
             $table->timestamps();
         });
     }

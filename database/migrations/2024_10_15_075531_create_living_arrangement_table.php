@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('living_arrangement', function (Blueprint $table) {
             $table->id();
+            $table->integer('senior_id');
             $table->string('type_of_living_arrangement');
             $table->string('others_remark');
             $table->timestamps();

@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('if_pensioner', function (Blueprint $table) {
             $table->id();
+            $table->integer('senior_id');
             $table->tinyInteger('pensioner')->default(0);
+            $table->string('if_yes');
             $table->timestamps();
         });
     }

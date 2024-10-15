@@ -8,6 +8,8 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Seniors;
+use Carbon\Carbon;
+
 
 class SeniorsController extends Controller
 {
@@ -27,9 +29,14 @@ class SeniorsController extends Controller
         $validated = $request->validate([
             "first_name" => ['required', 'min:4'],
             "last_name" => ['required', 'min:4'],
-            "middle_name" => ['required', 'min:4'],
-            "suffix" => ['required', 'min:4'],
-            "birthdate" => ['required'],
+            "middle_name" => ['nullable'],
+            "suffix" => ['nullable'],
+            "birthdate" => ['required', function ($age, $value, $fail) {
+                $age = Carbon::parse($value)->age;
+                if ($age < 60) {
+                    $fail('The age must be 60 years old or above.');
+                }
+            }],
             "age" => ['required'],
             "birthplace" => ['required'],
             "sex" => ['required'],
@@ -39,16 +46,16 @@ class SeniorsController extends Controller
             "blood_type" => ['required'],
             "address" => ['required'],
             "barangay" => ['required'],
-            "telephone_number" => ['required'],
+            "telephone_number" => ['nullable'],
             "mobile_number" => ['required'],
-            "existing_email" => ['required'],
-            "gsis_number" => ['required'],
-            "sss_number" => ['required'],
-            "tin_number" => ['required'],
-            "philhealth_number" => ['required'],
+            "existing_email" => ['nullable'],
+            "gsis_number" => ['nullable'],
+            "sss_number" => ['nullable'],
+            "tin_number" => ['nullable'],
+            "philhealth_number" => ['nullable'],
             "email" => ['required', 'email', Rule::unique('seniors', 'email')],
             "password" => 'required|confirmed|min:6',
-            "valid_id" => 'nullable|mimes:jpeg,png,bmp,tiff|max:4096',
+            "valid_id" => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
             "profile_picture" => 'nullable|mimes:jpeg,png,bmp,tiff|max:4096',
         ]);
 

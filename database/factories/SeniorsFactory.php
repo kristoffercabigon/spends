@@ -382,6 +382,38 @@ class SeniorsFactory extends Factory
             'Soriano',
         ];
 
+        $barangayNo = [
+            'Barangay 165',
+            'Barangay 166',
+            'Barangay 167',
+            'Barangay 168',
+            'Barangay 169',
+            'Barangay 170',
+            'Barangay 171',
+            'Barangay 172',
+            'Barangay 173',
+            'Barangay 174',
+            'Barangay 175',
+            'Barangay 176-A',
+            'Barangay 176-B',
+            'Barangay 176-C',
+            'Barangay 176-D',
+            'Barangay 176-E',
+            'Barangay 176-F',
+            'Barangay 177',
+            'Barangay 178',
+            'Barangay 179',
+            'Barangay 180',
+            'Barangay 181',
+            'Barangay 182',
+            'Barangay 183',
+            'Barangay 184',
+            'Barangay 185',
+            'Barangay 186',
+            'Barangay 187',
+            'Barangay 188'
+        ];
+
         $isMale = $this->faker->boolean();
         $firstName = $isMale ? $this->faker->randomElement($maleNames) : $this->faker->randomElement($femaleNames);
         $sex = $isMale ? 'Male' : 'Female';
@@ -396,18 +428,8 @@ class SeniorsFactory extends Factory
             'birthplace' => $this->faker->randomElement($philippineCities),
             'sex' => $sex,
             'civil_status' => $this->faker->randomElement(['Single', 'Married', 'Widowed', 'Divorced']),
-            'employment_status' => $this->faker->randomElement(['Employed', 'Unemployed', 'Retired']),
-            'religion' => $this->faker->randomElement(['Catholic', 'Christian', 'Muslim', 'Other']),
-            'blood_type' => $this->faker->randomElement(['A', 'B', 'AB', 'O']),
             'address' => $address,
             'barangay' => $barangayNo,
-            'telephone_number' => $this->faker->numerify('82##-####'),
-            'existing_email' => strtolower($firstName . '.' . $this->faker->randomNumber(3) . '.' . $this->faker->randomElement($filipinoLastNames) . '@example.com'),
-            'mobile_number' => '+63' . $this->faker->randomNumber(9, true),
-            'gsis_number' => $this->faker->numerify('GSIS#######'),
-            'sss_number' => $this->faker->numerify('SSS#######'),
-            'tin_number' => $this->faker->numerify('TIN#######'),
-            'philhealth_number' => $this->faker->numerify('PH#######'),
             'valid_id' => null,
             'profile_picture' => null,
 

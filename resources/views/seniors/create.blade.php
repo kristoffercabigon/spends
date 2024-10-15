@@ -18,7 +18,7 @@
 
                         <div class="text-xl font-bold mt-[15px] mb-6 leading-tight tracking-tight text-gray-900 md:text-xl">
                             <p class="text-left">
-                                Senior Citizen's Information
+                                Basic Information
                             </p>
                         </div>
 
@@ -145,15 +145,28 @@
                                     @error('birthdate') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
                                     @elseif(old('birthdate')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
                                     @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Select birthdate" readonly />
+                                    placeholder="Select birthdate" readonly 
+                                    value="{{ old('birthdate') }}" />
+                                <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-6 6h6m-8 0h.01M4 7h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
+                                    </svg>
+                                </span>
+
                                 @if(old('birthdate'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 top-1/2 transform -translate-y-1/2">
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
                                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                         </svg>
                                     </span>
                                 @endif
+
                                 @error('birthdate')
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-6 6h6m-8 0h.01M4 7h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
+                                        </svg>
+                                    </span>
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @elseif(old('birthdate'))
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
@@ -167,12 +180,12 @@
                                     @else text-gray-800 @enderror">
                                     Age/ Edad
                                 </label>
-                                <input name="age" type="text" value="{{ old('age') }}" 
+                                <input name="age" type="text" id="age" value="{{ old('age') }}" 
                                     class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10 
                                     @error('age') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
                                     @elseif(old('age')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
                                     @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Enter age" />
+                                    placeholder="Age will be calculated automatically" readonly />
                                 @if(old('age'))
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3 top-1/2 transform -translate-y-1/2">
                                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -267,95 +280,6 @@
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @endif
                                 @error('civil_status')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div class="relative">
-                                <label class="text-sm mb-2 block 
-                                    @error('employment_status') text-red-700 dark:text-red-500 
-                                    @elseif(old('employment_status')) text-green-700 dark:text-green-500 
-                                    @else text-gray-800 @enderror">
-                                    Employment Status
-                                </label>
-                                <select name="employment_status" 
-                                    class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md transition-all 
-                                    @error('employment_status') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
-                                    @elseif(old('employment_status')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror">
-                                    <option value="" disabled selected>Select employment status</option>
-                                    <option value="employed" {{ old('employment_status') == 'employed' ? 'selected' : '' }}>Employed</option>
-                                    <option value="unemployed" {{ old('employment_status') == 'unemployed' ? 'selected' : '' }}>Unemployed</option>
-                                    <option value="self_employed" {{ old('employment_status') == 'self_employed' ? 'selected' : '' }}>Self-Employed</option>
-                                    <option value="retired" {{ old('employment_status') == 'retired' ? 'selected' : '' }}>Retired</option>
-                                    <option value="student" {{ old('employment_status') == 'student' ? 'selected' : '' }}>Student</option>
-                                    <option value="other" {{ old('employment_status') == 'other' ? 'selected' : '' }}>Other</option>
-                                </select>
-                                @if(old('employment_status'))
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @endif
-                                @error('employment_status')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div class="relative">
-                                <label class="text-sm mb-2 block 
-                                    @error('religion') text-red-700 dark:text-red-500 
-                                    @elseif(old('religion')) text-green-700 dark:text-green-500 
-                                    @else text-gray-800 @enderror">
-                                    Religion
-                                </label>
-                                <select name="religion" 
-                                    class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md transition-all 
-                                    @error('religion') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
-                                    @elseif(old('religion')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror">
-                                    <option value="" disabled selected>Select religion</option>
-                                    <option value="catholic" {{ old('religion') == 'catholic' ? 'selected' : '' }}>Catholic</option>
-                                    <option value="christianity" {{ old('religion') == 'christianity' ? 'selected' : '' }}>Christianity</option>
-                                    <option value="islam" {{ old('religion') == 'islam' ? 'selected' : '' }}>Islam</option>
-                                    <option value="hinduism" {{ old('religion') == 'hinduism' ? 'selected' : '' }}>Hinduism</option>
-                                    <option value="buddhism" {{ old('religion') == 'buddhism' ? 'selected' : '' }}>Buddhism</option>
-                                    <option value="judaism" {{ old('religion') == 'judaism' ? 'selected' : '' }}>Judaism</option>
-                                    <option value="atheist" {{ old('religion') == 'atheist' ? 'selected' : '' }}>Atheist</option>
-                                    <option value="agnostic" {{ old('religion') == 'agnostic' ? 'selected' : '' }}>Agnostic</option>
-                                    <option value="other" {{ old('religion') == 'other' ? 'selected' : '' }}>Other</option>
-                                </select>
-                                @if(old('religion'))
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @endif
-                                @error('religion')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div class="relative">
-                                <label class="text-sm mb-2 block 
-                                    @error('blood_type') text-red-700 dark:text-red-500 
-                                    @elseif(old('blood_type')) text-green-700 dark:text-green-500 
-                                    @else text-gray-800 @enderror">
-                                    Blood Type
-                                </label>
-                                <select name="blood_type" 
-                                    class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md transition-all 
-                                    @error('blood_type') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
-                                    @elseif(old('blood_type')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror">
-                                    <option value="" disabled selected>Select blood type</option>
-                                    <option value="A+" {{ old('blood_type') == 'A+' ? 'selected' : '' }}>A+</option>
-                                    <option value="A-" {{ old('blood_type') == 'A-' ? 'selected' : '' }}>A-</option>
-                                    <option value="B+" {{ old('blood_type') == 'B+' ? 'selected' : '' }}>B+</option>
-                                    <option value="B-" {{ old('blood_type') == 'B-' ? 'selected' : '' }}>B-</option>
-                                    <option value="AB+" {{ old('blood_type') == 'AB+' ? 'selected' : '' }}>AB+</option>
-                                    <option value="AB-" {{ old('blood_type') == 'AB-' ? 'selected' : '' }}>AB-</option>
-                                    <option value="O+" {{ old('blood_type') == 'O+' ? 'selected' : '' }}>O+</option>
-                                    <option value="O-" {{ old('blood_type') == 'O-' ? 'selected' : '' }}>O-</option>
-                                </select>
-                                @if(old('blood_type'))
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @endif
-                                @error('blood_type')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @enderror
                             </div>

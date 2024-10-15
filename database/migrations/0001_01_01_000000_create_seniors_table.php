@@ -12,30 +12,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('seniors', function (Blueprint $table) {
-            $table->id();
+            $table->senior_id();
             $table->string('first_name');
-            $table->string('middle_name');
+            $table->string('middle_name')->nullable();
             $table->string('last_name');
-            $table->string('suffix');
+            $table->string('suffix')->nullable();
+            $table->string('citizenship_id');
+            $table->string('address');
+            $table->string('barangay_id');
             $table->date('birthdate');
             $table->integer('age');
             $table->string('birthplace');
-            $table->string('sex');
-            $table->string('civil_status');
-            $table->string('employment_status');
-            $table->string('religion');
-            $table->string('blood_type');
-            $table->string('address');
-            $table->string('barangay');
-            $table->string('telephone_number');
-            $table->string('mobile_number');
-            $table->string('existing_email');
-            $table->string('gsis_number');
-            $table->string('sss_number');
-            $table->string('tin_number');
-            $table->string('philhealth_number');
+            $table->string('sex_id');
+            $table->string('civil_status_id');
             $table->string('valid_id')->nullable();
             $table->string('profile_picture')->nullable();
+            $table->string('indigency');
+            $table->string('signature');
+            $table->string('hospitalized');
             $table->string('email')->unique();
             $table->string('password');
             $table->timestamps();

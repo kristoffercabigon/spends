@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('family_composition', function (Blueprint $table) {
             $table->id();
-            $table->integer('senior_id')->constrained('seniors');
-            $table->string('name');
-            $table->string('relationship');
-            $table->integer('age');
-            $table->string('civil_status');
-            $table->string('occupation');
-            $table->string('income');
+            $table->integer('senior_id')->constrained('seniors')->nullable();
+            $table->string('relative_name')->nullable();
+            $table->string('relative_relationship')->nullable();
+            $table->integer('relative_age')->nullable();
+            $table->integer('relative_civil_status')->nullable();
+            $table->string('relative_occupation')->nullable();
+            $table->string('relative_income')->nullable();
             $table->timestamps();
         });
     }

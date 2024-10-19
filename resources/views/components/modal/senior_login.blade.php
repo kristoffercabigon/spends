@@ -4,7 +4,7 @@
      x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
      x-transition:leave="transition-opacity ease-linear duration-300"
      x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-     @click.away="showLoginModal = false; localStorage.setItem('showLoginModal', 'false')"> <!-- Add @click.away here -->
+     @click.away="showLoginModal = false; localStorage.setItem('showLoginModal', 'false')"> 
     <div @click.stop>
         <section class="bg-gray-50 dark:bg-gray-900 relative">
             <button @click="showLoginModal = false; localStorage.setItem('showLoginModal', 'false')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none">

@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('permanent_source', function (Blueprint $table) {
+        Schema::create('source', function (Blueprint $table) {
             $table->id();
             $table->integer('senior_id')->constrained('seniors');
-            $table->tinyInteger('permanent_source')->default(0);
-            $table->string('if_yes')->nullable();
+            $table->integer('source_id')->constrained('source_list');
+            $table->string('other_source_remark')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permanent_source');
+        Schema::dropIfExists('source');
     }
 };

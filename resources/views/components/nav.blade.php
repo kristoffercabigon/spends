@@ -1,6 +1,5 @@
 <nav x-data="{ open: false, showLoginModal: localStorage.getItem('showLoginModal') === 'true' }" class="bg-customGreen fixed h-[80px] w-full z-20 top-0 left-0 sm:px-4 text-white">
     <div class="container flex flex-wrap items-center h-full justify-between relative font-poppins">
-
         <a href="/" class="flex items-center">
             <img src="{{ asset('images/osca_image.jfif') }}" alt="Description of image" class="inline-block ml-4 md:ml-[48px] h-[60px] w-[60px] rounded-full object-cover" />
             <span class="self-center font-bold whitespace-nowrap text-30px ml-[12px]">
@@ -28,7 +27,7 @@
                     </form>
                 </li>
                 @else
-                <li><a @click.prevent="showLoginModal = true" class="block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
+                <li><a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" class="block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 <li><a href="/register" class="block py-2 text-16px hover:text-orange-300">Sign Up</a></li>
                 @endauth
             </ul>

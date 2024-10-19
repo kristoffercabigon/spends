@@ -189,7 +189,7 @@ class SeniorsFactory extends Factory
         $phase = 'Phase ' . $this->faker->numberBetween(1, 10);
         $block = 'Block ' . $this->faker->numberBetween(1, 90);
         $lot = 'Lot ' . $this->faker->numberBetween(1, 90);
-        $barangayNo = $this->faker->numberBetween(1, 29);
+        $barangayNo = $this->faker->numberBetween(1, 25);
         $filipinoStreet = $this->faker->randomElement($filipinoStreet);
         $address = "{$houseNumber} {$phase} {$block} {$lot} {$filipinoStreet}, Brgy. {$barangayNo}, Caloocan City";
 
@@ -382,6 +382,166 @@ class SeniorsFactory extends Factory
             'Soriano',
         ];
 
+        $otherArrangements = [
+            'Living with Extended Family',
+            'Living with Non-relatives',
+            'Living in a Shared Rental Property',
+            'Living Temporarily in a Shelter',
+            'Living in a Boarding House/Dormitory',
+            'Living in a Residential Care Facility',
+            'Co-living Spaces',
+            'Living in a Hostel or Temporary Accommodation',
+            'Living in a Commune or Cooperative Housing',
+            'Living Independently in Mobile Housing',
+            'Living as a Nomad',
+            'Living with a Foster Family',
+            'Living with a Legal Guardian',
+            'Incarcerated or Detained',
+            'Institutional Living',
+        ];
+
+        $existing_illness = [
+            'Hypertension',
+            'Diabetes',
+            'Arthritis',
+            'Heart disease',
+            'Chronic obstructive pulmonary disease (COPD)',
+            'Dementia',
+            'Alzheimer disease',
+            'Osteoporosis',
+            'Cancer',
+            'Kidney disease',
+            'Stroke',
+            'Parkinson disease',
+            'Depression',
+            'Anxiety disorders',
+            'Vision impairment',
+            'Hearing loss',
+            'Chronic pain conditions',
+            'Gastroesophageal reflux disease (GERD)',
+            'Hypothyroidism'
+        ];
+
+        $Receiving_pension = [
+            1000,
+            1500,
+            2000,
+            2500,
+            3000,
+            3500,
+            4000,
+            4500,
+            5000,
+            5500,
+            6000,
+            6500,
+            7000,
+            7500,
+            8000,
+            8500,
+            9000,
+            9500,
+            10000,
+            11000,
+            12000,
+            13000,
+            14000,
+            15000,
+            16000,
+            17000,
+            18000,
+            19000,
+            20000
+        ];
+
+        $if_cash = [
+            1000,
+            1500,
+            2000,
+            2500,
+            3000,
+            3500,
+            4000,
+            4500,
+            5000,
+            5500,
+            6000,
+            6500,
+            7000,
+            7500,
+            8000,
+            8500,
+            9000,
+            9500,
+            10000,
+            10500,
+            11000,
+            11500,
+            12000,
+            12500,
+            13000,
+            13500,
+            14000,
+            14500,
+            15000,
+            15500,
+            16000,
+            16500,
+            17000,
+            17500,
+            18000,
+            18500,
+            19000,
+            19500,
+            20000,
+        ];
+
+        $specific_support = [
+            'Regular financial assistance',
+            'Assistance with medical bills',
+            'Help with daily living activities',
+            'Transportation to appointments',
+            'Grocery shopping assistance',
+            'Housekeeping services',
+            'Home repairs and maintenance',
+            'Social visits and companionship',
+            'Meals prepared by family',
+            'Caregiving during illness',
+            'Payment of utility bills',
+            'Assistance with technology (e.g., setting up devices)',
+            'Monitoring health and wellness',
+            'Emotional support and counseling'
+        ];
+
+        $pension_sources = [
+            "Pension from Private Corporations",
+            "Pag-IBIG Fund (Home Development Mutual Fund)",
+            "Retirement Benefits from the Philippine National Police (PNP)",
+            "Retirement Benefits from the Bureau of Fire Protection (BFP)",
+            "Retirement Benefits from Local Government Units (LGUs)",
+            "Overseas Filipino Workers (OFW) Pension Plans",
+            "Retirement Plans from Insurance Companies",
+            "Corporate Employee Pension Plans",
+            "Cooperative Pension Funds"
+        ];
+
+        $senior_permanent_income_sources = [
+            "Business",
+            "Social Security Benefits",
+            "Investment Income",
+            "Rental Income from Properties",
+            "Annuities",
+            "Royalties from Intellectual Property",
+            "Government Assistance Programs",
+            "Family Support or Allowances",
+            "Income from Cooperative Memberships"
+        ];
+
+        $has_illness = $this->faker->numberBetween(0, 1);
+        $regularSupport = $this->faker->numberBetween(0, 1);
+        $permanent_source = $this->faker->numberBetween(0, 1);
+        $pensioner = $this->faker->numberBetween(0, 1);
+        $type_of_living_arrangement = $this->faker->numberBetween(1, 5);
         $isMale = $this->faker->boolean();
         $firstName = $isMale ? $this->faker->randomElement($maleNames) : $this->faker->randomElement($femaleNames);
         $sex = $isMale ? 1 : 2;
@@ -403,9 +563,18 @@ class SeniorsFactory extends Factory
             'profile_picture' => null,
             'indigency' => null,
             'signature' => null,
-            'regular_support' => $this->faker->numberBetween(0, 1),
             'hospitalized_6' => $this->faker->numberBetween(0, 1),
-
+            'type_of_living_arrangement' => $type_of_living_arrangement,
+            'other_arrangement_remark' => $type_of_living_arrangement == 5 ? $this->faker->randomElement($otherArrangements) : null,
+            'pensioner' => $pensioner,
+            'if_pensioner_yes' => $pensioner == 1 ? $this->faker->randomElement($Receiving_pension) : null,
+            'permanent_source' => $permanent_source,
+            'if_permanent_yes' => $permanent_source == 1 ? $this->faker->randomElement($senior_permanent_income_sources) : null,
+            'regular_support' => $regularSupport,
+            'if_cash' => $regularSupport == 1 ? $this->faker->randomElement($if_cash) : null,
+            'specific_support' => $regularSupport == 1 ? $this->faker->randomElement($specific_support) : null,
+            'has_illness' => $has_illness,
+            'if_illness_yes' => $has_illness == 1 ? $this->faker->randomElement($existing_illness) : null,
             'email' => strtolower($firstName . '.' . $this->faker->randomNumber(3) . '.' . $this->faker->randomElement($filipinoLastNames) . '@example.com'),
             'password' => Hash::make('password'),
         ];

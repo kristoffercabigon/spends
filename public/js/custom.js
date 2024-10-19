@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     flatpickr("#datepicker", {
-        dateFormat: "d-m-Y", // Date format
+        dateFormat: "Y-m-d",
         maxDate: new Date(), // Restrict future dates
         onChange: function (selectedDates, dateStr, instance) {
             if (selectedDates.length > 0) {

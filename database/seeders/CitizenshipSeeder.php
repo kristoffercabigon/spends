@@ -10,6 +10,7 @@ class CitizenshipSeeder extends Seeder
     public function run(): void
     {
         $citizenships = [
+            'Filipino',
             'Afghan',
             'Albanian',
             'Algerian',
@@ -72,7 +73,6 @@ class CitizenshipSeeder extends Seeder
             'Estonian',
             'Ethiopian',
             'Fijian',
-            'Filipino',
             'Finnish',
             'French',
             'Gabonese',

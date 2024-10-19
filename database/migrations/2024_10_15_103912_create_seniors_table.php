@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('seniors', function (Blueprint $table) {
-            $table->id(); // Creates an auto-incrementing primary key called 'id'
+            $table->id();
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
@@ -31,6 +31,16 @@ return new class extends Migration
             $table->string('signature')->nullable();
             $table->integer('regular_support');
             $table->integer('hospitalized_6');
+            $table->integer('type_of_living_arrangement');
+            $table->string('other_arrangement_remark')->nullable();
+            $table->tinyInteger('pensioner')->default(0);
+            $table->string('if_pensioner_yes')->nullable();
+            $table->tinyInteger('permanent_source')->default(0);
+            $table->string('if_permanent_yes')->nullable();
+            $table->string('if_cash')->nullable();
+            $table->string('specific_support')->nullable();
+            $table->tinyInteger('has_illness')->default(0);
+            $table->string('if_illness_yes')->nullable();
             $table->string('email')->unique();
             $table->string('password');
             $table->timestamps();

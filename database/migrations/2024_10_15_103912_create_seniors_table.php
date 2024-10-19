@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('valid_id')->nullable();
             $table->string('profile_picture')->nullable();
             $table->string('indigency')->nullable();
-            $table->string('signature')->nullable();
+            $table->string('signature_data')->nullable();
             $table->integer('regular_support');
             $table->integer('hospitalized_6');
             $table->integer('type_of_living_arrangement');

@@ -8,7 +8,7 @@
 
             <div class="mx-4 mb-4 -mt-16">
                 <div class="max-h-[80vh] overflow-y-auto">
-                    <form action="/store" enctype="multipart/form-data" method="POST" class="w-full bg-white shadow-lg sm:pt-2 px-12 py-10 rounded-md">
+                    <form id="form" action="/store" enctype="multipart/form-data" method="POST" class="w-full bg-white shadow-lg sm:pt-2 px-12 py-10 rounded-md">
                         @csrf
                         <div class="text-xl font-bold mt-[15px] mb-6 leading-tight tracking-tight text-gray-900 md:text-2xl">
                             <p class="mx-4 text-center">
@@ -1010,6 +1010,16 @@
                             </p>
                         </div>
 
+                        <div class="mt-4">
+                            <canvas id="sig-canvas" class="border border-gray-300 rounded-md w-full h-32 sm:h-40 md:h-48 lg:h-56"></canvas>
+                            <input type="hidden" id="sig-dataUrl" name="signature_data">
+                            <img id="sig-image" style="display:none;">
+                            <p id="signaturevalidation" style="display:none; color:red;">Please provide your signature.</p>
+                            <div class="flex justify-center items-center mt-4">
+                                <button type="button" id="sig-clearBtn" class="bg-red-500 text-white px-4 py-2 rounded">Clear</button>
+                            </div>
+                        </div>
+
                         <div class="text-xl font-bold mt-8 leading-tight tracking-tight text-gray-900 md:text-xl">
                             <p class="text-left">
                                 Account Information
@@ -1100,7 +1110,7 @@
                         </div>
 
                         <div class="mt-8 flex justify-center">
-                            <button type="submit" class="py-3 px-6 w-full md:w-auto text-sm tracking-wider font-semibold rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
+                            <button type="submit" id="submit" name="submit" class="py-3 px-6 w-full md:w-auto text-sm tracking-wider font-semibold rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
                                 Sign up
                             </button>
                         </div>

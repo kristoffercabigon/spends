@@ -83,13 +83,14 @@ class SeniorsController extends Controller
             "relative_civil_status.*" => 'nullable|string|max:255',
             "relative_occupation.*" => 'nullable|string|max:255',
             "relative_income.*" => 'nullable|string|max:255',
+            "signature_data" => ['required']
         ]);
 
         if ($request->hasFile('valid_id')) {
             $validIdFilename = pathinfo($request->file('valid_id')->getClientOriginalName(), PATHINFO_FILENAME);
             $validIdExtension = $request->file('valid_id')->getClientOriginalExtension();
             $validIdFilenameToStore = $validIdFilename . '_' . time() . '.' . $validIdExtension;
-            $request->file('valid_id')->storeAs('public/images/valid_id', $validIdFilenameToStore);
+            $request->file('valid_id')->storeAs('app/public/images/valid_id', $validIdFilenameToStore);
             $validated['valid_id'] = $validIdFilenameToStore;
         }
 
@@ -97,7 +98,7 @@ class SeniorsController extends Controller
             $profilePictureFilename = pathinfo($request->file('profile_picture')->getClientOriginalName(), PATHINFO_FILENAME);
             $profilePictureExtension = $request->file('profile_picture')->getClientOriginalExtension();
             $profilePictureFilenameToStore = $profilePictureFilename . '_' . time() . '.' . $profilePictureExtension;
-            $request->file('profile_picture')->storeAs('public/images/profile_picture', $profilePictureFilenameToStore);
+            $request->file('profile_picture')->storeAs('app/public/images/profile_picture', $profilePictureFilenameToStore);
             $validated['profile_picture'] = $profilePictureFilenameToStore;
         }
 
@@ -105,8 +106,19 @@ class SeniorsController extends Controller
             $indigencyFilename = pathinfo($request->file('indigency')->getClientOriginalName(), PATHINFO_FILENAME);
             $indigencyExtension = $request->file('indigency')->getClientOriginalExtension();
             $indigencyFilenameToStore = $indigencyFilename . '_' . time() . '.' . $indigencyExtension;
-            $request->file('indigency')->storeAs('public/images/indigency', $indigencyFilenameToStore);
+            $request->file('indigency')->storeAs('app/public/images/indigency', $indigencyFilenameToStore);
             $validated['indigency'] = $indigencyFilenameToStore;
+        }
+
+        if ($request->has('signature_data')) {
+            $signatureData = $request->input('signature_data');
+            $signatureData = str_replace('data:image/png;base64,', '', $signatureData);
+            $signatureData = str_replace(' ', '+', $signatureData);
+            $signatureData = base64_decode($signatureData); 
+            $signatureFilename = 'signature_' . time() . '.png';
+            $path = storage_path('app/public/images/signatures/');
+            file_put_contents($path . $signatureFilename, $signatureData); 
+            $validated['signature_data'] = $signatureFilename;
         }
 
         $seniorData = $validated;

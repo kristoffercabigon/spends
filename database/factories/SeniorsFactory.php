@@ -562,7 +562,7 @@ class SeniorsFactory extends Factory
             'valid_id' => null,
             'profile_picture' => null,
             'indigency' => null,
-            'signature' => null,
+            'signature_data' => null,
             'hospitalized_6' => $this->faker->numberBetween(0, 1),
             'type_of_living_arrangement' => $type_of_living_arrangement,
             'other_arrangement_remark' => $type_of_living_arrangement == 5 ? $this->faker->randomElement($otherArrangements) : null,

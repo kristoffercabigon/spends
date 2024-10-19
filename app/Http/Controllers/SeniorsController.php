@@ -83,7 +83,8 @@ class SeniorsController extends Controller
             "relative_civil_status.*" => 'nullable|string|max:255',
             "relative_occupation.*" => 'nullable|string|max:255',
             "relative_income.*" => 'nullable|string|max:255',
-            "signature_data" => ['required']
+            "signature_data" => ['required'],
+            "confirm-checkbox" => ['required']
         ]);
 
         if ($request->hasFile('valid_id')) {

@@ -30,7 +30,7 @@
                                     @else text-gray-800 @enderror">
                                     First Name/ Unang Pangalan
                                 </label>
-                                <input name="first_name" type="text" value="{{ old('first_name') }}" 
+                                <input name="first_name" id="first_name" type="text" value="{{ old('first_name') }}" 
                                     class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
                                     @error('first_name') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
                                     @elseif(old('first_name')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
@@ -52,39 +52,12 @@
 
                             <div class="relative">
                                 <label class="text-sm mb-2 block 
-                                    @error('last_name') text-red-700 dark:text-red-500 
-                                    @elseif(old('last_name')) text-green-700 dark:text-green-500 
-                                    @else text-gray-800 @enderror">
-                                    Last Name/ Huling Pangalan
-                                </label>
-                                <input name="last_name" type="text" value="{{ old('last_name') }}" 
-                                    class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
-                                    @error('last_name') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                    @elseif(old('last_name')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Enter last name" />
-                                @if(old('last_name'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 top-1/2 transform -translate-y-1/2">
-                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                @endif
-                                @error('last_name')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @elseif(old('last_name'))
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @enderror
-                            </div>
-
-                            <div class="relative">
-                                <label class="text-sm mb-2 block 
                                     @error('middle_name') text-red-700 dark:text-red-500 
                                     @elseif(old('middle_name')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
                                     Middle Name/ Gitnang Pangalan
                                 </label>
-                                <input name="middle_name" type="text" value="{{ old('middle_name') }}" 
+                                <input name="middle_name" id="middle_name" type="text" value="{{ old('middle_name') }}" 
                                     class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
                                     @error('middle_name') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
                                     @elseif(old('middle_name')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
@@ -106,12 +79,39 @@
 
                             <div class="relative">
                                 <label class="text-sm mb-2 block 
+                                    @error('last_name') text-red-700 dark:text-red-500 
+                                    @elseif(old('last_name')) text-green-700 dark:text-green-500 
+                                    @else text-gray-800 @enderror">
+                                    Last Name/ Huling Pangalan
+                                </label>
+                                <input name="last_name" id="last_name" type="text" value="{{ old('last_name') }}" 
+                                    class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
+                                    @error('last_name') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
+                                    @elseif(old('last_name')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
+                                    placeholder="Enter last name" />
+                                @if(old('last_name'))
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 top-1/2 transform -translate-y-1/2">
+                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </span>
+                                @endif
+                                @error('last_name')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @elseif(old('last_name'))
+                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
+                                @enderror
+                            </div>
+
+                            <div class="relative">
+                                <label class="text-sm mb-2 block 
                                     @error('suffix') text-red-700 dark:text-red-500 
                                     @elseif(old('suffix')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
                                     Suffix/ Karugtong ng Pangalan
                                 </label>
-                                <input name="suffix" type="text" value="{{ old('suffix') }}" 
+                                <input name="suffix" id="suffix" type="text" value="{{ old('suffix') }}" 
                                     class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
                                     @error('suffix') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
                                     @elseif(old('suffix')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
@@ -147,11 +147,6 @@
                                     @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                     placeholder="Select birthdate" readonly 
                                     value="{{ old('birthdate') }}" />
-                                <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-6 6h6m-8 0h.01M4 7h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
-                                    </svg>
-                                </span>
 
                                 @if(old('birthdate'))
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -448,7 +443,7 @@
                                             <th class="border border-gray-300 px-4 py-2 text-left">Civil Status</th>
                                             <th class="border border-gray-300 px-4 py-2 text-left">Occupation</th>
                                             <th class="border border-gray-300 px-4 py-2 text-left">Income</th>
-                                            <th class="border border-gray-300 px-4 py-2 text-left">Remove</th>
+                                            <th id="remove-header" class="border border-gray-300 px-4 py-2 text-left">Remove</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -531,7 +526,7 @@
                         </div>
 
                         <div class="mt-4 flex justify-center">
-                            <button type="button" onclick="addRow()" class="bg-blue-500 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center">
+                            <button type="button" onclick="addRow()" class="bg-blue-500 text-white font-light py-2 px-4 rounded-md flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                                 </svg>
@@ -1006,22 +1001,6 @@
 
                         <div class="text-xl font-bold mt-8 leading-tight tracking-tight text-gray-900 md:text-xl">
                             <p class="text-left">
-                                E-Signature
-                            </p>
-                        </div>
-
-                        <div class="mt-4">
-                            <canvas id="sig-canvas" class="border border-gray-300 rounded-md w-full h-32 sm:h-40 md:h-48 lg:h-56"></canvas>
-                            <input type="hidden" id="sig-dataUrl" name="signature_data">
-                            <img id="sig-image" style="display:none;">
-                            <p id="signaturevalidation" style="display:none; color:red;">Please provide your signature.</p>
-                            <div class="flex justify-center items-center mt-4">
-                                <button type="button" id="sig-clearBtn" class="bg-red-500 text-white px-4 py-2 rounded">Clear</button>
-                            </div>
-                        </div>
-
-                        <div class="text-xl font-bold mt-8 leading-tight tracking-tight text-gray-900 md:text-xl">
-                            <p class="text-left">
                                 Account Information
                             </p>
                         </div>
@@ -1109,8 +1088,34 @@
                             </div>
                         </div>
 
+                        <div class="text-xl font-bold mt-8 leading-tight tracking-tight text-gray-900 md:text-xl">
+                            <p class="text-left">E-Signature</p>
+                        </div>
+
+                        <div class="mt-4">
+                            <canvas id="sig-canvas" class="border border-gray-300 rounded-md w-full h-32 sm:h-40 md:h-48 lg:h-56"></canvas>
+                            <input type="hidden" id="sig-dataUrl" name="signature_data">
+                            <img id="sig-image" style="display:none;">
+                            <p id="signaturevalidation" style="display:none; color:red;">Please provide your signature.</p>
+                            <div class="flex justify-center items-center mt-4">
+                                <button type="button" id="sig-clearBtn" class="bg-red-500 text-white px-4 py-2 rounded">Clear Signature</button>
+                            </div>
+                        </div>
+
+                        <div class="row justify-content-center align-items-center mt-8">
+                            <div class="col-md-12 text-center"> 
+                                <div class="checkbox-container">
+                                    <input class="form-check-input checkdrop" type="checkbox" id="confirm-checkbox" name="confirm-checkbox">
+                                    <label class="form-check-label1" for="confirm-checkbox" id="confirm-checkbox-label">
+                                        I, <span id="full-name-placeholder">[Full Name]</span>, hereby confirm that the informations provided in the form is accurate
+                                    </label>
+                                </div>
+                                <p id="checkbox-error" class="text-red-500" style="display:none;">This checkbox is required.</p>
+                            </div>
+                        </div>
+
                         <div class="mt-8 flex justify-center">
-                            <button type="submit" id="submit" name="submit" class="py-3 px-6 w-full md:w-auto text-sm tracking-wider font-semibold rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
+                            <button type="submit" id="submit" name="submit" class="py-3 px-6 w-full md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
                                 Sign up
                             </button>
                         </div>

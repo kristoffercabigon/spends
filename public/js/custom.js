@@ -244,30 +244,43 @@ document.addEventListener("DOMContentLoaded", function () {
                 sigText.value = "";
                 sigImage.setAttribute("src", "");
                 submitBtn.disabled = false;
-                validateForm();
             },
             false
         );
 
         form.addEventListener("submit", function (e) {
             saveSignature();
-            if (!validateSignature() || !validateForm()) {
+            if (!validateSignature()) {
                 e.preventDefault();
             }
         });
 
-        function validateForm() {
-            var reqName = document.getElementById("req_name").value;
-            var reqContactNo = document.getElementById("req_contact_no").value;
-            var reqEmail = document.getElementById("req_email").value;
-
-            if (!reqName || !reqContactNo || !reqEmail) {
-                return false;
-            }
-
-            return true;
-        }
-
         loadSignature();
     })();
+
+    const firstNameInput = document.getElementById("first_name");
+    const middleNameInput = document.getElementById("middle_name");
+    const lastNameInput = document.getElementById("last_name");
+    const suffixInput = document.getElementById("suffix");
+
+    const fullNamePlaceholder = document.getElementById(
+        "full-name-placeholder"
+    );
+
+    function updateFullName() {
+        const firstName = firstNameInput.value || "";
+        const middleName = middleNameInput.value
+            ? `${middleNameInput.value} `
+            : "";
+        const lastName = lastNameInput.value || "";
+        const suffix = suffixInput.value ? `, ${suffixInput.value}` : "";
+
+        fullNamePlaceholder.textContent = `${firstName} ${middleName}${lastName}${suffix}`;
+    }
+
+    firstNameInput.addEventListener("input", updateFullName);
+    middleNameInput.addEventListener("input", updateFullName);
+    lastNameInput.addEventListener("input", updateFullName);
+    suffixInput.addEventListener("input", updateFullName);
+
 });

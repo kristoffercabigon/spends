@@ -502,11 +502,12 @@
                                                 </td>
                                                 <td class="border border-gray-300 px-4 py-2">
                                                     <select name="relative_civil_status[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
-                                                        <option value="" disabled selected>Select status</option>
-                                                        <option value="Single">Single</option>
-                                                        <option value="Married">Married</option>
-                                                        <option value="Divorced">Divorced</option>
-                                                        <option value="Widowed">Widowed</option>
+                                                        <option value="" disabled>Select status</option>
+                                                        @foreach ($civil_status as $status)
+                                                            <option value="{{ $status->id }}">
+                                                                {{ $status->civil_status }}
+                                                            </option>
+                                                        @endforeach
                                                     </select>
                                                 </td>
                                                 <td class="border border-gray-300 px-4 py-2">
@@ -1260,14 +1261,13 @@
 </script>
 
 <script>
-    let rowCount = 1; 
+    let rowCount = @if(old('relative_name')) {{ count(old('relative_name')) }} @else 1 @endif;
 
     function addRow() {
-        const table = document.getElementById('familyTable').getElementsByTagName('tbody')[0];
-        const newRow = table.insertRow();
-        const rowIndex = rowCount++;
-
-        newRow.innerHTML = `
+    rowCount++;
+    
+    let newRow = `
+        <tr>
             <td class="border border-gray-300 px-4 py-2">
                 <input type="text" name="relative_name[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter name" style="min-width: 150px;">
             </td>
@@ -1279,11 +1279,10 @@
             </td>
             <td class="border border-gray-300 px-4 py-2">
                 <select name="relative_civil_status[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
-                    <option value="" disabled selected>Select status</option>
-                    <option value="Single">Single</option>
-                    <option value="Married">Married</option>
-                    <option value="Divorced">Divorced</option>
-                    <option value="Widowed">Widowed</option>
+                    <option value="" disabled>Select status</option>
+                    @foreach ($civil_status as $status)
+                        <option value="{{ $status->id }}">{{ $status->civil_status }}</option>
+                    @endforeach
                 </select>
             </td>
             <td class="border border-gray-300 px-4 py-2">
@@ -1292,22 +1291,24 @@
             <td class="border border-gray-300 px-4 py-2">
                 <input type="text" name="relative_income[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter income" style="min-width: 150px;">
             </td>
-            <td class="border border-gray-300 px-4 py-2 hidden" id="removeCell-${rowIndex}">
+            <td class="border border-gray-300 px-4 py-2">
                 <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M4 5a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm1 3a1 1 0 00-1 1v7a1 1 0 001 1h10a1 1 0 001-1v-7a1 1 0 00-1-1H5zm3 2a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm5 0a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1z" clip-rule="evenodd" />
                     </svg>
                 </button>
             </td>
-        `;
-        
+        </tr>
+    `;
+
+        $('#familyTable tbody').append(newRow);
         updateRemoveIconVisibility();
     }
 
     function removeRow(button) {
-        const row = button.closest('tr');
-        row.parentNode.removeChild(row);
-        updateRemoveIconVisibility();
+        const row = button.closest('tr'); 
+        row.parentNode.removeChild(row); 
+        updateRemoveIconVisibility(); 
     }
 
     function updateRemoveIconVisibility() {
@@ -1319,8 +1320,8 @@
             removeCell.classList.toggle('hidden', rows.length <= 1);
         }
     }
-    updateRemoveIconVisibility();
-</script>
 
+    updateRemoveIconVisibility(); 
+</script>
 
 @include('partials.footer')

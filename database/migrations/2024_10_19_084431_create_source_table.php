@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('source', function (Blueprint $table) {
             $table->id();
-            $table->integer('senior_id')->constrained('seniors');
-            $table->integer('source_id')->constrained('source_list');
+            $table->foreignId('senior_id')->constrained('seniors');
+            $table->foreignId('source_id')->constrained('source_list');
             $table->string('other_source_remark')->nullable();
             $table->timestamps();
         });

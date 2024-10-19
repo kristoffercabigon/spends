@@ -90,7 +90,8 @@ class SeniorsController extends Controller
             $validIdFilename = pathinfo($request->file('valid_id')->getClientOriginalName(), PATHINFO_FILENAME);
             $validIdExtension = $request->file('valid_id')->getClientOriginalExtension();
             $validIdFilenameToStore = $validIdFilename . '_' . time() . '.' . $validIdExtension;
-            $request->file('valid_id')->storeAs('app/public/images/valid_id', $validIdFilenameToStore);
+            $path = storage_path('app/public/images/valid_id/'); 
+            $request->file('valid_id')->move($path, $validIdFilenameToStore);
             $validated['valid_id'] = $validIdFilenameToStore;
         }
 
@@ -98,7 +99,8 @@ class SeniorsController extends Controller
             $profilePictureFilename = pathinfo($request->file('profile_picture')->getClientOriginalName(), PATHINFO_FILENAME);
             $profilePictureExtension = $request->file('profile_picture')->getClientOriginalExtension();
             $profilePictureFilenameToStore = $profilePictureFilename . '_' . time() . '.' . $profilePictureExtension;
-            $request->file('profile_picture')->storeAs('app/public/images/profile_picture', $profilePictureFilenameToStore);
+            $path = storage_path('app/public/images/profile_picture/'); 
+            $request->file('profile_picture')->move($path, $profilePictureFilenameToStore); 
             $validated['profile_picture'] = $profilePictureFilenameToStore;
         }
 
@@ -106,7 +108,8 @@ class SeniorsController extends Controller
             $indigencyFilename = pathinfo($request->file('indigency')->getClientOriginalName(), PATHINFO_FILENAME);
             $indigencyExtension = $request->file('indigency')->getClientOriginalExtension();
             $indigencyFilenameToStore = $indigencyFilename . '_' . time() . '.' . $indigencyExtension;
-            $request->file('indigency')->storeAs('app/public/images/indigency', $indigencyFilenameToStore);
+            $path = storage_path('app/public/images/indigency/'); 
+            $request->file('indigency')->move($path, $indigencyFilenameToStore); 
             $validated['indigency'] = $indigencyFilenameToStore;
         }
 

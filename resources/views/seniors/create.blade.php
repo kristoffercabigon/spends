@@ -433,6 +433,113 @@
 
                         <div class="text-xl font-bold mt-8 leading-tight tracking-tight text-gray-900 md:text-xl">
                             <p class="text-left">
+                                Family Composition
+                            </p>
+                        </div>
+
+                        <div class="mt-8">
+                            <div class="overflow-x-auto">
+                                <table id="familyTable" class="table-auto w-full border-collapse border border-gray-300">
+                                    <thead>
+                                        <tr class="bg-gray-200">
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Name</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Relationship</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Age</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Civil Status</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Occupation</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Income</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">Remove</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if(old('relative_name'))
+                                            @foreach(old('relative_name') as $index => $name)
+                                            <tr>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <input type="text" name="relative_name[]" value="{{ $name }}" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter name" style="min-width: 150px;">
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <input type="text" name="relative_relationship[]" value="{{ old('relative_relationship')[$index] }}" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter relationship" style="min-width: 150px;">
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <input type="number" name="relative_age[]" value="{{ old('relative_age')[$index] }}" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter age" style="min-width: 150px;">
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <select name="relative_civil_status[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
+                                                        <option value="" disabled>Select status</option>
+                                                        @foreach ($civil_status as $status)
+                                                            <option value="{{ $status->id }}" {{ (old('relative_civil_status')[$index] ?? '') == $status->id ? 'selected' : '' }}>
+                                                                {{ $status->civil_status }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <input type="text" name="relative_occupation[]" value="{{ old('relative_occupation')[$index] }}" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter occupation" style="min-width: 150px;">
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <input type="text" name="relative_income[]" value="{{ old('relative_income')[$index] }}" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter income" style="min-width: 150px;">
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-2 hidden" id="removeCell-{{ $index }}">
+                                                    <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd" d="M4 5a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm1 3a1 1 0 00-1 1v7a1 1 0 001 1h10a1 1 0 001-1v-7a1 1 0 00-1-1H5zm3 2a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm5 0a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <input type="text" name="relative_name[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter name" style="min-width: 150px;">
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <input type="text" name="relative_relationship[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter relationship" style="min-width: 150px;">
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <input type="number" name="relative_age[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter age" style="min-width: 150px;">
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <select name="relative_civil_status[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
+                                                        <option value="" disabled selected>Select status</option>
+                                                        <option value="Single">Single</option>
+                                                        <option value="Married">Married</option>
+                                                        <option value="Divorced">Divorced</option>
+                                                        <option value="Widowed">Widowed</option>
+                                                    </select>
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <input type="text" name="relative_occupation[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter occupation" style="min-width: 150px;">
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <input type="text" name="relative_income[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter income" style="min-width: 150px;">
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-2 hidden" id="removeCell-0">
+                                                    <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd" d="M4 5a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm1 3a1 1 0 00-1 1v7a1 1 0 001 1h10a1 1 0 001-1v-7a1 1 0 00-1-1H5zm3 2a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm5 0a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 flex justify-center">
+                            <button type="button" onclick="addRow()" class="bg-blue-500 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                                Add another row
+                            </button>
+                        </div>
+
+                        <div class="text-xl font-bold mt-8 leading-tight tracking-tight text-gray-900 md:text-xl">
+                            <p class="text-left">
                                 Economic Status
                             </p>
                         </div>
@@ -1151,5 +1258,69 @@
         }
     });
 </script>
+
+<script>
+    let rowCount = 1; 
+
+    function addRow() {
+        const table = document.getElementById('familyTable').getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+        const rowIndex = rowCount++;
+
+        newRow.innerHTML = `
+            <td class="border border-gray-300 px-4 py-2">
+                <input type="text" name="relative_name[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter name" style="min-width: 150px;">
+            </td>
+            <td class="border border-gray-300 px-4 py-2">
+                <input type="text" name="relative_relationship[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter relationship" style="min-width: 150px;">
+            </td>
+            <td class="border border-gray-300 px-4 py-2">
+                <input type="number" name="relative_age[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter age" style="min-width: 150px;">
+            </td>
+            <td class="border border-gray-300 px-4 py-2">
+                <select name="relative_civil_status[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
+                    <option value="" disabled selected>Select status</option>
+                    <option value="Single">Single</option>
+                    <option value="Married">Married</option>
+                    <option value="Divorced">Divorced</option>
+                    <option value="Widowed">Widowed</option>
+                </select>
+            </td>
+            <td class="border border-gray-300 px-4 py-2">
+                <input type="text" name="relative_occupation[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter occupation" style="min-width: 150px;">
+            </td>
+            <td class="border border-gray-300 px-4 py-2">
+                <input type="text" name="relative_income[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter income" style="min-width: 150px;">
+            </td>
+            <td class="border border-gray-300 px-4 py-2 hidden" id="removeCell-${rowIndex}">
+                <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 5a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm1 3a1 1 0 00-1 1v7a1 1 0 001 1h10a1 1 0 001-1v-7a1 1 0 00-1-1H5zm3 2a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm5 0a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </td>
+        `;
+        
+        updateRemoveIconVisibility();
+    }
+
+    function removeRow(button) {
+        const row = button.closest('tr');
+        row.parentNode.removeChild(row);
+        updateRemoveIconVisibility();
+    }
+
+    function updateRemoveIconVisibility() {
+        const tableBody = document.getElementById('familyTable').getElementsByTagName('tbody')[0];
+        const rows = tableBody.getElementsByTagName('tr');
+        
+        for (let i = 0; i < rows.length; i++) {
+            const removeCell = rows[i].querySelector(`[id^='removeCell-']`);
+            removeCell.classList.toggle('hidden', rows.length <= 1);
+        }
+    }
+    updateRemoveIconVisibility();
+</script>
+
 
 @include('partials.footer')

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('relative_name')->nullable();
             $table->string('relative_relationship')->nullable();
             $table->integer('relative_age')->nullable();
-            $table->integer('relative_civil_status')->nullable();
+            $table->integer('relative_civil_status')->constrained('civil_status')->nullable();
             $table->string('relative_occupation')->nullable();
             $table->string('relative_income')->nullable();
             $table->timestamps();

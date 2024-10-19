@@ -58,7 +58,7 @@ class SeniorsController extends Controller
             "address" => ['required'],
             "barangay_id" => ['required'],
             "email" => ['required', 'email', Rule::unique('seniors', 'email')],
-            "password" => 'required|confirmed|min:8|max:16',
+            "password" => 'required|confirmed|min:8|max:32',
             "valid_id" => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
             "profile_picture" => 'nullable|mimes:jpeg,png,bmp,tiff|max:4096',
             "indigency" => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
@@ -76,7 +76,13 @@ class SeniorsController extends Controller
             "specific_support" => 'required_if:regular_support,1',
             "has_illness" => ['required'],
             "if_illness_yes" => 'required_if:has_illness,1',
-            "hospitalized_6" => ['required']
+            "hospitalized_6" => ['required'],
+            "relative_name.*" => 'nullable|string|max:255',
+            "relative_relationship.*" => 'nullable|string|max:255',
+            "relative_age.*" => 'nullable|integer|min:0',
+            "relative_civil_status.*" => 'nullable|string|max:255',
+            "relative_occupation.*" => 'nullable|string|max:255',
+            "relative_income.*" => 'nullable|string|max:255',
         ]);
 
         if ($request->hasFile('valid_id')) {
@@ -121,6 +127,18 @@ class SeniorsController extends Controller
             }
 
             DB::table('source')->insert($data);
+        }
+
+        foreach ($request->relative_name as $index => $name) {
+            DB::table('family_composition')->insert([
+                'senior_id' => $seniors->id,
+                'relative_name' => $name ?: null, 
+                'relative_relationship' => $request->relative_relationship[$index] ?: null,
+                'relative_age' => $request->relative_age[$index] ?: null,
+                'relative_civil_status' => $request->relative_civil_status[$index] ?: null,
+                'relative_occupation' => $request->relative_occupation[$index] ?: null,
+                'relative_income' => $request->relative_income[$index] ?: null,
+            ]);
         }
 
         FacadesAuth::login($seniors);

@@ -7,7 +7,6 @@ use App\Models\Seniors;
 use Illuminate\Database\Seeder;
 use Database\Seeders\LivingArrangementSeeder;
 use Database\Seeders\BarangaySeeder;
-use Database\Seeders\CitizenshipSeeder;
 use Database\Seeders\SexSeeder;
 use Database\Seeders\CivilStatusSeeder;
 use Database\Seeders\SourceSeeder;
@@ -21,7 +20,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(LivingArrangementSeeder::class);
         $this->call(BarangaySeeder::class);
-        $this->call(CitizenshipSeeder::class);
         $this->call(SexSeeder::class);
         $this->call(CivilStatusSeeder::class);
         $this->call(SourceSeeder::class);

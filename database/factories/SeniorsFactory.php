@@ -422,6 +422,15 @@ class SeniorsFactory extends Factory
             'Hypothyroidism'
         ];
 
+        $existing_disability = [
+            'visual_impairment',
+            'hearing_impairment',
+            'mobility_impairment',
+            'cognitive_disability', 
+            'mental_health_condition'
+        ];
+
+
         $Receiving_pension = [
             1000,
             1500,
@@ -537,8 +546,9 @@ class SeniorsFactory extends Factory
             "Income from Cooperative Memberships"
         ];
 
+        $date_applied = date('Y-m-d H:i:s');
         $has_illness = $this->faker->numberBetween(0, 1);
-        $regularSupport = $this->faker->numberBetween(0, 1);
+        $has_disability = $this->faker->numberBetween(0, 1);
         $permanent_source = $this->faker->numberBetween(0, 1);
         $pensioner = $this->faker->numberBetween(0, 1);
         $type_of_living_arrangement = $this->faker->numberBetween(1, 5);
@@ -551,30 +561,31 @@ class SeniorsFactory extends Factory
             'middle_name' => $this->faker->randomElement($filipinoLastNames),
             'last_name' => $this->faker->randomElement($filipinoLastNames),
             'suffix' => $this->faker->suffix(),
-            'citizenship_id' => $this->faker->numberBetween(1, 191),
             'birthdate' => $birthdate,
             'age' => $age,
             'birthplace' => $this->faker->randomElement($philippineCities),
             'sex_id' => $sex,
             'civil_status_id' => $this->faker->numberBetween(1, 4),
+            'contact_no' => $this->faker->regexify('\+639[0-9]{9}'),
             'address' => $address,
             'barangay_id' => $barangayNo,
             'valid_id' => null,
             'profile_picture' => null,
             'indigency' => null,
+            'birth_certificate' => null,
             'signature_data' => null,
-            'hospitalized_6' => $this->faker->numberBetween(0, 1),
             'type_of_living_arrangement' => $type_of_living_arrangement,
             'other_arrangement_remark' => $type_of_living_arrangement == 5 ? $this->faker->randomElement($otherArrangements) : null,
             'pensioner' => $pensioner,
             'if_pensioner_yes' => $pensioner == 1 ? $this->faker->randomElement($Receiving_pension) : null,
             'permanent_source' => $permanent_source,
             'if_permanent_yes' => $permanent_source == 1 ? $this->faker->randomElement($senior_permanent_income_sources) : null,
-            'regular_support' => $regularSupport,
-            'if_cash' => $regularSupport == 1 ? $this->faker->randomElement($if_cash) : null,
-            'specific_support' => $regularSupport == 1 ? $this->faker->randomElement($specific_support) : null,
+            'if_permanent_yes_income' => $permanent_source == 1 ? $this->faker->randomElement($Receiving_pension) : null,
             'has_illness' => $has_illness,
+            'date_applied' => $date_applied,
+            'has_disability' => $has_disability,
             'if_illness_yes' => $has_illness == 1 ? $this->faker->randomElement($existing_illness) : null,
+            'if_disability_yes' => $has_disability == 1 ? $this->faker->randomElement($existing_disability) : null,
             'email' => strtolower($firstName . '.' . $this->faker->randomNumber(3) . '.' . $this->faker->randomElement($filipinoLastNames) . '@example.com'),
             'password' => Hash::make('password'),
         ];

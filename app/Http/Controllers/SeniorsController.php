@@ -23,7 +23,6 @@ class SeniorsController extends Controller
         $sources = DB::table('source_list')->get();
         $arrangement_lists = DB::table('living_arrangement_list')->get();
         $sexes = DB::table('sex')->get();
-        $citizenship = DB::table('citizenship')->get();
         $civil_status = DB::table('civil_status')->get();
         $barangay = DB::table('barangay')->get();
 
@@ -32,7 +31,6 @@ class SeniorsController extends Controller
             'sources' => $sources,
             'arrangement_lists' => $arrangement_lists,
             'sexes' => $sexes,
-            'citizenship' => $citizenship,
             'civil_status' => $civil_status,
             'barangay' => $barangay
         ]);
@@ -40,12 +38,13 @@ class SeniorsController extends Controller
 
     public function store(Request $request)
     {
+        //dd($request->all());
+
         $validated = $request->validate([
             "first_name" => ['required', 'min:4', 'max:60'],
             "last_name" => ['required', 'min:4', 'max:30'],
             "middle_name" => ['nullable'],
             "suffix" => ['nullable'],
-            "citizenship_id" => ['required'],
             "birthdate" => ['required', function ($attribute, $value, $fail) {
                 if (Carbon::parse($value)->age < 60) {
                     $fail('The age must be 60 years old or above.');
@@ -55,6 +54,7 @@ class SeniorsController extends Controller
             "birthplace" => ['required'],
             "sex_id" => ['required'],
             "civil_status_id" => ['required'],
+            "contact_no" => ['required'],
             "address" => ['required'],
             "barangay_id" => ['required'],
             "email" => ['required', 'email', Rule::unique('seniors', 'email')],
@@ -62,21 +62,21 @@ class SeniorsController extends Controller
             "valid_id" => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
             "profile_picture" => 'nullable|mimes:jpeg,png,bmp,tiff|max:4096',
             "indigency" => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
+            "birth_certificate" => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
             "type_of_living_arrangement" => ['required'],
             "other_arrangement_remark" => 'required_if:type_of_living_arrangement,5',
             "pensioner" => ['required'],
             "if_pensioner_yes" => 'required_if:pensioner,1',
-            "source" => ['required', 'array'],
-            "source.*" => ['required', 'integer'],
+            'source' => ['required_if:pensioner,1', 'array'],
+            'source.*' => ['required_if:pensioner,1', 'integer'],
             'other_source_remark' => 'required_if:source.*,4',
             "permanent_source" => ['required'],
             "if_permanent_yes" => 'required_if:permanent_source,1',
-            "regular_support" => ['required'],
-            "if_cash" => 'required_if:regular_support,1',
-            "specific_support" => 'required_if:regular_support,1',
+            "if_permanent_yes_income" => 'required_if:permanent_source,1',
             "has_illness" => ['required'],
             "if_illness_yes" => 'required_if:has_illness,1',
-            "hospitalized_6" => ['required'],
+            "has_disability" => ['required'],
+            "if_disability_yes" => 'required_if:has_disability,1',
             "relative_name.*" => 'nullable|string|max:255',
             "relative_relationship.*" => 'nullable|string|max:255',
             "relative_age.*" => 'nullable|integer|min:0',
@@ -91,7 +91,8 @@ class SeniorsController extends Controller
             $validIdFilename = pathinfo($request->file('valid_id')->getClientOriginalName(), PATHINFO_FILENAME);
             $validIdExtension = $request->file('valid_id')->getClientOriginalExtension();
             $validIdFilenameToStore = $validIdFilename . '_' . time() . '.' . $validIdExtension;
-            $request->file('valid_id')->storeAs('app/public/images/valid_id', $validIdFilenameToStore);
+
+            $request->file('valid_id')->storeAs('images/valid_id', $validIdFilenameToStore);
             $validated['valid_id'] = $validIdFilenameToStore;
         }
 
@@ -99,7 +100,8 @@ class SeniorsController extends Controller
             $profilePictureFilename = pathinfo($request->file('profile_picture')->getClientOriginalName(), PATHINFO_FILENAME);
             $profilePictureExtension = $request->file('profile_picture')->getClientOriginalExtension();
             $profilePictureFilenameToStore = $profilePictureFilename . '_' . time() . '.' . $profilePictureExtension;
-            $request->file('profile_picture')->storeAs('app/public/images/profile_picture', $profilePictureFilenameToStore);
+
+            $request->file('profile_picture')->storeAs('images/profile_picture', $profilePictureFilenameToStore);
             $validated['profile_picture'] = $profilePictureFilenameToStore;
         }
 
@@ -107,18 +109,28 @@ class SeniorsController extends Controller
             $indigencyFilename = pathinfo($request->file('indigency')->getClientOriginalName(), PATHINFO_FILENAME);
             $indigencyExtension = $request->file('indigency')->getClientOriginalExtension();
             $indigencyFilenameToStore = $indigencyFilename . '_' . time() . '.' . $indigencyExtension;
-            $request->file('indigency')->storeAs('app/public/images/indigency', $indigencyFilenameToStore);
+
+            $request->file('indigency')->storeAs('images/indigency', $indigencyFilenameToStore);
             $validated['indigency'] = $indigencyFilenameToStore;
+        }
+
+        if ($request->hasFile('birth_certificate')) {
+            $birthCertificateFilename = pathinfo($request->file('birth_certificate')->getClientOriginalName(), PATHINFO_FILENAME);
+            $birthCertificateExtension = $request->file('birth_certificate')->getClientOriginalExtension();
+            $birthCertificateFilenameToStore = $birthCertificateFilename . '_' . time() . '.' . $birthCertificateExtension;
+
+            $request->file('birth_certificate')->storeAs('images/birth_certificate', $birthCertificateFilenameToStore);
+            $validated['birth_certificate'] = $birthCertificateFilenameToStore;
         }
 
         if ($request->has('signature_data')) {
             $signatureData = $request->input('signature_data');
             $signatureData = str_replace('data:image/png;base64,', '', $signatureData);
             $signatureData = str_replace(' ', '+', $signatureData);
-            $signatureData = base64_decode($signatureData); 
+            $signatureData = base64_decode($signatureData);
             $signatureFilename = 'signature_' . time() . '.png';
             $path = storage_path('app/public/images/signatures/');
-            file_put_contents($path . $signatureFilename, $signatureData); 
+            file_put_contents($path . $signatureFilename, $signatureData);
             $validated['signature_data'] = $signatureFilename;
         }
 
@@ -127,19 +139,33 @@ class SeniorsController extends Controller
 
         $seniorData['password'] = Hash::make($seniorData['password']);
 
+        $seniorData['date_applied'] = now();
+
         $seniors = Seniors::create($seniorData);
 
-        foreach ($request->input('source') as $source) {
-            $data = [
-                'senior_id' => $seniors->id,
-                'source_id' => $source,
-            ];
+        if ($request->input('pensioner') == 1
+        ) {
+            $sourceInputs = $request->input('source') ?? [];
 
-            if ($source == 4) {
-                $data['other_source_remark'] = $request->input('other_source_remark');
+            foreach ($sourceInputs as $source) {
+                $data = [];
+
+                if (!is_null($seniors->id)) {
+                    $data['senior_id'] = $seniors->id;
+                }
+
+                if (!is_null($source)) {
+                    $data['source_id'] = $source;
+                }
+
+                if ($source == 4) {
+                    $data['other_source_remark'] = $request->input('other_source_remark');
+                }
+
+                if (!empty($data)) {
+                    DB::table('source')->insert($data);
+                }
             }
-
-            DB::table('source')->insert($data);
         }
 
         foreach ($request->relative_name as $index => $name) {
@@ -156,7 +182,7 @@ class SeniorsController extends Controller
 
         FacadesAuth::login($seniors);
 
-        return redirect('/')->with('message', 'New Senior was added successfully!');
+        return redirect('/')->with('message', 'Registration Successful');
     }
 
     public function logout(Request $request)

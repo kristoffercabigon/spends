@@ -148,20 +148,7 @@
                                     placeholder="Select birthdate" readonly 
                                     value="{{ old('birthdate') }}" />
 
-                                @if(old('birthdate'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                @endif
-
                                 @error('birthdate')
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-6 6h6m-8 0h.01M4 7h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
-                                        </svg>
-                                    </span>
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @elseif(old('birthdate'))
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
@@ -285,33 +272,39 @@
 
                             <div class="relative">
                                 <label class="text-sm mb-2 block 
-                                    @error('citizenship_id') text-red-700 dark:text-red-500 
-                                    @elseif(old('citizenship_id')) text-green-700 dark:text-green-500 
+                                    @error('contact_no') text-red-700 dark:text-red-500 
+                                    @elseif(old('contact_no')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Citizenship / Nasyonalidad
+                                    Contact Number
                                 </label>
-                                <select name="citizenship_id" 
-                                    class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
-                                    @error('citizenship_id') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
-                                    @elseif(old('citizenship_id')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror">
-                                    <option value="" disabled selected>Select citizenship</option>
-                                    @foreach($citizenship as $citizenship1)
-                                        <option value="{{ $citizenship1->id }}" {{ old('citizenship_id') == $citizenship1->id ? 'selected' : '' }}>
-                                            {{ $citizenship1->citizenship_name }} 
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @if(old('citizenship_id'))
+
+                                <div class="flex">
+                                    <span class="inline-flex items-center px-3 bg-gray-200 text-gray-700 border border-gray-300 rounded-l-md">
+                                        +63
+                                    </span>
+                                    
+                                    <input name="contact_no" type="text" value="{{ old('contact_no') }}" 
+                                        class="w-full text-sm px-4 py-3 rounded-r-md transition-all pr-10 
+                                        @error('contact_no') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
+                                        @elseif(old('contact_no')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                        @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
+                                        placeholder="Enter contact number (10 digits)" 
+                                        inputmode="numeric" pattern="[0-9]*" maxlength="10" 
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                                </div>
+
+                                @if(old('contact_no'))
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3 top-1/2 transform -translate-y-1/2">
                                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                         </svg>
                                     </span>
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @endif
-                                @error('citizenship_id')
+
+                                @error('contact_no')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @elseif(old('contact_no'))
+                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
                             </div>
                         </div>
@@ -541,7 +534,7 @@
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
-                            <div class="relative md:col-span-3 sm:col-span-3">
+                            <div class="relative md:col-span-4 sm:col-span-3">
                                 <label class="text-sm mb-2 block 
                                     @error('pensioner') text-red-700 dark:text-red-500 
                                     @elseif(old('pensioner')) text-green-700 dark:text-green-500 
@@ -579,80 +572,84 @@
                                     </div>
                                 </div>
 
-                                <label id="pensioner_label" class="text-sm mt-4 mb-2 block {{ old('pensioner') == 1 ? '' : 'hidden' }}">
-                                    If yes, how much pension do you receive?
-                                </label>
+                                @error('pensioner')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @enderror
 
-                                <input type="text" 
-                                    name="if_pensioner_yes" 
-                                    id="if_pensioner_yes" 
-                                    class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
-                                    {{ old('pensioner') == 1 ? '' : 'hidden' }}" 
-                                    placeholder="Enter additional information"
-                                    value="{{ old('if_pensioner_yes') }}" style="width: -webkit-fill-available;"
-                                    >
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-1">
+                                    <div class="w-full md:col-span-2 relative">
+                                        <label id="pensioner_label" class="text-sm mt-4 mb-2 block {{ old('pensioner') == 1 ? '' : 'hidden' }}">
+                                            If yes, how much pension do you receive?
+                                        </label>
+
+                                        <input type="text" 
+                                            name="if_pensioner_yes" 
+                                            id="if_pensioner_yes" 
+                                            class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
+                                            {{ old('pensioner') == 1 ? '' : 'hidden' }}" 
+                                            placeholder="Enter additional information"
+                                            value="{{ old('if_pensioner_yes') }}" style="width: -webkit-fill-available;"
+                                            {{ old('pensioner') == 1 ? 'required' : '' }}>
+
+                                        @error('if_pensioner_yes')
+                                            <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div class="md:col-span-2 relative {{ old('pensioner') == 1 ? '' : 'hidden' }}" id="source_list">
+                                        <label id="source_label" class="text-sm mt-4 mb-2 block">
+                                            If yes, from what source?
+                                        </label>
+
+                                        <div class="flex flex-col md:flex-row md:flex-wrap">
+                                            @foreach($sources as $source)
+                                                <div class="flex items-center mb-2 md:mr-4">
+                                                    <input type="checkbox"
+                                                        name="source[]"
+                                                        value="{{ $source->id }}"
+                                                        id="{{ $source->id }}"
+                                                        class="mr-2"
+                                                        {{ is_array(old('source')) && in_array($source->id, old('source')) ? 'checked' : '' }}
+                                                        onclick="toggleCheckboxInputField()">
+
+                                                    <label for="{{ $source->id }}"
+                                                        class="text-sm text-gray-800 @error('source') text-red-700 dark:text-red-500 @enderror">
+                                                        {{ $source->source_list }}
+                                                    </label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+
+                                        <label id="other_source_label" class="text-sm mt-4 mb-2 block {{ is_array(old('source')) && in_array(4, old('source')) ? '' : 'hidden' }}">
+                                            If others, please specify:
+                                        </label>
+
+                                        <input type="text"
+                                            name="other_source_remark"
+                                            id="other_source_remark"
+                                            class="mt-4 bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all
+                                            {{ is_array(old('source')) && in_array(4, old('source')) ? '' : 'hidden' }}"
+                                            placeholder="Enter additional information"
+                                            value="{{ old('other_source_remark') ?? '' }}"
+                                            style="width: -webkit-fill-available;"
+                                            required="{{ is_array(old('source')) && in_array(4, old('source')) ? 'required' : '' }}">
+
+                                        @error('source')
+                                            <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                        @enderror
+
+                                        @error('other_source_remark')
+                                            <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
 
                                 @if(old('pensioner'))
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @endif
-                                @error('pensioner')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @enderror
-                                @error('if_pensioner_yes')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @enderror
                             </div>
 
-                            <div class="relative md:col-span-3 sm:col-span-3">
-                                <label class="text-sm mb-2 block 
-                                    @error('source') text-red-700 dark:text-red-500 
-                                    @elseif(is_array(old('source')) && count(old('source')) > 0) text-green-700 dark:text-green-500 
-                                    @else text-gray-800 @enderror">
-                                    Source of Pension
-                                </label>
-
-                                <div class="flex flex-col md:flex-row md:flex-wrap">
-                                    @foreach($sources as $source)
-                                        <div class="flex items-center mb-2 md:mr-4">
-                                            <input type="checkbox"
-                                                name="source[]"
-                                                value="{{ $source->id }}"
-                                                id="{{ $source->id }}"
-                                                class="mr-2"
-                                                {{ is_array(old('source')) && in_array($source->id, old('source')) ? 'checked' : '' }}
-                                                onclick="toggleCheckboxInputField()">
-
-                                            <label for="{{ $source->id }}"
-                                                class="text-sm text-gray-800 @error('source') text-red-700 dark:text-red-500 @enderror">
-                                                {{ $source->source_list }}
-                                            </label>
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                                <label id="other_source_label" class="text-sm mt-4 mb-2 block {{ is_array(old('source')) && in_array(4, old('source')) ? '' : 'hidden' }}">
-                                    If other, please specify:
-                                </label>
-
-                                <input type="text"
-                                    name="other_source_remark"
-                                    id="other_source_remark"
-                                    class="mt-4 bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all
-                                    {{ is_array(old('source')) && in_array(4, old('source')) ? 'md:col-span-4' : 'hidden' }}"
-                                    placeholder="Enter additional information"
-                                    value="{{ old('other_source_remark') ?? '' }}"
-                                    style="width: -webkit-fill-available;">
-
-                                @error('source')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @enderror
-
-                                @error('other_source_remark')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div class="relative md:col-span-3 sm:col-span-3">
+                            <div class="relative md:col-span-4 sm:col-span-4">
                                 <label class="text-sm mb-2 block 
                                     @error('permanent_source') text-red-700 dark:text-red-500 
                                     @elseif(old('permanent_source')) text-green-700 dark:text-green-500 
@@ -690,18 +687,37 @@
                                     </div>
                                 </div>
 
-                                <label id="permanent_label" class="text-sm mt-4 mb-2 block {{ old('permanent_source') == 1 ? '' : 'hidden' }}">
-                                    If yes, from what source?
-                                </label>
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-1">
+                                    <div class="w-full md:col-span-2 relative">
+                                        <label id="permanent_label" class="text-sm mt-4 mb-2 block {{ old('permanent_source') == 1 ? '' : 'hidden' }}">
+                                            If yes, from what source?
+                                        </label>
 
-                                <input type="text" 
-                                    name="if_permanent_yes" 
-                                    id="if_permanent_yes" 
-                                    class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
-                                    {{ old('permanent_source') == 1 ? '' : 'hidden' }}" 
-                                    placeholder="Enter additional information"
-                                    value="{{ old('if_permanent_yes') }}" style="width: -webkit-fill-available;"
-                                    >
+                                        <input type="text" 
+                                            name="if_permanent_yes" 
+                                            id="if_permanent_yes" 
+                                            class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
+                                            {{ old('permanent_source') == 1 ? '' : 'hidden' }}" 
+                                            placeholder="Enter additional information"
+                                            value="{{ old('if_permanent_yes') }}" 
+                                            style="width: -webkit-fill-available;">
+                                    </div>
+
+                                    <div class="md:col-span-2 relative">
+                                        <label id="permanent_income_label" class="text-sm mt-4 mb-2 block {{ old('permanent_source') == 1 ? '' : 'hidden' }}">
+                                            If yes, how much income?
+                                        </label>
+
+                                        <input type="text" 
+                                            name="if_permanent_yes_income" 
+                                            id="if_permanent_yes_income" 
+                                            class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
+                                            {{ old('permanent_source') == 1 ? '' : 'hidden' }}" 
+                                            placeholder="Enter income amount"
+                                            value="{{ old('if_permanent_yes_income') }}" 
+                                            style="width: -webkit-fill-available;">
+                                    </div>
+                                </div>
 
                                 @if(old('permanent_source'))
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
@@ -712,87 +728,7 @@
                                 @error('if_permanent_yes')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @enderror
-                            </div>
-
-                            <div class="relative md:col-span-4">
-                                <label class="text-sm mb-2 block 
-                                    @error('regular_support') text-red-700 dark:text-red-500 
-                                    @elseif(old('regular_support')) text-green-700 dark:text-green-500 
-                                    @else text-gray-800 @enderror">
-                                    Do you receive regular support from family?
-                                </label>
-
-                                <div class="flex flex-col md:flex-row md:flex-wrap">
-                                    <div class="flex items-center mb-2 md:mr-4">
-                                        <input type="radio" 
-                                            name="regular_support" 
-                                            value="1" 
-                                            id="regular_yes" 
-                                            class="mr-2" 
-                                            {{ old('regular_support') == 1 ? 'checked' : '' }}
-                                            onclick="toggleInputField(1, 'regular_support')">
-                                        <label for="regular_yes" 
-                                            class="text-sm text-gray-800 @error('regular_support') text-red-700 dark:text-red-500 @enderror">
-                                            Yes
-                                        </label>
-                                    </div>
-
-                                    <div class="flex items-center mb-2 md:mr-4">
-                                        <input type="radio" 
-                                            name="regular_support" 
-                                            value="0" 
-                                            id="regular_no" 
-                                            class="mr-2" 
-                                            {{ old('regular_support') === '0' ? 'checked' : '' }}
-                                            onclick="toggleInputField(0, 'regular_support')">
-                                        <label for="regular_no" 
-                                            class="text-sm text-gray-800 @error('regular_support') text-red-700 dark:text-red-500 @enderror">
-                                            No
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-1">
-                                    <div class="w-full md:col-span-2 relative">
-                                        <label id="regular_label" class="text-sm mt-4 mb-2 block {{ old('regular_support') == 1 ? '' : 'hidden' }}">
-                                            If yes, is it cash? how much and how often?
-                                        </label>
-
-                                        <input type="text" 
-                                            name="if_cash" 
-                                            id="if_cash" 
-                                            class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
-                                            {{ old('regular_support') == 1 ? '' : 'hidden' }}" 
-                                            placeholder="Enter additional information"
-                                            value="{{ old('if_cash') }}" style="width: -webkit-fill-available;"
-                                            >
-                                    </div>
-
-                                    <div class="md:col-span-2 relative">
-                                        <label id="regular_label1" class="text-sm mt-4 mb-2 block {{ old('regular_support') == 1 ? '' : 'hidden' }}">
-                                            If yes, then what kind of support aside from cash?
-                                        </label>
-
-                                        <input type="text" 
-                                            name="specific_support" 
-                                            id="specific_support" 
-                                            class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
-                                            {{ old('regular_support') == 1 ? '' : 'hidden' }}" 
-                                            placeholder="Enter additional information"
-                                            value="{{ old('specific_support') }}" style="width: -webkit-fill-available;">
-                                    </div>
-                                </div>
-
-                                @if(old('regular_support'))
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @endif
-                                @error('regular_support')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @enderror
-                                @error('specific_support')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @enderror
-                                @error('if_cash')
+                                @error('if_permanent_yes_income')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -869,41 +805,64 @@
 
                             <div class="relative md:col-span-3 sm:col-span-3">
                                 <label class="text-sm mb-2 block 
-                                    @error('hospitalized_6') text-red-700 dark:text-red-500 
-                                    @elseif(old('hospitalized_6')) text-green-700 dark:text-green-500 
+                                    @error('has_disability') text-red-700 dark:text-red-500 
+                                    @elseif(old('has_disability')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Have been hospitalized within the last 6 months?
+                                    Do you have disability?
                                 </label>
 
                                 <div class="flex flex-col md:flex-row md:flex-wrap">
                                     <div class="flex items-center mb-2 md:mr-4">
                                         <input type="radio" 
-                                            name="hospitalized_6" 
+                                            name="has_disability" 
                                             value="1" 
-                                            id="hospitalized_yes" 
+                                            id="disability_yes" 
                                             class="mr-2" 
-                                            {{ old('hospitalized_6') == 1 ? 'checked' : '' }}
-                                            onclick="toggleInputField(1, 'hospitalized_6')">
-                                        <label for="hospitalized_yes" 
-                                            class="text-sm text-gray-800 @error('hospitalized_6') text-red-700 dark:text-red-500 @enderror">
+                                            {{ old('has_disability') == 1 ? 'checked' : '' }}
+                                            onclick="toggleInputField(1, 'has_disability')">
+                                        <label for="disability_yes" 
+                                            class="text-sm text-gray-800 @error('has_disability') text-red-700 dark:text-red-500 @enderror">
                                             Yes
                                         </label>
                                     </div>
 
                                     <div class="flex items-center mb-2 md:mr-4">
                                         <input type="radio" 
-                                            name="hospitalized_6" 
+                                            name="has_disability" 
                                             value="0" 
-                                            id="hospitalized_no" 
+                                            id="disability_no" 
                                             class="mr-2" 
-                                            {{ old('hospitalized_6') === '0' ? 'checked' : '' }}
-                                            onclick="toggleInputField(0, 'hospitalized_6')" >
-                                        <label for="hospitalized_no" 
-                                            class="text-sm text-gray-800 @error('hospitalized_6') text-red-700 dark:text-red-500 @enderror">
+                                            {{ old('has_disability') === '0' ? 'checked' : '' }}
+                                            onclick="toggleInputField(0, 'has_disability')" >
+                                        <label for="disability_no" 
+                                            class="text-sm text-gray-800 @error('has_disability') text-red-700 dark:text-red-500 @enderror">
                                             No
                                         </label>
                                     </div>
                                 </div>
+
+                                <label id="disability_label" class="text-sm mt-4 mb-2 block {{ old('has_disability') == 1 ? '' : 'hidden' }}">
+                                    If yes, please specify:
+                                </label>
+
+                                <input type="text" 
+                                    name="if_disability_yes" 
+                                    id="if_disability_yes" 
+                                    class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
+                                    {{ old('has_disability') == 1 ? '' : 'hidden' }}" 
+                                    placeholder="Enter additional information"
+                                    value="{{ old('if_disability_yes') }}" style="width: -webkit-fill-available;"
+                                    >
+
+                                @if(old('has_disability'))
+                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
+                                @endif
+                                @error('has_disability')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @enderror
+                                @error('if_disability_yes')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -994,6 +953,34 @@
                                 @error('indigency')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @elseif(old('indigency'))
+                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label class="text-sm mb-2 block 
+                                    @error('birth_certificate') text-red-700 dark:text-red-500 
+                                    @elseif(old('birth_certificate')) text-green-700 dark:text-green-500 
+                                    @else text-gray-800 @enderror">
+                                    Birth Certificate
+                                </label>
+                                <input name="birth_certificate" type="file" 
+                                    class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
+                                    @error('birth_certificate') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
+                                    @elseif(old('birth_certificate')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
+                                    placeholder="Upload photo of Pensioner" />
+                                
+                                @if(old('birth_certificate'))
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </span>
+                                @endif
+                                @error('birth_certificate')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @elseif(old('birth_certificate'))
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
                             </div>
@@ -1107,7 +1094,7 @@
                                 <div class="checkbox-container">
                                     <input class="form-check-input checkdrop" type="checkbox" id="confirm-checkbox" name="confirm-checkbox">
                                     <label class="form-check-label1" for="confirm-checkbox" id="confirm-checkbox-label">
-                                        I, <span id="full-name-placeholder">[Full Name]</span>, hereby confirm that the informations provided in the form is accurate
+                                        I, <span id="full-name-placeholder">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span>, hereby confirm that the informations provided in the form is accurate
                                     </label>
                                 </div>
                                 <p id="checkbox-error" class="text-red-500" style="display:none;">This checkbox is required.</p>
@@ -1128,34 +1115,49 @@
 
 <script>
     function toggleInputField(value, type) {
-        let additionalInput;
+        let additionalInput, additionalIncomeInput, additionalLabel, additionalIncomeLabel;
+
         if (type === 'pensioner') {
             additionalInput = document.getElementById('if_pensioner_yes');
             const pensionerLabel = document.getElementById('pensioner_label');
+            const sourceList = document.getElementById('source_list');
 
             if (value == 1) { 
                 additionalInput.classList.remove('hidden');
                 pensionerLabel.classList.remove('hidden');
                 additionalInput.setAttribute('required', 'required'); 
+                sourceList.classList.remove('hidden');
             } else {
                 additionalInput.classList.add('hidden');
                 pensionerLabel.classList.add('hidden');
-                additionalInput.removeAttribute('required'); 
+                additionalInput.removeAttribute('required');
+                sourceList.classList.add('hidden');
                 additionalInput.value = ''; 
             }
         } else if (type === 'permanent_source') {
             additionalInput = document.getElementById('if_permanent_yes');
+            additionalIncomeInput = document.getElementById('if_permanent_yes_income');
             const permanentLabel = document.getElementById('permanent_label');
+            const permanentIncomeLabel = document.getElementById('permanent_income_label');
 
             if (value == 1) {
                 additionalInput.classList.remove('hidden');
                 permanentLabel.classList.remove('hidden');
                 additionalInput.setAttribute('required', 'required');
+
+                additionalIncomeInput.classList.remove('hidden');
+                permanentIncomeLabel.classList.remove('hidden');
+                additionalIncomeInput.setAttribute('required', 'required');
             } else {
                 additionalInput.classList.add('hidden');
                 permanentLabel.classList.add('hidden');
                 additionalInput.removeAttribute('required');
-                additionalInput.value = ''; 
+                additionalInput.value = '';
+
+                additionalIncomeInput.classList.add('hidden');
+                permanentIncomeLabel.classList.add('hidden');
+                additionalIncomeInput.removeAttribute('required');
+                additionalIncomeInput.value = ''; 
             }
         } else if (type === 'livingArrangement') {
             additionalInput = document.getElementById('other_arrangement_remark');
@@ -1177,32 +1179,23 @@
                 additionalInput.removeAttribute('required');
                 additionalInput.value = ''; 
             }
-        } else if (type === 'regular_support') {
-            const cashInput = document.getElementById('if_cash');
-            const cashLabel = document.getElementById('regular_label');
-            const supportInput = document.getElementById('specific_support');
-            const supportLabel = document.getElementById('regular_label1');
-            
-            if (value == 1) {
-                cashInput.classList.remove('hidden');
-                cashLabel.classList.remove('hidden');
-                supportInput.classList.remove('hidden');
-                supportLabel.classList.remove('hidden');
-                cashInput.setAttribute('required', 'required');
-                supportInput.setAttribute('required', 'required');
-            } else {
-                cashInput.classList.add('hidden');
-                cashLabel.classList.add('hidden');
-                supportInput.classList.add('hidden');
-                supportLabel.classList.add('hidden');
-                cashInput.removeAttribute('required');
-                supportInput.removeAttribute('required');
-                cashInput.value = '';
-                supportInput.value = '';
-            }
-        } else if (type === 'has_illness') {
+        }  else if (type === 'has_illness') {
             additionalInput = document.getElementById('if_illness_yes');
             additionalLabel = document.getElementById('illness_label');
+
+            if (value == 1) { 
+                additionalInput.classList.remove('hidden');
+                additionalLabel.classList.remove('hidden');
+                additionalInput.setAttribute('required', 'required'); 
+            } else {
+                additionalInput.classList.add('hidden');
+                additionalLabel.classList.add('hidden');
+                additionalInput.removeAttribute('required'); 
+                additionalInput.value = ''; 
+            }
+        } else if (type === 'has_disability') {
+            additionalInput = document.getElementById('if_disability_yes');
+            additionalLabel = document.getElementById('disability_label');
 
             if (value == 1) { 
                 additionalInput.classList.remove('hidden');
@@ -1217,7 +1210,7 @@
         }
     }
 
-    function toggleCheckboxInputField() {
+     function toggleCheckboxInputField() {
         const sourceCheckbox = document.querySelector('input[name="source[]"][value="4"]');
         const additionalInput = document.getElementById('other_source_remark');
         const sourceLabel = document.getElementById('other_source_label');
@@ -1234,43 +1227,35 @@
         }
     }
 
-        document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
         const previousPensionerValue = '{{ old("pensioner") }}';
         if (previousPensionerValue == 1) { 
-            document.getElementById('if_pensioner_yes').classList.remove('hidden');
-            document.getElementById('pensioner_label').classList.remove('hidden');
+            toggleInputField(1, 'pensioner');
+        }
+
+        const sourceCheckbox = document.querySelector('input[name="source[]"][value="4"]');
+        if (sourceCheckbox) {
+            sourceCheckbox.addEventListener('change', toggleCheckboxInputField);
+            toggleCheckboxInputField();
         }
 
         const previousPermanentSourceValue = '{{ old("permanent_source") }}';
         if (previousPermanentSourceValue == 1) {
             document.getElementById('if_permanent_yes').classList.remove('hidden');
             document.getElementById('permanent_label').classList.remove('hidden');
+            document.getElementById('if_permanent_yes_income').classList.remove('hidden');
+            document.getElementById('permanent_income_label').classList.remove('hidden');
         }
 
         const previousLivingArrangementValue = '{{ old("type_of_living_arrangement") }}';
         if (previousLivingArrangementValue == 5) {
             document.getElementById('other_arrangement_remark').classList.remove('hidden');
         }
-
-        const previousRegularSupportValue = '{{ old("regular_support") }}';
-        if (previousRegularSupportValue == 1) {
-            document.getElementById('if_cash').classList.remove('hidden');
-            document.getElementById('regular_label').classList.remove('hidden');
-            document.getElementById('specific_support').classList.remove('hidden');
-            document.getElementById('regular_label1').classList.remove('hidden');
-        }
-
-        const previousIllnessValue = '{{ old("has_illness") }}';
-        if (previousIllnessValue == 1) { 
-            document.getElementById('if_illness_yes').classList.remove('hidden');
-            document.getElementById('illness_label').classList.remove('hidden');
-        }
-
-        toggleCheckboxInputField();
-
-        const sourceCheckbox = document.querySelector('input[name="source[]"][value="4"]');
-        if (sourceCheckbox) {
-            sourceCheckbox.addEventListener('change', toggleCheckboxInputField);
+        
+        const previousDisabilityValue = '{{ old("has_disability") }}';
+        if (previousDisabilityValue == 1) { 
+            document.getElementById('if_disability_yes').classList.remove('hidden');
+            document.getElementById('disability_label').classList.remove('hidden');
         }
     });
 </script>

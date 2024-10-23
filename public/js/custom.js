@@ -268,12 +268,18 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     function updateFullName() {
-        const firstName = firstNameInput.value || "";
+        const firstName = firstNameInput.value || old("first_name");
         const middleName = middleNameInput.value
             ? `${middleNameInput.value} `
+            : old("middle_name")
+            ? `${old("middle_name")} `
             : "";
-        const lastName = lastNameInput.value || "";
-        const suffix = suffixInput.value ? `, ${suffixInput.value}` : "";
+        const lastName = lastNameInput.value || old("last_name");
+        const suffix = suffixInput.value
+            ? `, ${suffixInput.value}`
+            : old("suffix")
+            ? `, ${old("suffix")}`
+            : "";
 
         fullNamePlaceholder.textContent = `${firstName} ${middleName}${lastName}${suffix}`;
     }
@@ -283,4 +289,5 @@ document.addEventListener("DOMContentLoaded", function () {
     lastNameInput.addEventListener("input", updateFullName);
     suffixInput.addEventListener("input", updateFullName);
 
+    document.addEventListener("DOMContentLoaded", updateFullName);
 });

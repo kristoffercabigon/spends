@@ -10,3 +10,5 @@ Route::controller(SeniorsController::class)->group(function () {
     Route::post('/store', 'store');
     Route::post('/logout', 'logout');
 });
+
+Route::get('/verify-email', [SeniorsController::class, 'verifyEmail']);

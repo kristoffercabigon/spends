@@ -262,26 +262,23 @@ document.addEventListener("DOMContentLoaded", function () {
     const middleNameInput = document.getElementById("middle_name");
     const lastNameInput = document.getElementById("last_name");
     const suffixInput = document.getElementById("suffix");
-
     const fullNamePlaceholder = document.getElementById(
         "full-name-placeholder"
     );
 
     function updateFullName() {
-        const firstName = firstNameInput.value || old("first_name");
-        const middleName = middleNameInput.value
-            ? `${middleNameInput.value} `
-            : old("middle_name")
-            ? `${old("middle_name")} `
-            : "";
-        const lastName = lastNameInput.value || old("last_name");
-        const suffix = suffixInput.value
-            ? `, ${suffixInput.value}`
-            : old("suffix")
-            ? `, ${old("suffix")}`
-            : "";
+        const firstName = firstNameInput.value.trim() || "";
+        const middleName = middleNameInput.value.trim() || "";
+        const lastName = lastNameInput.value.trim() || "";
+        const suffix = suffixInput.value.trim() || "";
+        const nameParts = [];
 
-        fullNamePlaceholder.textContent = `${firstName} ${middleName}${lastName}${suffix}`;
+        if (firstName) nameParts.push(firstName);
+        if (middleName) nameParts.push(middleName);
+        if (lastName) nameParts.push(lastName);
+        if (suffix) nameParts.push(suffix);
+
+        fullNamePlaceholder.textContent = nameParts.join(" ");
     }
 
     firstNameInput.addEventListener("input", updateFullName);
@@ -290,4 +287,5 @@ document.addEventListener("DOMContentLoaded", function () {
     suffixInput.addEventListener("input", updateFullName);
 
     document.addEventListener("DOMContentLoaded", updateFullName);
+
 });

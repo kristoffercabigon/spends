@@ -48,7 +48,9 @@ class Seniors extends Authenticatable
         'if_illness_yes',
         'has_disability',
         'if_disability_yes',
-        'date_applied'
+        'date_applied',
+        'verification_code',
+        'verified_at'
     ];
 
     /**

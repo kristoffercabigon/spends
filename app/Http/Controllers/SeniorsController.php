@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Seniors;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail; 
+use App\Mail\VerificationEmail; 
+use Illuminate\Support\Str;
 
 class SeniorsController extends Controller
 {
@@ -141,7 +144,11 @@ class SeniorsController extends Controller
 
         $seniorData['date_applied'] = now();
 
+        $seniorData['verification_code'] = Str::random(30);
+
         $seniors = Seniors::create($seniorData);
+
+        Mail::to($seniorData['email'])->send(new VerificationEmail($seniors->verification_code));
 
         if ($request->input('pensioner') == 1
         ) {
@@ -183,6 +190,21 @@ class SeniorsController extends Controller
         FacadesAuth::login($seniors);
 
         return redirect('/')->with('message', 'Registration Successful');
+    }
+
+    public function verifyEmail(Request $request)
+    {
+        $senior = Seniors::where('verification_code', $request->input('code'))->first();
+
+        if ($senior) {
+            $senior->verified_at = now();
+            $senior->verification_code = null;
+            $senior->save();
+
+            return redirect('/')->with('message', 'Email verified successfully.');
+        }
+
+        return redirect('/')->with('error', 'Invalid verification code.');
     }
 
     public function logout(Request $request)

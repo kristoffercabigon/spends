@@ -45,11 +45,14 @@ class SeniorsController extends Controller
 
         $validated = $request->validate([
             "first_name" => ['required', 'min:4', 'max:60'],
-            "last_name" => ['required', 'min:4', 'max:30'],
+            "last_name" => ['required', 'min:4',
+                'max:30'
+            ],
             "middle_name" => ['nullable'],
             "suffix" => ['nullable'],
             "birthdate" => ['required', function ($attribute, $value, $fail) {
-                if (Carbon::parse($value)->age < 60) {
+                if (Carbon::parse($value)->age < 60
+                ) {
                     $fail('The age must be 60 years old or above.');
                 }
             }],
@@ -87,7 +90,19 @@ class SeniorsController extends Controller
             "relative_occupation.*" => 'nullable|string|max:255',
             "relative_income.*" => 'nullable|string|max:255',
             "signature_data" => ['required'],
-            "confirm-checkbox" => ['required']
+            "confirm-checkbox" => ['required'],
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY'); 
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
+
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
+
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
         ]);
 
         if ($request->hasFile('valid_id')) {
@@ -139,6 +154,7 @@ class SeniorsController extends Controller
 
         $seniorData = $validated;
         unset($seniorData['source'], $seniorData['other_source_remark']);
+        unset($validated['g-recaptcha-response']);
 
         $seniorData['password'] = Hash::make($seniorData['password']);
 
@@ -186,8 +202,6 @@ class SeniorsController extends Controller
                 'relative_income' => $request->relative_income[$index] ?: null,
             ]);
         }
-
-        FacadesAuth::login($seniors);
 
         return redirect('/')->with('message', 'Registration Successful');
     }

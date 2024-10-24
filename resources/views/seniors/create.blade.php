@@ -1101,6 +1101,10 @@
                             </div>
                         </div>
 
+                        <div class="flex justify-center mt-8">
+                            {!! htmlFormSnippet() !!}
+                        </div>
+
                         <div class="mt-8 flex justify-center">
                             <button type="submit" id="submit" name="submit" class="py-3 px-6 w-full md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
                                 Sign up

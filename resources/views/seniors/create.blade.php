@@ -402,7 +402,7 @@
                                     name="other_arrangement_remark" 
                                     id="other_arrangement_remark" 
                                     class="mt-4 bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
-                                    {{ old('type_of_living_arrangement') == 4 ? '' : 'hidden' }}" 
+                                    {{ old('type_of_living_arrangement') == 5 ? '' : 'hidden' }}" 
                                     placeholder="Enter additional information"
                                     value="{{ old('other_arrangement_remark') }}" style="width: -webkit-fill-available;"
                                     >

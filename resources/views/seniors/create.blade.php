@@ -28,7 +28,7 @@
                                     @error('first_name') text-red-700 dark:text-red-500 
                                     @elseif(old('first_name')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    First Name/ Unang Pangalan
+                                    First Name <span class="italic"> (Unang Pangalan) </span>
                                 </label>
                                 <input name="first_name" id="first_name" type="text" value="{{ old('first_name') }}" 
                                     class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
@@ -55,7 +55,7 @@
                                     @error('middle_name') text-red-700 dark:text-red-500 
                                     @elseif(old('middle_name')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Middle Name/ Gitnang Pangalan
+                                    Middle Name <span class="italic"> (Gitnang Pangalan) </span>
                                 </label>
                                 <input name="middle_name" id="middle_name" type="text" value="{{ old('middle_name') }}" 
                                     class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
@@ -82,7 +82,7 @@
                                     @error('last_name') text-red-700 dark:text-red-500 
                                     @elseif(old('last_name')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Last Name/ Huling Pangalan
+                                    Last Name <span class="italic"> (Huling Pangalan) </span>
                                 </label>
                                 <input name="last_name" id="last_name" type="text" value="{{ old('last_name') }}" 
                                     class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
@@ -109,7 +109,7 @@
                                     @error('suffix') text-red-700 dark:text-red-500 
                                     @elseif(old('suffix')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Suffix/ Karugtong ng Pangalan
+                                    Suffix <span class="italic"> (Karugtong na Pangalan) </span>
                                 </label>
                                 <input name="suffix" id="suffix" type="text" value="{{ old('suffix') }}" 
                                     class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
@@ -138,7 +138,7 @@
                                     @error('birthdate') text-red-700 dark:text-red-500 
                                     @elseif(old('birthdate')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Birthdate/ Kaarawan
+                                    Birthdate <span class="italic"> (Kaarawan) </span>
                                 </label>
                                 <input name="birthdate" type="text" id="datepicker" 
                                     class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md cursor-pointer transition-all 
@@ -147,7 +147,11 @@
                                     @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                     placeholder="Select birthdate" readonly 
                                     value="{{ old('birthdate') }}" />
-
+                                <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none @error('birthdate') h-[90%] @else h-[125%] @enderror">
+                                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-6 6h6m-8 0h.01M4 7h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
+                                        </svg>
+                                    </span>
                                 @error('birthdate')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @elseif(old('birthdate'))
@@ -160,7 +164,7 @@
                                     @error('age') text-red-700 dark:text-red-500 
                                     @elseif(old('age')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Age/ Edad
+                                    Age <span class="italic"> (Edad) </span>
                                 </label>
                                 <input name="age" type="text" id="age" value="{{ old('age') }}" 
                                     class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10 
@@ -187,7 +191,7 @@
                                     @error('birthplace') text-red-700 dark:text-red-500 
                                     @elseif(old('birthplace')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Birthplace/ Lugar ng Kapanganakan
+                                    Birthplace <span class="italic"> (Lugar ng Kapanganakan) </span>
                                 </label>
                                 <input name="birthplace" type="text" value="{{ old('birthplace') }}" 
                                     class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10 
@@ -216,7 +220,7 @@
                                     @error('sex_id') text-red-700 dark:text-red-500 
                                     @elseif(old('sex_id')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Sex/ Kasarian
+                                    Sex <span class="italic"> (Kasarian) </span>
                                 </label>
                                 <select name="sex_id" 
                                     class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
@@ -315,7 +319,7 @@
                                     @error('address') text-red-700 dark:text-red-500 
                                     @elseif(old('address')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Home Address / Tirahan
+                                    Home Address <span class="italic"> (Tirahan) </span>
                                 </label>
                                 <input name="address" type="text" 
                                     class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md transition-all 
@@ -323,13 +327,36 @@
                                     @elseif(old('address')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
                                     @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                     placeholder="Enter address" value="{{ old('address') }}" />
+
+                                <span class="absolute top-[28px] right-0 flex items-center justify-center bg-gray-400 text-gray-700 border border-gray-300 rounded-r-md w-12 cursor-pointer @error('address') h-[44%] @else h-[63%] @enderror group">
+                                    <svg fill="#ffffff" class="w-7 h-7" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 416.979 416.979" xml:space="preserve" stroke="#ffffff">
+                                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                        <g id="SVGRepo_iconCarrier">
+                                            <g>
+                                                <path d="M356.004,61.156c-81.37-81.47-213.377-81.551-294.848-0.182c-81.47,81.371-81.552,213.379-0.181,294.85
+                                                c81.369,81.47,213.378,81.551,294.849,0.181C437.293,274.636,437.375,142.626,356.004,61.156z M237.6,340.786
+                                                c0,3.217-2.607,5.822-5.822,5.822h-46.576c-3.215,0-5.822-2.605-5.822-5.822V167.885c0-3.217,2.607-5.822,5.822-5.822h46.576
+                                                c3.215,0,5.822,2.604,5.822,5.822V340.786z M208.49,137.901c-18.618,0-33.766-15.146-33.766-33.765
+                                                c0-18.617,15.147-33.766,33.766-33.766c18.619,0,33.766,15.148,33.766,33.766C242.256,122.755,227.107,137.901,208.49,137.901z">
+                                                </path>
+                                            </g>
+                                        </g>
+                                    </svg>
+
+                                    <div class="absolute top-full right-0 mt-2 w-48 p-2 text-sm text-white bg-customOrange rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                                        Enter your full home address. (House No., Street, Barangay, City/Municipality, Province)
+                                    </div>
+                                </span>
+
                                 @if(old('address'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 top-1/2 transform -translate-y-1/2">
                                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                         </svg>
                                     </span>
                                 @endif
+
                                 @error('address')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @elseif(old('address'))
@@ -654,7 +681,7 @@
                                     @error('permanent_source') text-red-700 dark:text-red-500 
                                     @elseif(old('permanent_source')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Do you have permanent source of income? <span class="italic"> (Ikaw ba ay may pinagkukunan na kita?) </span>
+                                    Do you have permanent source of income? <span class="italic"> (Ikaw ba ay may pinagkukunan ng kita?) </span>
                                 </label>
 
                                 <div class="flex flex-col md:flex-row md:flex-wrap">
@@ -691,7 +718,7 @@
                                     
                                     <div class="md:col-span-2 relative">
                                         <label id="permanent_income_label" class="text-sm mt-4 mb-2 block {{ old('permanent_source') == 1 ? '' : 'hidden' }}">
-                                            If yes, how much income? <span class="italic"> (Kung oo, magkanong kita ang iyong natatanggap?) </span>
+                                            If yes, how much income? <span class="italic"> (Kung oo, magkano and iyong kinikita?) </span>
                                         </label>
 
                                         <input type="text" 
@@ -1097,11 +1124,11 @@
                             <p class="text-left">E-Signature</p>
                         </div>
 
-                        <div class="mt-4">
+                        <div class="mt-4 text-center">
                             <canvas id="sig-canvas" class="border border-gray-300 rounded-md w-full h-32 sm:h-40 md:h-48 lg:h-56"></canvas>
                             <input type="hidden" id="sig-dataUrl" name="signature_data">
                             <img id="sig-image" style="display:none;">
-                            <p id="signaturevalidation" style="display:none; color:red;">Please provide your signature.</p>
+                            <p id="signaturevalidation" class="text-sm mt-2 text-red-500" style="display:none;">Please provide your signature.</p>
                             <div class="flex justify-center items-center mt-4">
                                 <button type="button" id="sig-clearBtn" class="bg-red-500 text-white px-4 py-2 rounded">Clear Signature</button>
                             </div>
@@ -1110,16 +1137,23 @@
                         <div class="row justify-content-center align-items-center mt-8"> 
                             <div class="col-md-12 text-center"> 
                                 <div class="checkbox-container">
-                                    <input class="form-check-input checkdrop" type="checkbox" id="confirm-checkbox" name="confirm-checkbox">
+                                    <input class="form-check-input checkdrop" type="checkbox" id="confirm-checkbox" name="confirm-checkbox" 
+                                        {{ old('confirm-checkbox') ? 'checked' : '' }}>
                                     <label class="form-check-label1" for="confirm-checkbox" id="confirm-checkbox-label">  
-                                        I, <span id="full-name-placeholder">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span>, hereby confirm that the informations provided in the form is accurate
+                                        I, <span id="full-name-placeholder">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span>, hereby confirm that the informations provided in the form is accurate.
                                     </label>
                                 </div>
-                                <p id="checkbox-error" class="text-red-500" style="display:none;">This checkbox is required.</p>
-                                
+
                                 <label class="form-check-label1" style="font-style: italic;">
-                                    Ako si <span id="full-name-placeholder-2">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span> at aking kinukumpirma na ang mga impormasyong ibinigay sa form na ito ay tama.
+                                    Ako si <span id="full-name-placeholder-2">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span> at aking kinukumpirma na ang mga impormasyong inilagay sa form na ito ay tama.
                                 </label>
+                                
+                                @if ($errors->has('confirm-checkbox'))
+                                    <p class="text-red-500 text-sm mt-2">{{ $errors->first('confirm-checkbox') }}</p>
+                                @else
+                                    <p id="checkbox-error" class="text-red-500" style="display:none;">This checkbox is required.</p>
+                                @endif
+                                
                             </div>
                         </div>
 

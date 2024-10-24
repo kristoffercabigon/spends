@@ -43,16 +43,63 @@ class SeniorsController extends Controller
     {
         //dd($request->all());
 
+        $customMessages = [
+            'first_name.required' => 'First name is required.',
+            'first_name.min' => 'First name must be at least 4 characters.',
+            'first_name.max' => 'First name cannot exceed 60 characters.',
+            'last_name.required' => 'Last name is required.',
+            'last_name.min' => 'Last name must be at least 4 characters.',
+            'last_name.max' => 'Last name cannot exceed 30 characters.',
+            'birthdate.required' => 'Birthdate is required.',
+            'birthdate.age' => 'The age must be 60 years old or above.',
+            'age.required' => 'Specify your birthdate to automatically indicate age.',
+            'birthplace.required' => 'Birthplace is required.',
+            'sex_id.required' => 'Sex is required.',
+            'civil_status_id.required' => 'Civil status is required.',
+            'contact_no.required' => 'Contact number is required.',
+            'address.required' => 'Address is required.',
+            'address.min' => 'Address must be at least 20 characters.',
+            'address.max' => 'Address cannot exceed 100 characters.',
+            'barangay_id.required' => 'Barangay is required.',
+            'email.required' => 'Email is required.',
+            'email.email' => 'Email must be a valid email address.',
+            'email.unique' => 'This email is already registered.',
+            'password.required' => 'Password is required.',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.max' => 'Password cannot exceed 32 characters.',
+            'password.regex' => 'Include 1 uppercase letter and 1 special character.',
+            'password.confirmed' => 'Password confirmation does not match.',
+            'valid_id.required' => 'Valid ID is required.',
+            'valid_id.mimes' => 'Valid ID must be a file of type: jpeg, png, bmp, tiff.',
+            'valid_id.max' => 'Valid ID must not exceed 4096 kilobytes.',
+            'profile_picture.mimes' => 'Profile picture must be a file of type: jpeg, png, bmp, tiff.',
+            'indigency.required' => 'Indigency document is required.',
+            'birth_certificate.required' => 'Birth certificate is required.',
+            'type_of_living_arrangement.required' => 'Type of living arrangement is required.',
+            'other_arrangement_remark.required_if' => 'This field is required when the type of living arrangement is 5.',
+            'pensioner.required' => 'Pensioner status is required.',
+            'if_pensioner_yes.required_if' => 'This field is required if you are a pensioner.',
+            'source.required_if' => 'Source of income is required if you are a pensioner.',
+            'source.*.required_if' => 'Each source of income is required if you are a pensioner.',
+            'other_source_remark.required_if' => 'This field is required if the source is "Other".',
+            'permanent_source.required' => 'Permanent source of income is required.',
+            'if_permanent_yes.required_if' => 'This field is required if the permanent source is "Yes".',
+            'has_illness.required' => 'Illness status is required.',
+            'if_illness_yes.required_if' => 'This field is required if you have an illness.',
+            'has_disability.required' => 'Disability status is required.',
+            'if_disability_yes.required_if' => 'This field is required if you have a disability.',
+            'signature_data.required' => 'Signature is required.',
+            'confirm-checkbox.required' => 'You must agree to the terms.',
+            'g-recaptcha-response.required' => 'ReCaptcha verification is required.',
+        ];
+
         $validated = $request->validate([
             "first_name" => ['required', 'min:4', 'max:60'],
-            "last_name" => ['required', 'min:4',
-                'max:30'
-            ],
+            "last_name" => ['required', 'min:4', 'max:30'],
             "middle_name" => ['nullable'],
             "suffix" => ['nullable'],
             "birthdate" => ['required', function ($attribute, $value, $fail) {
-                if (Carbon::parse($value)->age < 60
-                ) {
+                if (Carbon::parse($value)->age < 60) {
                     $fail('The age must be 60 years old or above.');
                 }
             }],
@@ -61,10 +108,17 @@ class SeniorsController extends Controller
             "sex_id" => ['required'],
             "civil_status_id" => ['required'],
             "contact_no" => ['required'],
-            "address" => ['required'],
+            "address" => ['required', 'min:20', 'max:100'],
             "barangay_id" => ['required'],
             "email" => ['required', 'email', Rule::unique('seniors', 'email')],
-            "password" => 'required|confirmed|min:8|max:32',
+            "password" => [
+                'required',
+                'min:8',
+                'max:32',
+                'regex:/[A-Z]/',
+                'regex:/[!@#$%^&*(),.?":{}|<>]/',
+                'confirmed'
+            ],
             "valid_id" => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
             "profile_picture" => 'nullable|mimes:jpeg,png,bmp,tiff|max:4096',
             "indigency" => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
@@ -103,7 +157,7 @@ class SeniorsController extends Controller
                     $fail('ReCaptcha verification failed, please try again.');
                 }
             }],
-        ]);
+        ], $customMessages);
 
         if (empty($request->input('g-recaptcha-response'))) {
             $validated['g-recaptcha-response'] = 'The ReCaptcha field is required.';

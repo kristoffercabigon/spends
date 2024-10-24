@@ -10,7 +10,7 @@
                 <div class="max-h-[80vh] overflow-y-auto">
                     <form id="form" action="/store" enctype="multipart/form-data" method="POST" class="w-full bg-white shadow-lg sm:pt-2 px-12 py-10 rounded-md">
                         @csrf
-                        <div class="text-xl font-bold mt-[15px] mb-6 leading-tight tracking-tight text-gray-900 md:text-2xl">
+                        <div class="text-2xl font-bold mt-[15px] mb-6 leading-tight tracking-tight text-gray-900 md:text-2xl">
                             <p class="mx-4 text-center">
                                 Registration Form
                             </p>
@@ -539,7 +539,7 @@
                                     @error('pensioner') text-red-700 dark:text-red-500 
                                     @elseif(old('pensioner')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Are you a pensioner?
+                                    Are you a pensioner? <span class="italic"> (Ikaw ba ay kasalukuyang tumatanggap ng pensyon?) </span>
                                 </label>
 
                                 <div class="flex flex-col md:flex-row md:flex-wrap">
@@ -579,7 +579,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-1">
                                     <div class="w-full md:col-span-2 relative">
                                         <label id="pensioner_label" class="text-sm mt-4 mb-2 block {{ old('pensioner') == 1 ? '' : 'hidden' }}">
-                                            If yes, how much pension do you receive?
+                                            If yes, how much pension do you receive? <span class="italic"> (Kung oo, magkano ang iyong natatanggap?) </span>
                                         </label>
 
                                         <input type="text" 
@@ -598,7 +598,7 @@
 
                                     <div class="md:col-span-2 relative {{ old('pensioner') == 1 ? '' : 'hidden' }}" id="source_list">
                                         <label id="source_label" class="text-sm mt-4 mb-2 block">
-                                            If yes, from what source?
+                                            If yes, from what source? <span class="italic"> (Kung oo, mula saan?) </span>
                                         </label>
 
                                         <div class="flex flex-col md:flex-row md:flex-wrap">
@@ -621,7 +621,7 @@
                                         </div>
 
                                         <label id="other_source_label" class="text-sm mt-4 mb-2 block {{ is_array(old('source')) && in_array(4, old('source')) ? '' : 'hidden' }}">
-                                            If others, please specify:
+                                            If others, please specify: <span class="italic"> (Kung iba, pakitukoy:) </span>
                                         </label>
 
                                         <input type="text"
@@ -654,7 +654,7 @@
                                     @error('permanent_source') text-red-700 dark:text-red-500 
                                     @elseif(old('permanent_source')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Do you have permanent source of income?
+                                    Do you have permanent source of income? <span class="italic"> (Ikaw ba ay may pinagkukunan na kita?) </span>
                                 </label>
 
                                 <div class="flex flex-col md:flex-row md:flex-wrap">
@@ -687,25 +687,11 @@
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-1">
-                                    <div class="w-full md:col-span-2 relative">
-                                        <label id="permanent_label" class="text-sm mt-4 mb-2 block {{ old('permanent_source') == 1 ? '' : 'hidden' }}">
-                                            If yes, from what source?
-                                        </label>
-
-                                        <input type="text" 
-                                            name="if_permanent_yes" 
-                                            id="if_permanent_yes" 
-                                            class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
-                                            {{ old('permanent_source') == 1 ? '' : 'hidden' }}" 
-                                            placeholder="Enter additional information"
-                                            value="{{ old('if_permanent_yes') }}" 
-                                            style="width: -webkit-fill-available;">
-                                    </div>
-
+                                <div class="md:grid grid-cols-1 md:grid-cols-4 gap-8 mt-1">
+                                    
                                     <div class="md:col-span-2 relative">
                                         <label id="permanent_income_label" class="text-sm mt-4 mb-2 block {{ old('permanent_source') == 1 ? '' : 'hidden' }}">
-                                            If yes, how much income?
+                                            If yes, how much income? <span class="italic"> (Kung oo, magkanong kita ang iyong natatanggap?) </span>
                                         </label>
 
                                         <input type="text" 
@@ -715,6 +701,21 @@
                                             {{ old('permanent_source') == 1 ? '' : 'hidden' }}" 
                                             placeholder="Enter income amount"
                                             value="{{ old('if_permanent_yes_income') }}" 
+                                            style="width: -webkit-fill-available;">
+                                    </div>
+
+                                    <div class="w-full md:col-span-2 relative">
+                                        <label id="permanent_label" class="text-sm mt-4 mb-2 block {{ old('permanent_source') == 1 ? '' : 'hidden' }}">
+                                            If yes, from what source? <span class="italic">(Kung oo, mula saan?)</span>
+                                        </label>
+
+                                        <input type="text" 
+                                            name="if_permanent_yes" 
+                                            id="if_permanent_yes" 
+                                            class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
+                                            {{ old('permanent_source') == 1 ? '' : 'hidden' }}" 
+                                            placeholder="Enter additional information"
+                                            value="{{ old('if_permanent_yes') }}" 
                                             style="width: -webkit-fill-available;">
                                     </div>
                                 </div>
@@ -746,7 +747,7 @@
                                     @error('has_illness') text-red-700 dark:text-red-500 
                                     @elseif(old('has_illness')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Do you have an existing illness?
+                                    Do you have an existing illness? <span class="italic"> (Ikaw ba ay may kasalukuyang sakit?) </span>
                                 </label>
 
                                 <div class="flex flex-col md:flex-row md:flex-wrap">
@@ -780,7 +781,7 @@
                                 </div>
 
                                 <label id="illness_label" class="text-sm mt-4 mb-2 block {{ old('has_illness') == 1 ? '' : 'hidden' }}">
-                                    If yes, please specify:
+                                    If yes, please specify: <span class="italic"> (Kung oo, pakitukoy:) </span>
                                 </label>
 
                                 <input type="text" 
@@ -808,7 +809,7 @@
                                     @error('has_disability') text-red-700 dark:text-red-500 
                                     @elseif(old('has_disability')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Do you have disability?
+                                    Do you have disability? <span class="italic"> (Ikaw ba ay may kapansanan?) </span>
                                 </label>
 
                                 <div class="flex flex-col md:flex-row md:flex-wrap">
@@ -842,7 +843,7 @@
                                 </div>
 
                                 <label id="disability_label" class="text-sm mt-4 mb-2 block {{ old('has_disability') == 1 ? '' : 'hidden' }}">
-                                    If yes, please specify:
+                                    If yes, please specify: <span class="italic"> (Kung oo, pakitukoy:) </span>
                                 </label>
 
                                 <input type="text" 
@@ -1027,24 +1028,34 @@
                                     @else text-gray-800 @enderror">
                                     Password
                                 </label>
-                                <input name="password" type="password" 
-                                    class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
-                                    @error('password') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                    @elseif(old('password')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Enter password" />
+                                <div class="relative">
+                                    <div class="flex">
+                                        <input name="password" type="password" 
+                                            class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-l-md rounded-r-md transition-all 
+                                            @error('password') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
+                                            @elseif(old('password')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                            @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
+                                            placeholder="Enter password" id="passwordField" oninput="saveInputValue('password', this.value)"/>
 
-                                @if(old('password'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                    <span class="text-green-500 text-xs mt-2 pl-2">Looks good!</span>
-                                @endif
-                                @error('password')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @enderror
+                                        <button class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-12 
+                                            @error('password') h-[60%] @else h-full @enderror" 
+                                            type="button" id="button-addon1" onclick="togglePassword('passwordField', 'togglePasswordIcon1')">
+                                            <img src="../images/hide.png" alt="Show Password" class="eye-icon w-7 h-7" id="togglePasswordIcon1">
+                                        </button>
+                                    </div>
+
+                                    @if(old('password'))
+                                        <span class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </span>
+                                        <span class="text-green-500 text-xs mt-2 pl-2">Looks good!</span>
+                                    @endif
+                                    @error('password')
+                                        <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
                             </div>
 
                             <div>
@@ -1054,24 +1065,31 @@
                                     @else text-gray-800 @enderror">
                                     Confirm Password
                                 </label>
-                                <input name="password_confirmation" type="password" 
-                                    class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
-                                    @error('password_confirmation') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                    @elseif(old('password_confirmation')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Enter password" />
+                                <div class="relative">
+                                    <div class="flex">
+                                        <input name="password_confirmation" type="password" 
+                                            class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
+                                            @error('password_confirmation') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
+                                            @elseif(old('password_confirmation')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                            @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
+                                            placeholder="Confirm password" id="passwordConfirmationField" />
 
-                                @if(old('password_confirmation'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                    <span class="text-green-500 text-xs mt-2 pl-2">Looks good!</span>
-                                @endif
-                                @error('password_confirmation')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @enderror
+                                        <button class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-12 h-full" type="button" id="button-addon2" onclick="togglePassword('passwordConfirmationField', 'togglePasswordIcon2')">
+                                            <img src="../images/hide.png" alt="Show Password" class="eye-icon w-7 h-7" id="togglePasswordIcon2">
+                                        </button>
+                                    </div>
+                                    @if(old('password_confirmation'))
+                                        <span class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </span>
+                                        <span class="text-green-500 text-xs mt-2 pl-2">Looks good!</span>
+                                    @endif
+                                    @error('password_confirmation')
+                                        <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
 
@@ -1089,21 +1107,30 @@
                             </div>
                         </div>
 
-                        <div class="row justify-content-center align-items-center mt-8">
+                        <div class="row justify-content-center align-items-center mt-8"> 
                             <div class="col-md-12 text-center"> 
                                 <div class="checkbox-container">
                                     <input class="form-check-input checkdrop" type="checkbox" id="confirm-checkbox" name="confirm-checkbox">
-                                    <label class="form-check-label1" for="confirm-checkbox" id="confirm-checkbox-label">
+                                    <label class="form-check-label1" for="confirm-checkbox" id="confirm-checkbox-label">  
                                         I, <span id="full-name-placeholder">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span>, hereby confirm that the informations provided in the form is accurate
                                     </label>
                                 </div>
                                 <p id="checkbox-error" class="text-red-500" style="display:none;">This checkbox is required.</p>
+                                
+                                <label class="form-check-label1" style="font-style: italic;">
+                                    Ako si <span id="full-name-placeholder-2">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span> at aking kinukumpirma na ang mga impormasyong ibinigay sa form na ito ay tama.
+                                </label>
                             </div>
                         </div>
 
                         <div class="flex justify-center mt-8">
                             {!! htmlFormSnippet() !!}
                         </div>
+                        @if ($errors->has('g-recaptcha-response'))
+                            <div class="text-red-500 flex justify-center text-sm mt-2">
+                                {{ $errors->first('g-recaptcha-response') }}
+                            </div>
+                        @endif
 
                         <div class="mt-8 flex justify-center">
                             <button type="submit" id="submit" name="submit" class="py-3 px-6 w-full md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
@@ -1326,6 +1353,19 @@
     }
 
     updateRemoveIconVisibility(); 
+
+    function togglePassword(fieldId, iconId) {
+        const passwordField = document.getElementById(fieldId);
+        const icon = document.getElementById(iconId);
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.src = "../images/show.png"; 
+        } else {
+            passwordField.type = "password";
+            icon.src = "../images/hide.png"; 
+        }
+    }
+
 </script>
 
 @include('partials.footer')

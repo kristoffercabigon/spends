@@ -265,6 +265,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const fullNamePlaceholder = document.getElementById(
         "full-name-placeholder"
     );
+    const fullNamePlaceholder2 = document.getElementById(
+        "full-name-placeholder-2"
+    );
 
     function updateFullName() {
         const firstName = firstNameInput.value.trim() || "";
@@ -278,7 +281,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (lastName) nameParts.push(lastName);
         if (suffix) nameParts.push(suffix);
 
-        fullNamePlaceholder.textContent = nameParts.join(" ");
+        const fullName = nameParts.join(" ");
+        fullNamePlaceholder.textContent = fullName;
+        fullNamePlaceholder2.textContent = fullName;
     }
 
     firstNameInput.addEventListener("input", updateFullName);

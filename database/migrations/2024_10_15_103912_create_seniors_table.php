@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('indigency')->nullable();
             $table->string('birth_certificate')->nullable();
             $table->string('signature_data')->nullable();
-            $table->integer('type_of_living_arrangement');
+            $table->integer('type_of_living_arrangement')->constrained('living_arrangement_list');
             $table->string('other_arrangement_remark')->nullable();
             $table->tinyInteger('pensioner')->default(0);
             $table->string('if_pensioner_yes')->nullable();

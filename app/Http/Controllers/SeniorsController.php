@@ -92,7 +92,7 @@ class SeniorsController extends Controller
             "signature_data" => ['required'],
             "confirm-checkbox" => ['required'],
             "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
-                $secret = env('RECAPTCHA_SECRET_KEY'); 
+                $secret = env('RECAPTCHA_SECRET_KEY');
                 $response = $request->input('g-recaptcha-response');
                 $remoteip = $request->ip();
 
@@ -104,6 +104,10 @@ class SeniorsController extends Controller
                 }
             }],
         ]);
+
+        if (empty($request->input('g-recaptcha-response'))) {
+            $validated['g-recaptcha-response'] = 'The ReCaptcha field is required.';
+        }
 
         if ($request->hasFile('valid_id')) {
             $validIdFilename = pathinfo($request->file('valid_id')->getClientOriginalName(), PATHINFO_FILENAME);

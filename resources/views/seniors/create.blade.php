@@ -413,7 +413,7 @@
                                                 name="type_of_living_arrangement" 
                                                 value="{{ $arrangement->id }}" 
                                                 id="living_arrangement_{{ $arrangement->id }}" 
-                                                class="mr-2" 
+                                                class="mr-2 shadow-md" 
                                                 {{ old('type_of_living_arrangement') == $arrangement->id ? 'checked' : '' }}
                                                 onclick="toggleInputField({{ $arrangement->id }}, 'livingArrangement')">
 
@@ -431,8 +431,7 @@
                                     class="mt-4 bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
                                     {{ old('type_of_living_arrangement') == 5 ? '' : 'hidden' }}" 
                                     placeholder="Enter additional information"
-                                    value="{{ old('other_arrangement_remark') }}" style="width: -webkit-fill-available;"
-                                    >
+                                    value="{{ old('other_arrangement_remark') }}" style="width: -webkit-fill-available;">
 
                                 @if(old('type_of_living_arrangement'))
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
@@ -575,7 +574,7 @@
                                             name="pensioner" 
                                             value="1" 
                                             id="pensioner_yes" 
-                                            class="mr-2" 
+                                            class="mr-2 shadow-md" 
                                             {{ old('pensioner') == 1 ? 'checked' : '' }}
                                             onclick="toggleInputField(1, 'pensioner')">
 
@@ -589,7 +588,7 @@
                                             name="pensioner" 
                                             value="0" 
                                             id="pensioner_no" 
-                                            class="mr-2" 
+                                            class="mr-2 shadow-md" 
                                             {{ old('pensioner') === '0' ? 'checked' : '' }}
                                             onclick="toggleInputField(0, 'pensioner')">
                                         <label for="pensioner_no" 
@@ -605,7 +604,7 @@
 
                                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-1">
                                     <div class="w-full md:col-span-2 relative">
-                                        <label id="pensioner_label" class="text-sm mt-4 mb-2 block {{ old('pensioner') == 1 ? '' : 'hidden' }}">
+                                        <label id="pensioner_label" class="text-sm text-gray-800 mt-4 mb-2 block {{ old('pensioner') == 1 ? '' : 'hidden' }}">
                                             If yes, how much pension do you receive? <span class="italic"> (Kung oo, magkano ang iyong natatanggap?) </span>
                                         </label>
 
@@ -624,7 +623,7 @@
                                     </div>
 
                                     <div class="md:col-span-2 relative {{ old('pensioner') == 1 ? '' : 'hidden' }}" id="source_list">
-                                        <label id="source_label" class="text-sm mt-4 mb-2 block">
+                                        <label id="source_label" class="text-sm text-gray-800 mt-4 mb-2 block">
                                             If yes, from what source? <span class="italic"> (Kung oo, mula saan?) </span>
                                         </label>
 
@@ -635,7 +634,7 @@
                                                         name="source[]"
                                                         value="{{ $source->id }}"
                                                         id="{{ $source->id }}"
-                                                        class="mr-2"
+                                                        class="mr-2 shadow-md"
                                                         {{ is_array(old('source')) && in_array($source->id, old('source')) ? 'checked' : '' }}
                                                         onclick="toggleCheckboxInputField()">
 
@@ -647,7 +646,7 @@
                                             @endforeach
                                         </div>
 
-                                        <label id="other_source_label" class="text-sm mt-4 mb-2 block {{ is_array(old('source')) && in_array(4, old('source')) ? '' : 'hidden' }}">
+                                        <label id="other_source_label" class="text-sm text-gray-800 mt-4 mb-2 block {{ is_array(old('source')) && in_array(4, old('source')) ? '' : 'hidden' }}">
                                             If others, please specify: <span class="italic"> (Kung iba, pakitukoy:) </span>
                                         </label>
 
@@ -681,7 +680,7 @@
                                     @error('permanent_source') text-red-700 dark:text-red-500 
                                     @elseif(old('permanent_source')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
-                                    Do you have permanent source of income? <span class="italic"> (Ikaw ba ay may pinagkukunan ng kita?) </span>
+                                    Do you have permanent source of income? <span class="italic"> (Ikaw ba ay may pinagkakakitaan?) </span>
                                 </label>
 
                                 <div class="flex flex-col md:flex-row md:flex-wrap">
@@ -690,7 +689,7 @@
                                             name="permanent_source" 
                                             value="1" 
                                             id="permanent_yes" 
-                                            class="mr-2" 
+                                            class="mr-2 shadow-md" 
                                             {{ old('permanent_source') == 1 ? 'checked' : '' }}
                                             onclick="toggleInputField(1, 'permanent_source')">
                                         <label for="permanent_yes" 
@@ -704,7 +703,7 @@
                                             name="permanent_source" 
                                             value="0" 
                                             id="permanent_no" 
-                                            class="mr-2" 
+                                            class="mr-2 shadow-md" 
                                             {{ old('permanent_source') === '0' ? 'checked' : '' }}
                                             onclick="toggleInputField(0, 'permanent_source')" >
                                         <label for="permanent_no" 
@@ -716,7 +715,7 @@
 
                                 <div class="md:grid grid-cols-1 md:grid-cols-4 gap-8 mt-1">
                                     
-                                    <div class="md:col-span-2 relative">
+                                    <div class="md:col-span-2 text-gray-800 relative">
                                         <label id="permanent_income_label" class="text-sm mt-4 mb-2 block {{ old('permanent_source') == 1 ? '' : 'hidden' }}">
                                             If yes, how much income? <span class="italic"> (Kung oo, magkano and iyong kinikita?) </span>
                                         </label>
@@ -731,7 +730,7 @@
                                             style="width: -webkit-fill-available;">
                                     </div>
 
-                                    <div class="w-full md:col-span-2 relative">
+                                    <div class="w-full text-gray-800 md:col-span-2 text-gray-800 relative">
                                         <label id="permanent_label" class="text-sm mt-4 mb-2 block {{ old('permanent_source') == 1 ? '' : 'hidden' }}">
                                             If yes, from what source? <span class="italic">(Kung oo, mula saan?)</span>
                                         </label>
@@ -783,7 +782,7 @@
                                             name="has_illness" 
                                             value="1" 
                                             id="illness_yes" 
-                                            class="mr-2" 
+                                            class="mr-2 shadow-md" 
                                             {{ old('has_illness') == 1 ? 'checked' : '' }}
                                             onclick="toggleInputField(1, 'has_illness')">
                                         <label for="illness_yes" 
@@ -797,7 +796,7 @@
                                             name="has_illness" 
                                             value="0" 
                                             id="illness_no" 
-                                            class="mr-2" 
+                                            class="mr-2 shadow-md" 
                                             {{ old('has_illness') === '0' ? 'checked' : '' }}
                                             onclick="toggleInputField(0, 'has_illness')" >
                                         <label for="illness_no" 
@@ -807,7 +806,7 @@
                                     </div>
                                 </div>
 
-                                <label id="illness_label" class="text-sm mt-4 mb-2 block {{ old('has_illness') == 1 ? '' : 'hidden' }}">
+                                <label id="illness_label" class="text-sm text-gray-800 mt-4 mb-2 block {{ old('has_illness') == 1 ? '' : 'hidden' }}">
                                     If yes, please specify: <span class="italic"> (Kung oo, pakitukoy:) </span>
                                 </label>
 
@@ -845,7 +844,7 @@
                                             name="has_disability" 
                                             value="1" 
                                             id="disability_yes" 
-                                            class="mr-2" 
+                                            class="mr-2 shadow-md" 
                                             {{ old('has_disability') == 1 ? 'checked' : '' }}
                                             onclick="toggleInputField(1, 'has_disability')">
                                         <label for="disability_yes" 
@@ -859,7 +858,7 @@
                                             name="has_disability" 
                                             value="0" 
                                             id="disability_no" 
-                                            class="mr-2" 
+                                            class="mr-2 shadow-md" 
                                             {{ old('has_disability') === '0' ? 'checked' : '' }}
                                             onclick="toggleInputField(0, 'has_disability')" >
                                         <label for="disability_no" 
@@ -869,7 +868,7 @@
                                     </div>
                                 </div>
 
-                                <label id="disability_label" class="text-sm mt-4 mb-2 block {{ old('has_disability') == 1 ? '' : 'hidden' }}">
+                                <label id="disability_label" class="text-sm text-gray-800 mt-4 mb-2 block {{ old('has_disability') == 1 ? '' : 'hidden' }}">
                                     If yes, please specify: <span class="italic"> (Kung oo, pakitukoy:) </span>
                                 </label>
 
@@ -912,7 +911,7 @@
                                     class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
                                     @error('valid_id') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
                                     @elseif(old('valid_id')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
+                                    @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                     placeholder="Upload image of Valid ID" />
                                 
                                 @if(old('valid_id'))
@@ -929,23 +928,29 @@
                                 @enderror
                             </div>
                             
-                            <div>
+                            <div x-data="{ showCameraModal: false }" @open-camera-modal.window="showCameraModal = true" @close-camera-modal.window="showCameraModal = false">
                                 <label class="text-sm mb-2 block 
                                     @error('profile_picture') text-red-700 dark:text-red-500 
                                     @elseif(old('profile_picture')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
                                     Profile Picture
                                 </label>
-                                <input name="profile_picture" type="file" 
-                                    class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
-                                    @error('profile_picture') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                    @elseif(old('profile_picture')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Upload photo of Pensioner" />
-                                
+                                <div class="relative">
+                                    <input name="profile_picture" type="file" 
+                                        class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-l-md rounded-r-md transition-all 
+                                        @error('profile_picture') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
+                                        @elseif(old('profile_picture')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                        @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
+                                        placeholder="Upload photo of Pensioner" id="profilePictureField"/>
+
+                                    <button @click="$dispatch('open-camera-modal')" class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-12" type="button">
+                                        <img src="../images/camera.png" alt="Toggle Profile Picture" class="camera-icon w-7 h-7" id="toggleCameraIcon">
+                                    </button>
+                                </div>
+
                                 @if(old('profile_picture'))
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                         </svg>
                                     </span>
@@ -955,6 +960,8 @@
                                 @elseif(old('profile_picture'))
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
+
+                                @include('components.modal.register_camera')
                             </div>
 
                             <div>
@@ -968,7 +975,7 @@
                                     class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
                                     @error('indigency') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
                                     @elseif(old('indigency')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
+                                    @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                     placeholder="Upload photo of Pensioner" />
                                 
                                 @if(old('indigency'))
@@ -996,7 +1003,7 @@
                                     class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
                                     @error('birth_certificate') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
                                     @elseif(old('birth_certificate')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
+                                    @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                     placeholder="Upload photo of Pensioner" />
                                 
                                 @if(old('birth_certificate'))
@@ -1133,7 +1140,7 @@
                         </div>
 
                         <div class="mt-4 text-center">
-                            <canvas id="sig-canvas" class="border border-gray-300 rounded-md w-full h-32 sm:h-40 md:h-48 lg:h-56"></canvas>
+                            <canvas id="sig-canvas" class="border border-gray-500 shadow-md rounded-md w-full h-32 sm:h-40 md:h-48 lg:h-56"></canvas>
                             <input type="hidden" id="sig-dataUrl" name="signature_data">
                             <img id="sig-image" style="display:none;">
                             <p id="signaturevalidation" class="text-sm mt-2 text-red-500" style="display:none;">Please provide your signature.</p>
@@ -1145,7 +1152,7 @@
                         <div class="row justify-content-center align-items-center mt-8"> 
                             <div class="col-md-12 text-center"> 
                                 <div class="checkbox-container">
-                                    <input class="form-check-input checkdrop" type="checkbox" id="confirm-checkbox" name="confirm-checkbox" 
+                                    <input class="form-check-input checkdrop shadow-md" type="checkbox" id="confirm-checkbox" name="confirm-checkbox" 
                                         {{ old('confirm-checkbox') ? 'checked' : '' }}>
                                     <label class="form-check-label1 text-gray-800" for="confirm-checkbox" id="confirm-checkbox-label">  
                                         I, <span id="full-name-placeholder">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span>, hereby confirm that the informations provided in the form is accurate.

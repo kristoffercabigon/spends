@@ -8,7 +8,7 @@ Route::controller(SeniorsController::class)->group(function () {
     Route::get('/register', 'create');
     Route::post('/login', 'login')->name('login')->middleware('guest');
     Route::post('/store', 'store');
+    Route::get('/verify-email', 'verifyEmail');
     Route::post('/logout', 'logout');
 });
 
-Route::get('/verify-email', [SeniorsController::class, 'verifyEmail']);

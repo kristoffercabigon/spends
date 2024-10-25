@@ -24,7 +24,7 @@
 
             <div style="background-color: #fff; padding: 20px; text-align: center; justify-content: center; align-items: center;">
                 <h1 class="text-2xl font-bold text-gray-900 text-center mb-4">Email Verification</h1>
-                <p class="text-lg text-gray-700 mb-6">
+                <p style="font-size: 18px; color: #4a5568; margin-bottom: 24px;">
                     Registration successful! Please click the button below to verify your email address:
                 </p>
                 <div class="text-center mb-6">
@@ -32,7 +32,7 @@
                         Verify Email
                     </a>
                 </div>
-                <p class="text-lg text-gray-700">
+                <p style="font-size: 18px; color: #4a5568;">
                     Your profile is currently under review. You will receive an email notification regarding the approval status of your submitted application.
                 </p>
             </div>

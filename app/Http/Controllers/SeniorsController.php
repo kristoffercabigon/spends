@@ -67,7 +67,7 @@ class SeniorsController extends Controller
             'password.required' => 'Password is required.',
             'password.min' => 'Password must be at least 8 characters.',
             'password.max' => 'Password cannot exceed 32 characters.',
-            'password.regex' => 'Include 1 uppercase letter and 1 special character.',
+            'password.regex' => 'Include 1 uppercase and lowercase letter and 1 special character.',
             'password.confirmed' => 'Password confirmation does not match.',
             'valid_id.required' => 'Valid ID is required.',
             'valid_id.mimes' => 'Valid ID must be a file of type: jpeg, png, bmp, tiff.',
@@ -116,6 +116,7 @@ class SeniorsController extends Controller
                 'min:8',
                 'max:32',
                 'regex:/[A-Z]/',
+                'regex:/[a-z]/',
                 'regex:/[!@#$%^&*(),.?":{}|<>]/',
                 'confirmed'
             ],
@@ -213,6 +214,8 @@ class SeniorsController extends Controller
         $seniorData = $validated;
         unset($seniorData['source'], $seniorData['other_source_remark']);
         unset($validated['g-recaptcha-response']);
+
+        $seniorData['contact_no'] = '+63' . $validated['contact_no'];
 
         $seniorData['password'] = Hash::make($seniorData['password']);
 

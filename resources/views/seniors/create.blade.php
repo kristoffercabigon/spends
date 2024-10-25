@@ -1062,18 +1062,26 @@
                                             @error('password') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
                                             @elseif(old('password')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
                                             @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                            placeholder="Enter password" id="passwordField" oninput="saveInputValue('password', this.value)"/>
+                                            placeholder="Enter password" id="passwordField" oninput="updatePasswordCriteria(this.value)"/>
 
-                                        <button class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-12 
-                                            @error('password') h-[60%] @else h-full @enderror" 
-                                            type="button" id="button-addon1" onclick="togglePassword('passwordField', 'togglePasswordIcon1')">
-                                            <img src="../images/hide.png" alt="Show Password" class="eye-icon w-7 h-7" id="togglePasswordIcon1">
+                                        <button class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-12 @error('password') h-[27%]  @else h-[33%] @enderror" 
+                                            type="button" onclick="togglePassword('passwordField', 'togglePasswordIcon')">
+                                            <img src="../images/hide.png" alt="Show Password" class="eye-icon w-7 h-7" id="togglePasswordIcon">
                                         </button>
+                                    </div>
+
+                                    <div class="ml-2 mt-4 text-gray-800 text-sm">
+                                        <ul>
+                                            <li id="minLength"><i class="fas fa-times text-red-500"></i> Minimum 8 characters</li>
+                                            <li id="uppercase"><i class="fas fa-times text-red-500"></i> At least one uppercase letter</li>
+                                            <li id="lowercase"><i class="fas fa-times text-red-500"></i> At least one lowercase letter</li>
+                                            <li id="symbol"><i class="fas fa-times text-red-500"></i> At least one symbol (@$!%*?&)</li>
+                                        </ul>
                                     </div>
 
                                     @if(old('password'))
                                         <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </span>
@@ -1139,13 +1147,13 @@
                                 <div class="checkbox-container">
                                     <input class="form-check-input checkdrop" type="checkbox" id="confirm-checkbox" name="confirm-checkbox" 
                                         {{ old('confirm-checkbox') ? 'checked' : '' }}>
-                                    <label class="form-check-label1" for="confirm-checkbox" id="confirm-checkbox-label">  
+                                    <label class="form-check-label1 text-gray-800" for="confirm-checkbox" id="confirm-checkbox-label">  
                                         I, <span id="full-name-placeholder">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span>, hereby confirm that the informations provided in the form is accurate.
                                     </label>
                                 </div>
 
-                                <label class="form-check-label1" style="font-style: italic;">
-                                    Ako si <span id="full-name-placeholder-2">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span> at aking kinukumpirma na ang mga impormasyong inilagay sa form na ito ay tama.
+                                <label class="form-check-label1 text-gray-800" style="font-style: italic;">
+                                    Ako si <span id="full-name-placeholder-2">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span> at aking kinukumpirma na ang mga impormasyong nakalagay sa form na ito ay tama.
                                 </label>
                                 
                                 @if ($errors->has('confirm-checkbox'))
@@ -1178,6 +1186,8 @@
     </div>
 </section>
 
+<script src= "https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src= "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 <script>
     function toggleInputField(value, type) {
         let additionalInput, additionalIncomeInput, additionalLabel, additionalIncomeLabel;
@@ -1398,6 +1408,24 @@
             passwordField.type = "password";
             icon.src = "../images/hide.png"; 
         }
+    }
+
+    function updatePasswordCriteria(password) {
+        document.getElementById("minLength").innerHTML = 
+            password.length >= 8 ? '<i class="fas fa-check text-green-500"></i> Minimum 8 characters' : 
+            '<i class="fas fa-times text-red-500"></i> Minimum 8 characters';
+        
+        document.getElementById("uppercase").innerHTML = 
+            /[A-Z]/.test(password) ? '<i class="fas fa-check text-green-500"></i> At least one uppercase letter' : 
+            '<i class="fas fa-times text-red-500"></i> At least one uppercase letter';
+        
+        document.getElementById("lowercase").innerHTML = 
+            /[a-z]/.test(password) ? '<i class="fas fa-check text-green-500"></i> At least one lowercase letter' : 
+            '<i class="fas fa-times text-red-500"></i> At least one lowercase letter';
+        
+        document.getElementById("symbol").innerHTML = 
+            /[@$!%*?&]/.test(password) ? '<i class="fas fa-check text-green-500"></i> At least one symbol (@$!%*?&)' : 
+            '<i class="fas fa-times text-red-500"></i> At least one symbol (@$!%*?&)';
     }
 
 </script>

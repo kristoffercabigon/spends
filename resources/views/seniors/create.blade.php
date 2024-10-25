@@ -344,7 +344,7 @@
                                         </g>
                                     </svg>
 
-                                    <div class="absolute top-full right-0 mt-2 w-48 p-2 text-sm text-white bg-customOrange rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div class="absolute top-full right-0 mt-2 w-48 p-2 text-sm text-white bg-customOrange rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-20">
                                         Enter your full home address. (House No., Street, Barangay, City/Municipality, Province)
                                     </div>
                                 </span>
@@ -960,8 +960,7 @@
                                 @elseif(old('profile_picture'))
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
-
-                                @include('components.modal.register_camera')
+                                @include('components.modal.register_camera') 
                             </div>
 
                             <div>

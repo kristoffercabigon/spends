@@ -35,7 +35,9 @@
                         <div id="results">(Your captured image will appear here)</div>
                     </div>
                     <div class="col-md-12 text-center">
-                        <span class="text-danger">{{ $errors->first('image') }}</span>
+                        <div class="mt-4">
+                        <span id="error-message" class="text-red-500 hidden">Take a picture first</span>
+                        </div>
                         <br/>
                         <button class="py-3 px-6 w-full md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none" type="button" onclick="useCapturedPhoto()">Use this photo</button>
                     </div>
@@ -73,11 +75,19 @@
         Webcam.snap(function(data_uri) {
             document.querySelector(".image-tag").value = data_uri;
             document.getElementById('results').innerHTML = '<img src="'+data_uri+'"/>';
+            document.getElementById('error-message').classList.add('hidden');
         });
     }
 
     function useCapturedPhoto() {
         const imageData = document.querySelector(".image-tag").value;
+        const errorMessage = document.getElementById('error-message');
+
+        if (!imageData) {
+            errorMessage.classList.remove('hidden'); 
+            return;
+        }
+
         const profilePictureField = document.getElementById('profilePictureField');
         
         fetch(imageData)

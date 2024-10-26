@@ -555,8 +555,18 @@ class SeniorsFactory extends Factory
         $isMale = $this->faker->boolean();
         $firstName = $isMale ? $this->faker->randomElement($maleNames) : $this->faker->randomElement($femaleNames);
         $sex = $isMale ? 1 : 2;
+        $uniqueOscaIds = [];
+        $uniqueEmails = [];
 
         return [
+            'osca_id' => function () use (&$uniqueOscaIds) {
+                do {
+                    $oscaId = $this->faker->numberBetween(1000, 9999);
+                } while (in_array($oscaId, $uniqueOscaIds));
+                $uniqueOscaIds[] = $oscaId; 
+                return $oscaId; 
+            },
+            'ncsc_rrn' => null,
             'first_name' => $firstName,
             'middle_name' => $this->faker->randomElement($filipinoLastNames),
             'last_name' => $this->faker->randomElement($filipinoLastNames),
@@ -586,7 +596,13 @@ class SeniorsFactory extends Factory
             'has_disability' => $has_disability,
             'if_illness_yes' => $has_illness == 1 ? $this->faker->randomElement($existing_illness) : null,
             'if_disability_yes' => $has_disability == 1 ? $this->faker->randomElement($existing_disability) : null,
-            'email' => strtolower($firstName . '.' . $this->faker->randomNumber(3) . '.' . $this->faker->randomElement($filipinoLastNames) . '@example.com'),
+            'email' => function () use (&$uniqueEmails, $firstName, $filipinoLastNames) {
+                do {
+                    $email = strtolower($firstName . '.' . $this->faker->randomNumber(3) . '.' . $this->faker->randomElement($filipinoLastNames) . '@example.com');
+                } while (in_array($email, $uniqueEmails));
+                $uniqueEmails[] = $email; 
+                return $email;
+            },
             'password' => Hash::make('password'),
         ];
     }

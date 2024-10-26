@@ -160,68 +160,70 @@ class SeniorsController extends Controller
             }],
         ], $customMessages);
 
-        if (empty($request->input('g-recaptcha-response'))) {
-            $validated['g-recaptcha-response'] = 'The ReCaptcha field is required.';
-        }
-
-        if ($request->hasFile('valid_id')) {
-            $validIdFilename = pathinfo($request->file('valid_id')->getClientOriginalName(), PATHINFO_FILENAME);
-            $validIdExtension = $request->file('valid_id')->getClientOriginalExtension();
-            $validIdFilenameToStore = $validIdFilename . '_' . time() . '.' . $validIdExtension;
-
-            $request->file('valid_id')->storeAs('images/valid_id', $validIdFilenameToStore);
-            $validated['valid_id'] = $validIdFilenameToStore;
-        }
-
-        if ($request->hasFile('profile_picture')) {
-            $profilePictureFilename = pathinfo($request->file('profile_picture')->getClientOriginalName(), PATHINFO_FILENAME);
-            $profilePictureExtension = $request->file('profile_picture')->getClientOriginalExtension();
-            $profilePictureFilenameToStore = $profilePictureFilename . '_' . time() . '.' . $profilePictureExtension;
-
-            $request->file('profile_picture')->storeAs('images/profile_picture', $profilePictureFilenameToStore);
-            $validated['profile_picture'] = $profilePictureFilenameToStore;
-        }
-
-        if ($request->hasFile('indigency')) {
-            $indigencyFilename = pathinfo($request->file('indigency')->getClientOriginalName(), PATHINFO_FILENAME);
-            $indigencyExtension = $request->file('indigency')->getClientOriginalExtension();
-            $indigencyFilenameToStore = $indigencyFilename . '_' . time() . '.' . $indigencyExtension;
-
-            $request->file('indigency')->storeAs('images/indigency', $indigencyFilenameToStore);
-            $validated['indigency'] = $indigencyFilenameToStore;
-        }
-
-        if ($request->hasFile('birth_certificate')) {
-            $birthCertificateFilename = pathinfo($request->file('birth_certificate')->getClientOriginalName(), PATHINFO_FILENAME);
-            $birthCertificateExtension = $request->file('birth_certificate')->getClientOriginalExtension();
-            $birthCertificateFilenameToStore = $birthCertificateFilename . '_' . time() . '.' . $birthCertificateExtension;
-
-            $request->file('birth_certificate')->storeAs('images/birth_certificate', $birthCertificateFilenameToStore);
-            $validated['birth_certificate'] = $birthCertificateFilenameToStore;
-        }
-
-        if ($request->has('signature_data')) {
-            $signatureData = $request->input('signature_data');
-            $signatureData = str_replace('data:image/png;base64,', '', $signatureData);
-            $signatureData = str_replace(' ', '+', $signatureData);
-            $signatureData = base64_decode($signatureData);
-            $signatureFilename = 'signature_' . time() . '.png';
-            $path = storage_path('app/public/images/signatures/');
-            file_put_contents($path . $signatureFilename, $signatureData);
-            $validated['signature_data'] = $signatureFilename;
-        }
+        $seniorData = $validated;
+        unset($seniorData['source'], $seniorData['other_source_remark']);
+        unset($seniorData['g-recaptcha-response']);
 
         do {
             $osca_id = rand(1000, 9999);
         } while (DB::table('seniors')->where('osca_id', $osca_id)->exists());
 
-        $seniorData = $validated;
-        unset($seniorData['source'], $seniorData['other_source_remark']);
-        unset($validated['g-recaptcha-response']);
-
-        $seniorData['contact_no'] = '+63' . $validated['contact_no'];
-
         $seniorData['osca_id'] = $osca_id;
+
+        if (empty($request->input('g-recaptcha-response'))) {
+            $seniorData['g-recaptcha-response'] = 'The ReCaptcha field is required.';
+        }
+
+        if ($request->hasFile('valid_id')) {
+            $validIdFilename = $osca_id;
+            $validIdExtension = $request->file('valid_id')->getClientOriginalExtension();
+            $validIdFilenameToStore = $validIdFilename . '.' . $validIdExtension;
+
+            $request->file('valid_id')->storeAs('images/valid_id', $validIdFilenameToStore);
+            $seniorData['valid_id'] = $validIdFilenameToStore;
+        }
+
+        if ($request->hasFile('profile_picture')) {
+            $profilePictureFilename = $osca_id;
+            $profilePictureExtension = $request->file('profile_picture')->getClientOriginalExtension();
+            $profilePictureFilenameToStore = $profilePictureFilename . '.' . $profilePictureExtension;
+
+            $request->file('profile_picture')->storeAs('images/profile_picture', $profilePictureFilenameToStore);
+            $seniorData['profile_picture'] = $profilePictureFilenameToStore;
+        }
+
+        if ($request->hasFile('indigency')) {
+            $indigencyFilename = $osca_id; 
+            $indigencyExtension = $request->file('indigency')->getClientOriginalExtension();
+            $indigencyFilenameToStore = $indigencyFilename . '.' . $indigencyExtension;
+            $request->file('indigency')->storeAs('images/indigency', $indigencyFilenameToStore);
+            $seniorData['indigency'] = $indigencyFilenameToStore;
+        }
+
+        if ($request->hasFile('birth_certificate')) {
+            $birthCertificateFilename = $osca_id;
+            $birthCertificateExtension = $request->file('birth_certificate')->getClientOriginalExtension();
+            $birthCertificateFilenameToStore = $birthCertificateFilename . '.' . $birthCertificateExtension;
+
+            $request->file('birth_certificate')->storeAs('images/birth_certificate', $birthCertificateFilenameToStore);
+            $seniorData['birth_certificate'] = $birthCertificateFilenameToStore;
+        }
+
+        if ($request->has('signature_data')) {
+            $signatureData = $request->input('signature_data');
+
+            $signatureData = str_replace('data:image/png;base64,', '', $signatureData);
+            $signatureData = str_replace(' ', '+', $signatureData);
+            $signatureData = base64_decode($signatureData);
+
+            $signatureFilename = $osca_id . '.png';
+            $path = storage_path('app/public/images/signatures/');
+            file_put_contents($path . $signatureFilename, $signatureData);
+
+            $seniorData['signature_data'] = $signatureFilename;
+        }
+
+        $seniorData['contact_no'] = '+63' . $seniorData['contact_no'];
 
         $seniorData['password'] = Hash::make($seniorData['password']);
 

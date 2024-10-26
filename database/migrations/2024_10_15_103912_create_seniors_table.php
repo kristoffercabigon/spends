@@ -31,8 +31,8 @@ return new class extends Migration
             $table->string('profile_picture')->nullable();
             $table->string('indigency')->nullable();
             $table->string('birth_certificate')->nullable();
-            $table->string('signature_data')->nullable();
-            $table->integer('type_of_living_arrangement')->constrained('living_arrangement_list');
+            $table->text('signature_data')->nullable();
+            $table->foreignId('type_of_living_arrangement')->constrained('living_arrangement_list');
             $table->string('other_arrangement_remark')->nullable();
             $table->tinyInteger('pensioner')->default(0);
             $table->string('if_pensioner_yes')->nullable();
@@ -46,6 +46,7 @@ return new class extends Migration
             $table->date('date_applied');
             $table->string('email')->unique();
             $table->string('password');
+            $table->integer('is_approved')->nullable();
             $table->string('verification_code')->nullable();
             $table->string('verified_at')->nullable();
             $table->string('token')->nullable();

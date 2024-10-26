@@ -33,7 +33,7 @@
             </ul>
         </div>
 
-        <div x-show="open" class="absolute top-full left-0 w-full bg-customGreen bg-opacity-90 md:hidden" id="navbar-main">
+        <div x-show="open" style="display: none" class="absolute top-full left-0 w-full bg-customGreen bg-opacity-90 md:hidden" id="navbar-main">
             <ul class="flex flex-col px-4">
                 <li><a href="/" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
                 <li><a href="/announcement" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Announcement</a></li>

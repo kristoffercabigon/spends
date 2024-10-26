@@ -16,7 +16,7 @@
                             </p>
                         </div>
 
-                        <div class="text-xl font-bold mt-[15px] mb-6 leading-tight tracking-tight text-gray-900 md:text-xl">
+                        <div class="text-xl font-bold mt-8 mb-6 leading-tight tracking-tight text-gray-900 md:text-xl">
                             <p class="text-left">
                                 Basic Information
                             </p>
@@ -916,20 +916,41 @@
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-                            <div>
+                            <div x-data="{
+                                showValidIdModal: false,
+                                validIdPreviewUrl: '', // Corrected to use 'validIdPreviewUrl'
+                                previewValidIdImage(event) {
+                                    const input = event.target;
+                                    if (input.files && input.files[0]) {
+                                        const reader = new FileReader();
+                                        reader.onload = (e) => {
+                                            this.validIdPreviewUrl = e.target.result; // Correct variable name
+                                            document.getElementById('valid_id_preview').style.display = 'block';
+                                        };
+                                        reader.readAsDataURL(input.files[0]);
+                                    }
+                                }
+                            }">
                                 <label class="text-sm mb-2 block 
                                     @error('valid_id') text-red-700 dark:text-red-500 
                                     @elseif(old('valid_id')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
                                     Valid ID
                                 </label>
-                                <input name="valid_id" type="file" 
+                                <input id="valid_id_input" name="valid_id" type="file" accept="image/*"
                                     class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
                                     @error('valid_id') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
                                     @elseif(old('valid_id')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
                                     @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Upload image of Valid ID" />
-                                
+                                    placeholder="Upload image of Valid ID" @change="previewValidIdImage">
+
+                                <p id="valid_id_filename" class="text-gray-700 text-xs mt-2"></p>
+
+                                <div class="flex justify-center items-center mt-4">
+                                    <img :src="validIdPreviewUrl" id="valid_id_preview" class="max-h-48 rounded-md shadow-lg cursor-pointer" 
+                                        style="display: none;" alt="Valid ID Preview" @click="showValidIdModal = true">
+                                </div>
+
                                 @if(old('valid_id'))
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3">
                                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -937,31 +958,63 @@
                                         </svg>
                                     </span>
                                 @endif
+
                                 @error('valid_id')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @elseif(old('valid_id'))
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
+
+                                @include('components.modal.validid_zoom')
                             </div>
                             
-                            <div x-data="{ showCameraModal: false }" @open-camera-modal.window="showCameraModal = true" @close-camera-modal.window="showCameraModal = false">
+                            <div x-data="{
+                                    showCameraModal: false,
+                                    showProfilePicModal: false,
+                                    previewUrl: '',
+                                    previewImage(event) {
+                                        const input = event.target;
+                                        if (input.files && input.files[0]) {
+                                            const reader = new FileReader();
+                                            reader.onload = (e) => {
+                                                this.previewUrl = e.target.result;
+                                                document.getElementById('profile_picture_preview').style.display = 'block';
+                                            };
+                                            reader.readAsDataURL(input.files[0]);
+                                        }
+                                    }
+                                }" 
+                                @open-camera-modal.window="showCameraModal = true; localStorage.setItem('showCameraModal', 'true')" 
+                                @close-camera-modal.window="showCameraModal = false; localStorage.setItem('showCameraModal', 'false')">
+
                                 <label class="text-sm mb-2 block 
                                     @error('profile_picture') text-red-700 dark:text-red-500 
                                     @elseif(old('profile_picture')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
                                     Profile Picture
                                 </label>
+
                                 <div class="relative">
                                     <input name="profile_picture" type="file" 
                                         class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-l-md rounded-r-md transition-all 
                                         @error('profile_picture') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
                                         @elseif(old('profile_picture')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
                                         @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                        placeholder="Upload photo of Pensioner" id="profilePictureField"/>
+                                        placeholder="Upload photo of Pensioner" id="profilePictureField" 
+                                        @change="previewImage">
 
-                                    <button @click="$dispatch('open-camera-modal')" class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12" type="button">
+                                    <button @click="$dispatch('open-camera-modal')" 
+                                            class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12" 
+                                            type="button">
                                         <img src="../images/camera.png" alt="Toggle Profile Picture" class="camera-icon w-7 h-7" id="toggleCameraIcon">
                                     </button>
+                                </div>
+
+                                <p id="profile_picture_filename" class="text-gray-700 text-xs mt-2"></p>
+
+                                <div class="flex justify-center items-center mt-4">
+                                    <img :src="previewUrl" id="profile_picture_preview" class="max-h-48 rounded-md shadow-lg cursor-pointer" style="display: none;" alt="Profile Picture Preview"
+                                        @click="showProfilePicModal = true">
                                 </div>
 
                                 @if(old('profile_picture'))
@@ -971,28 +1024,52 @@
                                         </svg>
                                     </span>
                                 @endif
+
                                 @error('profile_picture')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @elseif(old('profile_picture'))
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
-                                @include('components.modal.register_camera') 
+
+                                @include('components.modal.register_camera')
+                                @include('components.modal.profilepic_zoom')
                             </div>
 
-                            <div>
+                            <div x-data="{
+                                    showIndigencyModal: false,
+                                    indigencyPreviewUrl: '',
+                                    previewIndigencyImage(event) {
+                                        const input = event.target;
+                                        if (input.files && input.files[0]) {
+                                            const reader = new FileReader();
+                                            reader.onload = (e) => {
+                                                this.indigencyPreviewUrl = e.target.result;
+                                                document.getElementById('indigency_preview').style.display = 'block';
+                                            };
+                                            reader.readAsDataURL(input.files[0]);
+                                        }
+                                    }
+                                }">
                                 <label class="text-sm mb-2 block 
                                     @error('indigency') text-red-700 dark:text-red-500 
                                     @elseif(old('indigency')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
                                     Certificate of Indigency
                                 </label>
-                                <input name="indigency" type="file" 
+                                <input id="indigency_input" name="indigency" type="file" accept="image/*"
                                     class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
                                     @error('indigency') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
                                     @elseif(old('indigency')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
                                     @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Upload photo of Pensioner" />
-                                
+                                    placeholder="Upload photo of Pensioner" @change="previewIndigencyImage">
+
+                                <p id="indigency_filename" class="text-gray-700 text-xs mt-2"></p>
+
+                                <div class="flex justify-center items-center mt-4">
+                                    <img :src="indigencyPreviewUrl" id="indigency_preview" class="max-h-48 rounded-md shadow-lg cursor-pointer" 
+                                        style="display: none;" alt="Indigency Certificate Preview" @click="showIndigencyModal = true">
+                                </div>
+
                                 @if(old('indigency'))
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3">
                                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -1000,27 +1077,51 @@
                                         </svg>
                                     </span>
                                 @endif
+
                                 @error('indigency')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @elseif(old('indigency'))
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
+
+                                @include('components.modal.indigency_zoom')
                             </div>
 
-                            <div>
+                            <div x-data="{
+                                    showBirthCertificateModal: false,
+                                    birthCertificatePreviewUrl: '',
+                                    previewBirthCertificateImage(event) {
+                                        const input = event.target;
+                                        if (input.files && input.files[0]) {
+                                            const reader = new FileReader();
+                                            reader.onload = (e) => {
+                                                this.birthCertificatePreviewUrl = e.target.result;
+                                                document.getElementById('birth_certificate_preview').style.display = 'block';
+                                            };
+                                            reader.readAsDataURL(input.files[0]);
+                                        }
+                                    }
+                                }">
                                 <label class="text-sm mb-2 block 
                                     @error('birth_certificate') text-red-700 dark:text-red-500 
                                     @elseif(old('birth_certificate')) text-green-700 dark:text-green-500 
                                     @else text-gray-800 @enderror">
                                     Birth Certificate
                                 </label>
-                                <input name="birth_certificate" type="file" 
+                                <input id="birth_certificate_input" name="birth_certificate" type="file" accept="image/*"
                                     class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
                                     @error('birth_certificate') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
                                     @elseif(old('birth_certificate')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
                                     @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                    placeholder="Upload photo of Pensioner" />
-                                
+                                    placeholder="Upload photo of Birth Certificate" @change="previewBirthCertificateImage">
+
+                                <p id="birth_certificate_filename" class="text-gray-700 text-xs mt-2"></p>
+
+                                <div class="flex justify-center items-center mt-4">
+                                    <img :src="birthCertificatePreviewUrl" id="birth_certificate_preview" class="max-h-48 rounded-md shadow-lg cursor-pointer" 
+                                        style="display: none;" alt="Birth Certificate Preview" @click="showBirthCertificateModal = true">
+                                </div>
+
                                 @if(old('birth_certificate'))
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3">
                                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -1028,11 +1129,14 @@
                                         </svg>
                                     </span>
                                 @endif
+
                                 @error('birth_certificate')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @elseif(old('birth_certificate'))
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
+
+                                @include('components.modal.birthcertificate_zoom')
                             </div>
                         </div>
 
@@ -1189,14 +1293,14 @@
                             </div>
                         </div>
 
-                        <div class="mt-8 p-4 border border-gray-400 justify-content-center align-items-center rounded-lg bg-gray-100 text-gray-800">
+                        <div class="mt-8 p-4 border border-gray-400 rounded-lg bg-gray-100 text-gray-800">
                             <div class="text-center">
                                 <h3 class="text-lg font-bold">DATA PRIVACY</h3>
                             </div>
-                            <p class="mt-2 text-left">
+                            <p class="mt-4 text-justify text-indent">
                                 In compliance with the provisions of Republic Act No. 10173, also known as the Data Privacy Act of 2012 and its implementing Rules and Regulations (IRR), the Department of Social Welfare and Development (DSWD) ensures that the personal information provided is collected and processed by authorized personnel and is only used for the implementation of the Social Pension for Indigent Senior Citizens (SPISC) Program as mandated under Republic Act No. 9994.
                             </p>
-                            <p class="mt-2 text-left italic">
+                            <p class="mt-4 text-justify text-indent italic">
                                 Bilang alinsunod sa mga probisyon ng Batas Republika No. 10173, na kilala rin bilang Data Privacy Act of 2012 at ang Implementing Rules and Regulations (IRR) nito, tinitiyak ng Department of Social Welfare and Development (DSWD) na ang personal na impormasyong ibinigay ay kinokolekta at pinoproseso ng awtorisadong mga tauhan at ginagamit lamang para sa pagpapatupad ng Social Pension for Indigent Senior Citizens (SPISC) Program ayon sa mandato sa ilalim ng Batas Republika No. 9994.
                             </p>
                         </div>
@@ -1473,6 +1577,78 @@
 
         tooltipIcon.classList.toggle('bg-gray-400');
         tooltipIcon.classList.toggle('bg-gray-500');
+    });
+
+    document.getElementById('valid_id_input').addEventListener('change', function() {
+    var file = this.files[0];
+
+    document.getElementById('valid_id_filename').textContent = file ? 'Image attached' : '';
+
+        if (file && file.type.startsWith('image/')) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var preview = document.getElementById('valid_id_preview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            document.getElementById('valid_id_preview').style.display = 'none';
+        }
+    });
+
+    document.getElementById('profilePictureField').addEventListener('change', function() {
+    var file = this.files[0];
+
+    document.getElementById('profile_picture_filename').textContent = file ? 'Image attached' : '';
+
+        if (file && file.type.startsWith('image/')) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var preview = document.getElementById('profile_picture_preview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            document.getElementById('profile_picture_preview').style.display = 'none';
+        }
+    });
+
+    document.getElementById('indigency_input').addEventListener('change', function() {
+    var file = this.files[0];
+
+    document.getElementById('indigency_filename').textContent = file ? 'Image attached' : '';
+
+        if (file && file.type.startsWith('image/')) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var preview = document.getElementById('indigency_preview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            document.getElementById('indigency_preview').style.display = 'none';
+        }
+    });
+
+    document.getElementById('birth_certificate_input').addEventListener('change', function() {
+    var file = this.files[0];
+
+    document.getElementById('birth_certificate_filename').textContent = file ? 'Image attached' : '';
+
+        if (file && file.type.startsWith('image/')) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var preview = document.getElementById('birth_certificate_preview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            document.getElementById('birth_certificate_preview').style.display = 'none';
+        }
     });
 
 </script>

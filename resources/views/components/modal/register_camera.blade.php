@@ -1,4 +1,4 @@
-<div x-show="showCameraModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 font-poppins" 
+<div x-show="showCameraModal" style="display: none" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 font-poppins" 
     x-transition:enter="transition-opacity ease-linear duration-300"
     x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
     x-transition:leave="transition-opacity ease-linear duration-300"
@@ -13,7 +13,7 @@
                 </svg>
             </button>
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8" style="max-height: 75vh; overflow-y: auto;">
-                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                <h1 class="text-xl font-semibold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                     Capture a Photo
                 </h1>
                 <div class="col">
@@ -99,6 +99,8 @@
                 dataTransfer.items.add(file);
                 
                 profilePictureField.files = dataTransfer.files;
+
+                profilePictureField.dispatchEvent(new Event('change'));
 
                 document.dispatchEvent(new CustomEvent('close-camera-modal', { bubbles: true }));
             });

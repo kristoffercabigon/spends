@@ -7,15 +7,11 @@
     <title>{{ $title !== "" ? $title : 'SPENDS System'}}</title>
     @vite('resources/css/app.css')
     <script src="//unpkg.com/alpinejs" defer></script>
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     {!!htmlScriptTagJsApi()!!}
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-<style>
-    #tooltip-text {
-        transition: opacity 0.2s ease-in-out;
-    }
-</style>
 <body class="bg-white font-poppins min-h-screen pt-[80px]">
     <x-messages />

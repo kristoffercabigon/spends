@@ -12,5 +12,10 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+<style>
+    #tooltip-text {
+        transition: opacity 0.2s ease-in-out;
+    }
+</style>
 <body class="bg-white font-poppins min-h-screen pt-[80px]">
     <x-messages />

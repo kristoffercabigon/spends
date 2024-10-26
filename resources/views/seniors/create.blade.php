@@ -328,7 +328,7 @@
                                     @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                     placeholder="Enter address" value="{{ old('address') }}" />
 
-                                <span class="absolute top-[28px] right-0 flex items-center justify-center bg-gray-400 text-gray-700 border border-gray-300 rounded-r-md w-12 cursor-pointer @error('address') h-[44%] @elseif(old('address')) h-[44%] @else h-[63%] @enderror group">
+                                <span id="tooltip-icon" class="absolute top-[28px] right-0 flex items-center justify-center bg-gray-400 hover:bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-12 cursor-pointer @error('address') h-[44%] @elseif(old('address')) h-[44%] @else h-[63%] @enderror group">
                                     <svg fill="#ffffff" class="w-7 h-7" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 416.979 416.979" xml:space="preserve" stroke="#ffffff">
                                         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -344,7 +344,7 @@
                                         </g>
                                     </svg>
 
-                                    <div class="absolute top-full right-0 mt-2 w-48 p-2 text-sm text-white bg-customOrange rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                                    <div id="tooltip-text" class="absolute top-full right-0 mt-2 w-48 p-2 text-sm text-white bg-customOrange rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-20">
                                         Enter your full home address. (House No., Street, Barangay, City/Municipality, Province)
                                     </div>
                                 </span>
@@ -545,7 +545,7 @@
                         </div>
 
                         <div class="mt-4 flex justify-center">
-                            <button type="button" onclick="addRow()" class="bg-blue-500 text-white font-light py-2 px-4 rounded-md flex items-center justify-center">
+                            <button type="button" onclick="addRow()" class="py-3 px-6 flex justify-center items-center md:w-auto flex justify-center items-center text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                                 </svg>
@@ -895,8 +895,24 @@
 
                         <div class="text-xl font-bold mt-8 leading-tight tracking-tight text-gray-900 md:text-xl">
                             <p class="text-left">
-                                Identificaiton
+                                Identification
                             </p>
+                        </div>
+
+                        <div class="text-sm mt-8 text-gray-600 font-semibold">
+                            <div class="flex items-center">
+                                <img src="images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-1"> 
+                                <p class="text-left">
+                                    Note: documents or files uploaded must be clear; otherwise, it may hinder the approval of your account.
+                                </p>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <img src="images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-1"> 
+                                <p class="mt-2 text-left italic">
+                                    Paalala: ang mga dokumento o files na ipapasa ay kailangang malinaw at klaro; kung hindi, maaari itong maging hadlang sa pag-apruba ng iyong account.
+                                </p>
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
@@ -943,7 +959,7 @@
                                         @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                         placeholder="Upload photo of Pensioner" id="profilePictureField"/>
 
-                                    <button @click="$dispatch('open-camera-modal')" class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-12" type="button">
+                                    <button @click="$dispatch('open-camera-modal')" class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12" type="button">
                                         <img src="../images/camera.png" alt="Toggle Profile Picture" class="camera-icon w-7 h-7" id="toggleCameraIcon">
                                     </button>
                                 </div>
@@ -1070,7 +1086,7 @@
                                             @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                             placeholder="Enter password" id="passwordField" oninput="updatePasswordCriteria(this.value)"/>
 
-                                        <button class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-12 @error('password') h-[27%]  @else h-[33%] @enderror" 
+                                        <button class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-12 hover:bg-gray-600 @error('password') h-[27%]  @else h-[33%] @enderror" 
                                             type="button" onclick="togglePassword('passwordField', 'togglePasswordIcon')">
                                             <img src="../images/hide.png" alt="Show Password" class="eye-icon w-7 h-7" id="togglePasswordIcon">
                                         </button>
@@ -1115,7 +1131,7 @@
                                             @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                             placeholder="Confirm password" id="passwordConfirmationField" />
 
-                                        <button class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-12 h-full" type="button" id="button-addon2" onclick="togglePassword('passwordConfirmationField', 'togglePasswordIcon2')">
+                                        <button class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12 h-full" type="button" id="button-addon2" onclick="togglePassword('passwordConfirmationField', 'togglePasswordIcon2')">
                                             <img src="../images/hide.png" alt="Show Password" class="eye-icon w-7 h-7" id="togglePasswordIcon2">
                                         </button>
                                     </div>
@@ -1144,31 +1160,45 @@
                             <img id="sig-image" style="display:none;">
                             <p id="signaturevalidation" class="text-sm mt-2 text-red-500" style="display:none;">Please provide your signature.</p>
                             <div class="flex justify-center items-center mt-4">
-                                <button type="button" id="sig-clearBtn" class="bg-red-500 text-white px-4 py-2 rounded">Clear Signature</button>
+                                <button type="button" id="sig-clearBtn" class="py-3 px-6 md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none">Clear Signature</button>
                             </div>
                         </div>
 
                         <div class="row justify-content-center align-items-center mt-8"> 
                             <div class="col-md-12 text-center"> 
                                 <div class="checkbox-container">
-                                    <input class="form-check-input checkdrop shadow-md" type="checkbox" id="confirm-checkbox" name="confirm-checkbox" 
+                                    <input class="form-check-input checkdrop shadow-md w-6 h-6" type="checkbox" id="confirm-checkbox" name="confirm-checkbox" 
                                         {{ old('confirm-checkbox') ? 'checked' : '' }}>
-                                    <label class="form-check-label1 text-gray-800" for="confirm-checkbox" id="confirm-checkbox-label">  
-                                        I, <span id="full-name-placeholder">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span>, hereby confirm that the informations provided in the form is accurate.
+                                </div>
+                                <div class="mt-4">
+                                    <label class="form-check-label1 text-gray-800" id="confirm-checkbox-label" onclick="event.preventDefault();">
+                                        I, <span id="full-name-placeholder">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span>, hereby confirm that the above-mentioned information is true and correct to the best of my knowledge; and hereby authorized the verification of the details provided herein.
+                                    </label>
+                                </div>
+                                <div class="mt-2">
+                                    <label class="form-check-label1 text-gray-800" style="font-style: italic;">
+                                        Ako si <span id="full-name-placeholder-2">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span> at aking pinatutunayan na ang mga nakasaad na impormasyon ay totoo at tama sa abot ng aking kaalaman; at sa pamamagitan nito ay pinahihintulutan ko ang pagpapatunay ng mga detalyeng ibinigay dito.
                                     </label>
                                 </div>
 
-                                <label class="form-check-label1 text-gray-800" style="font-style: italic;">
-                                    Ako si <span id="full-name-placeholder-2">{{ old('first_name') }} {{ old('middle_name') }} {{ old('last_name') }}{{ old('suffix') ? ', ' . old('suffix') : '' }}</span> at aking kinukumpirma na ang mga impormasyong nakalagay sa form na ito ay tama.
-                                </label>
-                                
                                 @if ($errors->has('confirm-checkbox'))
                                     <p class="text-red-500 text-sm mt-2">{{ $errors->first('confirm-checkbox') }}</p>
                                 @else
                                     <p id="checkbox-error" class="text-red-500" style="display:none;">This checkbox is required.</p>
                                 @endif
-                                
                             </div>
+                        </div>
+
+                        <div class="mt-8 p-4 border border-gray-400 justify-content-center align-items-center rounded-lg bg-gray-100 text-gray-800">
+                            <div class="text-center">
+                                <h3 class="text-lg font-bold">DATA PRIVACY</h3>
+                            </div>
+                            <p class="mt-2 text-left">
+                                In compliance with the provisions of Republic Act No. 10173, also known as the Data Privacy Act of 2012 and its implementing Rules and Regulations (IRR), the Department of Social Welfare and Development (DSWD) ensures that the personal information provided is collected and processed by authorized personnel and is only used for the implementation of the Social Pension for Indigent Senior Citizens (SPISC) Program as mandated under Republic Act No. 9994.
+                            </p>
+                            <p class="mt-2 text-left italic">
+                                Bilang alinsunod sa mga probisyon ng Batas Republika No. 10173, na kilala rin bilang Data Privacy Act of 2012 at ang Implementing Rules and Regulations (IRR) nito, tinitiyak ng Department of Social Welfare and Development (DSWD) na ang personal na impormasyong ibinigay ay kinokolekta at pinoproseso ng awtorisadong mga tauhan at ginagamit lamang para sa pagpapatupad ng Social Pension for Indigent Senior Citizens (SPISC) Program ayon sa mandato sa ilalim ng Batas Republika No. 9994.
+                            </p>
                         </div>
 
                         <div class="flex justify-center mt-8">
@@ -1181,7 +1211,7 @@
                         @endif
 
                         <div class="mt-8 flex justify-center">
-                            <button type="submit" id="submit" name="submit" class="py-3 px-6 w-full md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
+                            <button type="submit" id="submit" name="submit" class="py-3 px-6 md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
                                 Sign up
                             </button>
                         </div>
@@ -1433,6 +1463,17 @@
             /[@$!%*?&]/.test(password) ? '<i class="fas fa-check text-green-500"></i> At least one symbol (@$!%*?&)' : 
             '<i class="fas fa-times text-red-500"></i> At least one symbol (@$!%*?&)';
     }
+
+    const tooltipIcon = document.getElementById('tooltip-icon');
+    const tooltipText = document.getElementById('tooltip-text');
+
+    tooltipIcon.addEventListener('click', () => {
+        tooltipText.classList.toggle('opacity-0');
+        tooltipText.classList.toggle('opacity-100');
+
+        tooltipIcon.classList.toggle('bg-gray-400');
+        tooltipIcon.classList.toggle('bg-gray-500');
+    });
 
 </script>
 

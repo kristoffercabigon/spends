@@ -58,7 +58,7 @@ class SeniorsController extends Controller
             'civil_status_id.required' => 'Civil status is required.',
             'contact_no.required' => 'Contact number is required.',
             'address.required' => 'Address is required.',
-            'address.min' => 'Address must be at least 20 characters.',
+            'address.min' => 'Full address needed, press the (i) icon to see the needed info.',
             'address.max' => 'Address cannot exceed 100 characters.',
             'barangay_id.required' => 'Barangay is required.',
             'email.required' => 'Email is required.',
@@ -211,11 +211,17 @@ class SeniorsController extends Controller
             $validated['signature_data'] = $signatureFilename;
         }
 
+        do {
+            $osca_id = rand(1000, 9999);
+        } while (DB::table('seniors')->where('osca_id', $osca_id)->exists());
+
         $seniorData = $validated;
         unset($seniorData['source'], $seniorData['other_source_remark']);
         unset($validated['g-recaptcha-response']);
 
         $seniorData['contact_no'] = '+63' . $validated['contact_no'];
+
+        $seniorData['osca_id'] = $osca_id;
 
         $seniorData['password'] = Hash::make($seniorData['password']);
 

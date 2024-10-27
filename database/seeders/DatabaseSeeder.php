@@ -10,6 +10,8 @@ use Database\Seeders\BarangaySeeder;
 use Database\Seeders\SexSeeder;
 use Database\Seeders\CivilStatusSeeder;
 use Database\Seeders\SourceSeeder;
+use Database\Seeders\PensionSeeder;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,6 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SexSeeder::class);
         $this->call(CivilStatusSeeder::class);
         $this->call(SourceSeeder::class);
+        $this->call(PensionSeeder::class);
         Seniors::factory(10)->create();
 
         // You can also uncomment and modify the user factory as needed

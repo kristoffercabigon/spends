@@ -42,7 +42,7 @@ class BarangaySeeder extends Seeder
         ];
 
         foreach ($barangayNo as $barangay) {
-            DB::table('barangay')->insert([
+            DB::table('barangay_list')->insert([
                 'barangay_no' => $barangay,
             ]);
         }

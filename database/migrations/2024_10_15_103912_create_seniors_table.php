@@ -20,12 +20,12 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('suffix')->nullable();
             $table->string('address');
-            $table->foreignId('barangay_id')->constrained('barangay');
+            $table->foreignId('barangay_id')->constrained('barangay_list');
             $table->date('birthdate');
             $table->integer('age');
             $table->string('birthplace');
-            $table->foreignId('sex_id')->constrained('sex');
-            $table->foreignId('civil_status_id')->constrained('civil_status');
+            $table->foreignId('sex_id')->constrained('sex_list');
+            $table->foreignId('civil_status_id')->constrained('civil_status_list');
             $table->string('contact_no');
             $table->string('valid_id')->nullable();
             $table->string('profile_picture')->nullable();
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->foreignId('type_of_living_arrangement')->constrained('living_arrangement_list');
             $table->string('other_arrangement_remark')->nullable();
             $table->tinyInteger('pensioner')->default(0);
-            $table->string('if_pensioner_yes')->nullable();
+            $table->foreignId('if_pensioner_yes')->nullable()->constrained('how_much_pension_list');
             $table->tinyInteger('permanent_source')->default(0);
             $table->string('if_permanent_yes')->nullable();
             $table->string('if_permanent_yes_income')->nullable();

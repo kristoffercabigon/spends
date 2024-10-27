@@ -23,18 +23,20 @@ class SeniorsController extends Controller
 
     public function create()
     {
+        $pensions = DB::table('how_much_pension_list')->get();
         $sources = DB::table('source_list')->get();
         $arrangement_lists = DB::table('living_arrangement_list')->get();
-        $sexes = DB::table('sex')->get();
-        $civil_status = DB::table('civil_status')->get();
-        $barangay = DB::table('barangay')->get();
+        $sexes = DB::table('sex_list')->get();
+        $civil_status_list = DB::table('civil_status_list')->get();
+        $barangay = DB::table('barangay_list')->get();
 
         return view('seniors.create')->with([
             'title' => 'SPENDS: Register',
+            'pensions' => $pensions,
             'sources' => $sources,
             'arrangement_lists' => $arrangement_lists,
             'sexes' => $sexes,
-            'civil_status' => $civil_status,
+            'civil_status_list' => $civil_status_list, 
             'barangay' => $barangay
         ]);
     }

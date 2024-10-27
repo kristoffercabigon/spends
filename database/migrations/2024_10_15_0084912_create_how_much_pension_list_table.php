@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sex', function (Blueprint $table) {
+        Schema::create('how_much_pension_list', function (Blueprint $table) {
             $table->id();
-            $table->string('sex');
+            $table->string('how_much_pension');
             $table->timestamps();
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sex');
+        Schema::dropIfExists('how_much_pension_list');
     }
 };

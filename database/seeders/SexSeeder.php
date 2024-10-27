@@ -12,7 +12,7 @@ class SexSeeder extends Seeder
         $sexOptions = ['Male', 'Female'];
 
         foreach ($sexOptions as $sex) {
-            DB::table('sex')->insert([
+            DB::table('sex_list')->insert([
                 'sex' => $sex,
             ]);
         }

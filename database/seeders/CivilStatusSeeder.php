@@ -12,7 +12,7 @@ class CivilStatusSeeder extends Seeder
         $statuses = ['Single', 'Married', 'Divorced', 'Widowed'];
 
         foreach ($statuses as $status) {
-            DB::table('civil_status')->insert([
+            DB::table('civil_status_list')->insert([
                 'civil_status' => $status,
             ]);
         }

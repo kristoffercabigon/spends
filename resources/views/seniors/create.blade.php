@@ -260,7 +260,7 @@
                                     @elseif(old('civil_status_id')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
                                     @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror">
                                     <option value="" disabled selected>Select civil status</option>
-                                    @foreach($civil_status as $civil_status1) 
+                                    @foreach($civil_status_list as $civil_status1) 
                                         <option value="{{ $civil_status1->id }}" {{ old('civil_status_id') == $civil_status1->id ? 'selected' : '' }}>
                                             {{ $civil_status1->civil_status }}
                                         </option>
@@ -481,7 +481,7 @@
                                                 <td class="border border-gray-300 px-4 py-2">
                                                     <select name="relative_civil_status[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
                                                         <option value="" disabled>Select status</option>
-                                                        @foreach ($civil_status as $status)
+                                                        @foreach ($civil_status_list as $status)
                                                             <option value="{{ $status->id }}" {{ (old('relative_civil_status')[$index] ?? '') == $status->id ? 'selected' : '' }}>
                                                                 {{ $status->civil_status }}
                                                             </option>
@@ -517,7 +517,7 @@
                                                 <td class="border border-gray-300 px-4 py-2">
                                                     <select name="relative_civil_status[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
                                                         <option value="" disabled>Select status</option>
-                                                        @foreach ($civil_status as $status)
+                                                        @foreach ($civil_status_list as $status)
                                                             <option value="{{ $status->id }}">
                                                                 {{ $status->civil_status }}
                                                             </option>
@@ -608,14 +608,19 @@
                                             If yes, how much pension do you receive? <span class="italic"> (Kung oo, magkano ang iyong natatanggap?) </span>
                                         </label>
 
-                                        <input type="text" 
-                                            name="if_pensioner_yes" 
-                                            id="if_pensioner_yes" 
-                                            class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
-                                            {{ old('pensioner') == 1 ? '' : 'hidden' }}" 
-                                            placeholder="Enter additional information"
-                                            value="{{ old('if_pensioner_yes') }}" style="width: -webkit-fill-available;"
-                                            {{ old('pensioner') == 1 ? 'required' : '' }}>
+                                        <select name="if_pensioner_yes" 
+                                                id="if_pensioner_yes" 
+                                                class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
+                                                {{ old('pensioner') == 1 ? '' : 'hidden' }}" 
+                                                style="width: -webkit-fill-available;"
+                                                {{ old('pensioner') == 1 ? 'required' : '' }}>
+                                            <option value="" disabled selected>Select pension amount</option>
+                                            @foreach($pensions as $pension)
+                                                <option value="{{ $pension->id }}" {{ old('pension_id') == $pension->id ? 'selected' : '' }}>
+                                                    {{ $pension->how_much_pension }}
+                                                </option>
+                                            @endforeach
+                                        </select>
 
                                         @error('if_pensioner_yes')
                                             <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
@@ -1495,7 +1500,7 @@
             <td class="border border-gray-300 px-4 py-2">
                 <select name="relative_civil_status[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
                     <option value="" disabled>Select status</option>
-                    @foreach ($civil_status as $status)
+                    @foreach ($civil_status_list as $status)
                         <option value="{{ $status->id }}">{{ $status->civil_status }}</option>
                     @endforeach
                 </select>

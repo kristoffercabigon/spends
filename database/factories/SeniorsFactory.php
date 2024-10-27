@@ -587,7 +587,7 @@ class SeniorsFactory extends Factory
             'type_of_living_arrangement' => $type_of_living_arrangement,
             'other_arrangement_remark' => $type_of_living_arrangement == 5 ? $this->faker->randomElement($otherArrangements) : null,
             'pensioner' => $pensioner,
-            'if_pensioner_yes' => $pensioner == 1 ? $this->faker->randomElement($Receiving_pension) : null,
+            'if_pensioner_yes' => $pensioner == 1 ? $this->faker->numberBetween(1, 11) : null,
             'permanent_source' => $permanent_source,
             'if_permanent_yes' => $permanent_source == 1 ? $this->faker->randomElement($senior_permanent_income_sources) : null,
             'if_permanent_yes_income' => $permanent_source == 1 ? $this->faker->randomElement($Receiving_pension) : null,

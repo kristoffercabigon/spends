@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('barangay', function (Blueprint $table) {
+        Schema::create('civil_status_list', function (Blueprint $table) {
             $table->id();
-            $table->string('barangay_no');
+            $table->string('civil_status');
             $table->timestamps();
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('barangay');
+        Schema::dropIfExists('civil_status_list');
     }
 };

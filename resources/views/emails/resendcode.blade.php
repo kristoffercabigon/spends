@@ -25,7 +25,7 @@
             <div style="background-color: #fff; padding: 20px; text-align: center; justify-content: center; align-items: center;">
                 <h1 class="text-2xl font-bold text-gray-900 text-center mb-4">Email Verification</h1>
                 <p style="font-size: 18px; color: #4a5568; margin-bottom: 24px;">
-                    Registration successful! Please click the button below to verify your email address:
+                    This is your new verification code:
                 </p>
                 <div class="text-center mb-6">
                     <span style="display: inline-block; background-color: #ff4802; color: white; padding: 10px 20px; border-radius: 5px; font-size: 25px; text-decoration: none; font-weight: bold;">
@@ -36,7 +36,7 @@
                     This code will expire after 1 hour: {{ $expirationTime->format('l, F j, Y g:i A') }}
                 </p>
                 <p style="font-size: 18px; color: #4a5568;">
-                    Your profile is currently under review. You will receive an email notification regarding the approval status of your submitted application.
+                    Use this code to verify your email.
                 </p>
             </div>
 

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class Seniors extends Authenticatable
+class Seniors extends Authenticatable 
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -17,6 +17,7 @@ class Seniors extends Authenticatable
      *
      * @var array<int, string>
      */
+
     protected $fillable = [
         'osca_id',
         'nscs_rrn',
@@ -52,7 +53,8 @@ class Seniors extends Authenticatable
         'if_disability_yes',
         'date_applied',
         'verification_code',
-        'verified_at'
+        'verified_at',
+        'verification_expires_at',
     ];
 
     /**
@@ -73,7 +75,8 @@ class Seniors extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
+            'verified_at' => 'datetime',
+            'verification_expires_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

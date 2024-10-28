@@ -12,6 +12,7 @@
     {!!htmlScriptTagJsApi()!!}
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="bg-white font-poppins min-h-screen pt-[80px]">
     <x-messages />

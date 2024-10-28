@@ -1,8 +1,8 @@
 @if(session()->has('message'))
-<div x-data="{ show: false }" 
+<div x-data="{ show: true }" 
      x-show="show" 
-     x-init="setTimeout(() => show = true, 10); setTimeout(() => show = false, 5000)" 
-     class="bg-teal-100 fixed top-[70px] right-0 m-4 z-20 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md" 
+     x-init="setTimeout(() => show = false, 7000)" 
+     class="bg-teal-100 fixed top-[70px] right-0 m-4 max-w-md mx-auto mt-4 z-[1000] border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md" 
      role="alert"
      x-transition:enter="transform transition ease-out duration-300"
      x-transition:enter-start="translate-x-full opacity-0"
@@ -18,8 +18,8 @@
     </div>
     <div>
       <p class="font-bold">Alert Message</p>
-      <p class="text-sm">{{session('message')}}</p>
-    </div>
+      <p class="text-sm">{{ session('message') }}</p>
+    </div>  
   </div>
 </div>
 @endif

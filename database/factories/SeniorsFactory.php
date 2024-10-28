@@ -534,18 +534,6 @@ class SeniorsFactory extends Factory
             "Cooperative Pension Funds"
         ];
 
-        $senior_permanent_income_sources = [
-            "Business",
-            "Social Security Benefits",
-            "Investment Income",
-            "Rental Income from Properties",
-            "Annuities",
-            "Royalties from Intellectual Property",
-            "Government Assistance Programs",
-            "Family Support or Allowances",
-            "Income from Cooperative Memberships"
-        ];
-
         $date_applied = date('Y-m-d H:i:s');
         $has_illness = $this->faker->numberBetween(0, 1);
         $has_disability = $this->faker->numberBetween(0, 1);
@@ -589,8 +577,7 @@ class SeniorsFactory extends Factory
             'pensioner' => $pensioner,
             'if_pensioner_yes' => $pensioner == 1 ? $this->faker->numberBetween(1, 11) : null,
             'permanent_source' => $permanent_source,
-            'if_permanent_yes' => $permanent_source == 1 ? $this->faker->randomElement($senior_permanent_income_sources) : null,
-            'if_permanent_yes_income' => $permanent_source == 1 ? $this->faker->randomElement($Receiving_pension) : null,
+            'if_permanent_yes_income' => $permanent_source == 1 ? $this->faker->numberBetween(1, 11) : null,
             'has_illness' => $has_illness,
             'date_applied' => $date_applied,
             'has_disability' => $has_disability,

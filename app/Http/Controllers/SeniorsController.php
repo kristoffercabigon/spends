@@ -11,7 +11,7 @@ use App\Models\Seniors;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail; 
 use App\Mail\VerificationEmail; 
-use Illuminate\Support\Str;
+use App\Mail\ResendCodeEmail;
 
 class SeniorsController extends Controller
 {
@@ -23,6 +23,8 @@ class SeniorsController extends Controller
 
     public function create()
     {
+        $income_sources = DB::table('where_income_source_list')->get();
+        $incomes = DB::table('how_much_income_list')->get();
         $pensions = DB::table('how_much_pension_list')->get();
         $sources = DB::table('source_list')->get();
         $arrangement_lists = DB::table('living_arrangement_list')->get();
@@ -32,6 +34,8 @@ class SeniorsController extends Controller
 
         return view('seniors.create')->with([
             'title' => 'SPENDS: Register',
+            'income_sources' => $income_sources,
+            'incomes' => $incomes,
             'pensions' => $pensions,
             'sources' => $sources,
             'arrangement_lists' => $arrangement_lists,
@@ -81,18 +85,20 @@ class SeniorsController extends Controller
             'other_arrangement_remark.required_if' => 'This field is required when the type of living arrangement is 5.',
             'pensioner.required' => 'Pensioner status is required.',
             'if_pensioner_yes.required_if' => 'This field is required if you are a pensioner.',
-            'source.required_if' => 'Source of income is required if you are a pensioner.',
-            'source.*.required_if' => 'Each source of income is required if you are a pensioner.',
+            'source.required_if' => 'Source of pension is required if you are a pensioner.',
+            'source.*.required_if' => 'Each source of pension is required if you are a pensioner.',
+            'income_source.required_if' => 'Source of income is required if you have permanent source of income.',
+            'income_source.*.required_if' => 'Each source of income is required if you have permanent source of income.',
             'other_source_remark.required_if' => 'This field is required if the source is "Other".',
             'permanent_source.required' => 'Permanent source of income is required.',
-            'if_permanent_yes.required_if' => 'This field is required if the permanent source is "Yes".',
+            'if_permanent_yes_income.required_if' => 'This field is required if the permanent source is "Yes".',
             'has_illness.required' => 'Illness status is required.',
             'if_illness_yes.required_if' => 'This field is required if you have an illness.',
             'has_disability.required' => 'Disability status is required.',
             'if_disability_yes.required_if' => 'This field is required if you have a disability.',
             'signature_data.required' => 'Signature is required.',
             'confirm-checkbox.required' => 'You must agree to the terms.',
-            'g-recaptcha-response.required' => 'ReCaptcha verification is required.',
+            // 'g-recaptcha-response.required' => 'ReCaptcha verification is required.',
         ];
 
         $validated = $request->validate([
@@ -134,7 +140,8 @@ class SeniorsController extends Controller
             'source.*' => ['required_if:pensioner,1', 'integer'],
             'other_source_remark' => 'required_if:source.*,4',
             "permanent_source" => ['required'],
-            "if_permanent_yes" => 'required_if:permanent_source,1',
+            'income_source' => ['required_if:permanent_source,1', 'array'],
+            'income_source.*' => ['required_if:permanent_source,1', 'integer'],
             "if_permanent_yes_income" => 'required_if:permanent_source,1',
             "has_illness" => ['required'],
             "if_illness_yes" => 'required_if:has_illness,1',
@@ -148,22 +155,23 @@ class SeniorsController extends Controller
             "relative_income.*" => 'nullable|string|max:255',
             "signature_data" => ['required'],
             "confirm-checkbox" => ['required'],
-            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
-                $secret = env('RECAPTCHA_SECRET_KEY');
-                $response = $request->input('g-recaptcha-response');
-                $remoteip = $request->ip();
+            // "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+            //     $secret = env('RECAPTCHA_SECRET_KEY');
+            //     $response = $request->input('g-recaptcha-response');
+            //     $remoteip = $request->ip();
 
-                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
-                $captcha_success = json_decode($verify);
+            //     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+            //     $captcha_success = json_decode($verify);
 
-                if (!$captcha_success->success) {
-                    $fail('ReCaptcha verification failed, please try again.');
-                }
-            }],
+            //     if (!$captcha_success->success) {
+            //         $fail('ReCaptcha verification failed, please try again.');
+            //     }
+            // }],
         ], $customMessages);
 
         $seniorData = $validated;
         unset($seniorData['source'], $seniorData['other_source_remark']);
+        unset($seniorData['income_source'], $seniorData['other_income_source_remark']);
         unset($seniorData['g-recaptcha-response']);
 
         do {
@@ -231,11 +239,15 @@ class SeniorsController extends Controller
 
         $seniorData['date_applied'] = now();
 
-        $seniorData['verification_code'] = Str::random(30);
+        $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+        $expirationTime = now()->addHour();
+
+        $seniorData['verification_code'] = $verificationCode;
+        $seniorData['verification_expires_at'] = $expirationTime;
 
         $seniors = Seniors::create($seniorData);
 
-        Mail::to($seniorData['email'])->send(new VerificationEmail($seniors->verification_code));
+        Mail::to($seniorData['email'])->send(new VerificationEmail($verificationCode, $expirationTime));
 
         if ($request->input('pensioner') == 1
         ) {
@@ -262,6 +274,31 @@ class SeniorsController extends Controller
             }
         }
 
+        if ($request->input('permanent_source') == 1
+        ) {
+            $incomeSourceInputs = $request->input('income_source') ?? [];
+
+            foreach ($incomeSourceInputs as $income_source) {
+                $data = [];
+
+                if (!is_null($seniors->id)) {
+                    $data['senior_id'] = $seniors->id;
+                }
+
+                if (!is_null($income_source)) {
+                    $data['income_source_id'] = $income_source;
+                }
+
+                if ($income_source == 10) {
+                    $data['other_income_source_remark'] = $request->input('other_income_source_remark');
+                }
+
+                if (!empty($data)) {
+                    DB::table('income_source')->insert($data);
+                }
+            }
+        }
+
         foreach ($request->relative_name as $index => $name) {
             DB::table('family_composition')->insert([
                 'senior_id' => $seniors->id,
@@ -274,22 +311,82 @@ class SeniorsController extends Controller
             ]);
         }
 
-        return redirect('/')->with('message', 'Registration Successful');
+        return redirect()->route('verify-email')->with([
+            'email' => $seniors->email,
+            'code' => $seniors->verification_code,
+            'showVerificationModal' => true,
+            'message' => 'Registration successful. Please verify your email.'
+        ]);
     }
 
-    public function verifyEmail(Request $request)
+    public function showVerificationForm()
     {
-        $senior = Seniors::where('verification_code', $request->input('code'))->first();
+        return redirect('/')->with([
+            'showVerificationModal' => true,
+            'email' => session('email'),
+            'code' => session('code'), 
+            'message' => 'Registration successful. Please verify your email.'
+        ]);
+    }
+
+    public function verifyEmailCode(Request $request)
+    {
+
+        $email = $request->input('email');
+        $code = $request->input('code');
+
+        $senior = Seniors::where('email', $email)
+            ->where('verification_code', $code)
+            ->first();
 
         if ($senior) {
+            if ($senior->verification_expires_at && $senior->verification_expires_at->isPast()) {
+                return response()->json(['error' => 'Verification code has expired. Please request a new one.'], 400);
+            }
+
             $senior->verified_at = now();
             $senior->verification_code = null;
+            $senior->verification_expires_at = null;
             $senior->save();
 
-            return redirect('/')->with('message', 'Email verified successfully.');
+            session()->flash('message', 'Email verified successfully.');
+
+            return response()->json(['message' => 'Email verified successfully.', 'redirect' => '/'], 200);
         }
 
-        return redirect('/')->with('error', 'Invalid verification code.');
+        return response()->json(['error' => 'Invalid verification code.'], 400);
+    }
+
+
+    public function resendVerificationCode(Request $request)
+    {
+        $email = $request->input('email');
+
+        if (empty($email)) {
+            $senior = Seniors::latest()->first();
+            $email = $senior?->email;
+        }
+
+        $senior = Seniors::where('email', $email)->first();
+
+        if ($senior) {
+            if ($senior->verified_at) {
+                return response()->json(['error' => 'Your email is already verified.'], 200);
+            }
+
+            $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+            $expirationTime = now()->addHour();
+
+            $senior->verification_code = $verificationCode;
+            $senior->verification_expires_at = $expirationTime;
+            $senior->save();
+
+            Mail::to($senior->email)->send(new ResendCodeEmail($verificationCode, $expirationTime));
+
+            return response()->json(['message' => 'A new verification code has been sent to your email.'], 200);
+        }
+
+        return response()->json(['error' => 'Failed to resend verification code. Please try again.'], 400);
     }
 
     public function logout(Request $request)

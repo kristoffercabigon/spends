@@ -37,8 +37,7 @@ return new class extends Migration
             $table->tinyInteger('pensioner')->default(0);
             $table->foreignId('if_pensioner_yes')->nullable()->constrained('how_much_pension_list');
             $table->tinyInteger('permanent_source')->default(0);
-            $table->string('if_permanent_yes')->nullable();
-            $table->string('if_permanent_yes_income')->nullable();
+            $table->foreignId('if_permanent_yes_income')->nullable()->constrained('how_much_income_list');
             $table->tinyInteger('has_illness')->default(0);
             $table->string('if_illness_yes')->nullable();
             $table->integer('has_disability');
@@ -46,9 +45,10 @@ return new class extends Migration
             $table->date('date_applied');
             $table->string('email')->unique();
             $table->string('password');
-            $table->integer('is_approved')->nullable();
+            $table->tinyInteger('is_approved')->default(0);
             $table->string('verification_code')->nullable();
-            $table->string('verified_at')->nullable();
+            $table->dateTime('verification_expires_at')->nullable();
+            $table->dateTime('verified_at')->nullable();
             $table->string('token')->nullable();
             $table->string('expiration')->nullable();
             $table->timestamps();

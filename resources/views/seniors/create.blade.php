@@ -603,7 +603,7 @@
                                 @enderror
 
                                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-1">
-                                    <div class="w-full md:col-span-2 relative">
+                                    <div class="w-full md:col-span-2 text-gray-800 relative">
                                         <label id="pensioner_label" class="text-sm text-gray-800 mt-4 mb-2 block {{ old('pensioner') == 1 ? '' : 'hidden' }}">
                                             If yes, how much pension do you receive? <span class="italic"> (Kung oo, magkano ang iyong natatanggap?) </span>
                                         </label>
@@ -616,7 +616,7 @@
                                                 {{ old('pensioner') == 1 ? 'required' : '' }}>
                                             <option value="" disabled selected>Select pension amount</option>
                                             @foreach($pensions as $pension)
-                                                <option value="{{ $pension->id }}" {{ old('pension_id') == $pension->id ? 'selected' : '' }}>
+                                                <option value="{{ $pension->id }}" {{ old('if_pensioner_yes') == $pension->id ? 'selected' : '' }}>
                                                     {{ $pension->how_much_pension }}
                                                 </option>
                                             @endforeach
@@ -725,29 +725,66 @@
                                             If yes, how much income? <span class="italic"> (Kung oo, magkano and iyong kinikita?) </span>
                                         </label>
 
-                                        <input type="text" 
-                                            name="if_permanent_yes_income" 
-                                            id="if_permanent_yes_income" 
-                                            class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
-                                            {{ old('permanent_source') == 1 ? '' : 'hidden' }}" 
-                                            placeholder="Enter income amount"
-                                            value="{{ old('if_permanent_yes_income') }}" 
-                                            style="width: -webkit-fill-available;">
+                                        <select name="if_permanent_yes_income" 
+                                                id="if_permanent_yes_income" 
+                                                class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
+                                                {{ old('permanent_source') == 1 ? '' : 'hidden' }}" 
+                                                style="width: -webkit-fill-available;"
+                                                {{ old('permanent_source') == 1 ? 'required' : '' }}>
+                                            <option value="" disabled selected>Select income amount</option>
+                                            @foreach($incomes as $income)
+                                                <option value="{{ $income->id }}" {{ old('if_permanent_yes_income') == $income->id ? 'selected' : '' }}>
+                                                    {{ $income->how_much_income }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
 
-                                    <div class="w-full text-gray-800 md:col-span-2 text-gray-800 relative">
-                                        <label id="permanent_label" class="text-sm mt-4 mb-2 block {{ old('permanent_source') == 1 ? '' : 'hidden' }}">
+                                    <div class="md:col-span-2 relative {{ old('permanent_source') == 1 ? '' : 'hidden' }}" id="income_source_list">
+                                        <label id="income_source_label" class="text-sm text-gray-800 mt-4 mb-2 block">
                                             If yes, from what source? <span class="italic">(Kung oo, mula saan?)</span>
                                         </label>
 
-                                        <input type="text" 
-                                            name="if_permanent_yes" 
-                                            id="if_permanent_yes" 
-                                            class="bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all 
-                                            {{ old('permanent_source') == 1 ? '' : 'hidden' }}" 
+                                        <div class="flex flex-col md:flex-row md:flex-wrap">
+                                            @foreach($income_sources as $income_source)
+                                                <div class="flex items-center mb-2 md:mr-4">
+                                                    <input type="checkbox"
+                                                        name="income_source[]"
+                                                        value="{{ $income_source->id }}"
+                                                        id="{{ $income_source->id }}"
+                                                        class="mr-2 shadow-md"
+                                                        {{ is_array(old('income_source')) && in_array($income_source->id, old('income_source')) ? 'checked' : '' }}
+                                                        onclick="toggleCheckboxForIncomeSourceInputField()">
+
+                                                    <label for="{{ $income_source->id }}"
+                                                        class="text-sm text-gray-800 @error('income_source') text-red-700 dark:text-red-500 @enderror">
+                                                        {{ $income_source->where_income_source }}
+                                                    </label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+
+                                        <label id="other_income_source_label" class="text-sm text-gray-800 mt-4 mb-2 block {{ is_array(old('income_source')) && in_array(9, old('income_source')) ? '' : 'hidden' }}">
+                                            If others, please specify: <span class="italic"> (Kung iba, pakitukoy:) </span>
+                                        </label>
+
+                                        <input type="text"
+                                            name="other_income_source_remark"
+                                            id="other_income_source_remark"
+                                            class="mt-4 bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all
+                                            {{ is_array(old('income_source')) && in_array(9, old('income_source')) ? '' : 'hidden' }}"
                                             placeholder="Enter additional information"
-                                            value="{{ old('if_permanent_yes') }}" 
-                                            style="width: -webkit-fill-available;">
+                                            value="{{ old('other_income_source_remark') ?? '' }}"
+                                            style="width: -webkit-fill-available;"
+                                            required="{{ is_array(old('income_source')) && in_array(9, old('income_source')) ? 'required' : '' }}">
+
+                                        @error('income_source')
+                                            <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                        @enderror
+
+                                        @error('other_income_source_remark')
+                                            <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
 
@@ -755,9 +792,6 @@
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @endif
                                 @error('permanent_source')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @enderror
-                                @error('if_permanent_yes')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @enderror
                                 @error('if_permanent_yes_income')
@@ -904,7 +938,7 @@
                             </p>
                         </div>
 
-                        <div class="text-sm mt-8 text-gray-600 font-semibold">
+                        <div class="text-sm mt-8 text-gray-800 font-semibold">
                             <div class="flex items-center">
                                 <img src="images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-1"> 
                                 <p class="text-left">
@@ -1355,28 +1389,20 @@
                 additionalInput.value = ''; 
             }
         } else if (type === 'permanent_source') {
-            additionalInput = document.getElementById('if_permanent_yes');
             additionalIncomeInput = document.getElementById('if_permanent_yes_income');
-            const permanentLabel = document.getElementById('permanent_label');
             const permanentIncomeLabel = document.getElementById('permanent_income_label');
+            const incomeSourceList = document.getElementById('income_source_list');
 
             if (value == 1) {
-                additionalInput.classList.remove('hidden');
-                permanentLabel.classList.remove('hidden');
-                additionalInput.setAttribute('required', 'required');
-
                 additionalIncomeInput.classList.remove('hidden');
                 permanentIncomeLabel.classList.remove('hidden');
                 additionalIncomeInput.setAttribute('required', 'required');
+                incomeSourceList.classList.remove('hidden');
             } else {
-                additionalInput.classList.add('hidden');
-                permanentLabel.classList.add('hidden');
-                additionalInput.removeAttribute('required');
-                additionalInput.value = '';
-
                 additionalIncomeInput.classList.add('hidden');
                 permanentIncomeLabel.classList.add('hidden');
                 additionalIncomeInput.removeAttribute('required');
+                incomeSourceList.classList.add('hidden');
                 additionalIncomeInput.value = ''; 
             }
         } else if (type === 'livingArrangement') {
@@ -1427,10 +1453,20 @@
                 additionalInput.removeAttribute('required'); 
                 additionalInput.value = ''; 
             }
-        }
+        } else if (type === 'incomesourceslist') {
+            additionalInput = document.getElementById('other_income_source_remark');
+            if (value == 9) {
+                additionalInput.classList.remove('hidden');
+                additionalInput.setAttribute('required', 'required');
+            } else {
+                additionalInput.classList.add('hidden');
+                additionalInput.removeAttribute('required');
+                additionalInput.value = ''; 
+            }
+        } 
     }
 
-     function toggleCheckboxInputField() {
+    function toggleCheckboxInputField() {
         const sourceCheckbox = document.querySelector('input[name="source[]"][value="4"]');
         const additionalInput = document.getElementById('other_source_remark');
         const sourceLabel = document.getElementById('other_source_label');
@@ -1447,6 +1483,23 @@
         }
     }
 
+    function toggleCheckboxForIncomeSourceInputField() {
+        const incomeSourceCheckbox = document.querySelector('input[name="income_source[]"][value="9"]');
+        const additionalIncomeInput = document.getElementById('other_income_source_remark');
+        const incomeSourceLabel = document.getElementById('other_income_source_label');
+
+        if (incomeSourceCheckbox.checked) {
+            additionalIncomeInput.classList.remove('hidden');
+            incomeSourceLabel.classList.remove('hidden');
+            additionalIncomeInput.setAttribute('required', 'required');
+        } else {
+            additionalIncomeInput.classList.add('hidden');
+            incomeSourceLabel.classList.add('hidden');
+            additionalIncomeInput.removeAttribute('required');
+            additionalIncomeInput.value = '';
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const previousPensionerValue = '{{ old("pensioner") }}';
         if (previousPensionerValue == 1) { 
@@ -1459,12 +1512,18 @@
             toggleCheckboxInputField();
         }
 
+        const incomeSourceCheckbox = document.querySelector('input[name="income_source[]"][value="9"]');
+        if (incomeSourceCheckbox) {
+            incomeSourceCheckbox.addEventListener('change', toggleCheckboxForIncomeSourceInputField);
+            toggleCheckboxForIncomeSourceInputField();
+        }
+
         const previousPermanentSourceValue = '{{ old("permanent_source") }}';
         if (previousPermanentSourceValue == 1) {
-            document.getElementById('if_permanent_yes').classList.remove('hidden');
-            document.getElementById('permanent_label').classList.remove('hidden');
             document.getElementById('if_permanent_yes_income').classList.remove('hidden');
             document.getElementById('permanent_income_label').classList.remove('hidden');
+            document.getElementById('income_source_list').classList.remove('hidden');
+            toggleInputField(1, 'permanent_source');
         }
 
         const previousLivingArrangementValue = '{{ old("type_of_living_arrangement") }}';

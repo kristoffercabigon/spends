@@ -323,7 +323,7 @@ class SeniorsController extends Controller
         ]);
     }
 
-    public function showVerificationForm()
+    public function showVerificationFormRegister()
     {
         return redirect('/')->with([
             'showVerificationModal' => true,
@@ -333,7 +333,7 @@ class SeniorsController extends Controller
         ]);
     }
 
-    public function verifyEmailCode(Request $request)
+    public function verifyEmailCodeRegister(Request $request)
     {
 
         $email = $request->input('email');
@@ -405,17 +405,48 @@ class SeniorsController extends Controller
 
     public function login(Request $request)
     {
+        $loginMessages = [
+            'email.required' => 'Enter your email.',
+            'password.required' => 'Enter your password.',
+        ];
+
         $validated = $request->validate([
-            "email" => ['required', 'email'],
-            "password" => 'required'
-        ]);
+            'email' => ['required', 'email'],
+            'password' => 'required',
+        ], $loginMessages);
 
-        if (FacadesAuth::attempt($validated)) {
-            $request->session()->regenerate();
+        $senior_login = Seniors::where('email', $validated['email'])->first();
 
-            return redirect('/')->with('message', 'Welcome back!');
+        if (!$senior_login) {
+            return back()->withErrors(['email' => "This email doesn't exist."])->onlyInput('email');
         }
 
-        return back()->withErrors(['email' => 'Login failed'])->onlyInput('email');
+        if (is_null($senior_login->verified_at)) {
+            return redirect()->route('verify-email-login')->with([
+                'email' => $senior_login->email,
+                'showVerificationModal' => true,
+                'showLoginModal' => false,
+            ]);
+        }
+
+        if (!Hash::check($validated['password'], $senior_login->password)) {
+            return back()->withErrors(['password' => 'Password incorrect.'])->onlyInput('email');
+        }
+
+        FacadesAuth::login($senior_login);
+        $request->session()->regenerate();
+
+        return redirect('/')->with('message', 'Welcome back!');
+    }
+
+
+    public function showVerificationFormLogin()
+    {
+        return redirect('/')->with([
+            'showVerificationModal' => true,
+            'showLoginModal' => false,
+            'email' => session('email'),
+            'message' => 'Login Failed. Verify your email first.'
+        ]);
     }
 }

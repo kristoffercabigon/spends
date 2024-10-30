@@ -91,7 +91,7 @@
     x-transition:leave="transition-opacity ease-linear duration-300"
     x-transition:leave-start="opacity-100" 
     x-transition:leave-end="opacity-0"
-    @click.away="showVerificationModal = false; localStorage.setItem('showVerificationModal', 'false')">
+    @click.away="showVerificationModal = false; localStorage.setItem('showVerificationModal', 'false'); showLoginModal = false;">
     
     <div @click.stop>
         <section class="bg-gray-50 dark:bg-gray-900 relative">

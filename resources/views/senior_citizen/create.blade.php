@@ -147,11 +147,11 @@
                                     @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                     placeholder="Select birthdate" readonly 
                                     value="{{ old('birthdate') }}" />
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none @error('birthdate') h-[90%] @elseif(old('birthdate')) h-[90%] @else h-[125%] @enderror">
-                                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-6 6h6m-8 0h.01M4 7h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
-                                        </svg>
-                                    </span>
+                                <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none @error('birthdate') h-[90%] @elseif(old('birthdate')) h-[90%] @else h-[125%] @enderror">
+                                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-6 6h6m-8 0h.01M4 7h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
+                                    </svg>
+                                </span>
                                 @error('birthdate')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @elseif(old('birthdate'))

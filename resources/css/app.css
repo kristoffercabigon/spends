@@ -10,3 +10,24 @@
 #tooltip-text {
     transition: opacity 0.2s ease-in-out;
 }
+
+.flatpickr-calendar {
+    border-color: #f97316; 
+}
+.flatpickr-months .flatpickr-month {
+    color: #f97316; 
+}
+.flatpickr-day.today {
+    background-color: #fde68a; 
+    border-color: #f97316;
+}
+.flatpickr-day.selected, .flatpickr-day.selected:hover {
+    background-color: #FF4802 !important; 
+    color: white !important;
+}
+.flatpickr-weekday {
+    color: #f97316; 
+}
+.flatpickr-day:hover {
+    background-color: #fdba74; 
+}

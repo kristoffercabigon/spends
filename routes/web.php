@@ -8,9 +8,11 @@ Route::controller(SeniorsController::class)->group(function () {
     Route::get('/register', 'create');
     Route::post('/login', 'login')->name('login')->middleware('guest');
     Route::post('/store', 'store');
-    Route::get('/verify-email', 'showVerificationForm')->name('verify-email');
+    Route::get('/verify-email', 'showVerificationFormRegister')->name('verify-email');
+    Route::get('/verify-email-login', 'showVerificationFormLogin')->name('verify-email-login');
     Route::post('/resend-code', 'resendVerificationCode')->name('resend-code');
-    Route::post('/verify-email', 'verifyEmailCode');
+    Route::post('/verify-email', 'verifyEmailCodeRegister');
+    Route::post('/verify-email-login', 'verifyEmailCodeLogin');
     Route::post('/logout', 'logout');
 });
 

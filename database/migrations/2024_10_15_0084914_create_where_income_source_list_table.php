@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('where_income_source_list', function (Blueprint $table) {
             $table->id();
             $table->string('where_income_source');
+            $table->string('where_income_source_examples')->nullable();
             $table->timestamps();
         });
     }

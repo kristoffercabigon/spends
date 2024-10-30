@@ -20,13 +20,26 @@ class IncomeSourceSeeder extends Seeder
             'Remittances',
             'Farm or Agricultural Income',
             'Annuities or Private Retirement Funds',
-            'Financial Assistance Programs',
             'Others'
         ];
 
-        foreach ($incomesources as $incomesource) {
+        $incomesources_examples = [
+            '(e.g., sari-sari store, carinderia or small eatery, online selling or e-commerce)',
+            '(e.g., renting out a house or apartment)',
+            '(e.g., dividends from stocks or interest from savings accounts)',
+            '(e.g., salary from a part-time job)',
+            '(e.g., money sent from family members working abroad)',
+            '(e.g., profits from selling crops or livestock)',
+            '(e.g., monthly payments from a retirement plan)',
+        ];
+
+        foreach ($incomesources as $index => $incomesource) {
+
+            $example = isset($incomesources_examples[$index]) ? $incomesources_examples[$index] : null;
+
             DB::table('where_income_source_list')->insert([
                 'where_income_source' => $incomesource,
+                'where_income_source_examples' => $example,
             ]);
         }
     }

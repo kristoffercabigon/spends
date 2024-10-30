@@ -10,15 +10,15 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Seniors;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail; 
-use App\Mail\VerificationEmail; 
-use App\Mail\ResendCodeEmail;
+use App\Mail\SeniorResendCodeEmail;
+use App\Mail\SeniorVerificationEmail;
 
 class SeniorsController extends Controller
 {
     public function index()
     {
         $data = array("seniors" => DB::table('seniors')->orderBy('created_at', 'desc')->paginate(10));
-        return view('seniors.index', $data)->with('title', 'SPENDS: Home ');
+        return view('senior_citizen.index', $data)->with('title', 'SPENDS: Home ');
     }
 
     public function create()
@@ -32,7 +32,7 @@ class SeniorsController extends Controller
         $civil_status_list = DB::table('civil_status_list')->get();
         $barangay = DB::table('barangay_list')->get();
 
-        return view('seniors.create')->with([
+        return view('senior_citizen.create')->with([
             'title' => 'SPENDS: Register',
             'income_sources' => $income_sources,
             'incomes' => $incomes,
@@ -98,7 +98,7 @@ class SeniorsController extends Controller
             'if_disability_yes.required_if' => 'This field is required if you have a disability.',
             'signature_data.required' => 'Signature is required.',
             'confirm-checkbox.required' => 'You must agree to the terms.',
-            // 'g-recaptcha-response.required' => 'ReCaptcha verification is required.',
+            'g-recaptcha-response.required' => 'ReCaptcha verification is required.',
         ];
 
         $validated = $request->validate([
@@ -155,18 +155,18 @@ class SeniorsController extends Controller
             "relative_income.*" => 'nullable|string|max:255',
             "signature_data" => ['required'],
             "confirm-checkbox" => ['required'],
-            // "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
-            //     $secret = env('RECAPTCHA_SECRET_KEY');
-            //     $response = $request->input('g-recaptcha-response');
-            //     $remoteip = $request->ip();
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
 
-            //     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
-            //     $captcha_success = json_decode($verify);
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
 
-            //     if (!$captcha_success->success) {
-            //         $fail('ReCaptcha verification failed, please try again.');
-            //     }
-            // }],
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
         ], $customMessages);
 
         $seniorData = $validated;
@@ -247,7 +247,9 @@ class SeniorsController extends Controller
 
         $seniors = Seniors::create($seniorData);
 
-        Mail::to($seniorData['email'])->send(new VerificationEmail($verificationCode, $expirationTime));
+        Mail::to($seniorData['email'])->send(new SeniorVerificationEmail($verificationCode, $expirationTime));
+
+        $lastSourceId = DB::table('source_list')->latest('id')->value('id');
 
         if ($request->input('pensioner') == 1
         ) {
@@ -264,7 +266,7 @@ class SeniorsController extends Controller
                     $data['source_id'] = $source;
                 }
 
-                if ($source == 4) {
+                if ($source == $lastSourceId) {
                     $data['other_source_remark'] = $request->input('other_source_remark');
                 }
 
@@ -274,8 +276,9 @@ class SeniorsController extends Controller
             }
         }
 
-        if ($request->input('permanent_source') == 1
-        ) {
+        $lastIncomeSourceId = DB::table('where_income_source_list')->latest('id')->value('id');
+
+        if ($request->input('permanent_source') == 1) {
             $incomeSourceInputs = $request->input('income_source') ?? [];
 
             foreach ($incomeSourceInputs as $income_source) {
@@ -289,7 +292,8 @@ class SeniorsController extends Controller
                     $data['income_source_id'] = $income_source;
                 }
 
-                if ($income_source == 10) {
+                if ($income_source == $lastIncomeSourceId
+                ) {
                     $data['other_income_source_remark'] = $request->input('other_income_source_remark');
                 }
 
@@ -381,7 +385,7 @@ class SeniorsController extends Controller
             $senior->verification_expires_at = $expirationTime;
             $senior->save();
 
-            Mail::to($senior->email)->send(new ResendCodeEmail($verificationCode, $expirationTime));
+            Mail::to($senior->email)->send(new SeniorResendCodeEmail($verificationCode, $expirationTime));
 
             return response()->json(['message' => 'A new verification code has been sent to your email.'], 200);
         }

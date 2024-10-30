@@ -112,8 +112,6 @@
                         <strong x-text="email"></strong>
                     </p>
 
-                    {{-------- cURRENT EMAIL ---- }}
-
                     {{-- @if(session('message'))
                         <p class="text-green-500 mt-4">{{ session('message') }}</p>
                     @endif --}}

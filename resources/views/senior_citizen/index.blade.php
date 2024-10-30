@@ -1,6 +1,6 @@
-@include('partials.header')
+@include('partials.senior_citizen.header')
 @php $array = array('title' => 'SPENDS') @endphp
-<x-nav :data="$array"/>
+<x-senior_nav :data="$array"/>
 
 <section class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background_seniors.jfif') }}'); background-attachment: fixed;">
     <div class="bg-white bg-opacity-50 min-h-screen flex items-center justify-center">
@@ -25,7 +25,7 @@
 
 
 <div x-data="{ showVerificationModal: {{ session('showVerificationModal') ? 'true' : 'false' }} }">
-    @include('components.modal.verify_your_email')
+    @include('components.modal.senior_citizen.verify_your_email')
 </div>
 
-@include('partials.footer')
+@include('partials.senior_citizen.footer')

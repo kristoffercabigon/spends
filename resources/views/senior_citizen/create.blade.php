@@ -1,6 +1,6 @@
-@include('partials.header')
+@include('partials.senior_citizen.header')
 @php $array = array('title' => 'SPENDS') @endphp
-<x-nav :data="$array"/>
+<x-senior_nav :data="$array"/>
 
 <section class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background_seniors.jfif') }}'); background-attachment: fixed;">
     <div class="bg-white bg-opacity-50 min-h-screen flex items-center justify-center font-poppins">
@@ -147,7 +147,7 @@
                                     @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                     placeholder="Select birthdate" readonly 
                                     value="{{ old('birthdate') }}" />
-                                <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none @error('birthdate') h-[90%] @elseif(old('birthdate')) h-[90%] @else h-[125%] @enderror">
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none @error('birthdate') h-[90%] @elseif(old('birthdate')) h-[90%] @else h-[125%] @enderror">
                                         <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-6 6h6m-8 0h.01M4 7h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
                                         </svg>
@@ -161,29 +161,40 @@
 
                             <div class="relative">
                                 <label class="text-sm mb-2 block 
-                                    @error('age') text-red-700 dark:text-red-500 
-                                    @elseif(old('age')) text-green-700 dark:text-green-500 
-                                    @else text-gray-800 @enderror">
+                                    @if($errors->has('age') || (old('age') && old('age') < 60)) 
+                                        text-red-700 dark:text-red-500 
+                                    @elseif(old('age') && old('age') >= 60) 
+                                        text-green-700 dark:text-green-500 
+                                    @else 
+                                        text-gray-800 
+                                    @endif">
                                     Age <span class="italic"> (Edad) </span>
                                 </label>
+
                                 <input name="age" type="text" id="age" value="{{ old('age') }}" 
                                     class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10 
-                                    @error('age') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                    @elseif(old('age')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
-                                    @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
+                                    @if($errors->has('age') || (old('age') && old('age') < 60)) 
+                                        bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
+                                    @elseif(old('age') && old('age') >= 60) 
+                                        bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                    @else 
+                                        bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 
+                                    @endif" 
                                     placeholder="Age" readonly />
-                                @if(old('age'))
+
+                                @if(old('age') && old('age') >= 60 && !$errors->has('age'))
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3 top-1/2 transform -translate-y-1/2">
                                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                         </svg>
                                     </span>
                                 @endif
-                                @error('age')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @elseif(old('age'))
+
+                                @if($errors->has('age') || (old('age') && old('age') < 60))
+                                    <p class="text-red-500 text-xs mt-2 p-1">The age must be 60 years old or above.</p>
+                                @elseif(old('age') && old('age') >= 60)
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @enderror
+                                @endif
                             </div>
 
                             <div class="relative">
@@ -348,14 +359,6 @@
                                         Enter your full home address. (House No., Street, Barangay, City/Municipality, Province)
                                     </div>
                                 </span>
-
-                                @if(old('address'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 top-1/2 transform -translate-y-1/2">
-                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                @endif
 
                                 @error('address')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
@@ -530,11 +533,9 @@
                                                 <td class="border border-gray-300 px-4 py-2">
                                                     <input type="text" name="relative_income[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter income" style="min-width: 150px;">
                                                 </td>
-                                                <td class="border border-gray-300 px-4 py-2 hidden" id="removeCell-0">
+                                                <td class="border border-gray-300 px-4 py-2 hidden flex items-center justify-center" id="removeCell-0">
                                                     <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                                            <path fill-rule="evenodd" d="M4 5a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm1 3a1 1 0 00-1 1v7a1 1 0 001 1h10a1 1 0 001-1v-7a1 1 0 00-1-1H5zm3 2a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm5 0a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                                        </svg>
+                                                        <img src="images/trashbin.png" alt="Delete" class="h-5 w-5" />
                                                     </button>
                                                 </td>
                                             </tr>
@@ -655,15 +656,20 @@
                                             If others, please specify: <span class="italic"> (Kung iba, pakitukoy:) </span>
                                         </label>
 
+                                        @php
+                                            $oldSource = old('source');
+                                            $isOtherSourceSelected = is_array($oldSource) && end($oldSource) == $sources->last()->id;
+                                        @endphp
+
                                         <input type="text"
                                             name="other_source_remark"
                                             id="other_source_remark"
                                             class="mt-4 bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all
-                                            {{ is_array(old('source')) && in_array(4, old('source')) ? '' : 'hidden' }}"
+                                            {{ $isOtherSourceSelected ? '' : 'hidden' }}"
                                             placeholder="Enter additional information"
                                             value="{{ old('other_source_remark') ?? '' }}"
                                             style="width: -webkit-fill-available;"
-                                            required="{{ is_array(old('source')) && in_array(4, old('source')) ? 'required' : '' }}">
+                                            {{ $isOtherSourceSelected ? 'required' : '' }}>
 
                                         @error('source')
                                             <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
@@ -672,12 +678,9 @@
                                         @error('other_source_remark')
                                             <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                         @enderror
+
                                     </div>
                                 </div>
-
-                                @if(old('pensioner'))
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @endif
                             </div>
 
                             <div class="relative md:col-span-4 sm:col-span-4">
@@ -745,7 +748,7 @@
                                             If yes, from what source? <span class="italic">(Kung oo, mula saan?)</span>
                                         </label>
 
-                                        <div class="flex flex-col md:flex-row md:flex-wrap">
+                                        <div class="flex flex-col md:flex-col mt-4 md:flex-wrap">
                                             @foreach($income_sources as $income_source)
                                                 <div class="flex items-center mb-2 md:mr-4">
                                                     <input type="checkbox"
@@ -759,6 +762,7 @@
                                                     <label for="{{ $income_source->id }}"
                                                         class="text-sm text-gray-800 @error('income_source') text-red-700 dark:text-red-500 @enderror">
                                                         {{ $income_source->where_income_source }}
+                                                        <span class="italic">{{ $income_source->where_income_source_examples }}</span>
                                                     </label>
                                                 </div>
                                             @endforeach
@@ -768,15 +772,20 @@
                                             If others, please specify: <span class="italic"> (Kung iba, pakitukoy:) </span>
                                         </label>
 
+                                        @php
+                                            $oldIncomeSource = old('income_source');
+                                            $isOtherIncomeSourceSelected = is_array($oldIncomeSource) && end($oldIncomeSource) == $income_sources->last()->id;
+                                        @endphp
+
                                         <input type="text"
                                             name="other_income_source_remark"
                                             id="other_income_source_remark"
                                             class="mt-4 bg-gray-100 focus:bg-transparent text-sm px-4 py-3 rounded-md transition-all
-                                            {{ is_array(old('income_source')) && in_array(9, old('income_source')) ? '' : 'hidden' }}"
+                                            {{ $isOtherIncomeSourceSelected ? '' : 'hidden' }}"
                                             placeholder="Enter additional information"
                                             value="{{ old('other_income_source_remark') ?? '' }}"
                                             style="width: -webkit-fill-available;"
-                                            required="{{ is_array(old('income_source')) && in_array(9, old('income_source')) ? 'required' : '' }}">
+                                            {{ $isOtherIncomeSourceSelected ? 'required' : '' }}>
 
                                         @error('income_source')
                                             <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
@@ -785,12 +794,10 @@
                                         @error('other_income_source_remark')
                                             <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                         @enderror
+                                        
                                     </div>
                                 </div>
 
-                                @if(old('permanent_source'))
-                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
-                                @endif
                                 @error('permanent_source')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @enderror
@@ -1004,7 +1011,7 @@
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
 
-                                @include('components.modal.validid_zoom')
+                                @include('components.modal.senior_citizen.validid_zoom')
                             </div>
                             
                             <div x-data="{
@@ -1070,8 +1077,8 @@
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
 
-                                @include('components.modal.register_camera')
-                                @include('components.modal.profilepic_zoom')
+                                @include('components.modal.senior_citizen.register_camera')
+                                @include('components.modal.senior_citizen.profilepic_zoom')
                             </div>
 
                             <div x-data="{
@@ -1123,7 +1130,7 @@
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
 
-                                @include('components.modal.indigency_zoom')
+                                @include('components.modal.senior_citizen.indigency_zoom')
                             </div>
 
                             <div x-data="{
@@ -1175,7 +1182,7 @@
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
 
-                                @include('components.modal.birthcertificate_zoom')
+                                @include('components.modal.senior_citizen.birthcertificate_zoom')
                             </div>
                         </div>
 
@@ -1407,6 +1414,7 @@
             }
         } else if (type === 'livingArrangement') {
             additionalInput = document.getElementById('other_arrangement_remark');
+
             if (value == 5) {
                 additionalInput.classList.remove('hidden');
                 additionalInput.setAttribute('required', 'required');
@@ -1417,13 +1425,15 @@
             }
         } else if (type === 'sourceslist') {
             additionalInput = document.getElementById('other_source_remark');
-            if (value == 4) {
+            const lastSourceId = {{ $sources->last()->id }};
+
+            if (value == lastSourceId) {
                 additionalInput.classList.remove('hidden');
                 additionalInput.setAttribute('required', 'required');
             } else {
                 additionalInput.classList.add('hidden');
                 additionalInput.removeAttribute('required');
-                additionalInput.value = ''; 
+                additionalInput.value = '';
             }
         }  else if (type === 'has_illness') {
             additionalInput = document.getElementById('if_illness_yes');
@@ -1455,7 +1465,9 @@
             }
         } else if (type === 'incomesourceslist') {
             additionalInput = document.getElementById('other_income_source_remark');
-            if (value == 9) {
+            const lastIncomeSourceId = {{ $income_sources->last()->id }};
+
+            if (value == lastIncomeSourceId) {
                 additionalInput.classList.remove('hidden');
                 additionalInput.setAttribute('required', 'required');
             } else {
@@ -1467,11 +1479,12 @@
     }
 
     function toggleCheckboxInputField() {
-        const sourceCheckbox = document.querySelector('input[name="source[]"][value="4"]');
+        const lastSourceId = {{ $sources->last()->id }};
+        const sourceCheckbox = document.querySelector(`input[name="source[]"][value="${lastSourceId}"]`);
         const additionalInput = document.getElementById('other_source_remark');
         const sourceLabel = document.getElementById('other_source_label');
 
-        if (sourceCheckbox.checked) {
+        if (sourceCheckbox && sourceCheckbox.checked) {
             additionalInput.classList.remove('hidden');
             sourceLabel.classList.remove('hidden');
             additionalInput.setAttribute('required', 'required');
@@ -1484,7 +1497,8 @@
     }
 
     function toggleCheckboxForIncomeSourceInputField() {
-        const incomeSourceCheckbox = document.querySelector('input[name="income_source[]"][value="9"]');
+        const lastIncomeSourceId = {{ $income_sources->last()->id }};
+        const incomeSourceCheckbox = document.querySelector(`input[name="income_source[]"][value="${lastIncomeSourceId}"]`);
         const additionalIncomeInput = document.getElementById('other_income_source_remark');
         const incomeSourceLabel = document.getElementById('other_income_source_label');
 
@@ -1506,13 +1520,15 @@
             toggleInputField(1, 'pensioner');
         }
 
-        const sourceCheckbox = document.querySelector('input[name="source[]"][value="4"]');
+        const lastSourceId = {{ $sources->last()->id }};
+        const sourceCheckbox = document.querySelector(`input[name="source[]"][value="${lastSourceId}"]`);
         if (sourceCheckbox) {
             sourceCheckbox.addEventListener('change', toggleCheckboxInputField);
             toggleCheckboxInputField();
         }
 
-        const incomeSourceCheckbox = document.querySelector('input[name="income_source[]"][value="9"]');
+        const lastIncomeSourceId = {{ $income_sources->last()->id }};
+        const incomeSourceCheckbox = document.querySelector(`input[name="income_source[]"][value="${lastIncomeSourceId}"]`);
         if (incomeSourceCheckbox) {
             incomeSourceCheckbox.addEventListener('change', toggleCheckboxForIncomeSourceInputField);
             toggleCheckboxForIncomeSourceInputField();
@@ -1570,11 +1586,9 @@
             <td class="border border-gray-300 px-4 py-2">
                 <input type="text" name="relative_income[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter income" style="min-width: 150px;">
             </td>
-            <td class="border border-gray-300 px-4 py-2">
+            <td class="border border-gray-300 px-4 py-2 hidden flex items-center justify-center" id="removeCell-${rowCount}">
                 <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4 5a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm1 3a1 1 0 00-1 1v7a1 1 0 001 1h10a1 1 0 001-1v-7a1 1 0 00-1-1H5zm3 2a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm5 0a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1z" clip-rule="evenodd" />
-                    </svg>
+                    <img src="images/trashbin.png" alt="Delete" class="h-5 w-5" />
                 </button>
             </td>
         </tr>
@@ -1593,10 +1607,15 @@
     function updateRemoveIconVisibility() {
         const tableBody = document.getElementById('familyTable').getElementsByTagName('tbody')[0];
         const rows = tableBody.getElementsByTagName('tr');
-        
+
+        const removeHeader = document.getElementById('remove-header');
+        removeHeader.style.display = rows.length > 1 ? '' : 'none';
+
         for (let i = 0; i < rows.length; i++) {
             const removeCell = rows[i].querySelector(`[id^='removeCell-']`);
-            removeCell.classList.toggle('hidden', rows.length <= 1);
+            if (removeCell) {
+                removeCell.classList.toggle('hidden', rows.length <= 1);
+            }
         }
     }
 
@@ -1717,4 +1736,4 @@
 
 </script>
 
-@include('partials.footer')
+@include('partials.senior_citizen.footer')

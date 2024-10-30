@@ -54,5 +54,5 @@
         </div>
     </div>
 
-    <x-modal.senior_login />
+    <x-modal.senior_citizen.senior_login />
 </nav>

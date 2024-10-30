@@ -6,23 +6,23 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ResendCodeEmail extends Mailable
+class SeniorVerificationEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $verificationCode;
-    public $expirationTime;
+    public $expirationTime; 
 
     /**
      * Create a new message instance.
      *
      * @param string $verificationCode
-     * @param \Illuminate\Support\Carbon $expirationTime
+     * @param \Carbon\Carbon $expirationTime 
      */
     public function __construct($verificationCode, $expirationTime)
     {
         $this->verificationCode = $verificationCode;
-        $this->expirationTime = $expirationTime; 
+        $this->expirationTime = $expirationTime;
     }
 
     /**
@@ -35,10 +35,10 @@ class ResendCodeEmail extends Mailable
         $logoPath = public_path('images/mail_cover.png');
 
         return $this->subject('Email Verification')
-            ->view('emails.resendcode')
+            ->view('emails.senior_citizen.verification')
             ->with([
                 'verificationCode' => $this->verificationCode,
-                'expirationTime' => $this->expirationTime, 
+                'expirationTime' => $this->expirationTime,
                 'logoPath' => $logoPath,
             ]);
     }

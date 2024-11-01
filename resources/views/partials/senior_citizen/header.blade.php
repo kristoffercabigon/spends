@@ -16,3 +16,5 @@
 </head>
 <body class="bg-white font-poppins min-h-screen pt-[80px]">
     <x-messages />
+    <x-error_messages />
+    

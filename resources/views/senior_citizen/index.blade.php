@@ -22,10 +22,12 @@
     </div>
 </section>
 
+@include('partials.senior_citizen.footer')
 
-
-<div x-data="{ showVerificationModal: {{ session('showVerificationModal') ? 'true' : 'false' }} }">
-    @include('components.modal.senior_citizen.verify_your_email')
+<div x-data="{ showPasswordResetModal: {{ json_encode(session('showPasswordResetModal', false)) }} || localStorage.getItem('showPasswordResetModal') === 'true' }"
+     x-init="showPasswordResetModal = showPasswordResetModal || localStorage.getItem('showPasswordResetModal') === 'true'">
+    @include('components.modal.senior_citizen.password_reset')
 </div>
 
-@include('partials.senior_citizen.footer')
+<x-modal 
+

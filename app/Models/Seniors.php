@@ -55,6 +55,8 @@ class Seniors extends Authenticatable
         'verification_code',
         'verified_at',
         'verification_expires_at',
+        'token',
+        'expiration',
     ];
 
     /**
@@ -75,6 +77,7 @@ class Seniors extends Authenticatable
     protected function casts(): array
     {
         return [
+            'expiration' => 'datetime',
             'verified_at' => 'datetime',
             'verification_expires_at' => 'datetime',
             'password' => 'hashed',

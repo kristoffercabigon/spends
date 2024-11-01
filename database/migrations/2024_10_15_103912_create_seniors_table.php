@@ -50,7 +50,7 @@ return new class extends Migration
             $table->dateTime('verification_expires_at')->nullable();
             $table->dateTime('verified_at')->nullable();
             $table->string('token')->nullable();
-            $table->string('expiration')->nullable();
+            $table->dateTime('expiration')->nullable();
             $table->timestamps();
         });
 

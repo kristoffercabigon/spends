@@ -1,4 +1,4 @@
-<nav x-data="{ open: false, showLoginModal: localStorage.getItem('showLoginModal') === 'true' }" class="bg-customGreen fixed h-[80px] w-full z-20 top-0 left-0 sm:px-4 text-white">
+<nav x-data="{ open: false, showLoginModal: localStorage.getItem('showLoginModal') === 'true' }" class="bg-customGreen fixed h-[80px] w-full z-20 top-0 left-0 sm:px-4 text-white shadow-2xl">
     <div class="container flex flex-wrap items-center h-full justify-between relative font-poppins">
         <a href="/" class="flex items-center">
             <img src="{{ asset('images/osca_image.jfif') }}" alt="Description of image" class="inline-block ml-4 md:ml-[48px] h-[60px] w-[60px] rounded-full object-cover" />
@@ -53,6 +53,14 @@
             </ul>
         </div>
     </div>
-
     <x-modal.senior_citizen.senior_login />
+
+    <div x-data="{ showForgotPasswordModal: localStorage.getItem('showForgotPasswordModal') === 'true' }" 
+        x-init="showForgotPasswordModal = localStorage.getItem('showForgotPasswordModal') === 'true'">
+        @include('components.modal.senior_citizen.forgot_password')
+    </div>
+
+    <div x-data="{ showVerificationModal: {{ session('showVerificationModal') ? 'true' : 'false' }} }">
+        @include('components.modal.senior_citizen.verify_your_email')
+    </div>
 </nav>

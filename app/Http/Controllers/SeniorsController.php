@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SeniorForgotPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -12,6 +13,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail; 
 use App\Mail\SeniorResendCodeEmail;
 use App\Mail\SeniorVerificationEmail;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
+
 
 class SeniorsController extends Controller
 {
@@ -325,7 +329,7 @@ class SeniorsController extends Controller
 
     public function showVerificationFormRegister()
     {
-        return redirect('/')->with([
+        return redirect(url()->previous())->with([
             'showVerificationModal' => true,
             'email' => session('email'),
             'code' => session('code'), 
@@ -355,12 +359,11 @@ class SeniorsController extends Controller
 
             session()->flash('message', 'Email verified successfully.');
 
-            return response()->json(['message' => 'Email verified successfully.', 'redirect' => '/'], 200);
+            return response()->json(['message' => 'Email verified successfully.', 'redirect' => url()->previous()], 200);
         }
 
         return response()->json(['error' => 'Invalid verification code.'], 400);
     }
-
 
     public function resendVerificationCode(Request $request)
     {
@@ -400,7 +403,17 @@ class SeniorsController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('message', 'Logout successful');
+        return redirect(url()->previous())->with('message', 'Logout successful');
+    }
+
+    public function showVerificationFormLogin()
+    {
+        return redirect(url()->previous())->with([
+            'showVerificationModal' => true,
+            'clearLoginModal' => true,
+            'email' => session('email'),
+            'error-message' => 'Login Failed. Verify your email first.'
+        ]);
     }
 
     public function login(Request $request)
@@ -425,7 +438,8 @@ class SeniorsController extends Controller
             return redirect()->route('verify-email-login')->with([
                 'email' => $senior_login->email,
                 'showVerificationModal' => true,
-                'showLoginModal' => false,
+                'clearLoginModal' => true, 
+                'error-message' => 'Login Failed. Verify your email first.',
             ]);
         }
 
@@ -436,17 +450,128 @@ class SeniorsController extends Controller
         FacadesAuth::login($senior_login);
         $request->session()->regenerate();
 
-        return redirect('/')->with('message', 'Welcome back!');
-    }
-
-
-    public function showVerificationFormLogin()
-    {
-        return redirect('/')->with([
-            'showVerificationModal' => true,
-            'showLoginModal' => false,
-            'email' => session('email'),
-            'message' => 'Login Failed. Verify your email first.'
+        return redirect(url()->previous())->with([
+            'message' => 'Welcome back!',
+            'clearLoginModal' => true, 
         ]);
     }
+
+    public function showForgotPassword()
+    {
+        return redirect(url()->previous())->with([
+            'showForgotPasswordModal' => true,
+        ]);
+    }
+
+    public function sendEmailForReset(Request $request)
+    {
+        $ResetMessages = [
+            'email.required' => 'Enter your email.',
+        ];
+
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+        ], $ResetMessages);
+
+        $senior_reset_password = Seniors::where('email', $validated['email'])->first();
+
+        if (!$senior_reset_password) {
+            return back()->withErrors(['email' => "This email doesn't exist."])->withInput(['email' => $validated['email']]);
+        }
+
+        $token = Str::random(30);
+        $expiresAt = now()->addHour();
+
+        $senior_reset_password->update([
+            'token' => $token,
+            'expiration' => $expiresAt,
+        ]);
+
+        $email = $senior_reset_password->email;
+
+        try {
+            Mail::to($email)->send(new SeniorForgotPassword($token, $expiresAt, $email));
+
+            return redirect(url()->previous())->with([
+                'message' => 'Reset token has been sent to your email.',
+                'clearForgotPasswordModal' => true,
+            ]);
+        } catch (\Exception $e) {
+            return back()->withErrors(['email' => 'Failed to send reset email. Please try again later.']);
+        }
+    }
+
+    public function showResetPasswordForm(Request $request)
+    {
+        $token = $request->query('token');
+        $email = $request->query('email');
+
+        $senior = Seniors::where('email', $email)->first();
+
+        if (!$senior || is_null($senior->token) && is_null($senior->expiration)) {
+            return redirect('/')->with([
+                'error-message' => 'This token has been used.'
+            ]);
+        }
+
+        if ($senior && $senior->expiration > now()) {
+            return redirect()->to('/?token=' . urlencode($token) . '&email=' . urlencode($email))->with([
+                'showPasswordResetModal' => true,
+                'savePasswordResetModal' => true,
+                'token' => $token,
+                'email' => $email
+            ]);
+        } else {
+            return redirect('/')->with([
+                'error-message' => 'Your token has expired. Request for reset link again.'
+            ]);
+        }
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:seniors,email',
+            'password' => [
+                'required',
+                'min:8',
+                'max:32',
+                'regex:/[A-Z]/',
+                'regex:/[a-z]/',
+                'regex:/[!@#$%^&*(),.?":{}|<>]/',
+                'confirmed',
+            ],
+        ], [
+            'email.required' => 'Email is required.',
+            'email.email' => 'Provide a valid email address.',
+            'email.exists' => 'This email is not registered.',
+            'password.required' => 'Password is required.',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.max' => 'Password cannot exceed 32 characters.',
+            'password.regex' => 'Include at least one uppercase letter, one lowercase letter, and one special character.',
+            'password.confirmed' => 'Password confirmation does not match.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $senior = Seniors::where('email', $request->input('email'))->first();
+        if ($senior) {
+            $senior->password = bcrypt($request->input('password'));
+            $senior->token = null;
+            $senior->expiration = null;
+            $senior->save();
+
+            return redirect('/')->with('message', 'Your password has been reset successfully.');
+        }
+
+        return redirect('/')->with([
+            'savePasswordResetModal' => true,
+            'error-message' => 'An error occurred while resetting your password. Please try again.'
+        ]);
+    }
+
 }

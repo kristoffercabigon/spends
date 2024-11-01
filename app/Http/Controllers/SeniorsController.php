@@ -244,7 +244,7 @@ class SeniorsController extends Controller
         $seniorData['date_applied'] = now();
 
         $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
-        $expirationTime = now()->addHour();
+        $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
 
         $seniorData['verification_code'] = $verificationCode;
         $seniorData['verification_expires_at'] = $expirationTime;
@@ -329,6 +329,12 @@ class SeniorsController extends Controller
 
     public function showVerificationFormRegister()
     {
+        if (!session()->has('email')) {
+            return redirect('/')->with([
+                'error-message' => 'Restricted Access.',
+            ]);
+        }
+
         return redirect(url()->previous())->with([
             'showVerificationModal' => true,
             'email' => session('email'),
@@ -382,7 +388,7 @@ class SeniorsController extends Controller
             }
 
             $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
-            $expirationTime = now()->addHour();
+            $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
 
             $senior->verification_code = $verificationCode;
             $senior->verification_expires_at = $expirationTime;
@@ -408,6 +414,12 @@ class SeniorsController extends Controller
 
     public function showVerificationFormLogin()
     {
+        if (!session()->has('email')) {
+            return redirect('/')->with([
+                'error-message' => 'Restricted Access.',
+            ]);
+        }
+
         return redirect(url()->previous())->with([
             'showVerificationModal' => true,
             'clearLoginModal' => true,
@@ -415,6 +427,7 @@ class SeniorsController extends Controller
             'error-message' => 'Login Failed. Verify your email first.'
         ]);
     }
+
 
     public function login(Request $request)
     {
@@ -480,7 +493,7 @@ class SeniorsController extends Controller
         }
 
         $token = Str::random(30);
-        $expiresAt = now()->addHour();
+        $expiresAt = now()->addHour()->setTimezone('Asia/Manila');
 
         $senior_reset_password->update([
             'token' => $token,
@@ -508,24 +521,26 @@ class SeniorsController extends Controller
 
         $senior = Seniors::where('email', $email)->first();
 
-        if (!$senior || is_null($senior->token) && is_null($senior->expiration)) {
+        if (!$senior) {
             return redirect('/')->with([
-                'error-message' => 'This token has been used.'
+                'error-message' => 'Restricted Access.',
+                'removePasswordResetModal' => true
             ]);
         }
 
-        if ($senior && $senior->expiration > now()) {
-            return redirect()->to('/?token=' . urlencode($token) . '&email=' . urlencode($email))->with([
-                'showPasswordResetModal' => true,
-                'savePasswordResetModal' => true,
-                'token' => $token,
-                'email' => $email
-            ]);
-        } else {
+        if ($senior->expiration <= now()) {
             return redirect('/')->with([
-                'error-message' => 'Your token has expired. Request for reset link again.'
+                'error-message' => 'Your token has expired. Request for reset link again.',
+                'removePasswordResetModal' => true
             ]);
         }
+
+        return redirect()->to('/?token=' . urlencode($token) . '&email=' . urlencode($email))->with([
+            'showPasswordResetModal' => true,
+            'savePasswordResetModal' => true,
+            'token' => $token,
+            'email' => $email
+        ]);
     }
 
     public function resetPassword(Request $request)
@@ -548,30 +563,36 @@ class SeniorsController extends Controller
             'password.required' => 'Password is required.',
             'password.min' => 'Password must be at least 8 characters.',
             'password.max' => 'Password cannot exceed 32 characters.',
-            'password.regex' => 'Include at least one uppercase letter, one lowercase letter, and one special character.',
+            'password.regex' => 'Include uppercase, lowercase letter and symbol.',
             'password.confirmed' => 'Password confirmation does not match.',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
-                ->withInput();
+                ->withInput()
+                ->with('email', $request->input('email'));
         }
 
         $senior = Seniors::where('email', $request->input('email'))->first();
+
         if ($senior) {
             $senior->password = bcrypt($request->input('password'));
             $senior->token = null;
             $senior->expiration = null;
             $senior->save();
 
-            return redirect('/')->with('message', 'Your password has been reset successfully.');
+            return redirect('/')->with([
+                'message' => 'Your password has been reset successfully.',
+                'removePasswordResetModal' => true
+            ]);
         }
 
-        return redirect('/')->with([
+        return redirect()->route('reset-password')->with([
             'savePasswordResetModal' => true,
+            'email' => $request->input('email'),
+            'token' => $request->input('token'),
             'error-message' => 'An error occurred while resetting your password. Please try again.'
         ]);
     }
-
 }

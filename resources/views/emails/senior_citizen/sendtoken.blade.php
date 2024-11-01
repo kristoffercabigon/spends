@@ -25,7 +25,7 @@
             <div style="background-color: #fff; padding: 20px; text-align: center;">
                 <h1 class="text-2xl font-bold text-gray-900 text-center mb-4">Password Reset</h1>
                 <p style="font-size: 18px; color: #4a5568; margin-bottom: 24px;">
-                    This is the link to reset your password:
+                    This is your token to reset your password:
                 </p>
                 <div class="flex items-center justify-center mb-6">
                     <a href="http://localhost:8000/reset-password?token={{ $token }}&email={{ urlencode($email) }}" style="display: inline-block; max-width: 50%; background-color: #ff4802; color: white; padding: 10px 20px; border-radius: 5px; font-size: 25px; text-decoration: none; font-weight: bold; overflow-wrap: break-word;">

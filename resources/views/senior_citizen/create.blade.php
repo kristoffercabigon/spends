@@ -640,7 +640,7 @@
                                                         name="source[]"
                                                         value="{{ $source->id }}"
                                                         id="{{ $source->id }}"
-                                                        class="mr-2 shadow-md"
+                                                        class="mr-2 shadow-md source-checkbox"
                                                         {{ is_array(old('source')) && in_array($source->id, old('source')) ? 'checked' : '' }}
                                                         onclick="toggleCheckboxInputField()">
 
@@ -683,7 +683,7 @@
                                 </div>
                             </div>
 
-                            <div class="relative md:col-span-4 sm:col-span-4">
+                            <div class="relative md:col-span-4 sm:col-span-4"> 
                                 <label class="text-sm mb-2 block 
                                     @error('permanent_source') text-red-700 dark:text-red-500 
                                     @elseif(old('permanent_source')) text-green-700 dark:text-green-500 
@@ -713,7 +713,7 @@
                                             id="permanent_no" 
                                             class="mr-2 shadow-md" 
                                             {{ old('permanent_source') === '0' ? 'checked' : '' }}
-                                            onclick="toggleInputField(0, 'permanent_source')" >
+                                            onclick="toggleInputField(0, 'permanent_source')">
                                         <label for="permanent_no" 
                                             class="text-sm text-gray-800 @error('permanent_source') text-red-700 dark:text-red-500 @enderror">
                                             No
@@ -722,7 +722,7 @@
                                 </div>
 
                                 <div class="md:grid grid-cols-1 md:grid-cols-4 gap-8 mt-1">
-                                    
+
                                     <div class="md:col-span-2 text-gray-800 relative">
                                         <label id="permanent_income_label" class="text-sm mt-4 mb-2 block {{ old('permanent_source') == 1 ? '' : 'hidden' }}">
                                             If yes, how much income? <span class="italic"> (Kung oo, magkano and iyong kinikita?) </span>
@@ -755,7 +755,7 @@
                                                         name="income_source[]"
                                                         value="{{ $income_source->id }}"
                                                         id="{{ $income_source->id }}"
-                                                        class="mr-2 shadow-md"
+                                                        class="mr-2 shadow-md income-source-checkbox"
                                                         {{ is_array(old('income_source')) && in_array($income_source->id, old('income_source')) ? 'checked' : '' }}
                                                         onclick="toggleCheckboxForIncomeSourceInputField()">
 
@@ -768,7 +768,7 @@
                                             @endforeach
                                         </div>
 
-                                        <label id="other_income_source_label" class="text-sm text-gray-800 mt-4 mb-2 block {{ is_array(old('income_source')) && in_array(9, old('income_source')) ? '' : 'hidden' }}">
+                                        <label id="other_income_source_label" class="text-sm text-gray-800 mt-4 mb-2 block {{ is_array(old('income_source')) && in_array($income_sources->last()->id, old('income_source')) ? '' : 'hidden' }}">
                                             If others, please specify: <span class="italic"> (Kung iba, pakitukoy:) </span>
                                         </label>
 
@@ -790,11 +790,9 @@
                                         @error('income_source')
                                             <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                         @enderror
-
                                         @error('other_income_source_remark')
                                             <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                         @enderror
-                                        
                                     </div>
                                 </div>
 
@@ -1237,8 +1235,8 @@
                                             placeholder="Enter password" id="passwordField" oninput="updatePasswordCriteria(this.value)"/>
 
                                         <button class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-12 hover:bg-gray-600 @error('password') h-[27%]  @else h-[33%] @enderror" 
-                                            type="button" onclick="togglePassword('passwordField', 'togglePasswordIcon')">
-                                            <img src="../images/hide.png" alt="Show Password" class="eye-icon w-7 h-7" id="togglePasswordIcon">
+                                            type="button" onclick="togglePassword('passwordField', 'togglePasswordIcon1')">
+                                            <img src="../images/hide.png" alt="Show Password" class="eye-icon w-7 h-7" id="togglePasswordIcon1">
                                         </button>
                                     </div>
 
@@ -1382,6 +1380,7 @@
             additionalInput = document.getElementById('if_pensioner_yes');
             const pensionerLabel = document.getElementById('pensioner_label');
             const sourceList = document.getElementById('source_list');
+            const checkboxes = document.querySelectorAll(".source-checkbox");
 
             if (value == 1) { 
                 additionalInput.classList.remove('hidden');
@@ -1393,12 +1392,17 @@
                 pensionerLabel.classList.add('hidden');
                 additionalInput.removeAttribute('required');
                 sourceList.classList.add('hidden');
-                additionalInput.value = ''; 
+                additionalInput.value = '';
+
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
             }
         } else if (type === 'permanent_source') {
             additionalIncomeInput = document.getElementById('if_permanent_yes_income');
             const permanentIncomeLabel = document.getElementById('permanent_income_label');
             const incomeSourceList = document.getElementById('income_source_list');
+            const checkboxes = document.querySelectorAll(".income-source-checkbox");
 
             if (value == 1) {
                 additionalIncomeInput.classList.remove('hidden');
@@ -1410,7 +1414,11 @@
                 permanentIncomeLabel.classList.add('hidden');
                 additionalIncomeInput.removeAttribute('required');
                 incomeSourceList.classList.add('hidden');
-                additionalIncomeInput.value = ''; 
+                additionalIncomeInput.value = '';
+
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
             }
         } else if (type === 'livingArrangement') {
             additionalInput = document.getElementById('other_arrangement_remark');

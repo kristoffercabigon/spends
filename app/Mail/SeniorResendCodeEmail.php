@@ -34,7 +34,7 @@ class SeniorResendCodeEmail extends Mailable
     {
         $logoPath = public_path('images/mail_cover.png');
 
-        return $this->subject('Email Verification')
+        return $this->subject('Resend Verification Code')
             ->view('emails.senior_citizen.resendcode')
             ->with([
                 'verificationCode' => $this->verificationCode,

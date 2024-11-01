@@ -38,7 +38,7 @@
                             <input type="password" name="password" id="password" placeholder="••••••••" 
                                 class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             
-                            <button class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 mt-[10%] h-[65%] hover:bg-gray-200" 
+                            <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 @error('password') mt-[10%] h-[48%] right-[-2px] top-[1px] @else mt-[10%] h-[66%] right-[-2px] top-[-1px] @enderror hover:bg-gray-600" 
                                 type="button" onclick="togglePassword('password', 'togglePasswordIcon')">
                                 <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5" id="togglePasswordIcon">
                             </button>
@@ -68,7 +68,14 @@
                         </div>
                         <button type="submit" class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
                         <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                            Don’t have an account yet? <a href="/register" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</a>
+                            Don’t have an account yet? 
+                            <a @click.prevent="
+                                localStorage.setItem('showLoginModal', 'false');
+                                window.location.href = '/register';
+                            " 
+                            class="font-medium text-primary-600 hover:underline dark:text-primary-500 cursor-pointer">
+                                Sign up
+                            </a>
                         </p>
                     </form>
                 </div>

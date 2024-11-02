@@ -16,7 +16,6 @@ use App\Mail\SeniorVerificationEmail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
-
 class SeniorsController extends Controller
 {
     public function index()
@@ -70,6 +69,7 @@ class SeniorsController extends Controller
             'address.required' => 'Address is required.',
             'address.min' => 'Full address needed, press the (i) icon to see the needed info.',
             'address.max' => 'Address cannot exceed 100 characters.',
+            'address.regex' => 'Please include Caloocan city in your address.',
             'barangay_id.required' => 'Barangay is required.',
             'email.required' => 'Email is required.',
             'email.email' => 'Email must be a valid email address.',
@@ -120,7 +120,7 @@ class SeniorsController extends Controller
             "sex_id" => ['required'],
             "civil_status_id" => ['required'],
             "contact_no" => ['required'],
-            "address" => ['required', 'min:20', 'max:100'],
+            "address" => ['required', 'min:20', 'max:100', 'regex:/\bCaloocan\b/i'],
             "barangay_id" => ['required'],
             "email" => ['required', 'email', Rule::unique('seniors', 'email')],
             "password" => [
@@ -176,6 +176,7 @@ class SeniorsController extends Controller
         $seniorData = $validated;
         unset($seniorData['source'], $seniorData['other_source_remark']);
         unset($seniorData['income_source'], $seniorData['other_income_source_remark']);
+        unset($seniorData['confirm-checkbox']);
         unset($seniorData['g-recaptcha-response']);
 
         do {
@@ -434,11 +435,24 @@ class SeniorsController extends Controller
         $loginMessages = [
             'email.required' => 'Enter your email.',
             'password.required' => 'Enter your password.',
+            'g-recaptcha-response' => 'Recaptcha field is required'
         ];
 
         $validated = $request->validate([
             'email' => ['required', 'email'],
             'password' => 'required',
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
+
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
+
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
         ], $loginMessages);
 
         $senior_login = Seniors::where('email', $validated['email'])->first();
@@ -524,6 +538,13 @@ class SeniorsController extends Controller
         if (!$senior) {
             return redirect('/')->with([
                 'error-message' => 'Restricted Access.',
+                'removePasswordResetModal' => true
+            ]);
+        }
+
+        if (is_null($senior->token) || is_null($senior->expiration)) {
+            return redirect('/')->with([
+                'error-message' => 'This token has been used.',
                 'removePasswordResetModal' => true
             ]);
         }

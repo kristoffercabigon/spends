@@ -3,13 +3,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* INDENT FOR DATA PRIVACY */
+
 .text-indent {
     text-indent: 2em;
 }
 
+/* TOOLTIP FOR ADDRESS IN REGISTER */
+
 #tooltip-text {
     transition: opacity 0.2s ease-in-out;
 }
+
+ /* CALENDAR FOR REGISTER */
 
 .flatpickr-calendar {
     border-color: #f97316; 
@@ -31,3 +37,4 @@
 .flatpickr-day:hover {
     background-color: #fdba74; 
 }
+

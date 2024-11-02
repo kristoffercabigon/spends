@@ -18,7 +18,10 @@
                 </h1>
                 <div class="col">
                     <div class="col-md-6">
-                        <div id="my_camera"></div>
+                        <div class="relative w-full h-auto">
+                            <div id="my_camera" class="w-full h-auto"></div>
+                            <img src="images/silhoutte.png" alt="Person Silhouette" class="absolute inset-0 w-full h-full opacity-50 pointer-events-none z-10">
+                        </div>
                         <br/>
                         <div class="flex justify-center">
                             <button type="button" class="flex items-center justify-center mb-6 w-16 h-16 bg-gray-500 rounded-full hover:bg-gray-300 transition" onClick="take_snapshot()">
@@ -38,6 +41,18 @@
                         <div class="mt-4">
                         <span id="error-message" class="text-red-500 hidden">Take a picture first</span>
                         </div>
+                            <div class="flex items-center">
+                                <img src="images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-4"> 
+                                <p class="mt-2 text-left">
+                                    Note: Make sure the face is in silhouette and the personal photo is taken on a clean PLAIN WHITE BACKGOUND. Wear proper clothes ( Polo shirt, T-shirt, Blouse ).
+                                </p>
+                            </div>
+                            <div class="flex items-center">
+                                <img src="images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-4"> 
+                                <p class="mt-2 text-left italic">
+                                    Paalala: Siguraduhing pasok ang mukha sa silhouette at nasa malinis na PLAIN WHITE BACKGOUND ang pagkakuha ng personal na litrato. Magsuot ng maayos na damit ( Polo shirt, T-shirt, Blouse ). 
+                                </p>
+                            </div>
                         <br/>
                         <button class="py-3 px-6 w-full md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none" type="button" onclick="useCapturedPhoto()">Use this photo</button>
                     </div>

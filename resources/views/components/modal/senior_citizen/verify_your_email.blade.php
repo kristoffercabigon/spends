@@ -112,10 +112,6 @@
                         <strong x-text="email"></strong>
                     </p>
 
-                    {{-- @if(session('message'))
-                        <p class="text-green-500 mt-4">{{ session('message') }}</p>
-                    @endif --}}
-
                     <div x-data="{ verifyStatusMessage: '', isLoadingVerify: false }">
                         <form @submit.prevent="verifyCode">
                             @csrf

@@ -49,8 +49,26 @@ document.addEventListener("DOMContentLoaded", function () {
             ctx.lineWidth = 4;
         }
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas(); 
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        function checkContentVisibility() {
+            const content2 = document.getElementById("content2");
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.target.style.display === "block") {
+                        resizeCanvas(); 
+                        loadSignature(); 
+                    }
+                });
+            });
+            observer.observe(content2, {
+                attributes: true,
+                attributeFilter: ["style"],
+            });
+        }
+
+        checkContentVisibility(); 
 
         function loadSignature() {
             var savedSignature = localStorage.getItem("signature");
@@ -87,7 +105,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             return { x: x, y: y };
         }
-
 
         function getTouchPos(canvasDom, touchEvent) {
             var rect = canvasDom.getBoundingClientRect();
@@ -155,8 +172,8 @@ document.addEventListener("DOMContentLoaded", function () {
             function (e) {
                 if (drawing) {
                     mousePos = getMousePos(canvas, e);
-                    renderCanvas(); 
-                    lastPos = mousePos; 
+                    renderCanvas();
+                    lastPos = mousePos;
                 }
             },
             false
@@ -178,8 +195,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 e.preventDefault();
                 if (drawing) {
                     mousePos = getTouchPos(canvas, e);
-                    renderCanvas(); 
-                    lastPos = mousePos; 
+                    renderCanvas();
+                    lastPos = mousePos;
                 }
             },
             false
@@ -205,6 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             false
         );
+
         document.body.addEventListener(
             "touchend",
             function (e) {
@@ -214,6 +232,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             false
         );
+
         document.body.addEventListener(
             "touchmove",
             function (e) {
@@ -258,6 +277,7 @@ document.addEventListener("DOMContentLoaded", function () {
         loadSignature();
     })();
 
+
     const firstNameInput = document.getElementById("first_name");
     const middleNameInput = document.getElementById("middle_name");
     const lastNameInput = document.getElementById("last_name");
@@ -292,5 +312,4 @@ document.addEventListener("DOMContentLoaded", function () {
     suffixInput.addEventListener("input", updateFullName);
 
     document.addEventListener("DOMContentLoaded", updateFullName);
-
 });

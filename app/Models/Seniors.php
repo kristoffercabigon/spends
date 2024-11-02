@@ -18,6 +18,8 @@ class Seniors extends Authenticatable
      * @var array<int, string>
      */
 
+    protected $guard = 'Seniors';
+
     protected $fillable = [
         'osca_id',
         'nscs_rrn',

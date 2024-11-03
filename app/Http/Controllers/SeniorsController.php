@@ -465,7 +465,7 @@ class SeniorsController extends Controller
             return redirect()->route('verify-email-login')->with([
                 'email' => $senior_login->email,
                 'showVerificationModal' => true,
-                'clearLoginModal' => true, 
+                'clearLoginModal' => true,
                 'error-message' => 'Login Failed. Verify your email first.',
             ]);
         }
@@ -477,9 +477,11 @@ class SeniorsController extends Controller
         FacadesAuth::login($senior_login);
         $request->session()->regenerate();
 
+        $request->session()->put('senior', $senior_login);
+
         return redirect(url()->previous())->with([
             'message' => 'Welcome back!',
-            'clearLoginModal' => true, 
+            'clearLoginModal' => true,
         ]);
     }
 

@@ -38,3 +38,16 @@
     background-color: #fdba74; 
 }
 
+/* HAMBURGER ICON */
+
+@media (max-width: 900px) {
+    .hidden-at-900 {
+        display: none;
+    }
+}
+
+@media (min-width: 901px) {
+    .show-at-900 {
+        display: block; 
+    }
+}

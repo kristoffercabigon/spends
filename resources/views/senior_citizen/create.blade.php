@@ -6,34 +6,130 @@
     <div class="bg-white bg-opacity-50 min-h-screen flex items-center justify-center font-poppins">
         <div class="w-full max-w-7xl mx-auto font-[sans-serif]">
             <div class="mx-4">
-                <div class="bg-white mt-4 shadow-lg rounded-md mb-5 sm:mb-5">
-                    <ul class="relative mt-2 flex flex-row mx-[10%] md:flex-row justify-center items-center py-2 md:gap-x-8 mx-[20%] md:mx-[30%]">
-                        <li id="navstep1" class="flex flex-col items-center gap-y-2 group">
-                            <span class="min-w-7 min-h-7 inline-flex items-center justify-center text-xs align-middle">
-                                <span class="size-7 flex justify-center items-center bg-gray-100 font-medium text-gray-800 rounded-full group-focus:bg-gray-200" id="step1">
-                                    <span id="step1text">1</span>
-                                </span>
-                            </span>
-                            <span class="text-sm font-medium text-gray-800">Requirements</span>
-                        </li>
+                <div class="bg-white mt-4 shadow-lg rounded-md mb-5 sm:mb-5 relative">
+                    <div id="progressLeft" class="absolute top-[35%] left-0 h-[2px] z-0 transform -translate-y-1/2 bg-gray-500" style="width: 50%;"></div>
+                    <div id="progressRight" class="absolute top-[35%] left-1/2 h-[2px] z-0 transform -translate-y-1/2 bg-gray-500" style="width: 50%;"></div>
 
-                        <div class="w-full h-px bg-gray-500 flex-1"></div>
-
-                        <li id="navstep2" class="flex flex-col items-center gap-y-2 group">
-                            <span class="min-w-7 min-h-7 inline-flex items-center justify-center text-xs align-middle">
-                                <span class="size-7 flex justify-center items-center bg-gray-100 font-medium text-gray-800 rounded-full group-focus:bg-gray-200" id="step2">
-                                    <span id="step2text">2</span>
+                    <ul class="grid grid-cols-2 mx-auto py-2 gap-x-4 md:gap-x-8 w-[100%] relative z-10">
+                        <div class="flex flex-col items-center gap-y-2">
+                            <li id="navstep1" class="flex flex-col items-center gap-y-2 group">
+                                <span class="min-w-7 min-h-7 inline-flex items-center justify-center text-s align-middle">
+                                    <span class="size-9 flex justify-center items-center bg-gray-100 font-medium text-gray-800 shadow-md rounded-full group-focus:bg-gray-200" id="step1">
+                                        <span id="step1text">1</span>
+                                    </span>
                                 </span>
-                            </span>
-                            <span class="text-sm font-medium text-gray-800 dark:text-neutral-200 text-center">Registration</span>
-                        </li>
+                                <span class="text-sm font-medium text-gray-800">Requirements</span>
+                            </li>
+                        </div>
+
+                        <div class="flex flex-col items-center gap-y-2">
+                            <li id="navstep2" class="flex flex-col items-center gap-y-2 group">
+                                <span class="min-w-7 min-h-7 inline-flex items-center justify-center text-s align-middle">
+                                    <span class="size-9 flex justify-center items-center bg-gray-100 font-medium text-gray-800 shadow-md rounded-full group-focus:bg-gray-200" id="step2">
+                                        <span id="step2text">2</span>
+                                    </span>
+                                </span>
+                                <span class="text-sm font-medium text-gray-800 dark:text-neutral-200 text-center">Registration</span>
+                            </li>
+                        </div>
                     </ul>
                 </div>
                 <div class="mt-8 sm:mt-8">
                     <div id="content1">
                         <div class="max-h-[80vh] shadow-lg mt-[-17px] overflow-y-auto">
                             <div class="w-full bg-white sm:pt-2 px-12 py-10 rounded-md">
+                                <div class="text-2xl font-bold mt-[15px] mb-6 leading-tight tracking-tight text-gray-900 md:text-2xl">
+                                    <p class="mx-4 text-center">
+                                        Requirements <span class="italic">(Mga Kinakailangan)</span>
+                                    </p>
+                                </div>
 
+                                <hr class="my-8 border-0 h-0.5 bg-gradient-to-r from-transparent via-[#1AA514] to-transparent">
+
+                                <div class="bg-gray-100 border border-gray-300 p-6 rounded-md mt-6">
+                                    <p id="requirement1" class="font-semibold text-lg text-red-600 mb-4">NEW APPLICATION:</p>
+                                    <p class="text-gray-700 mb-4">(Bagong senior citizen, wala pang senior citizen ID mula sa Caloocan o ibang lugar)</p>
+
+                                    <ol class="list-decimal list-inside space-y-3 text-gray-700 mb-[24px]">
+                                        <li class="font-semibold">1x1 (1 piraso)</li>
+                                        <li class="font-semibold">Isang (1) kopya ng Birth Certificate, dalhin rin ang orihinal na kopya nito</li>
+                                        <li class="font-semibold">Isang (1) kopya ng valid ID na may (Caloocan address) tulad ng:
+                                            <ul class="list-disc list-inside pl-5 font-light">
+                                                <li>Philippine Passport</li>
+                                                <li>Driver's License</li>
+                                                <li>UMID Card</li>
+                                                <li>Voter's ID</li>
+                                                <li>Philhealth ID</li>
+                                                <li>Postal ID</li>
+                                                <li>OFW ID</li>
+                                                <li>National ID</li>
+                                            </ul>
+                                        </li>
+                                        <li class="font-semibold">Orihinal na dokumento ng ALINMAN sa mga sumusunod:
+                                            <ul class="list-disc list-inside pl-5 font-light">
+                                                <li>Barangay Certification</li>
+                                                <li>Certificate of Residency</li>
+                                                <li>Barangay Indigency for Senior Citizen Application Purposes</li>
+                                            </ul>
+                                        </li>
+                                    </ol>
+
+                                    <p id="requirement2" class="font-semibold text-lg text-red-600 mb-4">KARAGDAGANG DOKUMENTO:</p>
+                                    <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                                        <li class="font-semibold">Kung babaeng ikinasal,
+                                            <ul class="list-disc list-inside pl-5 space-y-2 font-light">
+                                                <li>Isang (1) kopya ng Marriage Certificate, dalhin rin ang orihinal na kopya nito.</li>
+                                            </ul>
+                                        </li>
+                                        <li class="font-semibold">Kung dual citizen/hindi ipinanganak na Pilipino,
+                                            <ul class="list-disc list-inside pl-5 space-y-2 font-light">
+                                                <li>Identification Certificate mula sa Bureau of Immigration o anumang katibayan ng Filipino citizenship o re-acquisition of citizenship mula sa Philippine Embassy.</li>
+                                            </ul>
+                                        </li>
+                                    </ol>
+                                </div>
+
+                                <div class="bg-gray-100 border border-gray-300 p-6 rounded-md mt-6">
+                                    <p id="requirement3" class="font-semibold text-lg text-red-600 mb-4">REPLACEMENT ID (Pagpapapalit)</p>
+                                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                                        <li class="font-semibold">Lumang senior citizen ID (orihinal)</li>
+                                    </ol>
+                                </div>
+
+                                <div class="bg-gray-100 border border-gray-300 p-6 rounded-md mt-6">
+                                    <p id="requirement4" class="font-semibold text-lg text-red-600 mb-4">IF MARRIED (Kung ikinasal)</p>
+                                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                                        <li class="font-semibold">Lumang senior citizen ID (orihinal)</li>
+                                        <li class="font-semibold">Isang (1) kopya ng Marriage Certificate, dalhin rin ang orihinal na kopya nito</li>
+                                    </ol>
+                                </div>
+
+                                <div class="bg-gray-100 border border-gray-300 p-6 rounded-md mt-6">
+                                    <p id="requirement5" class="font-semibold text-lg text-red-600 mb-4">IF CHANGE ADDRESS</p>
+                                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                                        <li class="font-semibold">Lumang senior citizen ID (orihinal)</li>
+                                        <li class="font-semibold">Certificate of Residency mula sa kasalukuyang Barangay</li>
+                                    </ol>
+                                </div>
+
+                                <div class="bg-gray-100 border border-gray-300 p-6 rounded-md mt-6">
+                                    <p id="requirement6" class="font-semibold text-lg text-red-600 mb-4">LOST ID (Nawala)</p>
+                                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                                        <li class="font-semibold">Kung PVC ang nawala:
+                                            <ul class="list-disc list-inside pl-5 space-y-2 font-light">
+                                                <li>Affidavit of Loss</li>
+                                            </ul>
+                                        </li>
+                                        <li class="font-semibold">Kung lumang senior ID ang nawala:
+                                            <ul class="list-disc list-inside pl-5 space-y-2 font-light">
+                                                <li>Isang (1) kopya of Birth Certificate, dalhin rin ang orihinal na kopya nito</li>
+                                                <li>Isang (1) kopya ng Valid ID (Caloocan Address)</li>
+                                                <li>Affidavit of Loss</li>
+                                                <li>Senior Citizen Booklet</li>
+                                            </ul>
+                                        </li>
+                                    </ol>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -41,11 +137,13 @@
                         <div class="md:max-h-[80vh] shadow-lg mt-[-17px] overflow-y-auto">
                             <form id="form" action="/store" enctype="multipart/form-data" method="POST" class="w-full bg-white sm:pt-2 px-12 py-10 rounded-md">
                                 @csrf
-                                <div class="text-2xl font-bold mt-[15px] mb-6 leading-tight tracking-tight text-gray-900 md:text-2xl">
+                                <div class="text-2xl font-bold mt-[15px] leading-tight tracking-tight text-gray-900 md:text-2xl">
                                     <p class="mx-4 text-center">
                                         Registration Form
                                     </p>
                                 </div>
+
+                                <hr class="my-8 border-0 h-0.5 bg-gradient-to-r from-transparent via-[#1AA514] to-transparent">
 
                                 <div class="text-xl font-bold mt-8 mb-6 leading-tight tracking-tight text-gray-900 md:text-xl">
                                     <p class="text-left">
@@ -1799,15 +1897,12 @@
     let currentStep = localStorage.getItem('currentStep') ? parseInt(localStorage.getItem('currentStep')) : 1; 
     let scrollPosition = localStorage.getItem('scrollPosition') ? parseInt(localStorage.getItem('scrollPosition')) : 0;
 
-    // Set the scroll position on page load
     window.scrollTo(0, scrollPosition);
 
-    // Function to save scroll position
     function saveScrollPosition() {
         localStorage.setItem('scrollPosition', window.scrollY);
     }
 
-    // Save scroll position on every scroll
     window.addEventListener('scroll', saveScrollPosition);
 
     function updateButtonVisibility() {
@@ -1823,18 +1918,29 @@
         const step2 = document.getElementById('step2');
         const step1text = document.getElementById('step1text');
         const step2text = document.getElementById('step2text');
+        const progressLeft = document.getElementById('progressLeft');
+        const progressRight = document.getElementById('progressRight');
 
-        step1.style.backgroundColor = '#E5E7EB'; 
-        step2.style.backgroundColor = '#E5E7EB'; 
-        step1text.style.color = '#000000';
-        step2text.style.color = '#000000';
+
+        step1.style.backgroundColor = '#A1A1AA'; 
+        step2.style.backgroundColor = '#A1A1AA'; 
+        step1text.style.color = '#fff';
+        step2text.style.color = '#fff';
+        progressLeft.style.backgroundColor = '#A1A1AA';
+        progressRight.style.backgroundColor = '#A1A1AA';
 
         if (currentStep === 1) {
             step1.style.backgroundColor = '#FF4802';
             step1text.style.color = '#fff';  
+            progressLeft.style.width = '50%'; 
+            progressLeft.style.backgroundColor = '#FF4802';
         } else if (currentStep === 2) {
+            step1.style.backgroundColor = '#FF4802';
             step2.style.backgroundColor = '#FF4802';
             step2text.style.color = '#fff'; 
+            progressLeft.style.width = '50%';
+            progressLeft.style.backgroundColor = '#FF4802';
+            progressRight.style.backgroundColor = '#FF4802';
         }
     }
 

@@ -34,6 +34,12 @@ document.addEventListener("DOMContentLoaded", function () {
         })();
 
         var canvas = document.getElementById("sig-canvas");
+
+        if (!canvas) {
+            console.warn("Canvas element not found. Exiting script.");
+            return;
+        }
+
         var ctx = canvas.getContext("2d");
         ctx.strokeStyle = "#222222";
         ctx.lineWidth = 4;

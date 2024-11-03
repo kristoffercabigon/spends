@@ -1,5 +1,9 @@
-<nav x-data="{ open: false, showLoginModal: localStorage.getItem('showLoginModal') === 'true' }" class="bg-customGreen fixed h-[80px] w-full z-20 top-0 left-0 sm:px-4 text-white shadow-2xl">
-    <div class="container flex flex-wrap items-center h-full justify-between relative font-poppins">
+@php
+    $senior = session('senior'); 
+@endphp
+
+<nav x-data="{ open: false, dropdownOpen: false, showLoginModal: localStorage.getItem('showLoginModal') === 'true' }" class="bg-customGreen fixed h-[80px] w-full z-20 top-0 left-0 sm:px-4 text-white shadow-2xl">
+    <div class="container flex items-center h-full justify-between relative font-poppins">
         <a href="/" class="flex items-center">
             <img src="{{ asset('images/osca_image.jfif') }}" alt="Description of image" class="inline-block ml-4 md:ml-[48px] h-[60px] w-[60px] rounded-full object-cover" />
             <span class="self-center font-bold whitespace-nowrap text-30px ml-[12px]">
@@ -13,24 +17,54 @@
             </svg>
         </button>
 
-        <div class="hidden md:block md:w-auto flex-1">
+        <div class="hidden md:flex flex-1 justify-center">
             <ul class="flex justify-center space-x-8">
                 <li><a href="/" class="block py-2 text-16px hover:text-orange-300">Home</a></li>
                 <li><a href="/announcement" class="block py-2 text-16px hover:text-orange-300">Announcement</a></li>
                 <li><a href="/about-us" class="block py-2 text-16px hover:text-orange-300">About Us</a></li>
                 <li><a href="/contact-us" class="block py-2 text-16px hover:text-orange-300">Contact Us</a></li>
-                @auth
-                <li>
-                    <form action="/logout" method="POST">
-                        @csrf
-                        <button class="block py-2 text-16px hover:text-orange-300">Logout</button>
-                    </form>
-                </li>
-                @else
+                @guest
                 <li><a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" class="block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 <li><a href="/register" class="block py-2 text-16px hover:text-orange-300">Sign Up</a></li>
-                @endauth
+                @endguest
             </ul>
+        </div>
+
+        <div>
+            @if ($senior)
+                @php
+                    $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$senior->first_name."-".$senior->last_name;
+                @endphp
+                <div class="flex items-center cursor-pointer" @click="dropdownOpen = !dropdownOpen">
+                    <img id="avatarButton" class="w-10 h-10 rounded-full" src="{{ $default_profile }}" alt="User dropdown">
+                    <div class="ml-4">
+                        <div>{{ $senior->first_name }} {{ $senior->last_name }}</div>
+                    </div>
+                </div>
+
+                <div x-show="dropdownOpen" style="display: none" @click.away="dropdownOpen = false" id="userDropdown" class="z-10 absolute right-0 bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
+                    <div class="px-4 py-3 text-sm text-gray-900">
+                        <div class="font-medium truncate">{{ $senior->email }}</div>
+                    </div>
+                    <ul class="py-2 text-sm text-gray-700" aria-labelledby="avatarButton">
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Pension Status</a>
+                        </li>
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Settings</a>
+                        </li>
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Healthcare</a>
+                        </li>
+                    </ul>
+                    <div class="py-1">
+                        <form action="/logout" method="POST">
+                            @csrf
+                            <button type="submit" class="block px-4 py-2 text-left text-sm text-gray-700 w-full hover:bg-gray-100">Sign out</button>
+                        </form>
+                    </div>
+                </div>
+            @endif
         </div>
 
         <div x-show="open" style="display: none" class="absolute top-full left-0 w-full bg-customGreen bg-opacity-90 md:hidden" id="navbar-main">
@@ -39,20 +73,14 @@
                 <li><a href="/announcement" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Announcement</a></li>
                 <li><a href="/about-us" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
                 <li><a href="/contact-us" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Contact Us</a></li>
-                @auth
-                <li>
-                    <form action="/logout" method="POST">
-                        @csrf
-                        <button class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Logout</button>
-                    </form>
-                </li>
-                @else
-                <li><a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" class="block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
+                @guest
+                <li><a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 <li><a href="/register" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Sign Up</a></li>
-                @endauth
+                @endguest
             </ul>
         </div>
     </div>
+
     <x-modal.senior_citizen.senior_login />
 
     <div x-data="{ showForgotPasswordModal: localStorage.getItem('showForgotPasswordModal') === 'true' }" 

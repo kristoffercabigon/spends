@@ -63,8 +63,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
                     if (mutation.target.style.display === "block") {
-                        resizeCanvas(); 
-                        loadSignature(); 
+                        resizeCanvas();
+                        loadSignature();
                     }
                 });
             });
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
-        checkContentVisibility(); 
+        checkContentVisibility();
 
         function loadSignature() {
             var savedSignature = localStorage.getItem("signature");
@@ -282,7 +282,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         loadSignature();
     })();
-
 
     const firstNameInput = document.getElementById("first_name");
     const middleNameInput = document.getElementById("middle_name");

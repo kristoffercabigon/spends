@@ -15,6 +15,8 @@ use App\Mail\SeniorResendCodeEmail;
 use App\Mail\SeniorVerificationEmail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class SeniorsController extends Controller
 {
@@ -194,24 +196,35 @@ class SeniorsController extends Controller
             $validIdExtension = $request->file('valid_id')->getClientOriginalExtension();
             $validIdFilenameToStore = $validIdFilename . '.' . $validIdExtension;
 
-            $request->file('valid_id')->storeAs('images/valid_id', $validIdFilenameToStore);
+            $request->file('valid_id')->storeAs('images/senior_citizen/valid_id', $validIdFilenameToStore);
             $seniorData['valid_id'] = $validIdFilenameToStore;
         }
 
         if ($request->hasFile('profile_picture')) {
-            $profilePictureFilename = $osca_id;
+            $request->validate([
+                'profile_picture' => 'mimes:jpeg,png,bmp,tiff|max:4096',
+            ]);
+
+            $profilePictureFilename = $osca_id; 
             $profilePictureExtension = $request->file('profile_picture')->getClientOriginalExtension();
             $profilePictureFilenameToStore = $profilePictureFilename . '.' . $profilePictureExtension;
 
-            $request->file('profile_picture')->storeAs('images/profile_picture', $profilePictureFilenameToStore);
+            $request->file('profile_picture')->storeAs('images/senior_citizen/profile_picture', $profilePictureFilenameToStore);
             $seniorData['profile_picture'] = $profilePictureFilenameToStore;
+
+            $thumbnailFilename = $profilePictureFilename . '.' . $profilePictureExtension;
+            $thumbnailPath = 'storage/images/senior_citizen/thumbnail_profile/' . $thumbnailFilename;
+
+            $request->file('profile_picture')->storeAs('images/senior_citizen/thumbnail_profile', $thumbnailFilename);
+
+            $this->createThumbnail(public_path('storage/images/senior_citizen/profile_picture/' . $profilePictureFilenameToStore), public_path($thumbnailPath), 150, 150);
         }
 
         if ($request->hasFile('indigency')) {
             $indigencyFilename = $osca_id; 
             $indigencyExtension = $request->file('indigency')->getClientOriginalExtension();
             $indigencyFilenameToStore = $indigencyFilename . '.' . $indigencyExtension;
-            $request->file('indigency')->storeAs('images/indigency', $indigencyFilenameToStore);
+            $request->file('indigency')->storeAs('images/senior_citizen/indigency', $indigencyFilenameToStore);
             $seniorData['indigency'] = $indigencyFilenameToStore;
         }
 
@@ -220,7 +233,7 @@ class SeniorsController extends Controller
             $birthCertificateExtension = $request->file('birth_certificate')->getClientOriginalExtension();
             $birthCertificateFilenameToStore = $birthCertificateFilename . '.' . $birthCertificateExtension;
 
-            $request->file('birth_certificate')->storeAs('images/birth_certificate', $birthCertificateFilenameToStore);
+            $request->file('birth_certificate')->storeAs('images/senior_citizen/birth_certificate', $birthCertificateFilenameToStore);
             $seniorData['birth_certificate'] = $birthCertificateFilenameToStore;
         }
 
@@ -232,7 +245,7 @@ class SeniorsController extends Controller
             $signatureData = base64_decode($signatureData);
 
             $signatureFilename = $osca_id . '.png';
-            $path = storage_path('app/public/images/signatures/');
+            $path = storage_path('app/public/images/senior_citizen/signatures/');
             file_put_contents($path . $signatureFilename, $signatureData);
 
             $seniorData['signature_data'] = $signatureFilename;
@@ -326,6 +339,19 @@ class SeniorsController extends Controller
             'showVerificationModal' => true,
             'message' => 'Registration successful. Please verify your email.'
         ]);
+    }
+
+    function createThumbnail($sourcePath, $targetPath, $maxWidth, $maxHeight)
+    {
+        $manager = new ImageManager(new Driver('gd'));
+        $img = $manager->read($sourcePath);
+
+        $img->resize($maxWidth, $maxHeight, function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
+
+        $img->save($targetPath);
     }
 
     public function showVerificationFormRegister()

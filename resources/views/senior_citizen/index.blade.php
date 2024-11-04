@@ -29,5 +29,5 @@
     @include('components.modal.senior_citizen.password_reset')
 </div>
 
-<x-modal 
+<x-modal
 

@@ -32,7 +32,7 @@
      @mouseup="endDrag" 
      @mouseleave="endDrag"> 
 
-    <div @click.stop class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full relative">
+    <div @click.stop class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-3xl w-full relative">
         <section class="p-4 bg-gray-50 dark:bg-gray-900">
 
             <button type="button" @click="showProfilePicModal = false" 
@@ -42,7 +42,7 @@
 
             <div class="flex justify-center p-6">
                 <img :src="previewUrl" alt="Enlarged Profile Picture Preview" 
-                     class="max-h-96 rounded-md shadow-lg"
+                     class="max-h-[600px] rounded-md shadow-lg"
                      :style="{ 
                          transform: `scale(${zoom}) translate(${posX}px, ${posY}px)`, 
                          transition: 'transform 0.2s ease', 
@@ -50,14 +50,15 @@
                      }"
                      @mousedown="startDrag($event)" 
                      @mouseup="endDrag" 
-                     @mouseleave="endDrag"> 
+                     @mouseleave="endDrag"
+                     @dragstart.prevent> 
             </div>
         </section>
 
         <div class="absolute bottom-0 left-0 right-0 flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-900 z-40"> 
-            <button @click="zoom = zoom < 2 ? zoom + 0.1 : zoom" 
+            <button type="button" @click="zoom = zoom < 2 ? zoom + 0.1 : zoom" 
                     class="px-2 py-1 bg-gray-300 hover:bg-gray-400 rounded">Zoom In</button>
-            <button @click="zoom = zoom > 1 ? zoom - 0.1 : zoom" 
+            <button type="button" @click="zoom = zoom > 1 ? zoom - 0.1 : zoom" 
                     class="px-2 py-1 bg-gray-300 hover:bg-gray-400 rounded">Zoom Out</button>
         </div>
     </div>

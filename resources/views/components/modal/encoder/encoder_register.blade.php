@@ -60,35 +60,30 @@
                         @csrf
 
                         <div id="content1" class="space-y-4 md:space-y-6 overflow-x-hidden overflow-y-auto max-h-80 ">
-                            <!-- Encoder First Name -->
                             <div>
                                 <label for="encoder_first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First Name</label>
                                 <input type="text" name="encoder_first_name" id="encoder_first_name" placeholder="First Name"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             </div>
 
-                            <!-- Encoder Middle Name -->
                             <div>
                                 <label for="encoder_middle_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Middle Name</label>
                                 <input type="text" name="encoder_middle_name" id="encoder_middle_name" placeholder="Middle Name"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             </div>
 
-                            <!-- Encoder Last Name -->
                             <div>
                                 <label for="encoder_last_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
                                 <input type="text" name="encoder_last_name" id="encoder_last_name" placeholder="Last Name"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             </div>
 
-                            <!-- Encoder Email -->
                             <div>
                                 <label for="encoder_email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
                                 <input type="email" name="encoder_email" id="encoder_email" placeholder="email@example.com"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             </div>
 
-                            <!-- Encoder Password -->
                             <div class="relative">
                                 <label for="encoder_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
                                 <input type="password" name="encoder_password" id="encoder_password" placeholder="••••••••" 
@@ -120,16 +115,13 @@
 
                         <div id="content2" class="space-y-4 md:space-y-6">
 
-                            <!-- Encoder Profile Picture -->
                             <div class="relative">
                                 <label for="encoder_profile_picture" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Profile Picture</label>
 
-                                <!-- Input Field -->
                                 <input type="file" name="encoder_profile_picture" id="EncoderProfilePictureField"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                     @change="previewEncoderImage">
 
-                                <!-- Camera Button (absolute right) -->
                                 <button @click="$dispatch('open-encoder-camera-modal')" 
                                     class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12 @if('encoder_profile_picture') mt-[8.5%] @endif" 
                                     type="button">

@@ -7,35 +7,37 @@
         <div class="w-full max-w-7xl mx-auto font-[sans-serif]">
             <div class="mx-4">
                 <div class="bg-white mt-4 shadow-lg rounded-md mb-5 sm:mb-5 relative">
-                    <div id="progressLeft" class="absolute top-[35%] left-0 h-[2px] z-0 transform -translate-y-1/2 bg-gray-500" style="width: 50%;"></div>
-                    <div id="progressRight" class="absolute top-[35%] left-1/2 h-[2px] z-0 transform -translate-y-1/2 bg-gray-500" style="width: 50%;"></div>
+                    <div class="w-full sm:w-[50%] mx-auto relative font-poppins">
+                        <div id="progressLeft" class="absolute top-[35%] left-0 h-[2px] z-0 transform -translate-y-1/2 bg-gray-500" style="width: 50%;"></div>
+                        <div id="progressRight" class="absolute top-[35%] left-1/2 h-[2px] z-0 transform -translate-y-1/2 bg-gray-500" style="width: 50%;"></div>
 
-                    <ul class="grid grid-cols-2 mx-auto py-2 gap-x-4 md:gap-x-8 w-[100%] relative z-10">
-                        <div class="flex flex-col items-center gap-y-2">
-                            <li id="navstep1" class="flex flex-col items-center gap-y-2 group">
-                                <span class="min-w-7 min-h-7 inline-flex items-center justify-center text-s align-middle">
-                                    <span class="size-9 flex justify-center items-center bg-gray-100 font-medium text-gray-800 shadow-md rounded-full group-focus:bg-gray-200" id="step1">
-                                        <span id="step1text">1</span>
+                        <ul class="grid grid-cols-2 mx-auto py-2 gap-x-4 md:gap-x-8 w-[100%] relative z-10">
+                            <div class="flex flex-col items-center gap-y-2">
+                                <li id="navstep1" class="flex flex-col items-center gap-y-2 group">
+                                    <span class="min-w-7 min-h-7 inline-flex items-center justify-center text-s align-middle">
+                                        <span class="size-9 flex justify-center items-center bg-gray-100 font-medium text-gray-800 shadow-md rounded-full group-focus:bg-gray-200" id="step1">
+                                            <span id="step1text">1</span>
+                                        </span>
                                     </span>
-                                </span>
-                                <span class="text-sm font-medium text-gray-800">Requirements</span>
-                            </li>
-                        </div>
+                                    <span class="text-sm font-medium text-gray-800">Requirements</span>
+                                </li>
+                            </div>
 
-                        <div class="flex flex-col items-center gap-y-2">
-                            <li id="navstep2" class="flex flex-col items-center gap-y-2 group">
-                                <span class="min-w-7 min-h-7 inline-flex items-center justify-center text-s align-middle">
-                                    <span class="size-9 flex justify-center items-center bg-gray-100 font-medium text-gray-800 shadow-md rounded-full group-focus:bg-gray-200" id="step2">
-                                        <span id="step2text">2</span>
+                            <div class="flex flex-col items-center gap-y-2">
+                                <li id="navstep2" class="flex flex-col items-center gap-y-2 group">
+                                    <span class="min-w-7 min-h-7 inline-flex items-center justify-center text-s align-middle">
+                                        <span class="size-9 flex justify-center items-center bg-gray-100 font-medium text-gray-800 shadow-md rounded-full group-focus:bg-gray-200" id="step2">
+                                            <span id="step2text">2</span>
+                                        </span>
                                     </span>
-                                </span>
-                                <span class="text-sm font-medium text-gray-800 dark:text-neutral-200 text-center">Registration</span>
-                            </li>
-                        </div>
-                    </ul>
+                                    <span class="text-sm font-medium text-gray-800  text-center">Registration</span>
+                                </li>
+                            </div>
+                        </ul>
+                    </div>
                 </div>
                 <div class="mt-8 sm:mt-8">
-                    <div id="content1">
+                    <div id="content1" class="font-poppins">
                         <div class="max-h-[80vh] shadow-lg mt-[-17px] overflow-y-auto">
                             <div class="w-full bg-white sm:pt-2 px-12 py-10 rounded-md">
                                 <div class="text-2xl font-bold mt-[15px] mb-6 leading-tight tracking-tight text-gray-900 md:text-2xl">
@@ -46,7 +48,7 @@
 
                                 <hr class="my-8 border-0 h-0.5 bg-gradient-to-r from-transparent via-[#1AA514] to-transparent">
 
-                                <div class="bg-gray-100 border border-gray-300 p-6 rounded-md mt-6">
+                                <div class="bg-gray-100 border border-gray-400 p-6 rounded-md mt-6">
                                     <p id="requirement1" class="font-semibold text-lg text-red-600 mb-4">NEW APPLICATION:</p>
                                     <p class="text-gray-700 mb-4">(Bagong senior citizen, wala pang senior citizen ID mula sa Caloocan o ibang lugar)</p>
 
@@ -89,14 +91,14 @@
                                     </ol>
                                 </div>
 
-                                <div class="bg-gray-100 border border-gray-300 p-6 rounded-md mt-6">
+                                <div class="bg-gray-100 border border-gray-400 p-6 rounded-md mt-6">
                                     <p id="requirement3" class="font-semibold text-lg text-red-600 mb-4">REPLACEMENT ID (Pagpapapalit)</p>
                                     <ol class="list-decimal list-inside space-y-2 text-gray-700">
                                         <li class="font-semibold">Lumang senior citizen ID (orihinal)</li>
                                     </ol>
                                 </div>
 
-                                <div class="bg-gray-100 border border-gray-300 p-6 rounded-md mt-6">
+                                <div class="bg-gray-100 border border-gray-400 p-6 rounded-md mt-6">
                                     <p id="requirement4" class="font-semibold text-lg text-red-600 mb-4">IF MARRIED (Kung ikinasal)</p>
                                     <ol class="list-decimal list-inside space-y-2 text-gray-700">
                                         <li class="font-semibold">Lumang senior citizen ID (orihinal)</li>
@@ -104,7 +106,7 @@
                                     </ol>
                                 </div>
 
-                                <div class="bg-gray-100 border border-gray-300 p-6 rounded-md mt-6">
+                                <div class="bg-gray-100 border border-gray-400 p-6 rounded-md mt-6">
                                     <p id="requirement5" class="font-semibold text-lg text-red-600 mb-4">IF CHANGE ADDRESS</p>
                                     <ol class="list-decimal list-inside space-y-2 text-gray-700">
                                         <li class="font-semibold">Lumang senior citizen ID (orihinal)</li>
@@ -112,7 +114,7 @@
                                     </ol>
                                 </div>
 
-                                <div class="bg-gray-100 border border-gray-300 p-6 rounded-md mt-6">
+                                <div class="bg-gray-100 border border-gray-400 p-6 rounded-md mt-6">
                                     <p id="requirement6" class="font-semibold text-lg text-red-600 mb-4">LOST ID (Nawala)</p>
                                     <ol class="list-decimal list-inside space-y-2 text-gray-700">
                                         <li class="font-semibold">Kung PVC ang nawala:
@@ -133,7 +135,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="content2" class="shadow-lg" style="display: none;">
+                    <div id="content2" class="shadow-lg font-poppins" style="display: none;">
                         <div class="md:max-h-[80vh] shadow-lg mt-[-17px] overflow-y-auto">
                             <form id="form" action="/store" enctype="multipart/form-data" method="POST" class="w-full bg-white sm:pt-2 px-12 py-10 rounded-md">
                                 @csrf
@@ -154,15 +156,15 @@
                                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                                     <div class="relative">
                                         <label class="text-sm mb-2 block 
-                                            @error('first_name') text-red-700 dark:text-red-500 
-                                            @elseif(old('first_name')) text-green-700 dark:text-green-500 
+                                            @error('first_name') text-red-700 
+                                            @elseif(old('first_name')) text-green-700 
                                             @else text-gray-800 @enderror">
                                             First Name <span class="italic"> (Unang Pangalan) </span>
                                         </label>
                                         <input name="first_name" id="first_name" type="text" value="{{ old('first_name') }}" 
                                             class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
-                                            @error('first_name') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                            @elseif(old('first_name')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                            @error('first_name') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500  
+                                            @elseif(old('first_name')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                             @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                             placeholder="Enter first name" />
                                         @if(old('first_name'))
@@ -181,15 +183,15 @@
 
                                     <div class="relative">
                                         <label class="text-sm mb-2 block 
-                                            @error('middle_name') text-red-700 dark:text-red-500 
-                                            @elseif(old('middle_name')) text-green-700 dark:text-green-500 
+                                            @error('middle_name') text-red-700 
+                                            @elseif(old('middle_name')) text-green-700 
                                             @else text-gray-800 @enderror">
                                             Middle Name <span class="italic"> (Gitnang Pangalan) </span>
                                         </label>
                                         <input name="middle_name" id="middle_name" type="text" value="{{ old('middle_name') }}" 
                                             class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
-                                            @error('middle_name') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                            @elseif(old('middle_name')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                            @error('middle_name') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 
+                                            @elseif(old('middle_name')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                             @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                             placeholder="Enter middle name" />
                                         @if(old('middle_name'))
@@ -208,15 +210,15 @@
 
                                     <div class="relative">
                                         <label class="text-sm mb-2 block 
-                                            @error('last_name') text-red-700 dark:text-red-500 
-                                            @elseif(old('last_name')) text-green-700 dark:text-green-500 
+                                            @error('last_name') text-red-700
+                                            @elseif(old('last_name')) text-green-700 
                                             @else text-gray-800 @enderror">
                                             Last Name <span class="italic"> (Huling Pangalan) </span>
                                         </label>
                                         <input name="last_name" id="last_name" type="text" value="{{ old('last_name') }}" 
                                             class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
-                                            @error('last_name') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                            @elseif(old('last_name')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                            @error('last_name') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500  
+                                            @elseif(old('last_name')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                             @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                             placeholder="Enter last name" />
                                         @if(old('last_name'))
@@ -235,15 +237,15 @@
 
                                     <div class="relative">
                                         <label class="text-sm mb-2 block 
-                                            @error('suffix') text-red-700 dark:text-red-500 
-                                            @elseif(old('suffix')) text-green-700 dark:text-green-500 
+                                            @error('suffix') text-red-700 
+                                            @elseif(old('suffix')) text-green-700 
                                             @else text-gray-800 @enderror">
                                             Suffix <span class="italic"> (Karugtong na Pangalan) </span>
                                         </label>
                                         <input name="suffix" id="suffix" type="text" value="{{ old('suffix') }}" 
                                             class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
-                                            @error('suffix') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                            @elseif(old('suffix')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                            @error('suffix') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 
+                                            @elseif(old('suffix')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                             @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                             placeholder="Enter suffix (e.g., Jr., Sr., III)" />
                                         @if(old('suffix'))
@@ -264,15 +266,15 @@
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
                                     <div class="relative">
                                         <label class="text-sm mb-2 block 
-                                            @error('birthdate') text-red-700 dark:text-red-500 
-                                            @elseif(old('birthdate')) text-green-700 dark:text-green-500 
+                                            @error('birthdate') text-red-700
+                                            @elseif(old('birthdate')) text-green-700 
                                             @else text-gray-800 @enderror">
                                             Birthdate <span class="italic"> (Kaarawan) </span>
                                         </label>
                                         <input name="birthdate" type="text" id="datepicker" 
                                             class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md cursor-pointer transition-all 
-                                            @error('birthdate') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
-                                            @elseif(old('birthdate')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
+                                            @error('birthdate') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 
+                                            @elseif(old('birthdate')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                             @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                             placeholder="Select birthdate" readonly 
                                             value="{{ old('birthdate') }}" />
@@ -291,9 +293,9 @@
                                     <div class="relative">
                                         <label class="text-sm mb-2 block 
                                             @if($errors->has('age') || (old('age') && old('age') < 60)) 
-                                                text-red-700 dark:text-red-500 
+                                                text-red-700 
                                             @elseif(old('age') && old('age') >= 60) 
-                                                text-green-700 dark:text-green-500 
+                                                text-green-700 
                                             @else 
                                                 text-gray-800 
                                             @endif">
@@ -303,9 +305,9 @@
                                         <input name="age" type="text" id="age" value="{{ old('age') }}" 
                                             class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10 
                                             @if($errors->has('age') || (old('age') && old('age') < 60)) 
-                                                bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
+                                                bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
                                             @elseif(old('age') && old('age') >= 60) 
-                                                bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                                bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                             @else 
                                                 bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 
                                             @endif" 
@@ -328,15 +330,15 @@
 
                                     <div class="relative">
                                         <label class="text-sm mb-2 block 
-                                            @error('birthplace') text-red-700 dark:text-red-500 
-                                            @elseif(old('birthplace')) text-green-700 dark:text-green-500 
+                                            @error('birthplace') text-red-700 
+                                            @elseif(old('birthplace')) text-green-700 
                                             @else text-gray-800 @enderror">
                                             Birthplace <span class="italic"> (Lugar ng Kapanganakan) </span>
                                         </label>
                                         <input name="birthplace" type="text" value="{{ old('birthplace') }}" 
                                             class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10 
-                                            @error('birthplace') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                            @elseif(old('birthplace')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                            @error('birthplace') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500  
+                                            @elseif(old('birthplace')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                             @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                             placeholder="Enter place of birth" />
                                         @if(old('birthplace'))
@@ -357,15 +359,15 @@
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
                                     <div class="relative">
                                         <label class="text-sm mb-2 block 
-                                            @error('sex_id') text-red-700 dark:text-red-500 
-                                            @elseif(old('sex_id')) text-green-700 dark:text-green-500 
+                                            @error('sex_id') text-red-700
+                                            @elseif(old('sex_id')) text-green-700 
                                             @else text-gray-800 @enderror">
                                             Sex <span class="italic"> (Kasarian) </span>
                                         </label>
                                         <select name="sex_id" 
                                             class="w-full text-sm px-4 py-3 rounded-md transition-all pr-10
-                                            @error('sex_id') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
-                                            @elseif(old('sex_id')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
+                                            @error('sex_id') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500
+                                            @elseif(old('sex_id')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500
                                             @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror">
                                             <option value="" disabled selected>Select sex</option>
                                             @foreach($sexes as $sex)
@@ -389,15 +391,15 @@
 
                                     <div class="relative">
                                         <label class="text-sm mb-2 block 
-                                            @error('civil_status_id') text-red-700 dark:text-red-500 
-                                            @elseif(old('civil_status_id')) text-green-700 dark:text-green-500 
+                                            @error('civil_status_id') text-red-700 
+                                            @elseif(old('civil_status_id')) text-green-700 
                                             @else text-gray-800 @enderror">
                                             Civil Status
                                         </label>
                                         <select name="civil_status_id" 
                                             class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md transition-all 
-                                            @error('civil_status_id') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
-                                            @elseif(old('civil_status_id')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
+                                            @error('civil_status_id') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500
+                                            @elseif(old('civil_status_id')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 
                                             @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror">
                                             <option value="" disabled selected>Select civil status</option>
                                             @foreach($civil_status_list as $civil_status1) 
@@ -416,8 +418,8 @@
 
                                     <div class="relative">
                                         <label class="text-sm mb-2 block 
-                                            @error('contact_no') text-red-700 dark:text-red-500 
-                                            @elseif(old('contact_no')) text-green-700 dark:text-green-500 
+                                            @error('contact_no') text-red-700 
+                                            @elseif(old('contact_no')) text-green-700 
                                             @else text-gray-800 @enderror">
                                             Contact Number
                                         </label>
@@ -429,8 +431,8 @@
                                             
                                             <input name="contact_no" type="text" value="{{ old('contact_no') }}" 
                                                 class="w-full text-sm px-4 py-3 rounded-r-md transition-all pr-10 
-                                                @error('contact_no') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                                @elseif(old('contact_no')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                                @error('contact_no') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
+                                                @elseif(old('contact_no')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                                 @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                                 placeholder="Enter contact number (10 digits)" 
                                                 inputmode="numeric" pattern="[0-9]*" maxlength="10" 
@@ -456,15 +458,15 @@
                                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
                                     <div class="md:col-span-3 relative">
                                         <label class="text-sm mb-2 block 
-                                            @error('address') text-red-700 dark:text-red-500 
-                                            @elseif(old('address')) text-green-700 dark:text-green-500 
+                                            @error('address') text-red-700 
+                                            @elseif(old('address')) text-green-700
                                             @else text-gray-800 @enderror">
                                             Home Address <span class="italic"> (Tirahan) </span>
                                         </label>
                                         <input name="address" type="text" 
                                             class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md transition-all 
-                                            @error('address') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                            @elseif(old('address')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                            @error('address') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500  
+                                            @elseif(old('address')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                             @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                             placeholder="Enter address" value="{{ old('address') }}" />
 
@@ -498,15 +500,15 @@
 
                                     <div class="relative">
                                         <label class="text-sm mb-2 block 
-                                            @error('barangay_id') text-red-700 dark:text-red-500 
-                                            @elseif(old('barangay_id')) text-green-700 dark:text-green-500 
+                                            @error('barangay_id') text-red-700 
+                                            @elseif(old('barangay_id')) text-green-700 
                                             @else text-gray-800 @enderror">
                                             Barangay
                                         </label>
                                         <select name="barangay_id" 
                                             class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md transition-all 
-                                            @error('barangay_id') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:border-red-500 
-                                            @elseif(old('barangay_id')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:border-green-500 
+                                            @error('barangay_id') bg-red-50 border border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500
+                                            @elseif(old('barangay_id')) bg-green-50 border border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500
                                             @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror">
                                             <option value="" disabled selected>Select barangay</option>
                                             @foreach($barangay as $barangay1)
@@ -532,8 +534,8 @@
                                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
                                     <div class="relative md:col-span-3">
                                         <label class="text-sm mb-2 block 
-                                            @error('type_of_living_arrangement') text-red-700 dark:text-red-500 
-                                            @elseif(old('type_of_living_arrangement')) text-green-700 dark:text-green-500 
+                                            @error('type_of_living_arrangement') text-red-700 
+                                            @elseif(old('type_of_living_arrangement')) text-green-700
                                             @else text-gray-800 @enderror">
                                             Living Arrangement
                                         </label>
@@ -550,7 +552,7 @@
                                                         onclick="toggleInputField({{ $arrangement->id }}, 'livingArrangement')">
 
                                                     <label for="living_arrangement_{{ $arrangement->id }}" 
-                                                        class="text-sm text-gray-800 @error('type_of_living_arrangement') text-red-700 dark:text-red-500 @enderror">
+                                                        class="text-sm text-gray-800 @error('type_of_living_arrangement') text-red-700  @enderror">
                                                         {{ $arrangement->type_of_living_arrangement_list }}
                                                     </label>
                                                 </div>
@@ -588,13 +590,13 @@
                                         <table id="familyTable" class="table-auto w-full border-collapse border border-gray-300">
                                             <thead>
                                                 <tr class="bg-gray-200">
-                                                    <th class="border border-gray-300 px-4 py-2 text-left">Name</th>
-                                                    <th class="border border-gray-300 px-4 py-2 text-left">Relationship</th>
-                                                    <th class="border border-gray-300 px-4 py-2 text-left">Age</th>
-                                                    <th class="border border-gray-300 px-4 py-2 text-left">Civil Status</th>
-                                                    <th class="border border-gray-300 px-4 py-2 text-left">Occupation</th>
-                                                    <th class="border border-gray-300 px-4 py-2 text-left">Income</th>
-                                                    <th id="remove-header" class="border border-gray-300 px-4 py-2 text-left">Remove</th>
+                                                    <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Name</th>
+                                                    <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Relationship</th>
+                                                    <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Age</th>
+                                                    <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Civil Status</th>
+                                                    <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Occupation</th>
+                                                    <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Income</th>
+                                                    <th id="remove-header" class="border border-gray-300 px-4 py-2 text-left font-semibold">Remove</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -692,8 +694,8 @@
                                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
                                     <div class="relative md:col-span-4 sm:col-span-3">
                                         <label class="text-sm mb-2 block 
-                                            @error('pensioner') text-red-700 dark:text-red-500 
-                                            @elseif(old('pensioner')) text-green-700 dark:text-green-500 
+                                            @error('pensioner') text-red-700 
+                                            @elseif(old('pensioner')) text-green-700 
                                             @else text-gray-800 @enderror">
                                             Are you a pensioner? <span class="italic"> (Ikaw ba ay kasalukuyang tumatanggap ng pensyon?) </span>
                                         </label>
@@ -709,7 +711,7 @@
                                                     onclick="toggleInputField(1, 'pensioner')">
 
                                                 <label for="pensioner_yes" 
-                                                    class="text-sm text-gray-800 @error('pensioner') text-red-700 dark:text-red-500 @enderror">
+                                                    class="text-sm text-gray-800 @error('pensioner') text-red-700 @enderror">
                                                     Yes
                                                 </label>
                                             </div>
@@ -722,7 +724,7 @@
                                                     {{ old('pensioner') === '0' ? 'checked' : '' }}
                                                     onclick="toggleInputField(0, 'pensioner')">
                                                 <label for="pensioner_no" 
-                                                    class="text-sm text-gray-800 @error('pensioner') text-red-700 dark:text-red-500 @enderror">
+                                                    class="text-sm text-gray-800 @error('pensioner') text-red-700 @enderror">
                                                     No
                                                 </label>
                                             </div>
@@ -774,7 +776,7 @@
                                                                 onclick="toggleCheckboxInputField()">
 
                                                             <label for="{{ $source->id }}"
-                                                                class="text-sm text-gray-800 @error('source') text-red-700 dark:text-red-500 @enderror">
+                                                                class="text-sm text-gray-800 @error('source') text-red-700 @enderror">
                                                                 {{ $source->source_list }}
                                                             </label>
                                                         </div>
@@ -814,8 +816,8 @@
 
                                     <div class="relative md:col-span-4 sm:col-span-4"> 
                                         <label class="text-sm mb-2 block 
-                                            @error('permanent_source') text-red-700 dark:text-red-500 
-                                            @elseif(old('permanent_source')) text-green-700 dark:text-green-500 
+                                            @error('permanent_source') text-red-700 
+                                            @elseif(old('permanent_source')) text-green-700 
                                             @else text-gray-800 @enderror">
                                             Do you have permanent source of income? <span class="italic"> (Ikaw ba ay may pinagkakakitaan?) </span>
                                         </label>
@@ -830,7 +832,7 @@
                                                     {{ old('permanent_source') == 1 ? 'checked' : '' }}
                                                     onclick="toggleInputField(1, 'permanent_source')">
                                                 <label for="permanent_yes" 
-                                                    class="text-sm text-gray-800 @error('permanent_source') text-red-700 dark:text-red-500 @enderror">
+                                                    class="text-sm text-gray-800 @error('permanent_source') text-red-700 @enderror">
                                                     Yes
                                                 </label>
                                             </div>
@@ -844,7 +846,7 @@
                                                     {{ old('permanent_source') === '0' ? 'checked' : '' }}
                                                     onclick="toggleInputField(0, 'permanent_source')">
                                                 <label for="permanent_no" 
-                                                    class="text-sm text-gray-800 @error('permanent_source') text-red-700 dark:text-red-500 @enderror">
+                                                    class="text-sm text-gray-800 @error('permanent_source') text-red-700 @enderror">
                                                     No
                                                 </label>
                                             </div>
@@ -889,7 +891,7 @@
                                                                 onclick="toggleCheckboxForIncomeSourceInputField()">
 
                                                             <label for="{{ $income_source->id }}"
-                                                                class="text-sm text-gray-800 @error('income_source') text-red-700 dark:text-red-500 @enderror">
+                                                                class="text-sm text-gray-800 @error('income_source') text-red-700 @enderror">
                                                                 {{ $income_source->where_income_source }}
                                                                 <span class="italic">{{ $income_source->where_income_source_examples }}</span>
                                                             </label>
@@ -943,8 +945,8 @@
                                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
                                     <div class="relative md:col-span-3 sm:col-span-3">
                                         <label class="text-sm mb-2 block 
-                                            @error('has_illness') text-red-700 dark:text-red-500 
-                                            @elseif(old('has_illness')) text-green-700 dark:text-green-500 
+                                            @error('has_illness') text-red-700  
+                                            @elseif(old('has_illness')) text-green-700 
                                             @else text-gray-800 @enderror">
                                             Do you have an existing illness? <span class="italic"> (Ikaw ba ay may kasalukuyang sakit?) </span>
                                         </label>
@@ -959,7 +961,7 @@
                                                     {{ old('has_illness') == 1 ? 'checked' : '' }}
                                                     onclick="toggleInputField(1, 'has_illness')">
                                                 <label for="illness_yes" 
-                                                    class="text-sm text-gray-800 @error('has_illness') text-red-700 dark:text-red-500 @enderror">
+                                                    class="text-sm text-gray-800 @error('has_illness') text-red-700 @enderror">
                                                     Yes
                                                 </label>
                                             </div>
@@ -973,7 +975,7 @@
                                                     {{ old('has_illness') === '0' ? 'checked' : '' }}
                                                     onclick="toggleInputField(0, 'has_illness')" >
                                                 <label for="illness_no" 
-                                                    class="text-sm text-gray-800 @error('has_illness') text-red-700 dark:text-red-500 @enderror">
+                                                    class="text-sm text-gray-800 @error('has_illness') text-red-700 @enderror">
                                                     No
                                                 </label>
                                             </div>
@@ -1005,8 +1007,8 @@
 
                                     <div class="relative md:col-span-3 sm:col-span-3">
                                         <label class="text-sm mb-2 block 
-                                            @error('has_disability') text-red-700 dark:text-red-500 
-                                            @elseif(old('has_disability')) text-green-700 dark:text-green-500 
+                                            @error('has_disability') text-red-700
+                                            @elseif(old('has_disability')) text-green-700
                                             @else text-gray-800 @enderror">
                                             Do you have disability? <span class="italic"> (Ikaw ba ay may kapansanan?) </span>
                                         </label>
@@ -1021,7 +1023,7 @@
                                                     {{ old('has_disability') == 1 ? 'checked' : '' }}
                                                     onclick="toggleInputField(1, 'has_disability')">
                                                 <label for="disability_yes" 
-                                                    class="text-sm text-gray-800 @error('has_disability') text-red-700 dark:text-red-500 @enderror">
+                                                    class="text-sm text-gray-800 @error('has_disability') text-red-700 @enderror">
                                                     Yes
                                                 </label>
                                             </div>
@@ -1035,7 +1037,7 @@
                                                     {{ old('has_disability') === '0' ? 'checked' : '' }}
                                                     onclick="toggleInputField(0, 'has_disability')" >
                                                 <label for="disability_no" 
-                                                    class="text-sm text-gray-800 @error('has_disability') text-red-700 dark:text-red-500 @enderror">
+                                                    class="text-sm text-gray-800 @error('has_disability') text-red-700 @enderror">
                                                     No
                                                 </label>
                                             </div>
@@ -1105,15 +1107,15 @@
                                         }
                                     }">
                                         <label class="text-sm mb-2 block 
-                                            @error('valid_id') text-red-700 dark:text-red-500 
-                                            @elseif(old('valid_id')) text-green-700 dark:text-green-500 
+                                            @error('valid_id') text-red-700 
+                                            @elseif(old('valid_id')) text-green-700
                                             @else text-gray-800 @enderror">
                                             Valid ID
                                         </label>
                                         <input id="valid_id_input" name="valid_id" type="file" accept="image/*"
                                             class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
-                                            @error('valid_id') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                            @elseif(old('valid_id')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                            @error('valid_id') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500  
+                                            @elseif(old('valid_id')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                             @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                             placeholder="Upload image of Valid ID" @change="previewValidIdImage">
 
@@ -1161,8 +1163,8 @@
                                         @close-camera-modal.window="showCameraModal = false; localStorage.setItem('showCameraModal', 'false')">
 
                                         <label class="text-sm mb-2 block 
-                                            @error('profile_picture') text-red-700 dark:text-red-500 
-                                            @elseif(old('profile_picture')) text-green-700 dark:text-green-500 
+                                            @error('profile_picture') text-red-700
+                                            @elseif(old('profile_picture')) text-green-700
                                             @else text-gray-800 @enderror">
                                             Profile Picture
                                         </label>
@@ -1170,8 +1172,8 @@
                                         <div class="relative">
                                             <input name="profile_picture" type="file" 
                                                 class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-l-md rounded-r-md transition-all 
-                                                @error('profile_picture') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                                @elseif(old('profile_picture')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                                @error('profile_picture') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
+                                                @elseif(old('profile_picture')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                                 @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                                 placeholder="Upload photo of Pensioner" id="profilePictureField" 
                                                 @change="previewImage">
@@ -1224,15 +1226,15 @@
                                             }
                                         }">
                                         <label class="text-sm mb-2 block 
-                                            @error('indigency') text-red-700 dark:text-red-500 
-                                            @elseif(old('indigency')) text-green-700 dark:text-green-500 
+                                            @error('indigency') text-red-700 
+                                            @elseif(old('indigency')) text-green-700 
                                             @else text-gray-800 @enderror">
                                             Certificate of Indigency
                                         </label>
                                         <input id="indigency_input" name="indigency" type="file" accept="image/*"
                                             class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
-                                            @error('indigency') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                            @elseif(old('indigency')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                            @error('indigency') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 
+                                            @elseif(old('indigency')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                             @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                             placeholder="Upload photo of Pensioner" @change="previewIndigencyImage">
 
@@ -1276,15 +1278,15 @@
                                             }
                                         }">
                                         <label class="text-sm mb-2 block 
-                                            @error('birth_certificate') text-red-700 dark:text-red-500 
-                                            @elseif(old('birth_certificate')) text-green-700 dark:text-green-500 
+                                            @error('birth_certificate') text-red-700 
+                                            @elseif(old('birth_certificate')) text-green-700
                                             @else text-gray-800 @enderror">
                                             Birth Certificate
                                         </label>
                                         <input id="birth_certificate_input" name="birth_certificate" type="file" accept="image/*"
                                             class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
-                                            @error('birth_certificate') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                            @elseif(old('birth_certificate')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                            @error('birth_certificate') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
+                                            @elseif(old('birth_certificate')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                             @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                             placeholder="Upload photo of Birth Certificate" @change="previewBirthCertificateImage">
 
@@ -1322,15 +1324,15 @@
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
                                     <div>
                                         <label class="text-gray-800 text-sm mb-2 block 
-                                            @error('email') text-red-700 dark:text-red-500 
-                                            @elseif(old('email')) text-green-700 dark:text-green-500 
+                                            @error('email') text-red-700
+                                            @elseif(old('email')) text-green-700
                                             @else text-gray-800 @enderror">
                                             Email Address
                                         </label>
                                         <input name="email" type="email" 
                                             class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
-                                            @error('email') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                            @elseif(old('email')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                            @error('email') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
+                                            @elseif(old('email')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                             @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                             placeholder="Enter email" value="{{ old('email') }}" />
 
@@ -1349,8 +1351,8 @@
 
                                     <div>
                                         <label class="text-gray-800 text-sm mb-2 block 
-                                            @error('password') text-red-700 dark:text-red-500 
-                                            @elseif(old('password')) text-green-700 dark:text-green-500 
+                                            @error('password') text-red-700 
+                                            @elseif(old('password')) text-green-700
                                             @else text-gray-800 @enderror">
                                             Password
                                         </label>
@@ -1358,8 +1360,8 @@
                                             <div class="flex">
                                                 <input name="password" type="password" 
                                                     class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-l-md rounded-r-md transition-all 
-                                                    @error('password') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                                    @elseif(old('password')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                                    @error('password') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
+                                                    @elseif(old('password')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                                     @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                                     placeholder="Enter password" id="passwordField" oninput="updatePasswordCriteria(this.value)"/>
 
@@ -1394,8 +1396,8 @@
 
                                     <div>
                                         <label class="text-gray-800 text-sm mb-2 block 
-                                            @error('password_confirmation') text-red-700 dark:text-red-500 
-                                            @elseif(old('password_confirmation')) text-green-700 dark:text-green-500 
+                                            @error('password_confirmation') text-red-700
+                                            @elseif(old('password_confirmation')) text-green-700
                                             @else text-gray-800 @enderror">
                                             Confirm Password
                                         </label>
@@ -1403,8 +1405,8 @@
                                             <div class="flex">
                                                 <input name="password_confirmation" type="password" 
                                                     class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
-                                                    @error('password_confirmation') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500 
-                                                    @elseif(old('password_confirmation')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500 dark:border-green-500 
+                                                    @error('password_confirmation') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
+                                                    @elseif(old('password_confirmation')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                                     @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
                                                     placeholder="Confirm password" id="passwordConfirmationField" />
 
@@ -1506,7 +1508,7 @@
                         </button>
                     </div>
                     <div>
-                        <button type="button" id="nextButton" class="py-3 px-6 shadow-lg text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
+                        <button type="button" id="nextButton" class="py-3 px-6 shadow-lg text-sm tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148e10] focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
                             Next
                             <svg class="shrink-0 w-5 h-5 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M9 18l6-6-6-6"></path>

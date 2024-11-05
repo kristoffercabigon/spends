@@ -21,7 +21,10 @@ Route::controller(SeniorsController::class)->group(function () {
 });
 
 Route::controller(EncoderController::class)->group(function () {
-    Route::get('/encoder', 'encoder_index')->name('encoder');
+    Route::get('/encoder', 'showEncoderIndex')->name('encoder');
+    Route::get('/encoder/verify-email', 'showVerificationFormRegister')->name('encoder-verify-email');
     Route::put('/encoder/forgot-password', 'sendEncoderEmailForReset')->name('encoder-forgot-password');
-    Route::post('/encoder_store', 'encoder_store');
+    Route::post('/encoder/store', 'encoder_store');
+    Route::post('/encoder/verify-email', 'verifyEncoderEmailCodeRegister');
+    Route::post('/encoder/resend-code', 'resendEncoderVerificationCode')->name('encoder-resend-code');
 });

@@ -1,4 +1,4 @@
-@if(session()->has('encoder_message'))
+@if(session()->has('encoder-message'))
 <div x-data="{ show: true }" 
      x-show="show" 
      x-init="setTimeout(() => show = false, 7000)" 
@@ -18,7 +18,7 @@
     </div>
     <div>
       <p class="font-bold">Alert Message</p>
-      <p class="text-sm">{{ session('encoder_message') }}</p>
+      <p class="text-sm">{{ session('encoder-message') }}</p>
     </div>  
   </div>
 </div>

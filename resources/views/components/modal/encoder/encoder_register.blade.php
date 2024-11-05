@@ -12,16 +12,16 @@
     x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
     @click.away="showEncoderRegisterModal = false; localStorage.setItem('showEncoderRegisterModal', 'false')">
     <div @click.stop>
-        <section class="bg-gray-50 dark:bg-gray-900 relative">
+        <section class="bg-gray-50 relative">
             <button @click="showEncoderRegisterModal = false; localStorage.setItem('showEncoderRegisterModal', 'false')" 
-                    class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none">
+                    class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-            <div class="w-[400px] bg-white rounded-lg shadow dark:border sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+            <div class="w-[400px] bg-white rounded-lg shadow sm:max-w-md xl:p-0">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                    <h1 class="text-xl font-bold mt-4 leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                    <h1 class="text-xl font-bold mt-4 leading-tight tracking-tight text-gray-900 md:text-2xl">
                         Register as Encoder
                     </h1>
                     <div class="relative">
@@ -47,7 +47,7 @@
                                             <span id="step2text">2</span>
                                         </span>
                                     </span>
-                                    <span class="text-sm font-medium text-gray-800 dark:text-neutral-200 text-center">Profile Picture</span>
+                                    <span class="text-sm font-medium text-gray-800 text-center">Profile Picture</span>
                                 </li>
                             </div>
                         </ul>
@@ -56,42 +56,81 @@
                           @submit.prevent="
                           isEncoderLoadingSignUp = true;
                           $nextTick(() => $el.submit());" 
-                          class="space-y-4 md:space-y-6" method="POST" enctype="multipart/form-data" action="/encoder_store">
+                          class="space-y-4 md:space-y-6" method="POST" enctype="multipart/form-data" action="/encoder/store">
                         @csrf
 
-                        <div id="content1" class="space-y-4 md:space-y-6 overflow-x-hidden overflow-y-auto max-h-80 ">
+                        <div id="content1" class="space-y-4 md:space-y-6 overflow-x-hidden overflow-y-auto max-h-80 px-2">
                             <div>
-                                <label for="encoder_first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First Name</label>
+                                <label for="encoder_first_name" class="block mb-2 text-sm font-medium text-gray-900">First Name</label>
                                 <input type="text" name="encoder_first_name" id="encoder_first_name" placeholder="First Name"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ old('encoder_first_name') }}">
+
+                                @error('encoder_first_name')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @elseif(old('encoder_first_name'))
+                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
+                                @enderror
                             </div>
 
                             <div>
-                                <label for="encoder_middle_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Middle Name</label>
+                                <label for="encoder_middle_name" class="block mb-2 text-sm font-medium text-gray-900">Middle Name</label>
                                 <input type="text" name="encoder_middle_name" id="encoder_middle_name" placeholder="Middle Name"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ old('encoder_middle_name') }}">
+                                @error('encoder_middle_name')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @elseif(old('encoder_middle_name'))
+                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
+                                @enderror
                             </div>
 
                             <div>
-                                <label for="encoder_last_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
+                                <label for="encoder_last_name" class="block mb-2 text-sm font-medium text-gray-900">Last Name</label>
                                 <input type="text" name="encoder_last_name" id="encoder_last_name" placeholder="Last Name"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ old('encoder_last_name') }}">
+
+                                @error('encoder_last_name')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @elseif(old('encoder_last_name'))
+                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
+                                @enderror
                             </div>
 
                             <div>
-                                <label for="encoder_email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                                <label for="encoder_suffix" class="block mb-2 text-sm font-medium text-gray-900">Suffix</label>
+                                <input type="text" name="encoder_suffix" id="encoder_suffix" placeholder="Enter suffix (e.g., Jr., Sr., III)"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ old('encoder_suffix') }}">
+
+                                @error('encoder_suffix')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @elseif(old('encoder_suffix'))
+                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="encoder_email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
                                 <input type="email" name="encoder_email" id="encoder_email" placeholder="email@example.com"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ old('encoder_email') }}">
+
+                                @error('encoder_email')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @elseif(old('encoder_email'))
+                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
+                                @enderror
                             </div>
 
                             <div class="relative">
-                                <label for="encoder_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+                                <label for="encoder_password" class="block mb-2 text-sm font-medium text-gray-900">Password</label>
                                 <input type="password" name="encoder_password" id="encoder_password" placeholder="••••••••" 
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" oninput="updateEncoderPasswordCriteria(this.value)">
-                                <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 right-[-2px] top-[-4px] hover:bg-gray-600 @error('encoder_password') mt-[10%] h-[48%] right-[-2px] top-[-4px] @else mt-[9.5%] h-[66%] right-[-2px] top-[-4px] @enderror hover:bg-gray-600" 
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" oninput="updateEncoderPasswordCriteria(this.value)">
+                                <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 right-[-2px] top-[-4px] hover:bg-gray-600 @error('encoder_password') mt-[10%] h-[48%] right-[-2px] top-[-3px] @else mt-[10%] h-[66%] right-[-2px] top-[-3px] @enderror hover:bg-gray-600" 
                                         type="button" onclick="toggleEncoderPassword('encoder_password', 'toggleEncoderPasswordIcon')">
                                     <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5" id="toggleEncoderPasswordIcon">
                                 </button>
+
+                                @error('encoder_password')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div class="ml-2 text-gray-800 text-sm">
                                 <ul>
@@ -103,32 +142,36 @@
                             </div>
 
                             <div class="relative">
-                                <label for="password_confirmation" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm Password</label>
-                                <input type="password" name="password_confirmation" id="password_confirmation" placeholder="••••••••"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 right-[-2px] top-[-4px] hover:bg-gray-600 @if ('password_confirmation') mt-[9.5%] h-[66%] right-[-2px] top-[-4px] @endif " 
-                                        type="button" onclick="toggleEncoderPassword('password_confirmation', 'toggleConfirmationIcon')">
+                                <label for="encoder_password_confirmation" class="block mb-2 text-sm font-medium text-gray-900">Confirm Password</label>
+                                <input type="password" name="encoder_password_confirmation" id="encoder_password_confirmation" placeholder="••••••••"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                                <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 right-[-2px] top-[-4px] hover:bg-gray-600 @if ('encoder_password_confirmation') mt-[9.5%] h-[66%] right-[-2px] top-[-3px] @endif " 
+                                        type="button" onclick="toggleEncoderPassword('encoder_password_confirmation', 'toggleConfirmationIcon')">
                                     <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5" id="toggleConfirmationIcon">
                                 </button>
                             </div>
                         </div>
 
-                        <div id="content2" class="space-y-4 md:space-y-6">
+                        <div id="content2" class="space-y-4 px-2 md:space-y-6 overflow-x-hidden overflow-y-auto max-h-80 px-2">
 
                             <div class="relative">
-                                <label for="encoder_profile_picture" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Profile Picture</label>
+                                <label for="encoder_profile_picture" class="block mb-2 text-sm font-medium text-gray-900">Profile Picture</label>
 
                                 <input type="file" name="encoder_profile_picture" id="EncoderProfilePictureField"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ old('encoder_profile_picture') }}" 
                                     @change="previewEncoderImage">
 
                                 <button @click="$dispatch('open-encoder-camera-modal')" 
-                                    class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12 @if('encoder_profile_picture') mt-[8.5%] @endif" 
+                                    class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12 @error('encoder_profile_picture') h-[41%] mt-[8.5%] @else mt-[8.5%] @enderror" 
                                     type="button">
                                     <img src="../images/camera.png" alt="Toggle Profile Picture" class="camera-icon w-7 h-7" id="toggleCameraIcon">
                                 </button>
 
-
+                                @error('encoder_profile_picture')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @elseif(old('encoder_profile_picture'))
+                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
+                                @enderror
                             </div>
 
                             <p id="encoder_profile_picture_filename" class="text-gray-700 text-xs mt-2"></p>
@@ -138,7 +181,18 @@
                                     @click="showEncoderProfilePicModal = true">
                             </div>
 
-                            <button type="submit" class="relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-4">
+                            <div>
+                                <div class="flex justify-center mt-4">
+                                {!! htmlFormSnippet() !!}
+                                </div>
+                                @if ($errors->has('g-recaptcha-response'))
+                                    <div class="text-red-500 flex justify-center text-sm mt-2">
+                                        {{ $errors->first('g-recaptcha-response') }}
+                                    </div>
+                                @endif
+                            </div>
+
+                            <button type="submit" class="relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
                                 <span x-show="!isEncoderLoadingSignUp">Sign up</span>
                                 <span x-show="isEncoderLoadingSignUp" style="display: none;" class="flex items-center justify-center">
                                     <svg aria-hidden="true" class="inline w-4 h-4 mr-2 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -159,7 +213,7 @@
                                 </button>
                             </div>
                             <div>
-                                <button type="button" id="nextButton" class="py-3 px-6 shadow-lg text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
+                                <button type="button" id="nextButton" class="py-3 px-6 shadow-lg text-sm tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148e10] focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
                                     Next
                                     <svg class="shrink-0 w-5 h-5 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M9 18l6-6-6-6"></path>

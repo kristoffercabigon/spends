@@ -167,5 +167,6 @@
     <x-modal.encoder.encoder_register_camera />
     <x-modal.encoder.encoder_login />
     <x-modal.encoder.encoder_forgot_password />
+    <x-modal.encoder.encoder_verify_your_email />
     <x-modal.encoder.encoder_register />
 </nav>

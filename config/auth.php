@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'seniors',
         ],
+        'encoder' => [  // Adding the Encoder guard
+            'driver' => 'session',
+            'provider' => 'encoders', // Ensure you have a provider for Encoder
+        ],
     ],
 
     /*
@@ -65,11 +69,16 @@ return [
             'model' => env('AUTH_MODEL', App\Models\Seniors::class),
         ],
 
+        'encoders' => [  
+            'driver' => 'eloquent',
+            'model' => App\Models\Encoder::class, // Adjust the path if necessary
+        ],
+    ],
+
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
-    ],
 
     /*
     |--------------------------------------------------------------------------

@@ -7,4 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Encoder extends Model
 {
     protected $guarded = [];
+
+    protected $table = 'encoder';
 }

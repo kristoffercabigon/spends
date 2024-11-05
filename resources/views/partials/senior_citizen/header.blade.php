@@ -13,8 +13,9 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.8/dist/lottie-player.js"></script>
 </head>
 <body class="bg-white font-poppins min-h-screen pt-[80px]">
-    <x-messages />
-    <x-error_messages />
+    <x-messages.senior_citizen.messages />
+    <x-messages.senior_citizen.error_messages />
     

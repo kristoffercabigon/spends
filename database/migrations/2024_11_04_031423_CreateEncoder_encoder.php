@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('encoder', function (Blueprint $table) {
             $table->id();
+            $table->integer('encoder_id');
             $table->string('encoder_first_name');
             $table->string('encoder_middle_name')->nullable();
             $table->string('encoder_last_name');
+            $table->string('encoder_suffix')->nullable();
             $table->string('encoder_email');
             $table->string('encoder_password');
             $table->string('encoder_profile_picture')->nullable();

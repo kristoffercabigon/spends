@@ -21,7 +21,8 @@ class StoreSeniorRequest extends FormRequest
             "middle_name" => ['nullable'],
             "suffix" => ['nullable'],
             "birthdate" => ['required', function ($attribute, $value, $fail) {
-                if (Carbon::parse($value)->age < 60) {
+                $age = Carbon::parse($value)->age;
+                if ($age < 60) {
                     $fail('The age must be 60 years old or above.');
                 }
             }],
@@ -91,8 +92,8 @@ class StoreSeniorRequest extends FormRequest
             'last_name.required' => 'Last name is required.',
             'last_name.min' => 'Last name must be at least 4 characters.',
             'last_name.max' => 'Last name cannot exceed 30 characters.',
-            'birthdate.required' => 'Birthdate is required.',
-            'age.required' => 'Specify your birthdate to automatically indicate age.',
+            'birthdate.required' => 'Birthdate is required to calculate your age.',
+            'age.required' => 'specify your birthdate to show your age.',
             'birthplace.required' => 'Birthplace is required.',
             'sex_id.required' => 'Sex is required.',
             'civil_status_id.required' => 'Civil status is required.',
@@ -114,9 +115,16 @@ class StoreSeniorRequest extends FormRequest
             'valid_id.mimes' => 'Valid ID must be a file of type: jpeg, png, bmp, tiff.',
             'valid_id.max' => 'Valid ID must not exceed 4096 kilobytes.',
             'indigency.required' => 'Indigency document is required.',
+            'indigency.mimes' => 'Indigency must be a file of type: jpeg, png, bmp, tiff.',
+            'indigency.max' => 'Indigency must not exceed 4096 kilobytes.',
             'birth_certificate.required' => 'Birth certificate is required.',
+            'birth_certificate.mimes' => 'Birth certificate must be a file of type: jpeg, png, bmp, tiff.',
+            'birth_certificate.max' => 'Birth certificate must not exceed 4096 kilobytes.',
             'type_of_living_arrangement.required' => 'Type of living arrangement is required.',
             'pensioner.required' => 'Pensioner status is required.',
+            'permanent_source.required' => 'Income status is required.',
+            'has_illness.required' => 'Illness status is required.',
+            'has_disability.required' => 'Disability status is required.',
             'signature_data.required' => 'Signature is required.',
             'confirm-checkbox.required' => 'You must agree to the terms.',
             'g-recaptcha-response.required' => 'ReCaptcha verification is required.',

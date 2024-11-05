@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
-use App\Http\Requests\StoreSeniorRequest as RequestsStoreSeniorRequest;
+use App\Http\Requests\StoreSeniorRequest;
 
 class SeniorsController extends Controller
 {
@@ -51,7 +51,7 @@ class SeniorsController extends Controller
         ]);
     }
 
-    public function store(RequestsStoreSeniorRequest $request)
+    public function store(StoreSeniorRequest $request)
     {
         //dd($request->all());
 
@@ -219,7 +219,8 @@ class SeniorsController extends Controller
             'email' => $seniors->email,
             'code' => $seniors->verification_code,
             'showVerificationModal' => true,
-            'message' => 'Registration successful. Please verify your email.'
+            'message-header' => 'Registration successful',
+            'message-body' => 'Please verify your email.'
         ]);
     }
 
@@ -240,15 +241,17 @@ class SeniorsController extends Controller
     {
         if (!session()->has('email')) {
             return redirect('/')->with([
-                'error-message' => 'Restricted Access.',
+                'error-message-header' => 'Failed',
+                'error-message-body' => 'Restricted Access.',
             ]);
         }
 
         return redirect(url()->previous())->with([
             'showVerificationModal' => true,
             'email' => session('email'),
-            'code' => session('code'), 
-            'message' => 'Registration successful. Please verify your email.'
+            'code' => session('code'),
+            'message-header' => 'Registration successful',
+            'message-body' => 'Please verify your email.'
         ]);
     }
 
@@ -272,7 +275,10 @@ class SeniorsController extends Controller
             $senior->verification_expires_at = null;
             $senior->save();
 
-            session()->flash('message', 'Email verified successfully.');
+            session()->flash([
+                'message-header' => 'Success',
+                'message-body' => 'Email verified successfully.'
+            ]);
 
             return response()->json(['message' => 'Email verified successfully.', 'redirect' => url()->previous()], 200);
         }
@@ -318,14 +324,18 @@ class SeniorsController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect(url()->previous())->with('message', 'Logout successful');
+        return redirect(url()->previous())->with([
+            'message-header'=> 'Success',
+            'message-body' => 'Successfully logged out.'
+        ]);
     }
 
     public function showVerificationFormLogin()
     {
         if (!session()->has('email')) {
             return redirect('/')->with([
-                'error-message' => 'Restricted Access.',
+                'error-message-header' => 'Failed',
+                'error-message-body' => 'Restricted Access.',
             ]);
         }
 
@@ -333,7 +343,8 @@ class SeniorsController extends Controller
             'showVerificationModal' => true,
             'clearLoginModal' => true,
             'email' => session('email'),
-            'error-message' => 'Login Failed. Verify your email first.'
+            'error-message-header' => 'Login Failed',
+            'error-message-body' => 'Verify your email first.'
         ]);
     }
 
@@ -373,7 +384,8 @@ class SeniorsController extends Controller
                 'email' => $senior_login->email,
                 'showVerificationModal' => true,
                 'clearLoginModal' => true,
-                'error-message' => 'Login Failed. Verify your email first.',
+                'error-message-header' => 'Login Failed',
+                'error-message-body' => 'Verify your email first.'
             ]);
         }
 
@@ -387,7 +399,8 @@ class SeniorsController extends Controller
         $request->session()->put('senior', $senior_login);
 
         return redirect('/')->with([
-            'message' => 'Welcome back!',
+            'message-header' => 'Welcome back!',
+            'message-body' => 'Successfully logged in.',
             'clearLoginModal' => true,
         ]);
     }
@@ -424,7 +437,8 @@ class SeniorsController extends Controller
             Mail::to($email)->send(new SeniorForgotPassword($token, $expiresAt, $email));
 
             return redirect(url()->previous())->with([
-                'message' => 'Reset token has been sent to your email.',
+                'message-header' => 'Success',
+                'message-body' => 'Reset token has been sent to your email.',
                 'clearForgotPasswordModal' => true,
             ]);
         } catch (\Exception $e) {
@@ -441,21 +455,24 @@ class SeniorsController extends Controller
 
         if (!$senior) {
             return redirect('/')->with([
-                'error-message' => 'Restricted Access.',
+                'error-message-header' => 'Failed',
+                'error-message-body' => 'Restricted Access.',
                 'removePasswordResetModal' => true
             ]);
         }
 
         if (is_null($senior->token) || is_null($senior->expiration)) {
             return redirect('/')->with([
-                'error-message' => 'This token has been used.',
+                'error-message-header' => 'Failed',
+                'error-message-body' => 'This token has been used.',
                 'removePasswordResetModal' => true
             ]);
         }
 
         if ($senior->expiration <= now()) {
             return redirect('/')->with([
-                'error-message' => 'Your token has expired. Request for reset link again.',
+                'error-message-header' => 'Failed',
+                'error-message-body' => 'Your token has expired. Request for reset link again.',
                 'removePasswordResetModal' => true
             ]);
         }
@@ -508,7 +525,8 @@ class SeniorsController extends Controller
             $senior->save();
 
             return redirect('/')->with([
-                'message' => 'Your password has been reset successfully.',
+                'message-header' => 'Success',
+                'message-body' => 'Your password has been reset successfully.',
                 'removePasswordResetModal' => true
             ]);
         }
@@ -517,7 +535,8 @@ class SeniorsController extends Controller
             'savePasswordResetModal' => true,
             'email' => $request->input('email'),
             'token' => $request->input('token'),
-            'error-message' => 'An error occurred while resetting your password. Please try again.'
+            'error-message-header' => 'Failed',
+            'error-message-body' => 'An error occurred while resetting your password. Please try again.'
         ]);
     }
 }

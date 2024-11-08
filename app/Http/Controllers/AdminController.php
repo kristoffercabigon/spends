@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admin;
 use App\Mail\AdminResendCodeEmail;
 use App\Mail\AdminForgotPassword;
+use App\Mail\AdminLoginAttempt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -26,7 +28,6 @@ class AdminController extends Controller
 
     public function admin_login(Request $request)
     {
-
         $AdminLoginMessages = [
             'admin_email.required' => 'Enter your email.',
             'admin_password.required' => 'Enter your password.',
@@ -50,9 +51,36 @@ class AdminController extends Controller
             }],
         ], $AdminLoginMessages);
 
-        $admin_login = Admin::where('admin_email', $validated['admin_email'])->first();
+        $admin_email = $validated['admin_email'];
+        $admin_ipAddress = $request->ip();
+        $admin_throttleTime = Carbon::now()->format('Y-m-d H:i:s');
+
+        if (RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
+            DB::table('admin_login_attempts')->insert([
+                'admin_email' => $admin_email,
+                'ip_address' => $admin_ipAddress,
+                'status' => 'throttled',
+                'created_at' => now(),
+            ]);
+
+            Mail::to($admin_email)->send(new AdminLoginAttempt($admin_email, $admin_ipAddress, $admin_throttleTime));
+
+            return redirect('/admin')->with([
+                'admin-error-message-header' => 'Too many attempts',
+                'admin-error-message-body' => 'Please try again after 5 minutes.',
+            ]);
+        }
+
+        $admin_login = Admin::where('admin_email', $admin_email)->first();
 
         if (!$admin_login) {
+            DB::table('admin_login_attempts')->insert([
+                'admin_email' => $admin_email,
+                'ip_address' => $admin_ipAddress,
+                'status' => 'failed',
+                'created_at' => now(),
+            ]);
+
             return back()->withErrors(['admin_email' => "This email doesn't exist."])->onlyInput('admin_email');
         }
 
@@ -67,19 +95,39 @@ class AdminController extends Controller
         }
 
         if (!Hash::check($validated['admin_password'], $admin_login->admin_password)) {
+            DB::table('admin_login_attempts')->insert([
+                'admin_email' => $admin_email,
+                'ip_address' => $admin_ipAddress,
+                'status' => 'failed',
+                'created_at' => now(),
+            ]);
+
+            RateLimiter::hit($this->throttleKey($request), 300);
+
             return back()->withErrors(['admin_password' => 'Password incorrect.'])->onlyInput('admin_email');
         }
 
         FacadesAuth::login($admin_login);
         $request->session()->regenerate();
-
         $request->session()->put('admin', $admin_login);
+
+        DB::table('admin_login_attempts')->insert([
+            'admin_email' => $admin_email,
+            'ip_address' => $admin_ipAddress,
+            'status' => 'successful',
+            'created_at' => now(),
+        ]);
 
         return redirect('/admin')->with([
             'admin-message-header' => 'Welcome back!',
             'admin-message-body' => 'Successfully logged in.',
             'clearAdminLoginModal' => true,
         ]);
+    }
+
+    public function throttleKey(Request $request)
+    {
+        return 'login:' . $request->input('admin_email');
     }
 
     public function admin_logout(Request $request)

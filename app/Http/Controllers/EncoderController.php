@@ -13,7 +13,9 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\EncoderResendCodeEmail;
 use App\Mail\EncoderVerificationEmail;
 use App\Mail\EncoderForgotPassword;
+use App\Mail\EncoderLoginAttempt;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -29,11 +31,10 @@ class EncoderController extends Controller
 
     public function encoder_login(Request $request)
     {
-
         $EncoderLoginMessages = [
             'encoder_email.required' => 'Enter your email.',
             'encoder_password.required' => 'Enter your password.',
-            'g-recaptcha-response' => 'Recaptcha field is required'
+            'g-recaptcha-response' => 'Recaptcha field is required',
         ];
 
         $validated = $request->validate([
@@ -53,9 +54,35 @@ class EncoderController extends Controller
             }],
         ], $EncoderLoginMessages);
 
-        $encoder_login = Encoder::where('encoder_email', $validated['encoder_email'])->first();
+        $encoder_email = $validated['encoder_email'];
+        $encoder_ipAddress = $request->ip();
+        $encoder_throttleTime = Carbon::now()->format('Y-m-d H:i:s');
 
+        if (RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
+            DB::table('encoder_login_attempts')->insert([
+                'encoder_email' => $encoder_email,
+                'ip_address' => $encoder_ipAddress,
+                'status' => 'throttled',
+                'created_at' => now(),
+            ]);
+
+            Mail::to($encoder_email)->send(new EncoderLoginAttempt($encoder_email, $encoder_ipAddress, $encoder_throttleTime));
+
+            return redirect('/encoder')->with([
+                'encoder-error-message-header' => 'Too many attempts',
+                'encoder-error-message-body' => 'Please try again after 5 minutes.',
+            ]);
+        }
+
+        $encoder_login = Encoder::where('encoder_email', $encoder_email)->first();
         if (!$encoder_login) {
+            DB::table('encoder_login_attempts')->insert([
+                'encoder_email' => $encoder_email,
+                'ip_address' => $encoder_ipAddress,
+                'status' => 'failed',
+                'created_at' => now(),
+            ]);
+
             return back()->withErrors(['encoder_email' => "This email doesn't exist."])->onlyInput('encoder_email');
         }
 
@@ -65,24 +92,44 @@ class EncoderController extends Controller
                 'showEncoderVerificationModal' => true,
                 'clearEncoderLoginModal' => true,
                 'encoder-error-message-header' => 'Login Failed',
-                'encoder-error-message-body' => 'Verify your email first.'
+                'encoder-error-message-body' => 'Verify your email first.',
             ]);
         }
 
         if (!Hash::check($validated['encoder_password'], $encoder_login->encoder_password)) {
+            DB::table('encoder_login_attempts')->insert([
+                'encoder_email' => $encoder_email,
+                'ip_address' => $encoder_ipAddress,
+                'status' => 'failed',
+                'created_at' => now(),
+            ]);
+
+            RateLimiter::hit($this->throttleKey($request), 300);
+
             return back()->withErrors(['encoder_password' => 'Password incorrect.'])->onlyInput('encoder_email');
         }
 
         FacadesAuth::login($encoder_login);
         $request->session()->regenerate();
-
         $request->session()->put('encoder', $encoder_login);
+
+        DB::table('encoder_login_attempts')->insert([
+            'encoder_email' => $encoder_email,
+            'ip_address' => $encoder_ipAddress,
+            'status' => 'successful',
+            'created_at' => now(),
+        ]);
 
         return redirect('/encoder')->with([
             'encoder-message-header' => 'Welcome back!',
             'encoder-message-body' => 'Successfully logged in.',
             'clearEncoderLoginModal' => true,
         ]);
+    }
+
+    public function throttleKey(Request $request)
+    {
+        return 'login:' . $request->input('encoder_email');
     }
 
     public function showEncoderVerificationFormLogin()

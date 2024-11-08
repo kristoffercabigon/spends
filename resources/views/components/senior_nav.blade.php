@@ -61,10 +61,7 @@
                     </div>
                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="avatarButton">
                         <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Pension Status</a>
-                        </li>
-                        <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Settings</a>
+                            <a href="/profile" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
                         </li>
                         <li>
                             <a href="#" class="block px-4 py-2 hover:bg-gray-100">Messages</a>
@@ -103,8 +100,7 @@
                             <div class="font-medium truncate">OSCA ID: {{ $senior->osca_id }}</div>
                         </div>
                         <ul class="py-2 text-sm text-gray-700">
-                            <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Pension Status</a></li>
-                            <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Settings</a></li>
+                            <li><a href="/profile" class="block px-4 py-2 hover:bg-gray-100">Profile</a></li>
                             <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Messages</a></li>
                         </ul>
                         <div class="py-1">

@@ -18,11 +18,6 @@
                     <h1 class="text-xl font-bold mt-[15px] leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                         Sign in to your account
                     </h1>
-                    @if ($errors->has('throttle'))
-                        <div class="alert alert-danger">
-                            {{ $errors->first('throttle') }}
-                        </div>
-                    @endif
                     <form x-data="{ isLoadingSignIn: false }" 
                         @submit.prevent="
                         isLoadingSignIn = true;

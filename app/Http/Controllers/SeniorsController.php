@@ -13,11 +13,14 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail; 
 use App\Mail\SeniorResendCodeEmail;
 use App\Mail\SeniorVerificationEmail;
+use App\Mail\SeniorLoginAttempt;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use App\Http\Requests\StoreSeniorRequest;
+use Illuminate\Support\Facades\Facade;
 
 class SeniorsController extends Controller
 {
@@ -351,7 +354,7 @@ class SeniorsController extends Controller
         $loginMessages = [
             'email.required' => 'Enter your email.',
             'password.required' => 'Enter your password.',
-            'g-recaptcha-response' => 'Recaptcha field is required'
+            'g-recaptcha-response' => 'Recaptcha field is required',
         ];
 
         $validated = $request->validate([
@@ -371,9 +374,35 @@ class SeniorsController extends Controller
             }],
         ], $loginMessages);
 
-        $senior_login = Seniors::where('email', $validated['email'])->first();
+        $email = $validated['email'];
+        $ipAddress = $request->ip();
+        $throttleTime = Carbon::now()->format('Y-m-d H:i:s');
 
+        if (RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
+            DB::table('senior_login_attempts')->insert([
+                'email' => $email,
+                'ip_address' => $ipAddress,
+                'status' => 'throttled',
+                'created_at' => now(),
+            ]);
+
+            Mail::to($email)->send(new SeniorLoginAttempt($email, $ipAddress, $throttleTime));
+
+            return redirect('/')->with([
+                'error-message-header' => 'Too many attempts',
+                'error-message-body' => 'Please try again after 5 minutes.',
+            ]);
+        }
+
+        $senior_login = Seniors::where('email', $email)->first();
         if (!$senior_login) {
+            DB::table('senior_login_attempts')->insert([
+                'email' => $email,
+                'ip_address' => $ipAddress,
+                'status' => 'failed',
+                'created_at' => now(),
+            ]);
+
             return back()->withErrors(['email' => "This email doesn't exist."])->onlyInput('email');
         }
 
@@ -383,24 +412,44 @@ class SeniorsController extends Controller
                 'showVerificationModal' => true,
                 'clearLoginModal' => true,
                 'error-message-header' => 'Login Failed',
-                'error-message-body' => 'Verify your email first.'
+                'error-message-body' => 'Verify your email first.',
             ]);
         }
 
         if (!Hash::check($validated['password'], $senior_login->password)) {
+            DB::table('senior_login_attempts')->insert([
+                'email' => $email,
+                'ip_address' => $ipAddress,
+                'status' => 'failed',
+                'created_at' => now(),
+            ]);
+
+            RateLimiter::hit($this->throttleKey($request), 300);
+
             return back()->withErrors(['password' => 'Password incorrect.'])->onlyInput('email');
         }
 
         FacadesAuth::login($senior_login);
         $request->session()->regenerate();
-
         $request->session()->put('senior', $senior_login);
+
+        DB::table('senior_login_attempts')->insert([
+            'email' => $email,
+            'ip_address' => $ipAddress,
+            'status' => 'successful',
+            'created_at' => now(),
+        ]);
 
         return redirect('/')->with([
             'message-header' => 'Welcome back!',
             'message-body' => 'Successfully logged in.',
             'clearLoginModal' => true,
         ]);
+    }
+
+    public function throttleKey(Request $request)
+    {
+        return 'login:' . $request->input('email');
     }
 
     public function sendEmailForReset(Request $request)

@@ -18,8 +18,6 @@ use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use App\Http\Requests\StoreEncoderRequest;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Session;
 
 
 class EncoderController extends Controller
@@ -96,7 +94,7 @@ class EncoderController extends Controller
             ]);
         }
 
-        return redirect('/encoder')->with([
+        return redirect(url()->previous())->with([
             'showEncoderVerificationModal' => true,
             'clearEncoderLoginModal' => true,
             'encoder_email' => session('encoder_email'),

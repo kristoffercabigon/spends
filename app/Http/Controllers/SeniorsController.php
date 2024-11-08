@@ -207,15 +207,17 @@ class SeniorsController extends Controller
         }
 
         foreach ($request->relative_name as $index => $name) {
-            DB::table('family_composition')->insert([
-                'senior_id' => $seniors->id,
-                'relative_name' => $name ?: null, 
-                'relative_relationship' => $request->relative_relationship[$index] ?: null,
-                'relative_age' => $request->relative_age[$index] ?: null,
-                'relative_civil_status' => $request->relative_civil_status[$index] ?: null,
-                'relative_occupation' => $request->relative_occupation[$index] ?: null,
-                'relative_income' => $request->relative_income[$index] ?: null,
-            ]);
+            if (!empty($name)) {
+                DB::table('family_composition')->insert([
+                    'senior_id' => $seniors->id,
+                    'relative_name' => $name,
+                    'relative_relationship' => $request->relative_relationship[$index] ?: null,
+                    'relative_age' => $request->relative_age[$index] ?: null,
+                    'relative_civil_status' => $request->relative_civil_status[$index] ?: null,
+                    'relative_occupation' => $request->relative_occupation[$index] ?: null,
+                    'relative_income' => $request->relative_income[$index] ?: null,
+                ]);
+            }
         }
 
         return redirect()->route('verify-email')->with([
@@ -278,6 +280,9 @@ class SeniorsController extends Controller
             $senior->verification_code = null;
             $senior->verification_expires_at = null;
             $senior->save();
+
+            session()->flash('message-header', 'Success');
+            session()->flash('message-body', 'Email verified successfully.');
 
             session(['showLoginModal' => true]);
 

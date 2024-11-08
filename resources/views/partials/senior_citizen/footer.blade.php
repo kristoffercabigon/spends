@@ -5,16 +5,16 @@
     <img src="{{ asset('images/osca_image_transparent_with_border.png') }}" alt="OSCA Logo" class="w-[70px] mx-auto mb-6">
 
     <div class="mb-6 flex justify-center space-x-10">
-        <a href="/home" class="text-white hover:text-blue-700">Home</a>
-        <a href="/announcement" class="text-white hover:text-blue-700">Announcement</a>
-        <a href="/contact-us" class="text-white hover:text-blue-700">Contact Us</a>
-        <a href="/about-us" class="text-white hover:text-blue-700">About Us</a>
+        <a href="/home" class="text-white hover:text-orange-300 hover:animate-pop">Home</a>
+        <a href="/announcement" class="text-white hover:text-orange-300 hover:animate-pop">Announcement</a>
+        <a href="/contact-us" class="text-white hover:text-orange-300 hover:animate-pop">Contact Us</a>
+        <a href="/about-us" class="text-white hover:text-orange-300 hover:animate-pop">About Us</a>
     </div>
     <div class="mb-2 flex justify-center space-x-2">
       <a
         href="#!"
         type="button"
-        class="rounded-full bg-[transparent] p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
+        class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
         data-twe-ripple-init>
         <span class="[&>svg]:h-5 [&>svg]:w-5">
           <svg
@@ -30,7 +30,7 @@
       <a
         href="#!"
         type="button"
-        class="rounded-full bg-transparent p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
+        class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
         data-twe-ripple-init>
         <span class="mx-auto [&>svg]:h-5 [&>svg]:w-5">
           <svg
@@ -46,7 +46,7 @@
       <a
         href="#!"
         type="button"
-        class="rounded-full bg-transparent p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
+        class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
         data-twe-ripple-init>
         <span class="mx-auto [&>svg]:h-5 [&>svg]:w-5">
           <svg
@@ -62,7 +62,7 @@
       <a
         href="#!"
         type="button"
-        class="rounded-full bg-transparent p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
+        class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
         data-twe-ripple-init>
         <span class="mx-auto [&>svg]:h-5 [&>svg]:w-5">
           <svg
@@ -78,7 +78,7 @@
       <a
         href="#!"
         type="button"
-        class="rounded-full bg-transparent p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
+        class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
         data-twe-ripple-init>
         <span class="mx-auto [&>svg]:h-5 [&>svg]:w-5">
           <svg
@@ -94,7 +94,7 @@
       <a
         href="#!"
         type="button"
-        class="rounded-full bg-transparent p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
+        class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
         data-twe-ripple-init>
         <span class="mx-auto [&>svg]:h-5 [&>svg]:w-5">
           <svg

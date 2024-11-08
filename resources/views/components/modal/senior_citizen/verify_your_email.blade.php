@@ -87,6 +87,10 @@
         }
     }"
     x-show="showVerificationModal"
+    x-transition:enter="transition-opacity ease-linear duration-300"
+     x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+     x-transition:leave="transition-opacity ease-linear duration-300"
+     x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
     style="display: none"
     @click.away="showVerificationModal = false; localStorage.setItem('showVerificationModal', 'false'); showLoginModal = false;" class="w-full bg-white rounded-lg shadow dark:border sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
     

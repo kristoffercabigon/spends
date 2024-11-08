@@ -554,7 +554,6 @@ class SeniorsFactory extends Factory
                 $uniqueOscaIds[] = $oscaId; 
                 return $oscaId; 
             },
-            'ncsc_rrn' => null,
             'first_name' => $firstName,
             'middle_name' => $this->faker->randomElement($filipinoLastNames),
             'last_name' => $this->faker->randomElement($filipinoLastNames),

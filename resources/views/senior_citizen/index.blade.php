@@ -10,7 +10,7 @@
                 <p class="max-w-2xl font-semibold text-black text-[50px]">Social Pension Network of DSWD for Senior Citizens</p>
                 <p class="max-w-2xl mb-6 font-semibold text-[30px] text-black">North Caloocan City</p>
                 @guest
-                    <a href="/register" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center bg-white bg-opacity-50 text-gray-900 border border-gray-600 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white">
+                    <a href="/register" class="hover:animate-scale inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center bg-white bg-opacity-50 text-gray-900 border border-gray-600 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white">
                         Apply Now
                     </a>
                 @endguest

@@ -471,7 +471,7 @@
                                             placeholder="Enter address" value="{{ old('address') }}" />
 
                                         <span id="tooltip-icon" class="absolute top-[28px] right-0 flex items-center justify-center bg-gray-400 hover:bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-12 cursor-pointer @error('address') h-[44%] @elseif(old('address')) h-[44%] @else h-[63%] @enderror group">
-                                            <svg fill="#ffffff" class="w-7 h-7" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 416.979 416.979" xml:space="preserve" stroke="#ffffff">
+                                            <svg fill="#ffffff" class="w-7 h-7 hover:animate-jiggle" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 416.979 416.979" xml:space="preserve" stroke="#ffffff">
                                                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                                 <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                                                 <g id="SVGRepo_iconCarrier">
@@ -1122,7 +1122,7 @@
                                         <p id="valid_id_filename" class="text-gray-700 text-xs mt-2"></p>
 
                                         <div class="flex justify-center items-center mt-4">
-                                            <img :src="validIdPreviewUrl" id="valid_id_preview" class="max-h-48 rounded-md shadow-lg cursor-pointer" 
+                                            <img :src="validIdPreviewUrl" id="valid_id_preview" class="animate-blurred-fade-in max-h-48 rounded-md shadow-lg cursor-pointer" 
                                                 style="display: none;" alt="Valid ID Preview" @click="showValidIdModal = true">
                                         </div>
 
@@ -1181,14 +1181,14 @@
                                             <button @click="$dispatch('open-camera-modal')" 
                                                     class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12" 
                                                     type="button">
-                                                <img src="../images/camera.png" alt="Toggle Profile Picture" class="camera-icon w-7 h-7" id="toggleCameraIcon">
+                                                <img src="../images/camera.png" alt="Toggle Profile Picture" class="hover:animate-jiggle camera-icon w-7 h-7" id="toggleCameraIcon">
                                             </button>
                                         </div>
 
                                         <p id="profile_picture_filename" class="text-gray-700 text-xs mt-2"></p>
 
                                         <div class="flex justify-center items-center mt-4">
-                                            <img :src="previewUrl" id="profile_picture_preview" class="max-h-48 rounded-md shadow-lg cursor-pointer" style="display: none;" alt="Profile Picture Preview"
+                                            <img :src="previewUrl" id="profile_picture_preview" class="animate-blurred-fade-in max-h-48 rounded-md shadow-lg cursor-pointer" style="display: none;" alt="Profile Picture Preview"
                                                 @click="showProfilePicModal = true">
                                         </div>
 
@@ -1241,7 +1241,7 @@
                                         <p id="indigency_filename" class="text-gray-700 text-xs mt-2"></p>
 
                                         <div class="flex justify-center items-center mt-4">
-                                            <img :src="indigencyPreviewUrl" id="indigency_preview" class="max-h-48 rounded-md shadow-lg cursor-pointer" 
+                                            <img :src="indigencyPreviewUrl" id="indigency_preview" class="animate-blurred-fade-in max-h-48 rounded-md shadow-lg cursor-pointer" 
                                                 style="display: none;" alt="Indigency Certificate Preview" @click="showIndigencyModal = true">
                                         </div>
 
@@ -1293,7 +1293,7 @@
                                         <p id="birth_certificate_filename" class="text-gray-700 text-xs mt-2"></p>
 
                                         <div class="flex justify-center items-center mt-4">
-                                            <img :src="birthCertificatePreviewUrl" id="birth_certificate_preview" class="max-h-48 rounded-md shadow-lg cursor-pointer" 
+                                            <img :src="birthCertificatePreviewUrl" id="birth_certificate_preview" class="animate-blurred-fade-in max-h-48 rounded-md shadow-lg cursor-pointer" 
                                                 style="display: none;" alt="Birth Certificate Preview" @click="showBirthCertificateModal = true">
                                         </div>
 
@@ -1367,7 +1367,7 @@
 
                                                 <button class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-12 hover:bg-gray-600 @error('password') h-[27%]  @else h-[33%] @enderror" 
                                                     type="button" onclick="togglePassword('passwordField', 'togglePasswordIcon1')">
-                                                    <img src="../images/hide.png" alt="Show Password" class="eye-icon w-7 h-7" id="togglePasswordIcon1">
+                                                    <img src="../images/hide.png" alt="Show Password" class="eye-icon w-7 h-7 hover:animate-jiggle" id="togglePasswordIcon1">
                                                 </button>
                                             </div>
 
@@ -1411,7 +1411,7 @@
                                                     placeholder="Confirm password" id="passwordConfirmationField" />
 
                                                 <button class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12 h-full" type="button" id="button-addon2" onclick="togglePassword('passwordConfirmationField', 'togglePasswordIcon2')">
-                                                    <img src="../images/hide.png" alt="Show Password" class="eye-icon w-7 h-7" id="togglePasswordIcon2">
+                                                    <img src="../images/hide.png" alt="Show Password" class="eye-icon w-7 h-7 hover:animate-jiggle" id="togglePasswordIcon2">
                                                 </button>
                                             </div>
                                             @if(old('password_confirmation'))
@@ -1490,7 +1490,7 @@
                                 @endif
 
                                 <div class="mt-8 flex justify-center">
-                                    <button type="submit" id="submit" name="submit" class="py-3 px-6 md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
+                                    <button type="submit" id="submit" name="submit" class="hover:animate-pop py-3 px-6 md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
                                         Sign up
                                     </button>
                                 </div>
@@ -1500,7 +1500,7 @@
                 </div>
                 <div class="mt-3 mb-3 flex justify-between items-center">
                     <div>
-                        <button type="button" id="backButton" class="py-3 px-6 shadow-lg text-sm tracking-wider font-light rounded-md text-gray-800 bg-white border border-gray-200 shadow-sm hover:bg-gray-300 focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
+                        <button type="button" id="backButton" class="hover:animate-scale py-3 px-6 shadow-lg text-sm tracking-wider font-light rounded-md text-gray-800 bg-white border border-gray-200 shadow-sm hover:bg-gray-300 focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
                             <svg class="shrink-0 w-5 h-5 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M15 18l-6-6 6-6"></path>
                             </svg>
@@ -1508,7 +1508,7 @@
                         </button>
                     </div>
                     <div>
-                        <button type="button" id="nextButton" class="py-3 px-6 shadow-lg text-sm tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148e10] focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
+                        <button type="button" id="nextButton" class="hover:animate-scale py-3 px-6 shadow-lg text-sm tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148e10] focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
                             Next
                             <svg class="shrink-0 w-5 h-5 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M9 18l6-6-6-6"></path>

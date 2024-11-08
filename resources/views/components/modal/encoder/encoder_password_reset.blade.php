@@ -1,42 +1,42 @@
-@if (session('savePasswordResetModal'))
+@if (session('saveEncoderPasswordResetModal'))
     <script>
-        console.log("Modal session active, email:", '{{ session('email') }}', "token:", '{{ session('token') }}');
-        localStorage.setItem('resetEmail', localStorage.getItem('resetEmail') || '{{ session('email') }}');
-        localStorage.setItem('resetToken', localStorage.getItem('resetToken') || '{{ session('token') }}');
-        localStorage.setItem('showPasswordResetModal', 'true');
+        console.log("Modal session active, encoder_email:", '{{ session('encoder_email') }}', "encoder_token:", '{{ session('encoder_token') }}');
+        localStorage.setItem('resetEncoderEmail', localStorage.getItem('resetEncoderEmail') || '{{ session('encoder_email') }}');
+        localStorage.setItem('resetEncoderToken', localStorage.getItem('resetEncoderToken') || '{{ session('encoder_token') }}');
+        localStorage.setItem('showEncoderPasswordResetModal', 'true');
     </script>
 @endif
 
-@if (session('removePasswordResetModal'))
+@if (session('removeEncoderPasswordResetModal'))
     <script>
-        localStorage.removeItem('showPasswordResetModal');
-        localStorage.setItem('resetEmail', localStorage.getItem('resetEmail'));
-        localStorage.setItem('resetToken', localStorage.getItem('resetToken'));
+        localStorage.removeItem('showEncoderPasswordResetModal');
+        localStorage.setItem('resetEncoderEmail', localStorage.getItem('resetEncoderEmail'));
+        localStorage.setItem('resetEncoderToken', localStorage.getItem('resetEncoderToken'));
     </script>
 @endif
 
 <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 font-poppins"
      x-data="{
-         showPasswordResetModal: localStorage.getItem('showPasswordResetModal') === 'true',
-         email: localStorage.getItem('resetEmail'), 
-         token: localStorage.getItem('resetToken'),
+         showEncoderPasswordResetModal: localStorage.getItem('showEncoderPasswordResetModal') === 'true',
+         encoder_email: localStorage.getItem('resetEncoderEmail'), 
+         encoder_token: localStorage.getItem('resetEncoderToken'),
          init() {
-             if (this.email) {
-                 localStorage.setItem('resetEmail', this.email);
-                 document.getElementById('resetEmail').value = this.email;
+             if (this.encoder_email) {
+                 localStorage.setItem('resetEncoderEmail', this.encoder_email);
+                 document.getElementById('resetEncoderEmail').value = this.encoder_email;
              }
-             if (this.token) {
-                 localStorage.setItem('resetToken', this.token);
+             if (this.encoder_token) {
+                 localStorage.setItem('resetEncoderToken', this.encoder_token);
              }
-             localStorage.setItem('showPasswordResetModal', this.showPasswordResetModal);
+             localStorage.setItem('showEncoderPasswordResetModal', this.showEncoderPasswordResetModal);
          }
      }"
-     x-show="showPasswordResetModal"
+     x-show="showEncoderPasswordResetModal"
      style="display: none"
-     @click.away="showPasswordResetModal = false; localStorage.setItem('showPasswordResetModal', 'false')">
+     @click.away="showEncoderPasswordResetModal = false; localStorage.setItem('showEncoderPasswordResetModal', 'false')">
     <div @click.stop>
         <section class="bg-gray-50 dark:bg-gray-900 relative">
-            <button @click="showPasswordResetModal = false; localStorage.setItem('showPasswordResetModal', 'false')" 
+            <button @click="showEncoderPasswordResetModal = false; localStorage.setItem('showEncoderPasswordResetModal', 'false')" 
                     class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -48,8 +48,8 @@
                         Reset Password
                     </h1>
 
-                    <div x-show="email" class="text-sm text-gray-600 dark:text-gray-400">
-                        Change password for email: <strong x-text="email"></strong>
+                    <div x-show="encoder_email" class="text-sm text-gray-600 dark:text-gray-400">
+                        Change password for email: <strong x-text="encoder_email"></strong>
                     </div>
 
                     <form x-data="{ isLoadingResetPassword: false }"
@@ -57,19 +57,19 @@
                             isLoadingResetPassword = true;
                             $nextTick(() => $el.submit());
                         "
-                        class="space-y-4 md:space-y-6" method="POST" action="{{ route('reset-password') }}">
+                        class="space-y-4 md:space-y-6" method="POST" action="{{ route('encoder-reset-password') }}">
                         @csrf
                         @method('PUT')
 
                         <div class="relative">
-                            <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Password</label>
-                            <input type="hidden" name="email" id="resetEmail" value="">
-                            <input type="password" name="password" id="password1"
+                            <label for="encoder_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Password</label>
+                            <input type="hidden" name="encoder_email" id="resetEncoderEmail" value="">
+                            <input type="password" name="encoder_password" id="password1"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="New Password"
                                 oninput="updatePasswordCriteria(this.value)">
 
-                            <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 @error('password') h-[24%] mt-[7%] right-[-2px]  @else mt-[7%] h-[28%] right-[-2px] @enderror" 
+                            <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 @error('encoder_password') h-[24%] mt-[7%] right-[-2px]  @else mt-[7%] h-[28%] right-[-2px] @enderror" 
                                     type="button" onclick="togglePassword('password1', 'togglePasswordIcon')">
                                 <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIcon">
                             </button>
@@ -82,23 +82,23 @@
                                     <li id="symbol"><i class="fas fa-times text-red-500"></i> At least one symbol (@$!%*?&)</li>
                                 </ul>
                             </div>
-                            @error('password')
+                            @error('encoder_password')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div class="relative">
-                            <label for="password_confirmation" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm Password</label>
-                            <input type="password" name="password_confirmation" id="password_confirmation"
+                            <label for="encoder_password_confirmation" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm Password</label>
+                            <input type="password" name="encoder_password_confirmation" id="encoder_password_confirmation"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="Confirm Password">
 
-                            <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 @if('password_confirmation') h-[65%] mt-[7%] right-[-2px]@endif" 
-                                    type="button" onclick="togglePassword('password_confirmation', 'toggleConfirmationIcon')">
+                            <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 @if('encoder_password_confirmation') h-[65%] mt-[7%] right-[-2px]@endif" 
+                                    type="button" onclick="togglePassword('encoder_password_confirmation', 'toggleConfirmationIcon')">
                                 <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="toggleConfirmationIcon">
                             </button>
 
-                            @error('password_confirmation')
+                            @error('encoder_password_confirmation')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
@@ -124,21 +124,21 @@
 <script src= "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 
 <script>
-function updatePasswordCriteria(password) {
+function updatePasswordCriteria(encoder_password) {
     document.getElementById("minLength").innerHTML = 
-        password.length >= 8 ? '<i class="fas fa-check text-green-500"></i> Minimum 8 characters' : 
+        encoder_password.length >= 8 ? '<i class="fas fa-check text-green-500"></i> Minimum 8 characters' : 
         '<i class="fas fa-times text-red-500"></i> Minimum 8 characters';
     
     document.getElementById("uppercase").innerHTML = 
-        /[A-Z]/.test(password) ? '<i class="fas fa-check text-green-500"></i> At least one uppercase letter' : 
+        /[A-Z]/.test(encoder_password) ? '<i class="fas fa-check text-green-500"></i> At least one uppercase letter' : 
         '<i class="fas fa-times text-red-500"></i> At least one uppercase letter';
     
     document.getElementById("lowercase").innerHTML = 
-        /[a-z]/.test(password) ? '<i class="fas fa-check text-green-500"></i> At least one lowercase letter' : 
+        /[a-z]/.test(encoder_password) ? '<i class="fas fa-check text-green-500"></i> At least one lowercase letter' : 
         '<i class="fas fa-times text-red-500"></i> At least one lowercase letter';
     
     document.getElementById("symbol").innerHTML = 
-        /[@$!%*?&]/.test(password) ? '<i class="fas fa-check text-green-500"></i> At least one symbol (@$!%*?&)' : 
+        /[@$!%*?&]/.test(encoder_password) ? '<i class="fas fa-check text-green-500"></i> At least one symbol (@$!%*?&)' : 
         '<i class="fas fa-times text-red-500"></i> At least one symbol (@$!%*?&)';
 }
 
@@ -157,10 +157,9 @@ function togglePassword(fieldId, iconId) {
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const email = urlParams.get('email');
-    const token = urlParams.get('token');
+    const encoder_email = urlParams.get('encoder_email');
+    const encoder_token = urlParams.get('encoder_token');
 
-    if (email) localStorage.setItem('resetEmail', email);
-    if (token) localStorage.setItem('resetToken', token);
+    if (encoder_email) localStorage.setItem('resetEncoderEmail', email);
+    if (encoder_token) localStorage.setItem('resetEncoderToken', token);
 </script>
-

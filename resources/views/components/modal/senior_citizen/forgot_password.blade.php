@@ -7,14 +7,8 @@
 <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 font-poppins"
      x-show="showForgotPasswordModal"
      style="display: none"
-     x-transition:enter="transition-opacity ease-linear duration-300"
-     x-transition:enter-start="opacity-0"
-     x-transition:enter-end="opacity-100"
-     x-transition:leave="transition-opacity ease-linear duration-300"
-     x-transition:leave-start="opacity-100"
-     x-transition:leave-end="opacity-0"
      @click.away="showForgotPasswordModal = false; localStorage.setItem('showForgotPasswordModal', 'false')">
-    <div @click.stop>
+    <div @click.stop >
         <section class="bg-gray-50 dark:bg-gray-900 relative">
             <button @click="showForgotPasswordModal = false; localStorage.setItem('showForgotPasswordModal', 'false')" 
                     class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none">
@@ -50,7 +44,7 @@
                             @enderror
                         </div>
 
-                        <button type="submit" class="relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                        <button type="submit" class="hover:animate-pop relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                             <span x-show="!isLoadingForgotPassword">Send Reset Link</span>
                             <span x-show="isLoadingForgotPassword" style="display: none;" class="flex items-center justify-center">
                                 <svg aria-hidden="true" class="inline w-4 h-4 mr-2 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

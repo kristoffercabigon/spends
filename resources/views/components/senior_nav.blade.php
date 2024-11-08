@@ -18,20 +18,20 @@
         </a>
 
         <button @click="open = !open" data-collapse-toggle="navbar-main" class="md:hidden">
-            <svg class="text-white mr-4" xmlns="http://www.w3.org/2000/svg" alt="burger_icon" height="40px" viewBox="0 -960 960 960" width="40px" fill="#fff">
+            <svg class="text-white mr-4 hover:animate-squeeze" xmlns="http://www.w3.org/2000/svg" alt="burger_icon" height="40px" viewBox="0 -960 960 960" width="40px" fill="#fff">
                 <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
             </svg>
         </button>
 
         <div class="hidden md:flex flex-1 justify-center">
             <ul class="flex justify-center space-x-8">
-                <li><a href="/" class="block py-2 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/announcement" class="block py-2 text-16px hover:text-orange-300">Announcement</a></li>
-                <li><a href="/about-us" class="block py-2 text-16px hover:text-orange-300">About Us</a></li>
-                <li><a href="/contact-us" class="block py-2 text-16px hover:text-orange-300">Contact Us</a></li>
+                <li><a href="/" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Home</a></li>
+                <li><a href="/announcement" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Announcement</a></li>
+                <li><a href="/about-us" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">About Us</a></li>
+                <li><a href="/contact-us" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Contact Us</a></li>
                 @guest
-                <li><a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" class="block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
-                <li><a href="/register" class="block py-2 text-16px hover:text-orange-300">Sign Up</a></li>
+                <li><a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" class="hover:animate-pop block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
+                <li><a href="/register" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Sign Up</a></li>
                 @endguest
             </ul>
         </div>
@@ -52,14 +52,8 @@
                     x-show="dropdownOpen" 
                     style="display: none" 
                     @click.away="dropdownOpen = false" 
-                    id="userDropdown" 
+                    id="userDropdown"
                     class="z-10 absolute right-0 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 origin-top-right"
-                    x-transition:enter="transition ease-out duration-200 transform"
-                    x-transition:enter-start="opacity-0 scale-95"
-                    x-transition:enter-end="opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-150 transform"
-                    x-transition:leave-start="opacity-100 scale-100"
-                    x-transition:leave-end="opacity-0 scale-95"
                 >
                     <div class="px-4 py-3 text-sm text-gray-900">
                         <div class="font-medium truncate">{{ $senior->email }}</div>
@@ -88,15 +82,9 @@
 
         <div 
             x-show="open" 
-            style="display: none" 
+            style="display: none"
             class="absolute top-full left-0 w-full bg-customGreen bg-opacity-90 md:hidden" 
             id="navbar-main"
-            x-transition:enter="transition ease-out duration-300 transform"
-            x-transition:enter-start="opacity-0 -translate-y-4"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-200 transform"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-4"
         >
             <ul class="block flex-col px-4">
                 @if ($senior)
@@ -109,12 +97,6 @@
                         style="display: none" 
                         @click.away="dropdownOpen = false" 
                         class="absolute z-20 mt-2 right-0 left-0 ml-[60px] bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-48 origin-top"
-                        x-transition:enter="transition ease-out duration-200 transform"
-                        x-transition:enter-start="opacity-0 scale-95"
-                        x-transition:enter-end="opacity-100 scale-100"
-                        x-transition:leave="transition ease-in duration-150 transform"
-                        x-transition:leave-start="opacity-100 scale-100"
-                        x-transition:leave-end="opacity-0 scale-95"
                     >
                         <div class="px-4 py-3 text-sm text-gray-900">
                             <div class="font-medium truncate">{{ $senior->email }}</div>
@@ -133,13 +115,13 @@
                         </div>
                     </div>
                 @endif
-                <li><a href="/" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/announcement" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Announcement</a></li>
-                <li><a href="/about-us" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
-                <li><a href="/contact-us" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Contact Us</a></li>
+                <li><a href="/" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
+                <li><a href="/announcement" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Announcement</a></li>
+                <li><a href="/about-us" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
+                <li><a href="/contact-us" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Contact Us</a></li>
                 @guest
-                <li><a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
-                <li><a href="/register" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Sign Up</a></li>
+                <li><a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
+                <li><a href="/register" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Sign Up</a></li>
                 @endguest
             </ul>
         </div>

@@ -2,11 +2,12 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 font-poppins"
     x-data="{
         showEncoderVerificationModal: @json(session('showEncoderVerificationModal', false)),
+        showEncoderLoginModal: false, // Add the showEncoderLoginModal state
         isLoadingVerify: false,
         isLoadingResend: false,
         statusMessage: '',
         verifyStatusMessage: '',
-        encoder_email: '{{ session('encoder_email') }}',
+        encoder_email: '{{ session('encoder_email', '') }}',
         code: '{{ session('code') }}',
         
         resendCode() {
@@ -55,7 +56,7 @@
             formData.append('encoder_email', this.encoder_email);
             formData.append('code', codeInput);
 
-            fetch('{{ route("encoder-verify-email") }}', {
+            fetch('{{ route("encoder-verify-email-login") }}', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -72,7 +73,9 @@
                 } else if (data.message) {
                     this.verifyStatusMessage = data.message;
                     localStorage.setItem('isVerified', 'true');
-                    this.showEncoderVerificationModal = false; 
+                    this.showEncoderVerificationModal = false;
+                    
+                    localStorage.setItem('showEncoderLoginModal', 'true');
 
                     window.location.href = data.redirect;
                 }
@@ -85,12 +88,6 @@
     }"
     x-show="showEncoderVerificationModal"
     style="display: none"
-    x-transition:enter="transition-opacity ease-linear duration-300"
-    x-transition:enter-start="opacity-0" 
-    x-transition:enter-end="opacity-100"
-    x-transition:leave="transition-opacity ease-linear duration-300"
-    x-transition:leave-start="opacity-100" 
-    x-transition:leave-end="opacity-0"
     @click.away="showEncoderVerificationModal = false; localStorage.setItem('showEncoderVerificationModal', 'false'); showEncoderLoginModal = false;">
     
     <div @click.stop>
@@ -122,7 +119,7 @@
                                 class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" 
                                 placeholder="Enter code here">
 
-                            <p x-text="verifyStatusMessage" class="mt-2 text-sm" :class="verifyStatusMessage.includes('error') || verifyStatusMessage.includes('Invalid') || verifyStatusMessage.includes('Expired') ? 'text-gray-800' : 'text-gray-800'"></p>
+                            <p x-text="verifyStatusMessage" class="mt-2 text-sm" :class="verifyStatusMessage.includes('error') || verifyStatusMessage.includes('Invalid') || verifyStatusMessage.includes('Expired') ? 'text-red-600' : 'text-red-600'"></p>
 
                             <button type="submit" 
                                     class="relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">

@@ -18,13 +18,22 @@ Route::controller(SeniorsController::class)->group(function () {
     Route::post('/verify-email', 'verifyEmailCodeRegister');
     Route::post('/verify-email-login', 'verifyEmailCodeLogin');
     Route::post('/logout', 'logout');
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/profile', 'showProfile'); 
+        Route::post('/update-profile', 'updateProfile');
+    });
 });
 
 Route::controller(EncoderController::class)->group(function () {
     Route::get('/encoder', 'showEncoderIndex')->name('encoder');
-    Route::get('/encoder/verify-email', 'showVerificationFormRegister')->name('encoder-verify-email');
+    Route::get('/encoder/verify-email-login', 'showEncoderVerificationFormLogin')->name('encoder-verify-email-login');
+    Route::get('/encoder/reset-password', 'showEncoderResetPasswordForm')->name('encoder-reset-password');
     Route::put('/encoder/forgot-password', 'sendEncoderEmailForReset')->name('encoder-forgot-password');
-    Route::post('/encoder/store', 'encoder_store');
+    Route::put('/encoder/reset-password', 'resetEncoderPassword');
+    Route::post('/encoder/login', 'encoder_login')->name('encoder_login')->middleware('guest');
     Route::post('/encoder/verify-email', 'verifyEncoderEmailCodeRegister');
+    Route::post('/encoder/verify-email-login', 'verifyEncoderEmailCodeLogin');
     Route::post('/encoder/resend-code', 'resendEncoderVerificationCode')->name('encoder-resend-code');
+    Route::post('/encoder/logout', 'encoder_logout');
 });

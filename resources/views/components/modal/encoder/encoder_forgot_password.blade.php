@@ -7,12 +7,6 @@
 <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 font-poppins"
      x-show="showEncoderForgotPasswordModal"
      style="display: none"
-     x-transition:enter="transition-opacity ease-linear duration-300"
-     x-transition:enter-start="opacity-0"
-     x-transition:enter-end="opacity-100"
-     x-transition:leave="transition-opacity ease-linear duration-300"
-     x-transition:leave-start="opacity-100"
-     x-transition:leave-end="opacity-0"
      @click.away="showEncoderForgotPasswordModal = false; localStorage.setItem('showEncoderForgotPasswordModal', 'false')">
     <div @click.stop>
         <section class="bg-gray-50 dark:bg-gray-900 relative">
@@ -40,12 +34,12 @@
                         @csrf
 
                         <div>
-                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                            <input type="email" name="email" id="email"
+                            <label for="encoder_email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                            <input type="email" name="encoder_email" id="encoder_email"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="email@example.com">
 
-                            @error('email')
+                            @error('encoder_email')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                             @enderror
                         </div>

@@ -266,6 +266,7 @@ class SeniorsController extends Controller
             ->first();
 
         if ($senior) {
+
             if ($senior->verification_expires_at && $senior->verification_expires_at->isPast()) {
                 return response()->json(['error' => 'Verification code has expired. Please request a new one.'], 400);
             }
@@ -275,10 +276,7 @@ class SeniorsController extends Controller
             $senior->verification_expires_at = null;
             $senior->save();
 
-            session()->flash([
-                'message-header' => 'Success',
-                'message-body' => 'Email verified successfully.'
-            ]);
+            session(['showLoginModal' => true]);
 
             return response()->json(['message' => 'Email verified successfully.', 'redirect' => url()->previous()], 200);
         }
@@ -404,8 +402,6 @@ class SeniorsController extends Controller
             'clearLoginModal' => true,
         ]);
     }
-
-
 
     public function sendEmailForReset(Request $request)
     {

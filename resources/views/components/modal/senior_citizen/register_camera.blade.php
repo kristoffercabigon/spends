@@ -1,8 +1,4 @@
 <div x-show="showCameraModal" style="display: none" class="fixed inset-0 bg-black bg-opacity-50 z-30 flex items-center justify-center font-poppins" 
-    x-transition:enter="transition-opacity ease-linear duration-300"
-    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-    x-transition:leave="transition-opacity ease-linear duration-300"
-    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
     @click.away="showCameraModal = false"
     @open-camera-modal.window="initWebcam()">
     <div @click.stop class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-[715px] w-full">
@@ -19,7 +15,7 @@
                 <div class="col">
                     <div class="relative w-full h-auto">
                         <div id="my_camera" class="w-full h-auto" style="max-width: 100%; max-height: 100%;"></div>
-                        <img src="images/silhoutte.png" alt="Person Silhouette" class="absolute inset-0 w-full h-full opacity-50 pointer-events-none z-10 silhouette-image">
+                        <img src="images/silhoutte.png" alt="Person Silhouette" class="absolute inset-0 w-full h-full opacity-60 pointer-events-none z-10 silhouette-image">
                     </div>
                     <br/>
                     <div class="flex justify-center">
@@ -53,7 +49,7 @@
                         </div>
                     </div>
                     <div class="mt-8 items-center justify-center">
-                        <button class="py-3 px-6 w-full md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none" type="button" onclick="useCapturedPhoto()">Use this photo</button>
+                        <button class="hover:animate-pop py-3 px-6 w-full md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none" type="button" onclick="useCapturedPhoto()">Use this photo</button>
                     </div>
                 </div>
             </div>
@@ -96,7 +92,7 @@
     function take_snapshot() {
         Webcam.snap(function(data_uri) {
             document.querySelector(".image-tag").value = data_uri;
-            document.getElementById('results').innerHTML = '<img src="'+data_uri+'"/>';
+            document.getElementById('results').innerHTML = '<img src="'+data_uri+'" class="animate-zoom-in"/>';
             document.getElementById('error-message').classList.add('hidden');
         });
     }

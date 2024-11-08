@@ -2,6 +2,7 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 font-poppins"
     x-data="{
         showVerificationModal: @json(session('showVerificationModal', false)),
+        showLoginModal: false,
         isLoadingVerify: false,
         isLoadingResend: false,
         statusMessage: '',
@@ -72,7 +73,9 @@
                 } else if (data.message) {
                     this.verifyStatusMessage = data.message;
                     localStorage.setItem('isVerified', 'true');
-                    this.showVerificationModal = false; 
+                    this.showVerificationModal = false;
+
+                    localStorage.setItem('showLoginModal', 'true');
 
                     window.location.href = data.redirect;
                 }
@@ -85,13 +88,7 @@
     }"
     x-show="showVerificationModal"
     style="display: none"
-    x-transition:enter="transition-opacity ease-linear duration-300"
-    x-transition:enter-start="opacity-0" 
-    x-transition:enter-end="opacity-100"
-    x-transition:leave="transition-opacity ease-linear duration-300"
-    x-transition:leave-start="opacity-100" 
-    x-transition:leave-end="opacity-0"
-    @click.away="showVerificationModal = false; localStorage.setItem('showVerificationModal', 'false'); showLoginModal = false;">
+    @click.away="showVerificationModal = false; localStorage.setItem('showVerificationModal', 'false'); showLoginModal = false;" class="w-full bg-white rounded-lg shadow dark:border sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
     
     <div @click.stop>
         <section class="bg-gray-50 dark:bg-gray-900 relative">
@@ -110,6 +107,7 @@
                     <p class="text-sm text-gray-500 dark:text-gray-400">
                         Please enter the 6-digit verification code sent to your email.
                         <strong x-text="email"></strong>
+
                     </p>
 
                     <div x-data="{ verifyStatusMessage: '', isLoadingVerify: false }">
@@ -122,10 +120,10 @@
                                 class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                 placeholder="Enter code here">
 
-                            <p x-text="verifyStatusMessage" class="mt-2 text-sm" :class="verifyStatusMessage.includes('error') || verifyStatusMessage.includes('Invalid') || verifyStatusMessage.includes('Expired') ? 'text-gray-800' : 'text-gray-800'"></p>
+                            <p x-text="verifyStatusMessage" class="mt-2 text-sm" :class="verifyStatusMessage.includes('error') || verifyStatusMessage.includes('Invalid') || verifyStatusMessage.includes('Expired') ? 'text-red-600' : 'text-red-600'"></p>
 
                             <button type="submit" 
-                                    class="relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-4">
+                                    class="hover:animate-pop relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-4">
                                 <span x-show="!isLoadingVerify">Verify Code</span>
                                 <span x-show="isLoadingVerify" style="display: none" class="flex items-center justify-center">
                                     <svg aria-hidden="true" class="inline w-4 h-4 me-2 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

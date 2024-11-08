@@ -19,5 +19,10 @@
 
 @include('partials.encoder.encoder_footer')
 
+<div x-data="{ showEncoderPasswordResetModal: {{ json_encode(session('showEncoderPasswordResetModal', false)) }} || localStorage.getItem('showEncoderPasswordResetModal') === 'true' }"
+     x-init="showEncoderPasswordResetModal = showEncoderPasswordResetModal || localStorage.getItem('showEncoderPasswordResetModal') === 'true'">
+    @include('components.modal.encoder.encoder_password_reset')
+</div>
+
 <x-modal 
 

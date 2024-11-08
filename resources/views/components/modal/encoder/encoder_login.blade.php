@@ -6,10 +6,6 @@
 
 <div style="display: none" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 font-poppins"
     x-show="showEncoderLoginModal"
-    x-transition:enter="transition-opacity ease-linear duration-300"
-    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-    x-transition:leave="transition-opacity ease-linear duration-300"
-    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
     @click.away="showEncoderLoginModal = false; localStorage.setItem('showEncoderLoginModal', 'false')"> 
     <div @click.stop>
         <section class="bg-gray-50 dark:bg-gray-900 relative">
@@ -26,27 +22,27 @@
                     <form x-data="{ isEncoderLoadingSignIn: false }" 
                         @submit.prevent="
                         isEncoderLoadingSignIn = true;
-                        $nextTick(() => $el.submit());" class="space-y-4 md:space-y-6" method="POST" action="{{ route('login') }}">
+                        $nextTick(() => $el.submit());" class="space-y-4 md:space-y-6" method="POST" action="{{ route('encoder_login') }}">
                         @csrf
                         <div>
                             <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                            <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="email@example.com">
+                            <input type="email" name="encoder_email" id="encoder_email" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="email@example.com">
                             
-                            @error('email')
+                            @error('encoder_email')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
                         <div class="relative">
-                            <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                            <input type="password" name="password" id="password" placeholder="••••••••" 
+                            <label for="encoder_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+                            <input type="password" name="encoder_password" id="encoder_password" placeholder="••••••••" 
                                 class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             
-                            <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 @error('password') mt-[10%] h-[48%] right-[-2px] top-[-4px] @else mt-[10%] h-[66%] right-[-2px] top-[-4px] @enderror hover:bg-gray-600" 
-                                type="button" onclick="togglePassword('password', 'togglePasswordIcon')">
+                            <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 @error('encoder_password') mt-[10%] h-[48%] right-[-2px] top-[-4px] @else mt-[10%] h-[66%] right-[-2px] top-[-4px] @enderror hover:bg-gray-600" 
+                                type="button" onclick="togglePassword('encoder_password', 'togglePasswordIcon')">
                                 <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5" id="togglePasswordIcon">
                             </button>
 
-                            @error('password')
+                            @error('encoder_password')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                             @enderror
                         </div>

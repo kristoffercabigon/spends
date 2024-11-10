@@ -2,7 +2,10 @@
 @php $array = array('title' => 'SPENDS') @endphp
 <x-senior_nav :data="$array"/>
 
-<section x-data="{ showChangePasswordModal: localStorage.getItem('showChangePasswordModal') === 'true' }" class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
+<section x-data="{ showChangePasswordModal: localStorage.getItem('showChangePasswordModal') === 'true',
+                 showChangePasswordModal: localStorage.getItem('showChangePasswordModal') === 'true',
+                 showChangePasswordEmailVerifyModal: localStorage.getItem('showChangePasswordEmailVerifyModal') === 'true' }"
+                class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
     <div class="bg-white bg-opacity-50 min-h-screen flex items-center justify-center font-poppins">
         <div class="w-full max-w-7xl mx-auto font-[poppins]">
             <div class="bg-white mt-4 shadow-lg rounded-md">              
@@ -41,7 +44,7 @@
                                             <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm">Active</span></span>
                                         </li>
                                         <li class="flex items-center py-3">
-                                            <span>Member since</span>
+                                            <span>Date Approved</span>
                                             <span class="ml-auto">Nov 07, 2016</span>
                                         </li>
                                     </ul>
@@ -146,12 +149,9 @@
                                 <div class="bg-[#ffece5] pb-3 shadow-md rounded-md">
                                     <div class="flex bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 font-semibold text-gray-900 leading-8">
                                         <span class="text-green-500">
-                                            <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke="white">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                            </svg>
-                                        </span>
-                                        <span class="tracking-wide text-white">Account Information</span>
+                                            <img src="../images/key.png" alt="Key Icon" class="h-5 inline">
+                                        </span>                             
+                                    <span class="tracking-wide text-white">Account Information</span>
                                     </div>
                                     <div class="text-gray-700">
                                         <div class="grid md:grid-cols-2 text-sm gap-4">
@@ -170,10 +170,13 @@
                                             <div class="grid grid-cols-2">
                                                 <div class="px-4 py-2 font-semibold">Password</div>
                                                 <div class="px-4 py-2">
-                                                    <a class="py-3 px-4 md:w-auto text-sm cursor-pointer tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none" 
-                                                            @click.prevent="showChangePasswordModal = true; localStorage.setItem('showChangePasswordModal', 'true')">
+                                                    <button 
+                                                        type="button" 
+                                                        class="hover:animate-scale py-3 px-4 md:w-auto text-sm cursor-pointer tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none" 
+                                                        @click.prevent="showChangePasswordModal = true; localStorage.setItem('showChangePasswordModal', 'true'); localStorage.setItem('seniorEmail', '{{ $senior->email }}')"
+                                                    >
                                                         Change Password
-                                                    </a>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -190,6 +193,9 @@
 </div>
 <div x-show="showChangePasswordModal" @click.away="showChangePasswordModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
     @include('components.modal.senior_citizen.change_password')
+</div>
+<div x-show="showChangePasswordEmailVerifyModal" @click.away="showChangePasswordEmailVerifyModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.senior_citizen.email_verify_for_change_password')
 </div>
 </section>
 

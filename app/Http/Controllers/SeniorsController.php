@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\SeniorResendCodeEmail;
 use App\Mail\SeniorVerificationEmail;
 use App\Mail\SeniorLoginAttempt;
+use App\Mail\SeniorPasswordChangeVerificationCode;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
@@ -604,6 +605,85 @@ class SeniorsController extends Controller
             'sex' => $sex_list,
             'civil_status' => $civil_status_list,
             'barangay' => $barangay_list,
+        ]);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:seniors,email',
+            'old_password' => 'required',
+            'password' => [
+                'required',
+                'min:8',
+                'max:32',
+                'regex:/[A-Z]/',
+                'regex:/[a-z]/',
+                'regex:/[!@#$%^&*(),.?":{}|<>]/',
+                'confirmed',
+            ],
+        ], [
+            'email.required' => 'Email is required.',
+            'email.email' => 'Provide a valid email address.',
+            'email.exists' => 'This email is not registered.',
+            'old_password' => 'Current Password is required',
+            'password.required' => 'Password is required.',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.max' => 'Password cannot exceed 32 characters.',
+            'password.regex' => 'Include uppercase, lowercase letter and symbol.',
+            'password.confirmed' => 'Password confirmation does not match.',
+        ]);
+
+        $senior = Seniors::where('email', $request->email)->first();
+
+        if (!Hash::check($request->old_password, $senior->password)) {
+            return back()->withErrors(['old_password' => 'The current password is incorrect.']);
+        }
+
+        $change_password_verification_code = rand(100000, 999999);
+        session([
+            'change_password_verification_code' => $change_password_verification_code,
+            'password' => $request->password,
+            'email' => $request->email,
+        ]);
+
+        Mail::to($senior->email)->send(new SeniorPasswordChangeVerificationCode($change_password_verification_code));
+
+        session()->flash('showChangePasswordEmailVerifyModal', true);
+
+        return redirect()->back()->with([
+            'message-header' => 'Success',
+            'message-body'=> 'A verification code has been sent to your email.'
+        ]);
+    }
+
+    public function verifyChangePasswordCode(Request $request)
+    {
+        $request->validate([
+            'verification_code' => 'required|numeric',
+        ]);
+
+        if ($request->verification_code != session('change_password_verification_code')) {
+            return back()->withErrors(['verification_code' => 'The verification code is incorrect.']);
+        }
+
+        $senior = Seniors::where('email', session('email'))->first();
+
+        if (!$senior) {
+            return back()->withErrors(['email' => 'No user found with this email.']);
+        }
+
+        $senior->password = Hash::make(session('password'));
+        $senior->save();
+
+        session()->forget('change_password_verification_code');
+        session()->forget('password');
+        session()->flash('clearChangePasswordEmailVerifyModal', true);
+        session()->flash('clearChangePasswordModal', true);
+
+        return redirect()->back()->with([
+            'message-header' => 'Success',
+            'message-body'=> 'Password changed successfully.'
         ]);
     }
 

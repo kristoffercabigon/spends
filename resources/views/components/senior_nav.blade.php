@@ -5,7 +5,6 @@
     open: false,
     dropdownOpen: false,
     showLoginModal: localStorage.getItem('showLoginModal') === 'true',
-    
     showForgotPasswordModal: localStorage.getItem('showForgotPasswordModal') === 'true',
     showVerificationModal: {{ session('showVerificationModal') ? 'true' : 'false' }}
     }"

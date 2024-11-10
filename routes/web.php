@@ -22,7 +22,8 @@ Route::controller(SeniorsController::class)->group(function () {
     Route::middleware('auth')->group(function () {
         Route::get('/profile/{senior}', 'showSeniorProfile');
         Route::post('/logout', 'logout')->name('logout');
-        Route::post('/change-password', 'changePassword')->name('change-password');
+        Route::put('/change-password', 'changePassword')->name('change-password');
+        Route::post('/verify-change-password-email', 'verifyChangePasswordCode')->name('verify-change-password-email');
     });
 });
 

@@ -46,6 +46,7 @@ return new class extends Migration
             $table->string('password');
             $table->tinyInteger('is_approved')->default(0);
             $table->string('verification_code')->nullable();
+            $table->string('change_password_verification_code')->nullable();
             $table->dateTime('verification_expires_at')->nullable();
             $table->dateTime('verified_at')->nullable();
             $table->string('token')->nullable();

@@ -5,9 +5,10 @@
     open: false,
     dropdownOpen: false,
     showLoginModal: localStorage.getItem('showLoginModal') === 'true',
+    
     showForgotPasswordModal: localStorage.getItem('showForgotPasswordModal') === 'true',
     showVerificationModal: {{ session('showVerificationModal') ? 'true' : 'false' }}
-    }" 
+    }"
     class="bg-customGreen fixed h-[80px] w-full z-20 top-0 left-0 right-0 text-white shadow-2xl">
     <div class="container flex items-center h-full justify-between relative font-poppins">
         <a href="/" class="flex items-center">
@@ -42,7 +43,7 @@
                     $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$senior->first_name."-".$senior->last_name;
                 @endphp
                 <div class="flex items-center cursor-pointer" @click="dropdownOpen = !dropdownOpen">
-                    <img id="avatarButton" class="w-10 h-10 rounded-full ring-2 ring-white" src="{{ $senior->profile_picture ? asset("storage/images/senior_citizen/profile_picture/".$senior->profile_picture) : $default_profile }}" alt="Profile Picture">
+                    <img id="avatarButton" class="w-10 h-10 rounded-full ring-2 ring-white" src="{{ $senior->profile_picture ? asset("storage/images/senior_citizen/thumbnail_profile/".$senior->profile_picture) : $default_profile }}" alt="Profile Picture">
                     <div class="ml-4">
                         <div>{{ $senior->first_name }} {{ $senior->last_name }}</div>
                     </div>
@@ -59,7 +60,7 @@
                     style="display: none" 
                     @click.away="dropdownOpen = false" 
                     id="userDropdown"
-                    class="z-10 absolute right-0 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 origin-top-right"
+                    class="z-10 absolute right-0 bg-white shadow-lg divide-y divide-gray-100 rounded-lg shadow w-44 origin-top-right"
                 >
                     <div class="px-4 py-3 text-sm text-gray-900">
                         <div class="font-medium truncate">{{ $senior->email }}</div>
@@ -67,7 +68,7 @@
                     </div>
                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="avatarButton">
                         <li>
-                            <a href="/profile" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
+                            <a href="/profile/{{$senior->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
                         </li>
                         <li>
                             <a href="#" class="block px-4 py-2 hover:bg-gray-100">Messages</a>
@@ -98,7 +99,7 @@
             <ul class="block flex-col px-4">
                 @if ($senior)
                     <li @click="dropdownOpen = !dropdownOpen" class="flex items-center right-0 cursor-pointer py-2 pr-4 pl-3 text-16px hover:text-orange-300 relative">
-                        <img id="avatarButton" class="w-10 h-10 rounded-full ring-2 ring-white" src="{{ $senior->profile_picture ? asset("storage/images/senior_citizen/profile_picture/".$senior->profile_picture) : $default_profile }}" alt="Profile Picture">
+                        <img id="avatarButton" class="w-10 h-10 rounded-full ring-2 ring-white" src="{{ $senior->profile_picture ? asset("storage/images/senior_citizen/thumbnail_profile/".$senior->profile_picture) : $default_profile }}" alt="Profile Picture">
                         <div class="ml-4">{{ $senior->first_name }} {{ $senior->last_name }}</div>
                     </li>
                     <div 
@@ -111,14 +112,14 @@
                         x-transition:leave-end="opacity-0 transform -translate-y-4"
                         style="display: none" 
                         @click.away="dropdownOpen = false" 
-                        class="absolute z-20 mt-2 right-0 left-0 ml-[60px] bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-48 origin-top"
+                        class="absolute z-20 mt-2 shadow-lg right-0 left-0 ml-[60px] bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-48 origin-top"
                     >
                         <div class="px-4 py-3 text-sm text-gray-900">
                             <div class="font-medium truncate">{{ $senior->email }}</div>
                             <div class="font-medium truncate">OSCA ID: {{ $senior->osca_id }}</div>
                         </div>
                         <ul class="py-2 text-sm text-gray-700">
-                            <li><a href="/profile" class="block px-4 py-2 hover:bg-gray-100">Profile</a></li>
+                            <li><a href="/profile/{{$senior->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a></li>
                             <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Messages</a></li>
                         </ul>
                         <div class="py-1">
@@ -143,5 +144,6 @@
 
     <x-modal.senior_citizen.senior_login />
     <x-modal.senior_citizen.forgot_password />
+    
     <x-modal.senior_citizen.verify_your_email />
 </nav>

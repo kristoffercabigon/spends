@@ -330,7 +330,7 @@ class SeniorsController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect(url()->previous())->with([
+        return redirect('/')->with([
             'message-header'=> 'Success',
             'message-body' => 'Successfully logged out.'
         ]);
@@ -589,4 +589,22 @@ class SeniorsController extends Controller
             'error-message-body' => 'An error occurred while resetting your password. Please try again.'
         ]);
     }
+
+    public function showSeniorProfile($senior_id)
+    {
+        $senior = Seniors::findOrFail($senior_id);
+
+        $sex_list = DB::table('sex_list')->get();
+        $civil_status_list = DB::table('civil_status_list')->get();
+        $barangay_list = DB::table('barangay_list')->get();
+
+        return view('senior_citizen.profile', [
+            'senior' => $senior,
+            'title' => 'Profile: ' . $senior->first_name . ' ' . $senior->last_name,
+            'sex' => $sex_list,
+            'civil_status' => $civil_status_list,
+            'barangay' => $barangay_list,
+        ]);
+    }
+
 }

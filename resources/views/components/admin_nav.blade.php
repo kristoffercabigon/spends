@@ -64,7 +64,13 @@
                 </div>
 
                 <div 
-                    x-show="AdmindropdownOpen" 
+                    x-show="AdmindropdownOpen"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 transform translate-y-4" 
+                    x-transition:enter-end="opacity-100 transform translate-y-0"
+                    x-transition:leave="transition ease-in duration-300"
+                    x-transition:leave-start="opacity-100 transform translate-y-0" 
+                    x-transition:leave-end="opacity-0 transform -translate-y-4"
                     style="display: none" 
                     @click.away="AdmindropdownOpen = false" 
                     id="userDropdown" 
@@ -96,7 +102,13 @@
         </div>
 
         <div 
-            x-show="open" 
+            x-show="open"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform -translate-y-10" 
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-300"
+            x-transition:leave-start="opacity-100 transform translate-y-0" 
+            x-transition:leave-end="opacity-0 transform -translate-y-10"
             style="display: none" 
             class="absolute top-full left-0 w-full bg-customGreen bg-opacity-90 md:hidden" 
             id="navbar-main"
@@ -108,7 +120,13 @@
                         <div class="ml-4">{{ $admin->admin_first_name }} {{ $admin->admin_last_name }}</div>
                     </li>
                     <div 
-                        x-show="AdmindropdownOpen" 
+                        x-show="AdmindropdownOpen"
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 transform translate-y-4" 
+                        x-transition:enter-end="opacity-100 transform translate-y-0"
+                        x-transition:leave="transition ease-in duration-300"
+                        x-transition:leave-start="opacity-100 transform translate-y-0" 
+                        x-transition:leave-end="opacity-0 transform -translate-y-4"
                         style="display: none" 
                         @click.away="AdmindropdownOpen = false" 
                         class="absolute z-20 mt-2 right-0 left-0 ml-[60px] bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-48 origin-top"

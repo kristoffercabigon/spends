@@ -421,7 +421,7 @@ class EncoderController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect(url()->previous())->with([
+        return redirect('/')->with([
             'encoder-message-header' => 'Success',
             'encoder-message-body' => 'Successfully logged out.'
         ]);

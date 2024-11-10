@@ -20,8 +20,9 @@ Route::controller(SeniorsController::class)->group(function () {
     Route::post('/verify-email-login', 'verifyEmailCodeLogin');
 
     Route::middleware('auth')->group(function () {
-        Route::get('/profile', 'showProfile'); 
-        Route::post('/logout', 'logout');
+        Route::get('/profile/{senior}', 'showSeniorProfile');
+        Route::post('/logout', 'logout')->name('logout');
+        Route::post('/change-password', 'changePassword')->name('change-password');
     });
 });
 

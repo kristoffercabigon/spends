@@ -137,7 +137,7 @@ class AdminController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect(url()->previous())->with([
+        return redirect('/')->with([
             'admin-message-header' => 'Success',
             'admin-message-body' => 'Successfully logged out.'
         ]);

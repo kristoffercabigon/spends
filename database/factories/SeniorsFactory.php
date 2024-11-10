@@ -551,8 +551,8 @@ class SeniorsFactory extends Factory
                 do {
                     $oscaId = $this->faker->numberBetween(1000, 9999);
                 } while (in_array($oscaId, $uniqueOscaIds));
-                $uniqueOscaIds[] = $oscaId; 
-                return $oscaId; 
+                $uniqueOscaIds[] = $oscaId;
+                return $oscaId;
             },
             'first_name' => $firstName,
             'middle_name' => $this->faker->randomElement($filipinoLastNames),
@@ -567,7 +567,7 @@ class SeniorsFactory extends Factory
             'address' => $address,
             'barangay_id' => $barangayNo,
             'valid_id' => null,
-            'profile_picture' => null,
+            'profile_picture' => 'https://i.pravatar.cc/150?u=' . $this->faker->unique()->uuid,
             'indigency' => null,
             'birth_certificate' => null,
             'signature_data' => null,
@@ -586,7 +586,7 @@ class SeniorsFactory extends Factory
                 do {
                     $email = strtolower($firstName . '.' . $this->faker->randomNumber(3) . '.' . $this->faker->randomElement($filipinoLastNames) . '@example.com');
                 } while (in_array($email, $uniqueEmails));
-                $uniqueEmails[] = $email; 
+                $uniqueEmails[] = $email;
                 return $email;
             },
             'password' => Hash::make('password'),

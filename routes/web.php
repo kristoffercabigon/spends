@@ -43,7 +43,9 @@ Route::controller(EncoderController::class)->group(function () {
         Route::post('/encoder/logout', 'encoder_logout');
         Route::put('/encoder/change-password', 'changeEncoderPassword')->name('encoder-change-password');
         Route::put('/encoder/edit-profile', 'editEncoderProfile')->name('encoder-edit-profile');
+        Route::put('/encoder/edit-profile-picture', 'editEncoderProfilePicture')->name('encoder-edit-profile-picture');
         Route::post('/encoder/verify-change-password-email', 'verifyEncoderChangePasswordCode')->name('encoder-verify-change-password-email');
+        Route::post('/encoder/verify-password', 'verifyEncoderPasswordForEditProfile')->name('encoder-verify-password');
     });
 });
 
@@ -62,6 +64,9 @@ Route::controller(AdminController::class)->group(function () {
         Route::get('/admin/profile/{admin}', 'showAdminProfile');
         Route::post('/admin/logout', 'admin_logout');
         Route::put('/admin/change-password', 'changeAdminPassword')->name('admin-change-password');
+        Route::put('/admin/edit-profile', 'editAdminProfile')->name('admin-edit-profile');
+        Route::put('/admin/edit-profile-picture', 'editAdminProfilePicture')->name('admin-edit-profile-picture');
         Route::post('/admin/verify-change-password-email', 'verifyAdminChangePasswordCode')->name('admin-verify-change-password-email');
+        Route::post('/admin/verify-password', 'verifyAdminPasswordForEditProfile')->name('admin-verify-password');
     });
 });

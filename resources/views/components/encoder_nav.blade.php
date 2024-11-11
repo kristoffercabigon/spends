@@ -8,7 +8,6 @@
         showEncoderForgotPasswordModal: localStorage.getItem('showEncoderForgotPasswordModal') === 'true',
         showEncoderVerificationModal: {{ session('showEncoderVerificationModal') ? 'true' : 'false' }},
     }"
-
     class="bg-customGreen fixed h-[80px] w-full z-20 top-0 left-0 right-0 text-white shadow-2xl">
     <div class="container flex items-center h-full justify-between relative font-poppins">
         <a href="/encoder" class="flex items-center">
@@ -135,8 +134,8 @@
                 @endauth
                 <li><a href="/encoder" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
                 <li><a href="/announcement" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Announcement</a></li>
-                <li><a href="/about-us" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">About Us</a></li>
-                <li><a href="/contact-us" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Contact Us</a></li>
+                <li><a href="/about-us" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
+                <li><a href="/contact-us" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Contact Us</a></li>
                 @guest('encoder')
                 <li><a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 @endguest

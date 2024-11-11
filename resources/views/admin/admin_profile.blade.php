@@ -1,35 +1,35 @@
-@include('partials.encoder.encoder_header')
+@include('partials.admin.admin_header')
 @php $array = array('title' => 'SPENDS') @endphp
-<x-encoder_nav :data="$array"/>
+<x-admin_nav :data="$array"/>
 
 <section x-data="{ 
-        showEncoderChangePasswordModal: localStorage.getItem('showEncoderChangePasswordModal') === 'true',
-        showEncoderChangePasswordEmailVerifyModal: localStorage.getItem('showEncoderChangePasswordEmailVerifyModal') === 'true',
-        showEncoderEditProfileModal: localStorage.getItem('showEncoderEditProfileModal') === 'true',
-        showEncoderEditProfilePictureModal: localStorage.getItem('showEncoderEditProfilePictureModal') === 'true',
-        showEncoderVerifyCurrentPasswordModal: localStorage.getItem('showEncoderVerifyCurrentPasswordModal') === 'true',
-        showEncoderCameraModal: false,
-        showEncoderProfilePicModal: false,
-        showEncoderPreviewProfilePicModal: false,
+        showAdminChangePasswordModal: localStorage.getItem('showAdminChangePasswordModal') === 'true',
+        showAdminChangePasswordEmailVerifyModal: localStorage.getItem('showAdminChangePasswordEmailVerifyModal') === 'true',
+        showAdminEditProfileModal: localStorage.getItem('showAdminEditProfileModal') === 'true',
+        showAdminEditProfilePictureModal: localStorage.getItem('showAdminEditProfilePictureModal') === 'true',
+        showAdminVerifyCurrentPasswordModal: localStorage.getItem('showAdminVerifyCurrentPasswordModal') === 'true',
+        showAdminCameraModal: false,
+        showAdminProfilePicModal: false,
+        showAdminPreviewProfilePicModal: false,
         @php
-            $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$encoder->encoder_first_name."-".$encoder->encoder_last_name;
+            $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$admin->admin_first_name."-".$admin->admin_last_name;
         @endphp
-        previewUrl1: '{{ $encoder->encoder_profile_picture ? asset("storage/images/encoder/encoder_profile_picture/".$encoder->encoder_profile_picture) : $default_profile }}',
-        previewEncoderUrl: '',
-        previewEncoderImage(event) {
+        previewUrl1: '{{ $admin->admin_profile_picture ? asset("storage/images/admin/admin_profile_picture/".$admin->admin_profile_picture) : $default_profile }}',
+        previewAdminUrl: '',
+        previewAdminImage(event) {
             const input = event.target;
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    this.previewEncoderUrl = e.target.result;
-                    document.getElementById('encoder_profile_picture_preview').style.display = 'block';
+                    this.previewAdminUrl = e.target.result;
+                    document.getElementById('admin_profile_picture_preview').style.display = 'block';
                 };
                 reader.readAsDataURL(input.files[0]);
             }
         }
     }"
-    @open-encoder-camera-modal.window="showEncoderCameraModal = true; localStorage.setItem('showEncoderCameraModal', 'true')"
-    @close-encoder-camera-modal.window="showEncoderCameraModal = false; localStorage.setItem('showEncoderCameraModal', 'false')" 
+    @open-admin-camera-modal.window="showAdminCameraModal = true; localStorage.setItem('showAdminCameraModal', 'true')"
+    @close-admin-camera-modal.window="showAdminCameraModal = false; localStorage.setItem('showAdminCameraModal', 'false')" 
     class="bg-cover bg-center bg-no-repeat min-h-screen" 
     style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
     
@@ -46,41 +46,41 @@
                     <hr style="height: 2.5px; background: linear-gradient(to right, transparent, #1AA514, transparent); margin-top: 32px; margin-bottom: 32px;">
                     <div x-data="{ 
                             @php
-                                $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$encoder->encoder_first_name."-".$encoder->encoder_last_name;
+                                $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$admin->admin_first_name."-".$admin->admin_last_name;
                             @endphp
-                            showEncoderRegisteredProfilePicModal: false,
-                            previewUrl: '{{ $encoder->encoder_profile_picture ? asset("storage/images/encoder/encoder_profile_picture/".$encoder->encoder_profile_picture) : $default_profile }}'
+                            showAdminRegisteredProfilePicModal: false,
+                            previewUrl: '{{ $admin->admin_profile_picture ? asset("storage/images/admin/admin_profile_picture/".$admin->admin_profile_picture) : $default_profile }}'
                         }">
                         <div class="md:flex no-wrap ">
                             <div class="w-full md:w-3/12 md:mx-2">
                                 <div class="bg-white p-3 shadow-md border-t-4 border-b-4 rounded-md border-gray-400">
                                     <div class="flex items-center hover:animate-scale cursor-pointer justify-center image overflow-hidden"
-                                        @click="showEncoderRegisteredProfilePicModal = true">
+                                        @click="showAdminRegisteredProfilePicModal = true">
                                         @php
-                                            $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$encoder->encoder_first_name."-".$encoder->encoder_last_name;
+                                            $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$admin->admin_first_name."-".$admin->admin_last_name;
                                         @endphp
                                         <img class="w-48 h-48 rounded-full border-4 border-gray-400"
-                                            src="{{ $encoder->encoder_profile_picture ? asset('storage/images/encoder/encoder_profile_picture/'.$encoder->encoder_profile_picture) : $default_profile }}"
+                                            src="{{ $admin->admin_profile_picture ? asset('storage/images/admin/admin_profile_picture/'.$admin->admin_profile_picture) : $default_profile }}"
                                             alt="">
                                     </div>
                                     <div class="flex items-center justify-center">
                                     <button 
                                         type="button" 
                                         class="hover:animate-scale py-1 px-2 md:w-auto text-xs cursor-pointer tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none mt-4" 
-                                        @click.prevent="showEncoderEditProfilePictureModal = true; localStorage.setItem('showEncoderEditProfilePictureModal', 'true')"
+                                        @click.prevent="showAdminEditProfilePictureModal = true; localStorage.setItem('showAdminEditProfilePictureModal', 'true')"
                                     >
                                        <span class="text-green-500">
                                             <img src="../../images/edit-image.png" alt="Key Icon" class="h-5 inline ">
                                         </span> Change Photo
                                     </button>
                                     </div>
-                                    <h1 class="text-gray-900 font-bold text-xl mt-4 leading-8 my-1">{{ $encoder->encoder_first_name }} {{ $encoder->encoder_last_name }}</h1>
-                                    <h3 class="text-gray-600 font-lg text-semibold leading-6">Encoder ID: <span class="font-semibold">{{ $encoder->encoder_id }}</span></h3>
+                                    <h1 class="text-gray-900 font-bold text-xl mt-4 leading-8 my-1">{{ $admin->admin_first_name }} {{ $admin->admin_last_name }}</h1>
+                                    <h3 class="text-gray-600 font-lg text-semibold leading-6">Administrator</span></h3>
                                     <div class="flex items-center justify-center">
                                     <button 
                                         type="button" 
                                         class="hover:animate-scale py-3 px-4 md:w-auto text-sm cursor-pointer tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none mt-4" 
-                                        @click.prevent="showEncoderEditProfileModal = true; localStorage.setItem('showEncoderEditProfileModal', 'true')"
+                                        @click.prevent="showAdminEditProfileModal = true; localStorage.setItem('showAdminEditProfileModal', 'true')"
                                     >
                                        <span class="text-green-500">
                                             <img src="../../images/edit-user.png" alt="Key Icon" class="h-5 inline">
@@ -89,7 +89,7 @@
                                     </div>
                                     <ul class="bg-gray-100 text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
                                         <li class="flex items-center py-3">
-                                            <span>Encoder Roles</span>
+                                            <span>Admin Roles</span>
                                             <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm">Edit</span></span>
                                         </li>
                                         <li class="flex items-center py-3">
@@ -117,13 +117,13 @@
                                         <div class="grid md:grid-cols-2 text-sm">
                                             <div class="grid grid-cols-2">
                                                 <div class="px-4 py-2 font-semibold">First Name</div>
-                                                <div class="px-4 py-2">{{ $encoder->encoder_first_name }}</div>
+                                                <div class="px-4 py-2">{{ $admin->admin_first_name }}</div>
                                             </div>
                                             <div class="grid grid-cols-2">
                                                 <div class="px-4 py-2 font-semibold">Middle Name</div>
                                                 <div class="px-4 py-2">
-                                                    @if($encoder->encoder_middle_name)
-                                                        {{ $encoder->encoder_middle_name }}
+                                                    @if($admin->admin_middle_name)
+                                                        {{ $admin->admin_middle_name }}
                                                     @else
                                                         <em>None</em>
                                                     @endif
@@ -131,13 +131,13 @@
                                             </div>
                                             <div class="grid grid-cols-2">
                                                 <div class="px-4 py-2 font-semibold">Last Name</div>
-                                                <div class="px-4 py-2">{{ $encoder->encoder_last_name }}</div>
+                                                <div class="px-4 py-2">{{ $admin->admin_last_name }}</div>
                                             </div>
                                             <div class="grid grid-cols-2">
                                                 <div class="px-4 py-2 font-semibold">Suffix</div>
                                                 <div class="px-4 py-2">
-                                                    @if($encoder->encoder_suffix)
-                                                        {{ $encoder->encoder_suffix }}
+                                                    @if($admin->admin_suffix)
+                                                        {{ $admin->admin_suffix }}
                                                     @else
                                                         <em>None</em>
                                                     @endif
@@ -160,7 +160,7 @@
                                         <div class="grid md:grid-cols-2 text-sm gap-4">
                                             <div class="grid grid-cols-2">
                                                 <div class="px-4 py-2 font-semibold">Email</div>
-                                                <div class="px-4 py-2 break-words">{{ $encoder->encoder_email }}</div>
+                                                <div class="px-4 py-2 break-words">{{ $admin->admin_email }}</div>
                                             </div>
                                             <div class="grid grid-cols-2">
                                                 <div class="px-4 py-2 font-semibold">Password</div>
@@ -168,7 +168,7 @@
                                                     <button 
                                                         type="button" 
                                                         class="hover:animate-scale py-3 px-4 md:w-auto text-sm cursor-pointer tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none" 
-                                                        @click.prevent="showEncoderChangePasswordModal = true; localStorage.setItem('showEncoderChangePasswordModal', 'true'); localStorage.setItem('encoderEmail', '{{ $encoder->encoder_email }}')"
+                                                        @click.prevent="showAdminChangePasswordModal = true; localStorage.setItem('showAdminChangePasswordModal', 'true'); localStorage.setItem('adminEmail', '{{ $admin->admin_email }}')"
                                                     >
                                                         Change Password
                                                     </button>
@@ -179,38 +179,38 @@
                                 </div>
                             </div>
                         </div>
-                        @include('components.modal.encoder.encoder_registered_profilepic_zoom')
+                        @include('components.modal.admin.admin_registered_profilepic_zoom')
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div x-show="showEncoderChangePasswordModal" @click.away="showEncoderChangePasswordModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-    @include('components.modal.encoder.encoder_change_password')
+<div x-show="showAdminChangePasswordModal" @click.away="showAdminChangePasswordModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_change_password')
 </div>
-<div x-show="showEncoderChangePasswordEmailVerifyModal" @click.away="showEncoderChangePasswordEmailVerifyModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-    @include('components.modal.encoder.encoder_email_verify_for_change_password')
+<div x-show="showAdminChangePasswordEmailVerifyModal" @click.away="showAdminChangePasswordEmailVerifyModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_email_verify_for_change_password')
 </div>
-<div x-show="showEncoderEditProfileModal" @click.away="showEncoderEditProfileModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-    @include('components.modal.encoder.encoder_edit_profile')
+<div x-show="showAdminEditProfileModal" @click.away="showAdminEditProfileModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_edit_profile')
 </div>
-<div x-show="showEncoderEditProfilePictureModal" @click.away="showEncoderEditProfilePictureModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-    @include('components.modal.encoder.encoder_edit_profile_picture')
+<div x-show="showAdminEditProfilePictureModal" @click.away="showAdminEditProfilePictureModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_edit_profile_picture')
 </div>
-<div x-show="showEncoderCameraModal" @click.away="showEncoderCameraModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-    @include('components.modal.encoder.encoder_camera')
+<div x-show="showAdminCameraModal" @click.away="showAdminCameraModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_camera')
 </div>
-<div x-show="showEncoderProfilePicModal" @click.away="showEncoderProfilePicModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-    @include('components.modal.encoder.encoder_profilepic_zoom')
+<div x-show="showAdminProfilePicModal" @click.away="showAdminProfilePicModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_profilepic_zoom')
 </div>
-<div x-show="showEncoderPreviewProfilePicModal" @click.away="showEncoderPreviewProfilePicModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-    @include('components.modal.encoder.encoder_preview_profilepic_zoom')
+<div x-show="showAdminPreviewProfilePicModal" @click.away="showAdminPreviewProfilePicModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_preview_profilepic_zoom')
 </div>
-<div x-show="showEncoderVerifyCurrentPasswordModal" @click.away="showEncoderVerifyCurrentPasswordModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-    @include('components.modal.encoder.encoder_verify_current_password')
+<div x-show="showAdminVerifyCurrentPasswordModal" @click.away="showAdminVerifyCurrentPasswordModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_verify_current_password')
 </div>
 </section>
 
-@include('partials.encoder.encoder_footer')
+@include('partials.admin.admin_footer')
 

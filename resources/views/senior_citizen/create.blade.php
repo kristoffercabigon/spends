@@ -39,7 +39,7 @@
                 <div class="mt-8 sm:mt-8">
                     <div id="content1" class="font-poppins">
                         <div class="max-h-[80vh] shadow-lg mt-[-17px] overflow-y-auto">
-                            <div class="w-full bg-white sm:pt-2 px-12 py-10 rounded-md">
+                            <div class="w-full bg-white sm:pt-2 px-6 py-10 rounded-md md:px-12">
                                 <div class="text-2xl font-bold mt-[15px] mb-6 leading-tight tracking-tight text-gray-900 md:text-2xl">
                                     <p class="mx-4 text-center">
                                         Requirements <span class="italic">(Mga Kinakailangan)</span>
@@ -136,8 +136,8 @@
                         </div>
                     </div>
                     <div id="content2" class="shadow-lg font-poppins" style="display: none;">
-                        <div class="md:max-h-[80vh] shadow-lg mt-[-17px] overflow-y-auto">
-                            <form id="form" action="/store" enctype="multipart/form-data" method="POST" class="w-full bg-white sm:pt-2 px-12 py-10 rounded-md">
+                        <div class="max-h-[80vh] shadow-lg mt-[-17px] overflow-y-auto">
+                            <form id="form" action="/store" enctype="multipart/form-data" method="POST" class="w-full bg-white sm:pt-2 px-6 py-10 rounded-md md:px-12">
                                 @csrf
                                 <div class="text-2xl font-bold mt-[15px] leading-tight tracking-tight text-gray-900 md:text-2xl">
                                     <p class="mx-4 text-center">

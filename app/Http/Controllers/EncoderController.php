@@ -35,24 +35,24 @@ class EncoderController extends Controller
         $EncoderLoginMessages = [
             'encoder_email.required' => 'Enter your email.',
             'encoder_password.required' => 'Enter your password.',
-            'g-recaptcha-response' => 'Recaptcha field is required',
+            // 'g-recaptcha-response' => 'Recaptcha field is required',
         ];
 
         $validated = $request->validate([
             'encoder_email' => ['required', 'email'],
             'encoder_password' => 'required',
-            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
-                $secret = env('RECAPTCHA_SECRET_KEY');
-                $response = $request->input('g-recaptcha-response');
-                $remoteip = $request->ip();
+            // "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+            //     $secret = env('RECAPTCHA_SECRET_KEY');
+            //     $response = $request->input('g-recaptcha-response');
+            //     $remoteip = $request->ip();
 
-                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
-                $captcha_success = json_decode($verify);
+            //     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+            //     $captcha_success = json_decode($verify);
 
-                if (!$captcha_success->success) {
-                    $fail('ReCaptcha verification failed, please try again.');
-                }
-            }],
+            //     if (!$captcha_success->success) {
+            //         $fail('ReCaptcha verification failed, please try again.');
+            //     }
+            // }],
         ], $EncoderLoginMessages);
 
         $encoder_email = $validated['encoder_email'];
@@ -206,19 +206,6 @@ class EncoderController extends Controller
         //     'showEncoderVerificationModal' => true,
         //     'encoder-message' => 'Registration successful. Please verify your email.'
         // ]);
-    }
-
-    function createThumbnail($sourcePath, $targetPath, $maxWidth, $maxHeight)
-    {
-        $manager = new ImageManager(new Driver('gd'));
-        $img = $manager->read($sourcePath);
-
-        $img->resize($maxWidth, $maxHeight, function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-
-        $img->save($targetPath);
     }
 
     public function verifyEncoderEmailCodeLogin(Request $request)
@@ -522,4 +509,164 @@ class EncoderController extends Controller
             'encoder-message-body' => 'Password changed successfully.'
         ]);
     }
+
+    public function editEncoderProfilePicture(Request $request)
+    {
+        $request->validate([
+            'encoder_profile_picture' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048'
+        ]);
+
+        $encoderId = auth()->guard('encoder')->id();
+        $encoder = Encoder::find($encoderId);
+        $encoder_ID = $encoder->encoder_id;
+
+        if ($request->hasFile('encoder_profile_picture')) {
+            $request->validate([
+                'encoder_profile_picture' => 'mimes:jpeg,png,bmp,tiff|max:4096',
+            ]);
+
+            $profilePictureFilename = $encoder_ID . '.' . $request->file('encoder_profile_picture')->getClientOriginalExtension();
+
+            if ($encoder->encoder_profile_picture) {
+                @unlink(public_path('storage/images/encoder/encoder_profile_picture/' . $encoder->encoder_profile_picture));
+                @unlink(public_path('storage/images/encoder/encoder_thumbnail_profile/' . $encoder->encoder_profile_picture));
+            }
+
+            $request->file('encoder_profile_picture')->storeAs('images/encoder/encoder_profile_picture', $profilePictureFilename);
+            $encoder->encoder_profile_picture = $profilePictureFilename;
+
+            $thumbnailPath = 'storage/images/encoder/encoder_thumbnail_profile/' . $profilePictureFilename;
+            $this->createThumbnail(public_path('storage/images/encoder/encoder_profile_picture/' . $profilePictureFilename), public_path($thumbnailPath), 150, 150);
+
+            $encoder->save();
+
+            return redirect('/encoder/profile/' . $encoderId)->with([
+                'clearEncoderEditProfilePictureModal' => true,
+                'encoder-message-header' => 'Success',
+                'encoder-message-body' => 'Profile picture updated successfully.'
+            ]);
+        }
+
+        return redirect('/encoder/profile/' . $encoderId)->with([
+            'clearEncoderEditProfilePictureModal' => true,
+            'encoder-error-message-header' => 'No File Selected',
+            'encoder-error-message-body' => 'No changes has been made.'
+        ]);
+    }
+
+    function createThumbnail($sourcePath, $targetPath, $maxWidth, $maxHeight)
+    {
+        $manager = new ImageManager(new Driver('gd'));
+        $img = $manager->read($sourcePath);
+
+        $img->resize($maxWidth, $maxHeight, function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
+
+        $img->save($targetPath);
+    }
+
+    public function editEncoderProfile(Request $request)
+    {
+        $request->validate([
+            'encoder_first_name' => 'required|string|max:255',
+            'encoder_middle_name' => 'nullable|string|max:255',
+            'encoder_last_name' => 'required|string|max:255',
+            'encoder_suffix' => 'nullable|string|max:255',
+            'encoder_email' => 'required|email|unique:encoder,encoder_email,' . auth()->guard('encoder')->id(),
+            // "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+            //     $secret = env('RECAPTCHA_SECRET_KEY');
+            //     $response = $request->input('g-recaptcha-response');
+            //     $remoteip = $request->ip();
+
+            //     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+            //     $captcha_success = json_decode($verify);
+
+            //     if (!$captcha_success->success) {
+            //         $fail('ReCaptcha verification failed, please try again.');
+            //     }
+            // }],
+        ]);
+
+        $encoderId = auth()->guard('encoder')->id();
+        $encoder = Encoder::find($encoderId);
+
+        $originalValues = $encoder->getOriginal();
+
+        $encoder->encoder_first_name = $request->encoder_first_name;
+        $encoder->encoder_middle_name = $request->encoder_middle_name;
+        $encoder->encoder_last_name = $request->encoder_last_name;
+        $encoder->encoder_suffix = $request->encoder_suffix;
+        $encoder->encoder_email = $request->encoder_email;
+
+        $changesMade = false;
+        if (
+            $encoder->encoder_first_name !== $originalValues['encoder_first_name'] ||
+            $encoder->encoder_middle_name !== $originalValues['encoder_middle_name'] ||
+            $encoder->encoder_last_name !== $originalValues['encoder_last_name'] ||
+            $encoder->encoder_suffix !== $originalValues['encoder_suffix'] ||
+            $encoder->encoder_email !== $originalValues['encoder_email']
+        ) {
+            $changesMade = true;
+        }
+
+        if (!$changesMade) {
+            return redirect('/encoder/profile/' . $encoderId)->with([
+                'clearEncoderEditProfileModal' => true,
+                'encoder-error-message-header' => 'No Changes Made',
+                'encoder-error-message-body' => 'You did not make any changes to your profile.'
+            ]);
+        }
+
+        $updatedData = [
+            'encoder_first_name' => $request->encoder_first_name,
+            'encoder_middle_name' => $request->encoder_middle_name,
+            'encoder_last_name' => $request->encoder_last_name,
+            'encoder_suffix' => $request->encoder_suffix,
+            'encoder_email' => $request->encoder_email,
+        ];
+        session(['updated_profile_data' => $updatedData]);
+
+        return redirect('/encoder/profile/' . $encoderId)->with([
+            'showEncoderVerifyCurrentPasswordModal' => true,
+            'encoder-message-header' => 'Confirm Your Password',
+            'encoder-message-body' => 'Please confirm your password to proceed with the changes.'
+        ]);
+    }
+
+    public function verifyEncoderPasswordForEditProfile(Request $request)
+    {
+        $request->validate([
+            'encoder_current_password' => 'required|string',
+        ]);
+
+        $encoder = $request->user(); 
+        if ($encoder && Hash::check($request->encoder_current_password, $encoder->encoder_password)) {
+
+            $updatedData = session('updated_profile_data');
+
+            if ($updatedData) {
+                $encoder->encoder_first_name = $updatedData['encoder_first_name'];
+                $encoder->encoder_middle_name = $updatedData['encoder_middle_name'];
+                $encoder->encoder_last_name = $updatedData['encoder_last_name'];
+                $encoder->encoder_suffix = $updatedData['encoder_suffix'];
+                $encoder->encoder_email = $updatedData['encoder_email'];
+
+                $encoder->save();
+
+                session()->forget('updated_profile_data');
+
+                return redirect('/encoder/profile/' . $encoder->id)->with([
+                    'clearEncoderEditProfileModal' => true,
+                    'clearEncoderVerifyCurrentPasswordModal' => true,
+                    'encoder-message-header' => 'Success',
+                    'encoder-message-body' => 'Profile updated successfully.'
+                ]);
+            }
+        } else {
+            return redirect()->back()->withErrors(['encoder_current_password' => 'Password is incorrect.']);
+        }
+    }
+
 }

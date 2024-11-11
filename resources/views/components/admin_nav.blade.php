@@ -6,24 +6,8 @@
         AdmindropdownOpen: false,
         showAdminLoginModal: localStorage.getItem('showAdminLoginModal') === 'true',
         showAdminForgotPasswordModal: localStorage.getItem('showAdminForgotPasswordModal') === 'true',
-        showAdminVerificationModal: {{ session('showAdminVerificationModal') ? 'true' : 'false' }},
-        showAdminCameraModal: false,
-        showAdminProfilePicModal: false,
-        previewAdminUrl: '',
-        previewAdminImage(event) {
-            const input = event.target;
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.previewAdminUrl = e.target.result;
-                    document.getElementById('admin_profile_picture_preview').style.display = 'block';
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
+        showAdminVerificationModal: {{ session('showAdminVerificationModal') ? 'true' : 'false' }}
     }"
-    @open-admin-camera-modal.window="showAdminCameraModal = true; localStorage.setItem('showAdminCameraModal', 'true')"
-    @close-admin-camera-modal.window="showAdminCameraModal = false; localStorage.setItem('showAdminCameraModal', 'false')" 
     class="bg-customGreen fixed h-[80px] w-full z-20 top-0 left-0 right-0 text-white shadow-2xl">
     <div class="container flex items-center h-full justify-between relative font-poppins">
         <a href="/admin" class="flex items-center">
@@ -85,7 +69,7 @@
                             <a href="#" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
                         </li>
                         <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Profile Settings</a>
+                            <a href="/admin/profile/{{$admin->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
                         </li>
                         <li>
                             <a href="#" class="block px-4 py-2 hover:bg-gray-100">Messages</a>
@@ -137,7 +121,7 @@
                         </div>
                         <ul class="py-2 text-sm text-gray-700">
                             <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a></li>
-                            <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Profile Settings</a></li>
+                            <li><a href="/admin/profile/{{$admin->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile Settings</a></li>
                             <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Messages</a></li>
                         </ul>
                         <div class="py-1">

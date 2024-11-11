@@ -360,24 +360,24 @@ class SeniorsController extends Controller
         $loginMessages = [
             'email.required' => 'Enter your email.',
             'password.required' => 'Enter your password.',
-            'g-recaptcha-response' => 'Recaptcha field is required',
+            // 'g-recaptcha-response' => 'Recaptcha field is required',
         ];
 
         $validated = $request->validate([
             'email' => ['required', 'email'],
             'password' => 'required',
-            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
-                $secret = env('RECAPTCHA_SECRET_KEY');
-                $response = $request->input('g-recaptcha-response');
-                $remoteip = $request->ip();
+            // "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+            //     $secret = env('RECAPTCHA_SECRET_KEY');
+            //     $response = $request->input('g-recaptcha-response');
+            //     $remoteip = $request->ip();
 
-                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
-                $captcha_success = json_decode($verify);
+            //     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+            //     $captcha_success = json_decode($verify);
 
-                if (!$captcha_success->success) {
-                    $fail('ReCaptcha verification failed, please try again.');
-                }
-            }],
+            //     if (!$captcha_success->success) {
+            //         $fail('ReCaptcha verification failed, please try again.');
+            //     }
+            // }],
         ], $loginMessages);
 
         $email = $validated['email'];

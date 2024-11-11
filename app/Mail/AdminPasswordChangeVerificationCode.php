@@ -13,41 +13,32 @@ class AdminPasswordChangeVerificationCode extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $change_password_verification_code;
+
     /**
      * Create a new message instance.
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: 'Admin Password Change Verification Code',
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'view.name',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @param string $admin_change_password_verification_code
      */
-    public function attachments(): array
+    public function __construct($admin_change_password_verification_code)
     {
-        return [];
+        $this->admin_change_password_verification_code = $admin_change_password_verification_code;
+    }
+
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        $logoPath = public_path('images/mail_cover.png');
+
+        return $this->subject('Change Password Request')
+            ->view('emails.admin.verifyemailforchangepassword')
+            ->with([
+                'admin_change_password_verification_code' => $this->admin_change_password_verification_code,
+                'logoPath' => $logoPath,
+            ]);
     }
 }

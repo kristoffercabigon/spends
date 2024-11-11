@@ -40,9 +40,17 @@ return [
             'driver' => 'session',
             'provider' => 'seniors',
         ],
-        'encoder' => [  // Adding the Encoder guard
+        'encoder' => [  
             'driver' => 'session',
-            'provider' => 'encoders', // Ensure you have a provider for Encoder
+            'provider' => 'encoders',
+        ],
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
+        'senior' => [
+            'driver' => 'session',
+            'provider' => 'seniors',
         ],
     ],
 
@@ -71,7 +79,11 @@ return [
 
         'encoders' => [  
             'driver' => 'eloquent',
-            'model' => App\Models\Encoder::class, // Adjust the path if necessary
+            'model' => App\Models\Encoder::class,
+        ],
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
         ],
     ],
 

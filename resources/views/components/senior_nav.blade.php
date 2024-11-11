@@ -29,7 +29,7 @@
                 <li><a href="/announcement" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Announcement</a></li>
                 <li><a href="/about-us" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">About Us</a></li>
                 <li><a href="/contact-us" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Contact Us</a></li>
-                @guest
+                @guest('senior')
                 <li><a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" class="hover:animate-pop block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 <li><a href="/register" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Sign Up</a></li>
                 @endguest
@@ -37,7 +37,7 @@
         </div>
 
         <div class="hidden md:block items-center">
-            @if ($senior)
+            @auth('senior')
                 @php
                     $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$senior->first_name."-".$senior->last_name;
                 @endphp
@@ -80,7 +80,7 @@
                         </form>
                     </div>
                 </div>
-            @endif
+            @endauth
         </div>
 
         <div 
@@ -96,7 +96,7 @@
             id="navbar-main"
         >
             <ul class="block flex-col px-4">
-                @if ($senior)
+                @auth('senior')
                     <li @click="dropdownOpen = !dropdownOpen" class="flex items-center right-0 cursor-pointer py-2 pr-4 pl-3 text-16px hover:text-orange-300 relative">
                         <img id="avatarButton" class="w-10 h-10 rounded-full ring-2 ring-white" src="{{ $senior->profile_picture ? asset("storage/images/senior_citizen/thumbnail_profile/".$senior->profile_picture) : $default_profile }}" alt="Profile Picture">
                         <div class="ml-4">{{ $senior->first_name }} {{ $senior->last_name }}</div>
@@ -128,12 +128,12 @@
                             </form>
                         </div>
                     </div>
-                @endif
+                @endauth
                 <li><a href="/" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
                 <li><a href="/announcement" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Announcement</a></li>
                 <li><a href="/about-us" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
                 <li><a href="/contact-us" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Contact Us</a></li>
-                @guest
+                @guest('senior')
                 <li><a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 <li><a href="/register" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Sign Up</a></li>
                 @endguest

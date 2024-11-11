@@ -7,23 +7,8 @@
         showEncoderLoginModal: localStorage.getItem('showEncoderLoginModal') === 'true',
         showEncoderForgotPasswordModal: localStorage.getItem('showEncoderForgotPasswordModal') === 'true',
         showEncoderVerificationModal: {{ session('showEncoderVerificationModal') ? 'true' : 'false' }},
-        showEncoderCameraModal: false,
-        showEncoderProfilePicModal: false,
-        previewEncoderUrl: '',
-        previewEncoderImage(event) {
-            const input = event.target;
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.previewEncoderUrl = e.target.result;
-                    document.getElementById('encoder_profile_picture_preview').style.display = 'block';
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
     }"
-    @open-encoder-camera-modal.window="showEncoderCameraModal = true; localStorage.setItem('showEncoderCameraModal', 'true')"
-    @close-encoder-camera-modal.window="showEncoderCameraModal = false; localStorage.setItem('showEncoderCameraModal', 'false')" 
+
     class="bg-customGreen fixed h-[80px] w-full z-20 top-0 left-0 right-0 text-white shadow-2xl">
     <div class="container flex items-center h-full justify-between relative font-poppins">
         <a href="/encoder" class="flex items-center">
@@ -41,23 +26,23 @@
 
         <div class="hidden md:flex flex-1 justify-center">
             <ul class="flex justify-center space-x-8">
-                <li><a href="/encoder" class="block py-2 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/announcement" class="block py-2 text-16px hover:text-orange-300">Announcement</a></li>
-                <li><a href="/about-us" class="block py-2 text-16px hover:text-orange-300">Pension Distribution</a></li>
-                <li><a href="/contact-us" class="block py-2 text-16px hover:text-orange-300">Lists of Seniors</a></li>
-                @guest
-                <li><a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')" class="block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>    
+                <li><a href="/encoder" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Home</a></li>
+                <li><a href="/announcement" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Announcement</a></li>
+                <li><a href="/about-us" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">About Us</a></li>
+                <li><a href="/contact-us" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Contact Us</a></li>
+                @guest('encoder')
+                <li><a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')" class="hover:animate-pop block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>    
                 @endguest
             </ul>
         </div>
 
         <div class="hidden md:block items-center">
-            @if ($encoder)
+            @auth('encoder')
                 @php
                     $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$encoder->encoder_first_name."-".$encoder->encoder_last_name;
                 @endphp
                 <div class="flex items-center cursor-pointer" @click="EncoderdropdownOpen = !EncoderdropdownOpen">
-                    <img id="avatarButton" class="w-10 h-10 rounded-full ring-2 ring-white" src="{{ $encoder->encoder_profile_picture ? asset("storage/images/senior_citizen/profile_picture/".$encoder->encoder_profile_picture) : $default_profile }}" alt="Profile Picture">
+                    <img id="avatarButton" class="w-10 h-10 rounded-full ring-2 ring-white" src="{{ $encoder->encoder_profile_picture ? asset("storage/images/encoder/encoder_thumbnail_profile/".$encoder->encoder_profile_picture) : $default_profile }}" alt="Profile Picture">
                     <div class="ml-4">
                         <div>{{ $encoder->encoder_first_name }} {{ $encoder->encoder_last_name }}</div>
                     </div>
@@ -74,7 +59,7 @@
                     style="display: none" 
                     @click.away="EncoderdropdownOpen = false" 
                     id="userDropdown" 
-                    class="z-10 absolute right-0 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 origin-top-right"
+                    class="z-10 absolute right-0 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-44 origin-top-right"
                 >
                     <div class="px-4 py-3 text-sm text-gray-900">
                         <div class="font-medium truncate">{{ $encoder->encoder_email }}</div>
@@ -85,7 +70,7 @@
                             <a href="#" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
                         </li>
                         <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Profile Settings</a>
+                            <a href="/encoder/profile/{{$encoder->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
                         </li>
                         <li>
                             <a href="#" class="block px-4 py-2 hover:bg-gray-100">Messages</a>
@@ -98,7 +83,7 @@
                         </form>
                     </div>
                 </div>
-            @endif
+            @endauth
         </div>
 
         <div 
@@ -114,9 +99,9 @@
             id="navbar-main"
         >
             <ul class="block flex-col px-4">
-                @if ($encoder)
+                @auth('encoder')
                     <li @click="EncoderdropdownOpen = !EncoderdropdownOpen" class="flex items-center right-0 cursor-pointer py-2 pr-4 pl-3 text-16px hover:text-orange-300 relative">
-                        <img id="avatarButton" class="w-10 h-10 rounded-full ring-2 ring-white" src="{{ $encoder->encoder_profile_picture ? asset("storage/images/senior_citizen/profile_picture/".$encoder->encoder_profile_picture) : $default_profile }}" alt="Profile Picture">
+                        <img id="avatarButton" class="w-10 h-10 rounded-full ring-2 ring-white" src="{{ $encoder->encoder_profile_picture ? asset("storage/images/encoder/encoder_thumbnail_profile/".$encoder->encoder_profile_picture) : $default_profile }}" alt="Profile Picture">
                         <div class="ml-4">{{ $encoder->encoder_first_name }} {{ $encoder->encoder_last_name }}</div>
                     </li>
                     <div 
@@ -137,7 +122,7 @@
                         </div>
                         <ul class="py-2 text-sm text-gray-700">
                             <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a></li>
-                            <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Profile Settings</a></li>
+                            <li><a href="/encoder/profile/{{$encoder->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a></li>
                             <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Messages</a></li>
                         </ul>
                         <div class="py-1">
@@ -147,21 +132,18 @@
                             </form>
                         </div>
                     </div>
-                @endif
-                <li><a href="/encoder" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/announcement" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Announcement</a></li>
-                <li><a href="/about-us" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Pension Distribution</a></li>
-                <li><a href="/contact-us" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Lists of Seniors</a></li>
-                @guest
-                <li><a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
+                @endauth
+                <li><a href="/encoder" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
+                <li><a href="/announcement" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Announcement</a></li>
+                <li><a href="/about-us" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">About Us</a></li>
+                <li><a href="/contact-us" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Contact Us</a></li>
+                @guest('encoder')
+                <li><a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 @endguest
             </ul>
         </div>
     </div>
 
-    
-    <x-modal.encoder.encoder_profilepic_zoom />
-    <x-modal.encoder.encoder_register_camera />
     <x-modal.encoder.encoder_login />
     <x-modal.encoder.encoder_forgot_password />
     <x-modal.encoder.encoder_verify_your_email />

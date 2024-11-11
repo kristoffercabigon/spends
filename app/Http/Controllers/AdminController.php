@@ -107,7 +107,7 @@ class AdminController extends Controller
             return back()->withErrors(['admin_password' => 'Password incorrect.'])->onlyInput('admin_email');
         }
 
-        FacadesAuth::login($admin_login);
+        FacadesAuth::guard('admin')->login($admin_login);
         $request->session()->regenerate();
         $request->session()->put('admin', $admin_login);
 
@@ -132,12 +132,12 @@ class AdminController extends Controller
 
     public function admin_logout(Request $request)
     {
-        FacadesAuth::logout();
+        FacadesAuth::guard('admin')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with([
+        return redirect('/admin')->with([
             'admin-message-header' => 'Success',
             'admin-message-body' => 'Successfully logged out.'
         ]);

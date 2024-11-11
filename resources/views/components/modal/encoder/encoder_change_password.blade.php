@@ -1,18 +1,18 @@
-@if (session('clearChangePasswordModal'))
+@if (session('clearEncoderChangePasswordModal'))
 <script>
-    localStorage.removeItem('showChangePasswordModal');
+    localStorage.removeItem('showEncoderChangePasswordModal');
 </script>
 @endif
 
-<div x-show="showChangePasswordModal" style="display: none" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 font-poppins"
+<div x-show="showEncoderChangePasswordModal" style="display: none" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 font-poppins"
         x-transition:enter="transition-opacity ease-linear duration-300"
         x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
         x-transition:leave="transition-opacity ease-linear duration-300"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-        @click.away="showChangePasswordModal = false; localStorage.setItem('showChangePasswordModal', 'false')">
+        @click.away="showEncoderChangePasswordModal = false; localStorage.setItem('showEncoderChangePasswordModal', 'false')">
     <div @click.stop>
         <section class="bg-gray-50 dark:bg-gray-900 relative">
-            <button @click="showChangePasswordModal = false; localStorage.setItem('showChangePasswordModal', 'false')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none">
+            <button @click="showEncoderChangePasswordModal = false; localStorage.setItem('showEncoderChangePasswordModal', 'false')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -25,37 +25,37 @@
                     <p class="text-sm text-gray-500">To proceed with changing your password, please enter your current password.</p>
                     <form x-data="{ isLoadingChangePassword: false }" 
                             @submit.prevent="isLoadingChangePassword = true; $nextTick(() => $el.submit());" 
-                            class="space-y-4 md:space-y-6" method="POST" action="{{ route('change-password') }}">
+                            class="space-y-4 md:space-y-6" method="POST" action="{{ route('encoder-change-password') }}">
                         @csrf
                         @method('PUT')
                         <div class="relative">
-                            <label for="old_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Current Password</label>
-                            <input type="hidden" name="email" value="{{ $senior->email }}">
+                            <label for="encoder_old_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Current Password</label>
+                            <input type="hidden" name="encoder_email" value="{{ $encoder->encoder_email }}">
                             
-                            <input type="password" name="old_password" id="old_password" 
+                            <input type="password" name="encoder_old_password" id="encoder_old_password" 
                                 class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             
                             <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 
-                                        @error('old_password') h-[46%] mt-[7%] right-[-2px] @else h-[65%] mt-[7%] right-[-2px] @enderror" 
-                                    type="button" onclick="togglePassword('old_password', 'togglePasswordIcon5')">
-                                <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIcon5">
+                                        @error('encoder_old_password') h-[46%] mt-[7%] right-[-2px] @else h-[65%] mt-[7%] right-[-2px] @enderror" 
+                                    type="button" onclick="togglePassword('encoder_old_password', 'togglePasswordIconE')">
+                                <img src="../../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIconE">
                             </button>
 
-                            @error('old_password')
+                            @error('encoder_old_password')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div class="relative">
-                            <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Password</label>
+                            <label for="encoder_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Password</label>
                             
-                            <input type="password" name="password" id="password7" oninput="updatePasswordCriteria(this.value)" 
+                            <input type="password" name="encoder_password" id="passwordF" oninput="updatePasswordCriteria(this.value)" 
                                 class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
 
                             <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 
-                                        @error('password') h-[24%] mt-[7%] right-[-2px] @else mt-[7%] h-[28%] right-[-2px] @enderror" 
-                                    type="button" onclick="togglePassword('password7', 'togglePasswordIcon6')">
-                                <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIcon6">
+                                        @error('encoder_password') h-[24%] mt-[7%] right-[-2px] @else mt-[7%] h-[28%] right-[-2px] @enderror" 
+                                    type="button" onclick="togglePassword('passwordF', 'togglePasswordIconF')">
+                                <img src="../../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIconF">
                             </button>
 
                             <div class="ml-2 mt-4 text-gray-800 text-sm">
@@ -67,21 +67,21 @@
                                 </ul>
                             </div>
 
-                            @error('password')
+                            @error('encoder_password')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div class="relative">
-                            <label for="password_confirmation" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm New Password</label>
+                            <label for="encoder_password_confirmation" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm New Password</label>
                             
-                            <input type="password" name="password_confirmation" id="password_confirmation" 
+                            <input type="password" name="encoder_password_confirmation" id="encoder_password_confirmationG" 
                                 class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
 
                             <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 
-                                        @if('password_confirmation') h-[65%] mt-[7%] right-[-2px]@endif" 
-                                    type="button" onclick="togglePassword('password_confirmation', 'togglePasswordIcon2')">
-                                <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIcon2">
+                                        @if('encoder_password_confirmation') h-[65%] mt-[7%] right-[-2px]@endif" 
+                                    type="button" onclick="togglePassword('encoder_password_confirmationG', 'togglePasswordIconG')">
+                                <img src="../../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIconG">
                             </button>
                         </div>
                         <button type="submit"
@@ -106,21 +106,21 @@
 <script src= "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 
 <script>
-function updatePasswordCriteria(password) {
+function updatePasswordCriteria(encoder_password) {
     document.getElementById("minLength").innerHTML = 
-        password.length >= 8 ? '<i class="fas fa-check text-green-500"></i> Minimum 8 characters' : 
+        encoder_password.length >= 8 ? '<i class="fas fa-check text-green-500"></i> Minimum 8 characters' : 
         '<i class="fas fa-times text-red-500"></i> Minimum 8 characters';
     
     document.getElementById("uppercase").innerHTML = 
-        /[A-Z]/.test(password) ? '<i class="fas fa-check text-green-500"></i> At least one uppercase letter' : 
+        /[A-Z]/.test(encoder_password) ? '<i class="fas fa-check text-green-500"></i> At least one uppercase letter' : 
         '<i class="fas fa-times text-red-500"></i> At least one uppercase letter';
     
     document.getElementById("lowercase").innerHTML = 
-        /[a-z]/.test(password) ? '<i class="fas fa-check text-green-500"></i> At least one lowercase letter' : 
+        /[a-z]/.test(encoder_password) ? '<i class="fas fa-check text-green-500"></i> At least one lowercase letter' : 
         '<i class="fas fa-times text-red-500"></i> At least one lowercase letter';
     
     document.getElementById("symbol").innerHTML = 
-        /[@$!%*?&]/.test(password) ? '<i class="fas fa-check text-green-500"></i> At least one symbol (@$!%*?&)' : 
+        /[@$!%*?&]/.test(encoder_password) ? '<i class="fas fa-check text-green-500"></i> At least one symbol (@$!%*?&)' : 
         '<i class="fas fa-times text-red-500"></i> At least one symbol (@$!%*?&)';
 }
 
@@ -129,10 +129,10 @@ function togglePassword(fieldId, iconId) {
     const icon = document.getElementById(iconId);
     if (passwordField.type === "password") {
         passwordField.type = "text";
-        icon.src = "../images/show.png"; 
+        icon.src = "../../images/show.png"; 
     } else {
         passwordField.type = "password";
-        icon.src = "../images/hide.png"; 
+        icon.src = "../../images/hide.png"; 
     }
 }
 </script>

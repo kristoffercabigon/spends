@@ -62,7 +62,7 @@
                                                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                             </svg>
                                         </span>
-                                        <span class="tracking-wide text-white">About</span>
+                                        <span class="tracking-wide text-white font-light">Basic Information</span>
                                     </div>
                                     <div class="text-gray-700">
                                         <div class="grid md:grid-cols-2 text-sm">
@@ -144,14 +144,14 @@
                                     </div>
                                 </div>
 
-                                <div class="my-4"></div>
+                                <div class="my-6"></div>
 
                                 <div class="bg-[#ffece5] pb-3 shadow-md rounded-md">
                                     <div class="flex bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 font-semibold text-gray-900 leading-8">
                                         <span class="text-green-500">
                                             <img src="../images/key.png" alt="Key Icon" class="h-5 inline">
                                         </span>                             
-                                    <span class="tracking-wide text-white">Account Information</span>
+                                    <span class="tracking-wide text-white font-light">Account Information</span>
                                     </div>
                                     <div class="text-gray-700">
                                         <div class="grid md:grid-cols-2 text-sm gap-4">

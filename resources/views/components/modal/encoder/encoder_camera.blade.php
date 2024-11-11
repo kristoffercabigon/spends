@@ -1,4 +1,4 @@
-<div x-show="showEncoderCameraModal" style="display: none" class="fixed inset-0 bg-black bg-opacity-50 z-30 flex items-center justify-center font-poppins"
+<div x-show="showEncoderCameraModal" style="display: none" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center font-poppins"
     x-transition:enter="transition-opacity ease-linear duration-300"
      x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
      x-transition:leave="transition-opacity ease-linear duration-300"
@@ -19,16 +19,16 @@
                 <div class="col">
                     <div class="relative w-full h-auto">
                         <div id="my_encoder_camera" class="w-full h-auto" style="max-width: 100%; max-height: 100%;"></div>
-                        <img src="images/silhoutte.png" alt="Person Silhouette" class="absolute inset-0 w-full h-full opacity-50 pointer-events-none z-10 silhouette-image">
+                        <img src="../../images/silhoutte.png" alt="Person Silhouette" class="absolute inset-0 w-full h-full opacity-50 pointer-events-none z-10 silhouette-image">
                     </div>
                     <br/>
                     <div class="flex justify-center">
                         <button type="button" class="flex items-center justify-center mb-6 w-16 h-16 bg-gray-500 rounded-full hover:bg-gray-300 transition" onClick="take_snapshot()">
-                            <img src="../images/camera.png" alt="Take Snapshot" class="w-8 h-8" />
+                            <img src="../../images/camera.png" alt="Take Snapshot" class="w-8 h-8" />
                         </button>
 
                         <button type="button" class="flex items-center justify-center mb-6 ml-4 w-16 h-16 bg-gray-500 rounded-full hover:bg-gray-300 transition" @click="switchEncoderCamera()">
-                            <img src="../images/switch-camera.png" alt="Turn Camera" class="w-8 h-8" />
+                            <img src="../../images/switch-camera.png" alt="Turn Camera" class="w-8 h-8" />
                         </button>
                     </div>
                     <input type="hidden" name="image" class="image-tag">
@@ -39,13 +39,13 @@
                         <span id="error-message" class="text-red-500 hidden">Take a picture first</span>
                         <div>
                             <div class="flex items-center">
-                                <img src="images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-4"> 
+                                <img src="../../images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-4"> 
                                 <p class="mt-2 text-left text-gray-900">
                                     Note: It is preferred that the profile photo is taken on a clean PLAIN WHITE BACKGOUND.
                                 </p>
                             </div>
                             <div class="flex items-center">
-                                <img src="images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-4"> 
+                                <img src="../../images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-4"> 
                                 <p class="mt-2 text-left italic text-gray-900">
                                     Paalala: Mas inirerekomenda na ang pagkakuha ng personal na litrato ay nasa malinis na PLAIN WHITE BACKGOUND.
                                 </p>

@@ -43,16 +43,16 @@
             <ul class="flex justify-center space-x-8">
                 <li><a href="/admin" class="block py-2 text-16px hover:text-orange-300">Home</a></li>
                 <li><a href="/announcement" class="block py-2 text-16px hover:text-orange-300">Announcement</a></li>
-                <li><a href="/about-us" class="block py-2 text-16px hover:text-orange-300">Pension Distribution</a></li>
-                <li><a href="/contact-us" class="block py-2 text-16px hover:text-orange-300">Lists of Seniors</a></li>
-                @guest
+                <li><a href="/about-us" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">About Us</a></li>
+                <li><a href="/contact-us" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Contact Us</a></li>
+                @guest('admin')
                 <li><a @click.prevent="showAdminLoginModal = true; localStorage.setItem('showAdminLoginModal', 'true')" class="block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>    
                 @endguest
             </ul>
         </div>
 
         <div class="hidden md:block items-center">
-            @if ($admin)
+            @auth('admin')
                 @php
                     $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$admin->admin_first_name."-".$admin->admin_last_name;
                 @endphp
@@ -98,7 +98,7 @@
                         </form>
                     </div>
                 </div>
-            @endif
+            @endauth
         </div>
 
         <div 
@@ -114,7 +114,7 @@
             id="navbar-main"
         >
             <ul class="block flex-col px-4">
-                @if ($admin)
+                @auth('admin')
                     <li @click="AdmindropdownOpen = !AdmindropdownOpen" class="flex items-center right-0 cursor-pointer py-2 pr-4 pl-3 text-16px hover:text-orange-300 relative">
                         <img id="avatarButton" class="w-10 h-10 rounded-full ring-2 ring-white" src="{{ $admin->admin_profile_picture ? asset("storage/images/senior_citizen/profile_picture/".$admin->admin_profile_picture) : $default_profile }}" alt="Profile Picture">
                         <div class="ml-4">{{ $admin->admin_first_name }} {{ $admin->admin_last_name }}</div>
@@ -147,12 +147,12 @@
                             </form>
                         </div>
                     </div>
-                @endif
+                @endauth
                 <li><a href="/admin" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
                 <li><a href="/announcement" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Announcement</a></li>
                 <li><a href="/about-us" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Pension Distribution</a></li>
                 <li><a href="/contact-us" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Lists of Seniors</a></li>
-                @guest
+                @guest('admin')
                 <li><a @click.prevent="showAdminLoginModal = true; localStorage.setItem('showAdminLoginModal', 'true')" class="block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 @endguest
             </ul>

@@ -29,7 +29,7 @@
                 </p>
                 <div class="text-center mb-6">
                     <span style="display: inline-block; background-color: #ff4802; color: white; padding: 10px 20px; border-radius: 5px; font-size: 25px; text-decoration: none; font-weight: bold;">
-                        {{ $change_password_verification_code }}
+                        {{ $admin_change_password_verification_code }}
                     </span>
                 </div>
                 <p style="font-size: 18px; color: #4a5568;">

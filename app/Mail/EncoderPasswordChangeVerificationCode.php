@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SeniorPasswordChangeVerificationCode extends Mailable
+class EncoderPasswordChangeVerificationCode extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -18,11 +18,11 @@ class SeniorPasswordChangeVerificationCode extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param string $change_password_verification_code
+     * @param string $encoder_change_password_verification_code
      */
-    public function __construct($change_password_verification_code)
+    public function __construct($encoder_change_password_verification_code)
     {
-        $this->change_password_verification_code = $change_password_verification_code;
+        $this->encoder_change_password_verification_code = $encoder_change_password_verification_code;
     }
 
     /**
@@ -35,10 +35,10 @@ class SeniorPasswordChangeVerificationCode extends Mailable
         $logoPath = public_path('images/mail_cover.png');
 
         return $this->subject('Change Password Request')
-        ->view('emails.senior_citizen.verifyemailforchangepassword')
-        ->with([
-            'change_password_verification_code' => $this->change_password_verification_code,
-            'logoPath' => $logoPath,
-        ]);
+            ->view('emails.encoder.verifyemailforchangepassword')
+            ->with([
+            'encoder_change_password_verification_code' => $this->encoder_change_password_verification_code,
+                'logoPath' => $logoPath,
+            ]);
     }
 }

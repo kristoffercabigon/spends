@@ -11,15 +11,15 @@ Route::controller(SeniorsController::class)->group(function () {
     Route::get('/verify-email', 'showVerificationFormRegister')->name('verify-email');
     Route::get('/verify-email-login', 'showVerificationFormLogin')->name('verify-email-login');
     Route::get('/reset-password', 'showResetPasswordForm')->name('reset-password');
-    Route::put('/forgot-password', 'sendEmailForReset')->name('forgot-password')->middleware('guest');
+    Route::put('/forgot-password', 'sendEmailForReset')->name('forgot-password');
     Route::put('/reset-password', 'resetPassword');
-    Route::post('/login', 'login')->name('login')->middleware('guest');
+    Route::post('/login', 'login')->name('login')->middleware('guest:senior');
     Route::post('/store', 'store');
     Route::post('/resend-code', 'resendVerificationCode')->name('resend-code');
     Route::post('/verify-email', 'verifyEmailCodeRegister');
     Route::post('/verify-email-login', 'verifyEmailCodeLogin');
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware('auth:senior')->group(function () {
         Route::get('/profile/{senior}', 'showSeniorProfile');
         Route::post('/logout', 'logout')->name('logout');
         Route::put('/change-password', 'changePassword')->name('change-password');
@@ -33,13 +33,17 @@ Route::controller(EncoderController::class)->group(function () {
     Route::get('/encoder/reset-password', 'showEncoderResetPasswordForm')->name('encoder-reset-password');
     Route::put('/encoder/forgot-password', 'sendEncoderEmailForReset')->name('encoder-forgot-password');
     Route::put('/encoder/reset-password', 'resetEncoderPassword');
-    Route::post('/encoder/login', 'encoder_login')->name('encoder_login')->middleware('guest');
+    Route::post('/encoder/login', 'encoder_login')->name('encoder_login')->middleware('guest:encoder');
     Route::post('/encoder/verify-email', 'verifyEncoderEmailCodeRegister');
     Route::post('/encoder/verify-email-login', 'verifyEncoderEmailCodeLogin');
     Route::post('/encoder/resend-code', 'resendEncoderVerificationCode')->name('encoder-resend-code');
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware('auth:encoder')->group(function () {
+        Route::get('/encoder/profile/{encoder}', 'showEncoderProfile');
         Route::post('/encoder/logout', 'encoder_logout');
+        Route::put('/encoder/change-password', 'changeEncoderPassword')->name('encoder-change-password');
+        Route::put('/encoder/edit-profile', 'editEncoderProfile')->name('encoder-edit-profile');
+        Route::post('/encoder/verify-change-password-email', 'verifyEncoderChangePasswordCode')->name('encoder-verify-change-password-email');
     });
 });
 
@@ -49,12 +53,15 @@ Route::controller(AdminController::class)->group(function () {
     Route::get('/admin/reset-password', 'showAdminResetPasswordForm')->name('admin-reset-password');
     Route::put('/admin/forgot-password', 'sendAdminEmailForReset')->name('admin-forgot-password');
     Route::put('/admin/reset-password', 'resetAdminPassword');
-    Route::post('/admin/login', 'admin_login')->name('admin_login')->middleware('guest');
+    Route::post('/admin/login', 'admin_login')->name('admin_login')->middleware('guest:admin');
     Route::post('/admin/verify-email', 'verifyAdminEmailCodeRegister');
     Route::post('/admin/verify-email-login', 'verifyAdminEmailCodeLogin');
     Route::post('/admin/resend-code', 'resendAdminVerificationCode')->name('admin-resend-code');
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware('auth:admin')->group(function () {
+        Route::get('/admin/profile/{admin}', 'showAdminProfile');
         Route::post('/admin/logout', 'admin_logout');
+        Route::put('/admin/change-password', 'changeAdminPassword')->name('admin-change-password');
+        Route::post('/admin/verify-change-password-email', 'verifyAdminChangePasswordCode')->name('admin-verify-change-password-email');
     });
 });

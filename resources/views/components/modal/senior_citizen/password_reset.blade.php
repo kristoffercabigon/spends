@@ -74,8 +74,8 @@
                                 oninput="updatePasswordCriteria(this.value)">
 
                             <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 @error('password') h-[24%] mt-[7%] right-[-2px]  @else mt-[7%] h-[28%] right-[-2px] @enderror" 
-                                    type="button" onclick="togglePassword('password1', 'togglePasswordIcon')">
-                                <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIcon">
+                                    type="button" onclick="togglePassword('password1', 'togglePasswordIconA')">
+                                <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIconA">
                             </button>
 
                             <div class="ml-2 mt-4 text-gray-800 text-sm">
@@ -93,13 +93,13 @@
 
                         <div class="relative">
                             <label for="password_confirmation" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm Password</label>
-                            <input type="password" name="password_confirmation" id="password_confirmation"
+                            <input type="password" name="password_confirmation" id="password_confirmationB"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="Confirm Password">
 
                             <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 @if('password_confirmation') h-[65%] mt-[7%] right-[-2px]@endif" 
-                                    type="button" onclick="togglePassword('password_confirmation', 'toggleConfirmationIcon')">
-                                <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="toggleConfirmationIcon">
+                                    type="button" onclick="togglePassword('password_confirmationB', 'toggleConfirmationIconB')">
+                                <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="toggleConfirmationIconB">
                             </button>
 
                             @error('password_confirmation')

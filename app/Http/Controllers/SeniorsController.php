@@ -326,7 +326,7 @@ class SeniorsController extends Controller
 
     public function logout(Request $request)
     {
-        FacadesAuth::logout();
+        FacadesAuth::guard('senior')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -435,7 +435,7 @@ class SeniorsController extends Controller
             return back()->withErrors(['password' => 'Password incorrect.'])->onlyInput('email');
         }
 
-        FacadesAuth::login($senior_login);
+        FacadesAuth::guard('senior')->login($senior_login);
         $request->session()->regenerate();
         $request->session()->put('senior', $senior_login);
 
@@ -621,12 +621,18 @@ class SeniorsController extends Controller
                 'regex:/[a-z]/',
                 'regex:/[!@#$%^&*(),.?":{}|<>]/',
                 'confirmed',
+                function ($attribute, $value, $fail) use ($request) {
+                    $senior = Seniors::where('email', $request->email)->first();
+                    if (Hash::check($value, $senior->password)) {
+                        $fail('The new password must not be the same as the old password.');
+                    }
+                },
             ],
         ], [
             'email.required' => 'Email is required.',
             'email.email' => 'Provide a valid email address.',
             'email.exists' => 'This email is not registered.',
-            'old_password' => 'Current Password is required',
+            'old_password.required' => 'Current Password is required',
             'password.required' => 'Password is required.',
             'password.min' => 'Password must be at least 8 characters.',
             'password.max' => 'Password cannot exceed 32 characters.',
@@ -653,7 +659,7 @@ class SeniorsController extends Controller
 
         return redirect()->back()->with([
             'message-header' => 'Success',
-            'message-body'=> 'A verification code has been sent to your email.'
+            'message-body' => 'A verification code has been sent to your email.'
         ]);
     }
 

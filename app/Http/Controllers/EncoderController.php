@@ -14,6 +14,7 @@ use App\Mail\EncoderResendCodeEmail;
 use App\Mail\EncoderVerificationEmail;
 use App\Mail\EncoderForgotPassword;
 use App\Mail\EncoderLoginAttempt;
+use App\Mail\EncoderPasswordChangeVerificationCode;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
@@ -109,7 +110,7 @@ class EncoderController extends Controller
             return back()->withErrors(['encoder_password' => 'Password incorrect.'])->onlyInput('encoder_email');
         }
 
-        FacadesAuth::login($encoder_login);
+        FacadesAuth::guard('encoder')->login($encoder_login);
         $request->session()->regenerate();
         $request->session()->put('encoder', $encoder_login);
 
@@ -416,15 +417,109 @@ class EncoderController extends Controller
 
     public function encoder_logout(Request $request)
     {
-        FacadesAuth::logout();
+        FacadesAuth::guard('encoder')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with([
+        return redirect('/encoder')->with([
             'encoder-message-header' => 'Success',
             'encoder-message-body' => 'Successfully logged out.'
         ]);
     }
 
+    public function showEncoderProfile($encoder_id)
+    {
+        $encoder = Encoder::findOrFail($encoder_id);
+
+        return view('encoder.encoder_profile', [
+            'encoder' => $encoder,
+            'title' => 'Profile: ' . $encoder->encoder_first_name . ' ' . $encoder->encoder_last_name,
+        ]);
+    }
+
+    public function changeEncoderPassword(Request $request)
+    {
+        $request->validate([
+            'encoder_email' => 'required|email|exists:encoder,encoder_email',
+            'encoder_old_password' => 'required',
+            'encoder_password' => [
+                'required',
+                'min:8',
+                'max:32',
+                'regex:/[A-Z]/',
+                'regex:/[a-z]/',
+                'regex:/[!@#$%^&*(),.?":{}|<>]/',
+                'confirmed',
+                function ($attribute, $value, $fail) use ($request) {
+                    $encoder = Encoder::where('encoder_email', $request->encoder_email)->first();
+                    if (Hash::check($value, $encoder->encoder_password)) {
+                        $fail('The new password must not be the same as the old password.');
+                    }
+                },
+            ],
+        ], [
+            'encoder_email.required' => 'Email is required.',
+            'encoder_email.email' => 'Provide a valid email address.',
+            'encoder_email.exists' => 'This email is not registered.',
+            'encoder_old_password' => 'Current Password is required',
+            'encoder_password.required' => 'Password is required.',
+            'encoder_password.min' => 'Password must be at least 8 characters.',
+            'encoder_password.max' => 'Password cannot exceed 32 characters.',
+            'encoder_password.regex' => 'Include uppercase, lowercase letter and symbol.',
+            'encoder_password.confirmed' => 'Password confirmation does not match.',
+        ]);
+
+        $encoder = Encoder::where('encoder_email', $request->encoder_email)->first();
+
+        if (!Hash::check($request->encoder_old_password, $encoder->encoder_password)) {
+            return back()->withErrors(['encoder_old_password' => 'The current password is incorrect.']);
+        }
+
+        $encoder_change_password_verification_code = rand(100000, 999999);
+        session([
+            'encoder_change_password_verification_code' => $encoder_change_password_verification_code,
+            'encoder_password' => $request->encoder_password,
+            'encoder_email' => $request->encoder_email,
+        ]);
+
+        Mail::to($encoder->encoder_email)->send(new EncoderPasswordChangeVerificationCode($encoder_change_password_verification_code));
+
+        session()->flash('showEncoderChangePasswordEmailVerifyModal', true);
+
+        return redirect()->back()->with([
+            'encoder-message-header' => 'Success',
+            'encoder-message-body' => 'A verification code has been sent to your email.'
+        ]);
+    }
+
+    public function verifyEncoderChangePasswordCode(Request $request)
+    {
+        $request->validate([
+            'encoder_verification_code' => 'required|numeric',
+        ]);
+
+        if ($request->encoder_verification_code != session('encoder_change_password_verification_code')) {
+            return back()->withErrors(['encoder_verification_code' => 'The verification code is incorrect.']);
+        }
+
+        $encoder = Encoder::where('encoder_email', session('encoder_email'))->first();
+
+        if (!$encoder) {
+            return back()->withErrors(['encoder_email' => 'No user found with this email.']);
+        }
+
+        $encoder->encoder_password = Hash::make(session('encoder_password'));
+        $encoder->save();
+
+        session()->forget('encoder_change_password_verification_code');
+        session()->forget('encoder_password');
+        session()->flash('clearEncoderChangePasswordEmailVerifyModal', true);
+        session()->flash('clearEncoderChangePasswordModal', true);
+
+        return redirect()->back()->with([
+            'encoder-message-header' => 'Success',
+            'encoder-message-body' => 'Password changed successfully.'
+        ]);
+    }
 }

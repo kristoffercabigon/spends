@@ -71,7 +71,19 @@ class SeniorsController extends Controller
             $osca_id = rand(1000, 9999);
         } while (DB::table('seniors')->where('osca_id', $osca_id)->exists());
 
+        $user_type_id = 1;
+
+        $application_status_id = 1;
+
+        $date_approved = now();
+
         $seniorData['osca_id'] = $osca_id;
+
+        $seniorData['user_type_id'] = $user_type_id;
+
+        $seniorData['application_status_id'] = $application_status_id;
+
+        $seniorData['date_approved'] = $date_approved;
 
         if (empty($request->input('g-recaptcha-response'))) {
             $seniorData['g-recaptcha-response'] = 'The ReCaptcha field is required.';
@@ -360,24 +372,24 @@ class SeniorsController extends Controller
         $loginMessages = [
             'email.required' => 'Enter your email.',
             'password.required' => 'Enter your password.',
-            // 'g-recaptcha-response' => 'Recaptcha field is required',
+            'g-recaptcha-response' => 'Recaptcha field is required',
         ];
 
         $validated = $request->validate([
             'email' => ['required', 'email'],
             'password' => 'required',
-            // "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
-            //     $secret = env('RECAPTCHA_SECRET_KEY');
-            //     $response = $request->input('g-recaptcha-response');
-            //     $remoteip = $request->ip();
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
 
-            //     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
-            //     $captcha_success = json_decode($verify);
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
 
-            //     if (!$captcha_success->success) {
-            //         $fail('ReCaptcha verification failed, please try again.');
-            //     }
-            // }],
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
         ], $loginMessages);
 
         $email = $validated['email'];
@@ -540,6 +552,18 @@ class SeniorsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:seniors,email',
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
+
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
+
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
             'password' => [
                 'required',
                 'min:8',
@@ -613,6 +637,18 @@ class SeniorsController extends Controller
         $request->validate([
             'email' => 'required|email|exists:seniors,email',
             'old_password' => 'required',
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
+
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
+
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
             'password' => [
                 'required',
                 'min:8',

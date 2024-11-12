@@ -28,62 +28,77 @@
                             class="space-y-4 md:space-y-6" method="POST" action="{{ route('encoder-change-password') }}">
                         @csrf
                         @method('PUT')
-                        <div class="relative">
-                            <label for="encoder_old_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Current Password</label>
-                            <input type="hidden" name="encoder_email" value="{{ $encoder->encoder_email }}">
-                            
-                            <input type="password" name="encoder_old_password" id="encoder_old_password" 
-                                class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                            
-                            <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 
-                                        @error('encoder_old_password') h-[46%] mt-[7%] right-[-2px] @else h-[65%] mt-[7%] right-[-2px] @enderror" 
-                                    type="button" onclick="togglePassword('encoder_old_password', 'togglePasswordIconE')">
-                                <img src="../../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIconE">
-                            </button>
+                        
+                        <div class="space-y-4 md:space-y-6 overflow-x-hidden overflow-y-auto max-h-80 px-2">
+                            <div class="relative">
+                                <label for="encoder_old_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Current Password</label>
+                                <input type="hidden" name="encoder_email" value="{{ $encoder->encoder_email }}">
+                                
+                                <input type="password" name="encoder_old_password" id="encoder_old_password" 
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                
+                                <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 
+                                            @error('encoder_old_password') h-[46%] mt-[7%] right-[-2px] @else h-[65%] mt-[7%] right-[-2px] @enderror" 
+                                        type="button" onclick="togglePassword('encoder_old_password', 'togglePasswordIconE')">
+                                    <img src="../../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIconE">
+                                </button>
 
-                            @error('encoder_old_password')
-                                <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="relative">
-                            <label for="encoder_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Password</label>
-                            
-                            <input type="password" name="encoder_password" id="passwordF" oninput="updatePasswordCriteria(this.value)" 
-                                class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-
-                            <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 
-                                        @error('encoder_password') h-[24%] mt-[7%] right-[-2px] @else mt-[7%] h-[28%] right-[-2px] @enderror" 
-                                    type="button" onclick="togglePassword('passwordF', 'togglePasswordIconF')">
-                                <img src="../../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIconF">
-                            </button>
-
-                            <div class="ml-2 mt-4 text-gray-800 text-sm">
-                                <ul>
-                                    <li id="minLength"><i class="fas fa-times text-red-500"></i> Minimum 8 characters</li>
-                                    <li id="uppercase"><i class="fas fa-times text-red-500"></i> At least one uppercase letter</li>
-                                    <li id="lowercase"><i class="fas fa-times text-red-500"></i> At least one lowercase letter</li>
-                                    <li id="symbol"><i class="fas fa-times text-red-500"></i> At least one symbol (@$!%*?&)</li>
-                                </ul>
+                                @error('encoder_old_password')
+                                    <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
-                            @error('encoder_password')
-                                <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
-                            @enderror
+                            <div class="relative">
+                                <label for="encoder_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Password</label>
+                                
+                                <input type="password" name="encoder_password" id="passwordF" oninput="updatePasswordCriteria(this.value)" 
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+
+                                <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 
+                                            @error('encoder_password') h-[24%] mt-[7%] right-[-2px] @else mt-[7%] h-[28%] right-[-2px] @enderror" 
+                                        type="button" onclick="togglePassword('passwordF', 'togglePasswordIconF')">
+                                    <img src="../../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIconF">
+                                </button>
+
+                                <div class="ml-2 mt-4 text-gray-800 text-sm">
+                                    <ul>
+                                        <li id="minLength"><i class="fas fa-times text-red-500"></i> Minimum 8 characters</li>
+                                        <li id="uppercase"><i class="fas fa-times text-red-500"></i> At least one uppercase letter</li>
+                                        <li id="lowercase"><i class="fas fa-times text-red-500"></i> At least one lowercase letter</li>
+                                        <li id="symbol"><i class="fas fa-times text-red-500"></i> At least one symbol (@$!%*?&)</li>
+                                    </ul>
+                                </div>
+
+                                @error('encoder_password')
+                                    <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="relative">
+                                <label for="encoder_password_confirmation" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm New Password</label>
+                                
+                                <input type="password" name="encoder_password_confirmation" id="encoder_password_confirmationG" 
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+
+                                <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 
+                                            @if('encoder_password_confirmation') h-[65%] mt-[7%] right-[-2px]@endif" 
+                                        type="button" onclick="togglePassword('encoder_password_confirmationG', 'togglePasswordIconG')">
+                                    <img src="../../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIconG">
+                                </button>
+                            </div>
                         </div>
 
-                        <div class="relative">
-                            <label for="encoder_password_confirmation" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm New Password</label>
-                            
-                            <input type="password" name="encoder_password_confirmation" id="encoder_password_confirmationG" 
-                                class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-
-                            <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 
-                                        @if('encoder_password_confirmation') h-[65%] mt-[7%] right-[-2px]@endif" 
-                                    type="button" onclick="togglePassword('encoder_password_confirmationG', 'togglePasswordIconG')">
-                                <img src="../../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIconG">
-                            </button>
+                        <div>
+                            <div class="flex justify-center mt-8">
+                            {!! htmlFormSnippet() !!}
+                            </div>
+                            @if ($errors->has('g-recaptcha-response'))
+                                <div class="text-red-500 flex justify-center text-sm mt-2">
+                                    {{ $errors->first('g-recaptcha-response') }}
+                                </div>
+                            @endif
                         </div>
+
                         <button type="submit"
                                 class="hover:animate-pop relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-4">
                             <span x-show="!isLoadingChangePassword">Change Password</span>

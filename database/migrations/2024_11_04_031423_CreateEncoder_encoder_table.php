@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('encoder', function (Blueprint $table) {
             $table->id();
             $table->integer('encoder_id');
+            $table->foreignId('encoder_user_type_id')->constrained('user_type_list');
             $table->string('encoder_first_name');
             $table->string('encoder_middle_name')->nullable();
             $table->string('encoder_last_name');
@@ -26,7 +27,7 @@ return new class extends Migration
             $table->dateTime('encoder_verified_at')->nullable();
             $table->string('encoder_token')->nullable();
             $table->dateTime('encoder_token_expiration')->nullable();
-            $table->tinyInteger('encoder_is_approved')->default(0);
+            $table->date('encoder_date_registered');
             $table->timestamps();
         });
     }

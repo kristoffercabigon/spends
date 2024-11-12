@@ -13,7 +13,10 @@ use Database\Seeders\SourceSeeder;
 use Database\Seeders\PensionSeeder;
 use Database\Seeders\IncomeSeeder;
 use Database\Seeders\IncomeSourceSeeder;
-
+use Database\Seeders\EncoderRolesSeeder;
+use Database\Seeders\SeniorApplicationStatusSeeder;
+use Database\Seeders\SeniorAccountStatusSeeder;
+use Database\Seeders\UserTypeSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,6 +25,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(UserTypeSeeder::class);
         $this->call(LivingArrangementSeeder::class);
         $this->call(BarangaySeeder::class);
         $this->call(SexSeeder::class);
@@ -30,7 +34,10 @@ class DatabaseSeeder extends Seeder
         $this->call(PensionSeeder::class);
         $this->call(IncomeSeeder::class);
         $this->call(IncomeSourceSeeder::class);
-        Seniors::factory(10)->create();
+        $this->call(EncoderRolesSeeder::class);
+        $this->call(SeniorApplicationStatusSeeder::class);
+        $this->call(SeniorAccountStatusSeeder::class);
+        Seniors::factory(500)->create();
 
         // You can also uncomment and modify the user factory as needed
         // User::factory()->create([

@@ -107,6 +107,17 @@
                             @enderror
                         </div>
 
+                        <div>
+                            <div class="flex justify-center mt-8">
+                            {!! htmlFormSnippet() !!}
+                            </div>
+                            @if ($errors->has('g-recaptcha-response'))
+                                <div class="text-red-500 flex justify-center text-sm mt-2">
+                                    {{ $errors->first('g-recaptcha-response') }}
+                                </div>
+                            @endif
+                        </div>
+
                         <button type="submit" class="hover:animate-pop relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                             <span x-show="!isLoadingResetPassword">Reset Password</span>
                             <span x-show="isLoadingResetPassword" style="display: none;" class="flex items-center justify-center">
@@ -164,6 +175,6 @@ function togglePassword(fieldId, iconId) {
     const encoder_email = urlParams.get('encoder_email');
     const encoder_token = urlParams.get('encoder_token');
 
-    if (encoder_email) localStorage.setItem('resetEncoderEmail', email);
-    if (encoder_token) localStorage.setItem('resetEncoderToken', token);
+    if (encoder_email) localStorage.setItem('resetEncoderEmail', encoder_email);
+    if (encoder_token) localStorage.setItem('resetEncoderToken', encoder_token);
 </script>

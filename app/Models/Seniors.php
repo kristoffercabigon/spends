@@ -22,7 +22,8 @@ class Seniors extends Authenticatable
 
     protected $fillable = [
         'osca_id',
-        'nscs_rrn',
+        'user_type_id',
+        'application_status_id',
         'first_name',
         'last_name',
         'middle_name',
@@ -59,6 +60,7 @@ class Seniors extends Authenticatable
         'verification_expires_at',
         'token',
         'expiration',
+        'date_approved',
     ];
 
     /**

@@ -73,7 +73,7 @@
                                 placeholder="New Password"
                                 oninput="updatePasswordCriteria(this.value)">
 
-                            <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 @error('password') h-[24%] mt-[7%] right-[-2px]  @else mt-[7%] h-[28%] right-[-2px] @enderror" 
+                            <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 @error('password') h-[24%] mt-[7%] right-[-2px]  @else mt-[7%] h-[27%] right-[-2px] @enderror" 
                                     type="button" onclick="togglePassword('password1', 'togglePasswordIconA')">
                                 <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIconA">
                             </button>
@@ -105,6 +105,17 @@
                             @error('password_confirmation')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                             @enderror
+                        </div>
+
+                        <div>
+                            <div class="flex justify-center mt-8">
+                            {!! htmlFormSnippet() !!}
+                            </div>
+                            @if ($errors->has('g-recaptcha-response'))
+                                <div class="text-red-500 flex justify-center text-sm mt-2">
+                                    {{ $errors->first('g-recaptcha-response') }}
+                                </div>
+                            @endif
                         </div>
 
                         <button type="submit" class="hover:animate-pop relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">

@@ -32,24 +32,24 @@ class AdminController extends Controller
         $AdminLoginMessages = [
             'admin_email.required' => 'Enter your email.',
             'admin_password.required' => 'Enter your password.',
-            // 'g-recaptcha-response' => 'Recaptcha field is required'
+            'g-recaptcha-response' => 'Recaptcha field is required'
         ];
 
         $validated = $request->validate([
             'admin_email' => ['required', 'email'],
             'admin_password' => 'required',
-            // "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
-            //     $secret = env('RECAPTCHA_SECRET_KEY');
-            //     $response = $request->input('g-recaptcha-response');
-            //     $remoteip = $request->ip();
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
 
-            //     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
-            //     $captcha_success = json_decode($verify);
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
 
-            //     if (!$captcha_success->success) {
-            //         $fail('ReCaptcha verification failed, please try again.');
-            //     }
-            // }],
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
         ], $AdminLoginMessages);
 
         $admin_email = $validated['admin_email'];
@@ -305,6 +305,18 @@ class AdminController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'admin_email' => 'required|email|exists:admin,admin_email',
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
+
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
+
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
             'admin_password' => [
                 'required',
                 'min:8',
@@ -371,6 +383,18 @@ class AdminController extends Controller
         $request->validate([
             'admin_email' => 'required|email|exists:admin,admin_email',
             'admin_old_password' => 'required',
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
+
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
+
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
             'admin_password' => [
                 'required',
                 'min:8',
@@ -454,7 +478,19 @@ class AdminController extends Controller
     public function editAdminProfilePicture(Request $request)
     {
         $request->validate([
-            'admin_profile_picture' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048'
+            'admin_profile_picture' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
+
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
+
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
         ]);
 
         $adminId = auth()->guard('admin')->id();
@@ -516,18 +552,18 @@ class AdminController extends Controller
             'admin_last_name' => 'required|string|max:255',
             'admin_suffix' => 'nullable|string|max:255',
             'admin_email' => 'required|email|unique:admin,admin_email,' . auth()->guard('admin')->id(),
-            // "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
-            //     $secret = env('RECAPTCHA_SECRET_KEY');
-            //     $response = $request->input('g-recaptcha-response');
-            //     $remoteip = $request->ip();
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
 
-            //     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
-            //     $captcha_success = json_decode($verify);
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
 
-            //     if (!$captcha_success->success) {
-            //         $fail('ReCaptcha verification failed, please try again.');
-            //     }
-            // }],
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
         ]);
 
         $adminId = auth()->guard('admin')->id();

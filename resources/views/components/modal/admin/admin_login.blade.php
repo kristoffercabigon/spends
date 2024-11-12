@@ -43,7 +43,7 @@
                             
                             <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 @error('admin_password') mt-[10%] h-[48%] right-[-2px] top-[-4px] @else mt-[10%] h-[66%] right-[-2px] top-[-4px] @enderror hover:bg-gray-600" 
                                 type="button" onclick="togglePassword('admin_password', 'togglePasswordIcon')">
-                                <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5" id="togglePasswordIcon">
+                                <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIcon">
                             </button>
 
                             @error('admin_password')
@@ -76,7 +76,7 @@
                             @endif
                         </div>
                         <button type="submit"
-                                class="relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-4">
+                                class="hover:animate-pop relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-4">
                             <span x-show="!isAdminLoadingSignIn">Sign in</span>
                             <span x-show="isAdminLoadingSignIn" style="display: none;" class="flex items-center justify-center">
                                 <svg aria-hidden="true" class="inline w-4 h-4 mr-2 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('admin', function (Blueprint $table) {
             $table->id();
             $table->integer('admin_id');
+            $table->foreignId('admin_user_type_id')->constrained('user_type_list');
             $table->string('admin_first_name');
             $table->string('admin_middle_name')->nullable();
             $table->string('admin_last_name');
@@ -26,7 +27,7 @@ return new class extends Migration
             $table->dateTime('admin_verified_at')->nullable();
             $table->string('admin_token')->nullable();
             $table->dateTime('admin_token_expiration')->nullable();
-            $table->tinyInteger('admin_is_approved')->default(0);
+            $table->date('admin_date_registered');
             $table->timestamps();
         });
     }

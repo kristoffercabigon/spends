@@ -35,24 +35,24 @@ class EncoderController extends Controller
         $EncoderLoginMessages = [
             'encoder_email.required' => 'Enter your email.',
             'encoder_password.required' => 'Enter your password.',
-            // 'g-recaptcha-response' => 'Recaptcha field is required',
+            'g-recaptcha-response' => 'Recaptcha field is required',
         ];
 
         $validated = $request->validate([
             'encoder_email' => ['required', 'email'],
             'encoder_password' => 'required',
-            // "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
-            //     $secret = env('RECAPTCHA_SECRET_KEY');
-            //     $response = $request->input('g-recaptcha-response');
-            //     $remoteip = $request->ip();
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
 
-            //     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
-            //     $captcha_success = json_decode($verify);
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
 
-            //     if (!$captcha_success->success) {
-            //         $fail('ReCaptcha verification failed, please try again.');
-            //     }
-            // }],
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
         ], $EncoderLoginMessages);
 
         $encoder_email = $validated['encoder_email'];
@@ -351,6 +351,18 @@ class EncoderController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'encoder_email' => 'required|email|exists:encoder,encoder_email',
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
+
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
+
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
             'encoder_password' => [
                 'required',
                 'min:8',
@@ -430,6 +442,18 @@ class EncoderController extends Controller
         $request->validate([
             'encoder_email' => 'required|email|exists:encoder,encoder_email',
             'encoder_old_password' => 'required',
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
+
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
+
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
             'encoder_password' => [
                 'required',
                 'min:8',
@@ -513,6 +537,18 @@ class EncoderController extends Controller
     public function editEncoderProfilePicture(Request $request)
     {
         $request->validate([
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
+
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
+
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
             'encoder_profile_picture' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048'
         ]);
 
@@ -565,7 +601,7 @@ class EncoderController extends Controller
         });
 
         $img->save($targetPath);
-    }
+    } 
 
     public function editEncoderProfile(Request $request)
     {
@@ -575,18 +611,18 @@ class EncoderController extends Controller
             'encoder_last_name' => 'required|string|max:255',
             'encoder_suffix' => 'nullable|string|max:255',
             'encoder_email' => 'required|email|unique:encoder,encoder_email,' . auth()->guard('encoder')->id(),
-            // "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
-            //     $secret = env('RECAPTCHA_SECRET_KEY');
-            //     $response = $request->input('g-recaptcha-response');
-            //     $remoteip = $request->ip();
+            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+                $secret = env('RECAPTCHA_SECRET_KEY');
+                $response = $request->input('g-recaptcha-response');
+                $remoteip = $request->ip();
 
-            //     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
-            //     $captcha_success = json_decode($verify);
+                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                $captcha_success = json_decode($verify);
 
-            //     if (!$captcha_success->success) {
-            //         $fail('ReCaptcha verification failed, please try again.');
-            //     }
-            // }],
+                if (!$captcha_success->success) {
+                    $fail('ReCaptcha verification failed, please try again.');
+                }
+            }],
         ]);
 
         $encoderId = auth()->guard('encoder')->id();

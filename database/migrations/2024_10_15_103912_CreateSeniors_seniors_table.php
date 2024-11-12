@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('seniors', function (Blueprint $table) {
             $table->id();
             $table->integer('osca_id');
+            $table->foreignId('application_status_id')->constrained('senior_application_status_list');
+            $table->foreignId('account_status_id')->nullable()->constrained('senior_account_status_list');
+            $table->foreignId('user_type_id')->constrained('user_type_list');
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
@@ -44,12 +47,13 @@ return new class extends Migration
             $table->date('date_applied');
             $table->string('email')->unique();
             $table->string('password');
-            $table->tinyInteger('is_approved')->default(0);
             $table->string('verification_code')->nullable();
             $table->dateTime('verification_expires_at')->nullable();
             $table->dateTime('verified_at')->nullable();
             $table->string('token')->nullable();
             $table->dateTime('expiration')->nullable();
+            $table->foreignId('assisted_by_id')->nullable()->constrained('user_type_list');
+            $table->date('date_approved');
             $table->timestamps();
         });
 

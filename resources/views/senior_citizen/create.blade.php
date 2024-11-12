@@ -3,7 +3,7 @@
 <x-senior_nav :data="$array"/>
 
 <section class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
-    <div class="bg-white bg-opacity-50 min-h-screen flex items-center justify-center font-poppins">
+    <div class="min-h-screen flex items-center justify-center font-poppins">
         <div class="w-full max-w-7xl mx-auto font-[sans-serif]">
             <div class="mx-4">
                 <div class="bg-white mt-4 shadow-lg rounded-md mb-5 sm:mb-5 relative">
@@ -1932,17 +1932,17 @@
         progressRight.style.backgroundColor = '#A1A1AA';
 
         if (currentStep === 1) {
-            step1.style.backgroundColor = '#FF4802';
+            step1.style.backgroundColor = '#1AA514';
             step1text.style.color = '#fff';  
             progressLeft.style.width = '50%'; 
-            progressLeft.style.backgroundColor = '#FF4802';
+            progressLeft.style.backgroundColor = '#1AA514';
         } else if (currentStep === 2) {
-            step1.style.backgroundColor = '#FF4802';
-            step2.style.backgroundColor = '#FF4802';
+            step1.style.backgroundColor = '#1AA514';
+            step2.style.backgroundColor = '#1AA514';
             step2text.style.color = '#fff'; 
             progressLeft.style.width = '50%';
-            progressLeft.style.backgroundColor = '#FF4802';
-            progressRight.style.backgroundColor = '#FF4802';
+            progressLeft.style.backgroundColor = '#1AA514';
+            progressRight.style.backgroundColor = '#1AA514';
         }
     }
 

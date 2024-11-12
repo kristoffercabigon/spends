@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
         $this->call(EncoderRolesSeeder::class);
         $this->call(SeniorApplicationStatusSeeder::class);
         $this->call(SeniorAccountStatusSeeder::class);
-        Seniors::factory(500)->create();
+        Seniors::factory(10)->create();
 
         // You can also uncomment and modify the user factory as needed
         // User::factory()->create([

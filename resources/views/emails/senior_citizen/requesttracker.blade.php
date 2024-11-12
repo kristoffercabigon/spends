@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Attempt</title>
+    <title>Request Tracker</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
         @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
@@ -23,20 +23,20 @@
             </div>
 
             <div style="background-color: #fff; padding: 20px; text-align: center; justify-content: center; align-items: center;">
-                <h1 class="text-2xl font-bold text-gray-900 text-center mb-4">Login Attempt</h1>
+                <h1 class="text-2xl font-bold text-gray-900 text-center mb-4">Email Verification</h1>
                 <p style="font-size: 18px; color: #4a5568; margin-bottom: 24px;">
-                    There have been five unsuccessful login attempts to your account using the email address:
+                    Registration successful! Below is your reference number:
                 </p>
                 <div class="text-center mb-6">
-                    <span style="display: inline-block; background-color: #fff; color: white !important; padding: 10px 20px; border-radius: 5px; font-size: 25px; text-decoration: none; font-weight: bold;">
-                        {{ $email }}
+                    <span style="display: inline-block; background-color: #ff4802; color: white; padding: 10px 20px; border-radius: 5px; font-size: 25px; text-decoration: none; font-weight: bold;">
+                        {{ $ncsc_rrn }}
                     </span>
                 </div>
                 <p style="font-size: 18px; color: #4a5568; margin-bottom: 24px;">
-                    This login attempt was recorded on {{ $throttleTime }}.
+                    Use this code to keep track of your application status.
                 </p>
                 <p style="font-size: 18px; color: #4a5568;">
-                    If this was you and you have simply forgotten your password, you may request a password reset by selecting "Forgot Password" on the login modal.
+                    You can visit our website and enter the this reference number on our request tracker form to know the status of your application.
                 </p>
             </div>
 

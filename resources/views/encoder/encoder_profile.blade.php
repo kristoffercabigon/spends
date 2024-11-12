@@ -33,10 +33,10 @@
     class="bg-cover bg-center bg-no-repeat min-h-screen" 
     style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
     
-    <div class="bg-white bg-opacity-50 min-h-screen flex items-center justify-center font-poppins">
+    <div class="min-h-screen flex items-center justify-center font-poppins">
         <div class="w-full max-w-7xl mx-auto font-[poppins]">
             <div class="bg-white mt-4 shadow-lg rounded-md">              
-                <div class="w-full my-5 p-5 px-6 py-10 md:px-12">
+                <div class="w-full mb-16 mt-5 p-5 px-6 py-10 md:px-12">
                     <div class="text-2xl font-bold mb-6 leading-tight tracking-tight text-gray-900 md:text-2xl">
                         <p class="mx-4 text-center">
                             Profile Settings

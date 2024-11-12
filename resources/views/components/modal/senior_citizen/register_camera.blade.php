@@ -6,14 +6,14 @@
     @click.away="showCameraModal = false"
     @open-camera-modal.window="initWebcam()">
     <div @click.stop class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-[715px] w-full">
-        <section class="bg-gray-50 dark:bg-gray-900 relative">
-            <button type="button" @click="showCameraModal = false" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none">
+        <section class="bg-gray-50 relative">
+            <button type="button" @click="showCameraModal = false" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8" style="max-height: 90vh; overflow-y: auto;">
-                <h1 class="text-xl font-semibold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                <h1 class="text-xl font-semibold leading-tight tracking-tight text-gray-900 md:text-2xl">
                     Capture a Photo
                 </h1>
                 <div class="col">

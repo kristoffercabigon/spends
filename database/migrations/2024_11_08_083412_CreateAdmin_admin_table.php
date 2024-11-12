@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('admin_email');
             $table->string('admin_password');
             $table->string('admin_profile_picture')->nullable();
-            $table->integer('admin_verification_code')->nullable();
+            $table->string('admin_verification_code')->nullable();
             $table->dateTime('admin_verification_expires_at')->nullable();
             $table->dateTime('admin_verified_at')->nullable();
             $table->string('admin_token')->nullable();

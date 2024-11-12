@@ -1,10 +1,11 @@
-<footer
-  class="flex flex-col items-center bg-[#FF4802] text-center text-surface dark:bg-neutral-700 dark:text-white">
-  <div class="container pt-9">
+<footer class="flex flex-col w-full relative items-center bg-[#FF4802] text-center shadow-lg text-surface">
 
-    <img src="{{ asset('images/osca_image_transparent_with_border.png') }}" alt="OSCA Logo" class="w-[70px] mx-auto mb-6">
+  <div class="bg-white w-full h-[2px] flex items-center relative shadow-[0_12px_16px_rgba(255,255,255,0.7)]">
+    <img src="{{ asset('images/osca_image_transparent_with_border.png') }}" alt="OSCA Logo" class="w-[70px] mx-auto top-[-20px]">
+  </div>
 
-    <div class="mb-6 flex justify-center space-x-10">
+  <div class="container pt-16">
+    <div class="mb-6 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-10">
         <a href="/home" class="text-white hover:text-orange-300 hover:animate-pop">Home</a>
         <a href="/announcement" class="text-white hover:text-orange-300 hover:animate-pop">Announcement</a>
         <a href="/contact-us" class="text-white hover:text-orange-300 hover:animate-pop">Contact Us</a>
@@ -14,7 +15,7 @@
       <a
         href="#!"
         type="button"
-        class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
+        class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0"
         data-twe-ripple-init>
         <span class="[&>svg]:h-5 [&>svg]:w-5">
           <svg
@@ -30,7 +31,7 @@
       <a
         href="#!"
         type="button"
-        class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
+        class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0"
         data-twe-ripple-init>
         <span class="mx-auto [&>svg]:h-5 [&>svg]:w-5">
           <svg
@@ -46,7 +47,7 @@
       <a
         href="#!"
         type="button"
-        class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0 dark:text-white dark:hover:bg-secondary-900"
+        class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0"
         data-twe-ripple-init>
         <span class="mx-auto [&>svg]:h-5 [&>svg]:w-5">
           <svg
@@ -60,7 +61,6 @@
       </a>
     </div>
   </div>
-
   <hr class="border-t-2 border-white mx-auto w-[80%] my-4">
 
   <div class="w-full pb-4 pt-2 text-center text-white">

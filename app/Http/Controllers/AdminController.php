@@ -53,18 +53,16 @@ class AdminController extends Controller
         ], $AdminLoginMessages);
 
         $admin_email = $validated['admin_email'];
-        $admin_ipAddress = $request->ip();
         $admin_throttleTime = Carbon::now()->format('Y-m-d H:i:s');
 
         if (RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
             DB::table('admin_login_attempts')->insert([
                 'admin_email' => $admin_email,
-                'ip_address' => $admin_ipAddress,
-                'status' => 'throttled',
+                'status' => 'Throttled',
                 'created_at' => now(),
             ]);
 
-            Mail::to($admin_email)->send(new AdminLoginAttempt($admin_email, $admin_ipAddress, $admin_throttleTime));
+            Mail::to($admin_email)->send(new AdminLoginAttempt($admin_email, $admin_throttleTime));
 
             return redirect('/admin')->with([
                 'admin-error-message-header' => 'Too many attempts',
@@ -77,8 +75,7 @@ class AdminController extends Controller
         if (!$admin_login) {
             DB::table('admin_login_attempts')->insert([
                 'admin_email' => $admin_email,
-                'ip_address' => $admin_ipAddress,
-                'status' => 'failed',
+                'status' => 'Failed',
                 'created_at' => now(),
             ]);
 
@@ -98,8 +95,7 @@ class AdminController extends Controller
         if (!Hash::check($validated['admin_password'], $admin_login->admin_password)) {
             DB::table('admin_login_attempts')->insert([
                 'admin_email' => $admin_email,
-                'ip_address' => $admin_ipAddress,
-                'status' => 'failed',
+                'status' => 'Failed',
                 'created_at' => now(),
             ]);
 
@@ -114,8 +110,7 @@ class AdminController extends Controller
 
         DB::table('admin_login_attempts')->insert([
             'admin_email' => $admin_email,
-            'ip_address' => $admin_ipAddress,
-            'status' => 'successful',
+            'status' => 'Successful',
             'created_at' => now(),
         ]);
 
@@ -167,11 +162,10 @@ class AdminController extends Controller
         $admin_email = $request->input('admin_email');
         $code = $request->input('code');
 
-        $admin = Admin::where('admin_email', $admin_email)
-            ->where('admin_verification_code', $code)
-            ->first();
+        $admin = Admin::where('admin_email', $admin_email)->first();
 
-        if ($admin) {
+        if ($admin && Hash::check($code, $admin->admin_verification_code)) {
+
             if ($admin->admin_verification_expires_at && $admin->admin_verification_expires_at->isPast()) {
                 return response()->json(['error' => 'Verification code has expired. Please request a new one.'], 400);
             }
@@ -181,7 +175,10 @@ class AdminController extends Controller
             $admin->admin_verification_expires_at = null;
             $admin->save();
 
-            session(['showAdminLoginModal' => true,]);
+            session()->flash('admin-message-header', 'Success');
+            session()->flash('admin-message-body', 'Email verified successfully.');
+
+            session(['showAdminLoginModal' => true]);
 
             return response()->json([
                 'message' => 'Email verified successfully.',
@@ -209,9 +206,11 @@ class AdminController extends Controller
             }
 
             $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+            $hashedVerificationCode = Hash::make($verificationCode);
+
             $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
 
-            $admin->admin_verification_code = $verificationCode;
+            $admin->admin_verification_code = $hashedVerificationCode;
             $admin->admin_verification_expires_at = $expirationTime;
             $admin->save();
 

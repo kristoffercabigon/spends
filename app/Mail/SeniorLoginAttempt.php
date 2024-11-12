@@ -11,13 +11,11 @@ class SeniorLoginAttempt extends Mailable
     use Queueable, SerializesModels;
 
     public $email;
-    public $ipAddress;
     public $throttleTime;
 
-    public function __construct($email, $ipAddress, $throttleTime)
+    public function __construct($email, $throttleTime)
     {
         $this->email = $email;
-        $this->ipAddress = $ipAddress;
         $this->throttleTime = $throttleTime;
     }
 
@@ -29,7 +27,6 @@ class SeniorLoginAttempt extends Mailable
             ->view('emails.senior_citizen.loginattempt')
             ->with([
                 'email' => $this->email,
-                'ipAddress' => $this->ipAddress,
                 'throttleTime' => $this->throttleTime,
                 'logoPath' => $logoPath,
             ]);

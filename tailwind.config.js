@@ -72,8 +72,5 @@ export default {
             },
         },
     },
-    plugins: [
-        require('@tailwindcss/forms'),
-        animations,  
-    ],
+    plugins: [require("@tailwindcss/forms"), animations],
 };

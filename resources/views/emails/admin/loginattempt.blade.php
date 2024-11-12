@@ -33,7 +33,7 @@
                     </span>
                 </div>
                 <p style="font-size: 18px; color: #4a5568; margin-bottom: 24px;">
-                    This login attempt was recorded on {{ $admin_throttleTime }} from the IP address {{ $admin_ipAddress }}.
+                    This login attempt was recorded on {{ $admin_throttleTime }}.
                 </p>
                 <p style="font-size: 18px; color: #4a5568;">
                     If this was you and you have simply forgotten your password, you may request a password reset by selecting "Forgot Password" on the login modal.

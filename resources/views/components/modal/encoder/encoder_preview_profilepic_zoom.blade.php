@@ -33,7 +33,7 @@
          @mouseleave="endDrag"> 
 
         <div @click.stop class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-3xl w-full relative">
-            <section class="p-4 bg-gray-50 dark:bg-gray-900">
+            <section class="p-4 bg-gray-50">
                 <button type="button" @click="showEncoderPreviewProfilePicModal = false" 
                         class="absolute top-4 right-4 z-40 focus:outline-none">
                     <img src="../../images/close.png" alt="Close" class="h-6 w-6">
@@ -54,7 +54,7 @@
                 </div>
             </section>
 
-            <div class="absolute bottom-0 left-0 right-0 flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-900 z-40"> 
+            <div class="absolute bottom-0 left-0 right-0 flex justify-between items-center p-4 bg-gray-50 z-40"> 
                 <button type="button" @click="zoom = zoom < 2 ? zoom + 0.1 : zoom" 
                         class="hover:animate-scale px-2 py-1 bg-gray-300 hover:bg-gray-400 rounded">Zoom In</button>
                 <button type="button" @click="zoom = zoom > 1 ? zoom - 0.1 : zoom" 

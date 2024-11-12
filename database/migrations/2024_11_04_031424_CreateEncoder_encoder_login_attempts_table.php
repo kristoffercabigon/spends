@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('encoder_login_attempts', function (Blueprint $table) {
             $table->id();
             $table->string('encoder_email')->nullable();
-            $table->ipAddress('ip_address')->nullable();
             $table->string('status');
             $table->timestamp('created_at')->useCurrent();
         });

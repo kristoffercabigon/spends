@@ -582,10 +582,14 @@ class SeniorsFactory extends Factory
         return [
             'osca_id' => function () use (&$uniqueOscaIds) {
                 do {
-                    $oscaId = $this->faker->numberBetween(1000, 9999);
+                    $oscaId = $this->faker->numberBetween(10000, 99999);
                 } while (in_array($oscaId, $uniqueOscaIds));
                 $uniqueOscaIds[] = $oscaId;
                 return $oscaId;
+            },
+            'date_applied' => $date_applied,
+            'ncsc_rrn' => function (array $attributes) {
+                return $attributes['date_applied'] . '-' . $attributes['osca_id'];
             },
             'application_status_id' => 1,
             'account_status_id' => null,
@@ -619,7 +623,6 @@ class SeniorsFactory extends Factory
             'permanent_source' => $permanent_source,
             'if_permanent_yes_income' => $permanent_source == 1 ? $this->faker->numberBetween(1, 11) : null,
             'has_illness' => $has_illness,
-            'date_applied' => $date_applied,
             'date_approved' => $date_approved,
             'has_disability' => $has_disability,
             'if_illness_yes' => $has_illness == 1 ? $this->faker->randomElement($existing_illness) : null,
@@ -632,27 +635,7 @@ class SeniorsFactory extends Factory
                 return $email;
             },
             'password' => Hash::make('password'),
-            'verified_at' => function () use (&$verificationCode, &$verificationExpiresAt) {
-                $verifiedAt = $this->faker->optional(0.75)->dateTimeBetween('-1 year', 'now');
-
-                if (is_null($verifiedAt)) {
-                    $verificationCode = $this->faker->numberBetween(100000, 999999);
-                    $verificationExpiresAt = $this->faker->dateTimeBetween('now', '+6 month');
-                } else {
-                    $verificationCode = null;
-                    $verificationExpiresAt = null;
-                }
-
-                return $verifiedAt;
-            },
-
-            'verification_code' => function () use (&$verificationCode) {
-                return $verificationCode;
-            },
-
-            'verification_expires_at' => function () use (&$verificationExpiresAt) {
-                return $verificationExpiresAt;
-            },
+            'verified_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
     }
 

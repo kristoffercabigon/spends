@@ -1498,7 +1498,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-3 mb-3 flex justify-between items-center">
+                <div class="mt-3 mb-8 flex justify-between items-center">
                     <div>
                         <button type="button" id="backButton" class="hover:animate-scale py-3 px-6 shadow-lg text-sm tracking-wider font-light rounded-md text-gray-800 bg-white border border-gray-200 shadow-sm hover:bg-gray-300 focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
                             <svg class="shrink-0 w-5 h-5 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

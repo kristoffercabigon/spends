@@ -56,18 +56,16 @@ class EncoderController extends Controller
         ], $EncoderLoginMessages);
 
         $encoder_email = $validated['encoder_email'];
-        $encoder_ipAddress = $request->ip();
         $encoder_throttleTime = Carbon::now()->format('Y-m-d H:i:s');
 
         if (RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
             DB::table('encoder_login_attempts')->insert([
                 'encoder_email' => $encoder_email,
-                'ip_address' => $encoder_ipAddress,
-                'status' => 'throttled',
+                'status' => 'Throttled',
                 'created_at' => now(),
             ]);
 
-            Mail::to($encoder_email)->send(new EncoderLoginAttempt($encoder_email, $encoder_ipAddress, $encoder_throttleTime));
+            Mail::to($encoder_email)->send(new EncoderLoginAttempt($encoder_email, $encoder_throttleTime));
 
             return redirect('/encoder')->with([
                 'encoder-error-message-header' => 'Too many attempts',
@@ -79,8 +77,7 @@ class EncoderController extends Controller
         if (!$encoder_login) {
             DB::table('encoder_login_attempts')->insert([
                 'encoder_email' => $encoder_email,
-                'ip_address' => $encoder_ipAddress,
-                'status' => 'failed',
+                'status' => 'Failed',
                 'created_at' => now(),
             ]);
 
@@ -100,8 +97,7 @@ class EncoderController extends Controller
         if (!Hash::check($validated['encoder_password'], $encoder_login->encoder_password)) {
             DB::table('encoder_login_attempts')->insert([
                 'encoder_email' => $encoder_email,
-                'ip_address' => $encoder_ipAddress,
-                'status' => 'failed',
+                'status' => 'Failed',
                 'created_at' => now(),
             ]);
 
@@ -116,8 +112,7 @@ class EncoderController extends Controller
 
         DB::table('encoder_login_attempts')->insert([
             'encoder_email' => $encoder_email,
-            'ip_address' => $encoder_ipAddress,
-            'status' => 'successful',
+            'status' => 'Successful',
             'created_at' => now(),
         ]);
 
@@ -191,9 +186,11 @@ class EncoderController extends Controller
         $encoderData['encoder_password'] = Hash::make($encoderData['encoder_password']);
 
         $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+        $hashedVerificationCode = Hash::make($verificationCode);
+
         $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
 
-        $encoderData['encoder_verification_code'] = $verificationCode;
+        $encoderData['encoder_verification_code'] = $hashedVerificationCode;
         $encoderData['encoder_verification_expires_at'] = $expirationTime;
 
         $encoder = Encoder::create($encoderData);
@@ -213,11 +210,10 @@ class EncoderController extends Controller
         $encoder_email = $request->input('encoder_email');
         $code = $request->input('code');
 
-        $encoder = Encoder::where('encoder_email', $encoder_email)
-            ->where('encoder_verification_code', $code)
-            ->first();
+        $encoder = Encoder::where('encoder_email', $encoder_email)->first();
 
-        if ($encoder) {
+        if ($encoder && Hash::check($code, $encoder->encoder_verification_code)) {
+
             if ($encoder->encoder_verification_expires_at && $encoder->encoder_verification_expires_at->isPast()) {
                 return response()->json(['error' => 'Verification code has expired. Please request a new one.'], 400);
             }
@@ -227,7 +223,10 @@ class EncoderController extends Controller
             $encoder->encoder_verification_expires_at = null;
             $encoder->save();
 
-            session(['showEncoderLoginModal' => true,]);
+            session()->flash('encoder-message-header', 'Success');
+            session()->flash('encoder-message-body', 'Email verified successfully.');
+
+            session(['showEncoderLoginModal' => true]);
 
             return response()->json([
                 'message' => 'Email verified successfully.',
@@ -255,9 +254,11 @@ class EncoderController extends Controller
             }
 
             $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+            $hashedVerificationCode = Hash::make($verificationCode);
+
             $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
 
-            $encoder->encoder_verification_code = $verificationCode;
+            $encoder->encoder_verification_code = $hashedVerificationCode;
             $encoder->encoder_verification_expires_at = $expirationTime;
             $encoder->save();
 

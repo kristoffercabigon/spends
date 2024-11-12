@@ -22,6 +22,7 @@ class Seniors extends Authenticatable
 
     protected $fillable = [
         'osca_id',
+        'ncsc_rrn',
         'user_type_id',
         'application_status_id',
         'first_name',

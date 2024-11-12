@@ -40,46 +40,42 @@
                 @php
                     $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$encoder->encoder_first_name."-".$encoder->encoder_last_name;
                 @endphp
-                <div class="flex items-center cursor-pointer" @click="EncoderdropdownOpen = !EncoderdropdownOpen">
-                    <img id="avatarButton" class="w-10 h-10 rounded-full ring-2 ring-white" src="{{ $encoder->encoder_profile_picture ? asset("storage/images/encoder/encoder_thumbnail_profile/".$encoder->encoder_profile_picture) : $default_profile }}" alt="Profile Picture">
+                <div class="flex items-center cursor-pointer relative" @click="EncoderdropdownOpen = !EncoderdropdownOpen">
+                    <img id="avatarButton" class="w-10 h-10 rounded-full ring-2 ring-white" src="{{ $encoder->encoder_profile_picture ? asset('storage/images/encoder/encoder_thumbnail_profile/'.$encoder->encoder_profile_picture) : $default_profile }}" alt="Profile Picture">
                     <div class="ml-4">
                         <div>{{ $encoder->encoder_first_name }} {{ $encoder->encoder_last_name }}</div>
                     </div>
-                </div>
-
-                <div 
-                    x-show="EncoderdropdownOpen"
-                    x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="opacity-0 transform translate-y-4" 
-                    x-transition:enter-end="opacity-100 transform translate-y-0"
-                    x-transition:leave="transition ease-in duration-300"
-                    x-transition:leave-start="opacity-100 transform translate-y-0" 
-                    x-transition:leave-end="opacity-0 transform -translate-y-4"
-                    style="display: none" 
-                    @click.away="EncoderdropdownOpen = false" 
-                    id="userDropdown" 
-                    class="z-10 absolute right-0 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-44 origin-top-right"
-                >
-                    <div class="px-4 py-3 text-sm text-gray-900">
-                        <div class="font-medium truncate">{{ $encoder->encoder_email }}</div>
-                        <div class="font-medium truncate">Encoder ID: {{ $encoder->encoder_id }}</div>
-                    </div>
-                    <ul class="py-2 text-sm text-gray-700" aria-labelledby="avatarButton">
-                        <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
-                        </li>
-                        <li>
-                            <a href="/encoder/profile/{{$encoder->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
-                        </li>
-                        <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Messages</a>
-                        </li>
-                    </ul>
-                    <div class="py-1">
-                        <form action="/encoder/logout" method="POST">
-                            @csrf
-                            <button type="submit" class="block px-4 py-2 text-left text-sm text-gray-700 w-full hover:bg-gray-100">Sign out</button>
-                        </form>
+                    <div 
+                        x-show="EncoderdropdownOpen"
+                        x-transition:enter="transition-transform transition-opacity ease-out duration-300"
+                        x-transition:enter-start="opacity-0 transform translate-y-[-5%]"
+                        x-transition:enter-end="opacity-100 transform translate-y-0"
+                        x-transition:leave="transition transform ease-in duration-300"
+                        x-transition:leave-start="opacity-100 transform translate-y-0"
+                        x-transition:leave-end="opacity-0 transform translate-y-[10%]"
+                        style="display: none"
+                        @click.away="EncoderdropdownOpen = false"
+                        id="userDropdown"
+                        class="z-10 absolute left-0 transform top-0 mt-12 bg-white shadow-lg divide-y divide-gray-100 rounded-lg shadow w-44 origin-top"
+                    >
+                        <div class="px-4 py-3 text-sm text-gray-900">
+                            <div class="font-medium truncate">{{ $encoder->encoder_email }}</div>
+                            <div class="font-medium truncate">Encoder ID: {{ $encoder->encoder_id }}</div>
+                        </div>
+                        <ul class="py-2 text-sm text-gray-700" aria-labelledby="avatarButton">
+                            <li>
+                                <a href="#" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
+                            </li>
+                            <li>
+                                <a href="/encoder/profile/{{$encoder->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
+                            </li>
+                        </ul>
+                        <div class="py-1">
+                            <form action="/encoder/logout" method="POST">
+                                @csrf
+                                <button type="submit" class="block px-4 py-2 text-left text-sm text-gray-700 w-full hover:bg-gray-100">Sign out</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             @endauth
@@ -105,12 +101,12 @@
                     </li>
                     <div 
                         x-show="EncoderdropdownOpen"
-                        x-transition:enter="transition ease-out duration-300"
-                        x-transition:enter-start="opacity-0 transform translate-y-4" 
+                        x-transition:enter="transition-transform transition-opacity ease-out duration-300"
+                        x-transition:enter-start="opacity-0 transform translate-y-[-5%]"
                         x-transition:enter-end="opacity-100 transform translate-y-0"
-                        x-transition:leave="transition ease-in duration-300"
-                        x-transition:leave-start="opacity-100 transform translate-y-0" 
-                        x-transition:leave-end="opacity-0 transform -translate-y-4"
+                        x-transition:leave="transition transform ease-in duration-300"
+                        x-transition:leave-start="opacity-100 transform translate-y-0"
+                        x-transition:leave-end="opacity-0 transform translate-y-[10%]"
                         style="display: none" 
                         @click.away="EncoderdropdownOpen = false" 
                         class="absolute z-20 mt-2 right-0 left-0 ml-[60px] bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-48 origin-top"
@@ -122,7 +118,6 @@
                         <ul class="py-2 text-sm text-gray-700">
                             <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a></li>
                             <li><a href="/encoder/profile/{{$encoder->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a></li>
-                            <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Messages</a></li>
                         </ul>
                         <div class="py-1">
                             <form action="/encoder/logout" method="POST">

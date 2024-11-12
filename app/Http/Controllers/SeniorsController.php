@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\SeniorForgotPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -14,6 +13,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\SeniorResendCodeEmail;
 use App\Mail\SeniorVerificationEmail;
 use App\Mail\SeniorLoginAttempt;
+use App\Mail\SeniorForgotPassword;
+use App\Mail\SeniorReferenceNumber;
 use App\Mail\SeniorPasswordChangeVerificationCode;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\RateLimiter;
@@ -29,6 +30,22 @@ class SeniorsController extends Controller
     {
         $data = array("seniors" => DB::table('seniors')->orderBy('created_at', 'desc')->paginate(10));
         return view('senior_citizen.index', $data)->with('title', 'SPENDS: Home ');
+    }
+
+    public function announcement()
+    {
+        $senior = array("seniors" => DB::table('seniors')->orderBy('created_at', 'desc')->paginate(10));
+        return view('senior_citizen.index', $senior)->with('title', 'SPENDS: Home ');
+    }
+
+    public function contact_us()
+    {
+        return view('senior_citizen.contact_us')->with('title', 'SPENDS: Home ');
+    }
+
+    public function about_us()
+    {
+        return view('senior_citizen.about_us')->with('title', 'SPENDS: Home ');
     }
 
     public function create()
@@ -68,21 +85,22 @@ class SeniorsController extends Controller
         unset($seniorData['g-recaptcha-response']);
 
         do {
-            $osca_id = rand(1000, 9999);
+            $osca_id = rand(10000, 99999);
         } while (DB::table('seniors')->where('osca_id', $osca_id)->exists());
 
         $user_type_id = 1;
-
         $application_status_id = 1;
+        $date_approved = null;
 
-        $date_approved = now();
-
+        $seniorData['date_applied'] = now();
         $seniorData['osca_id'] = $osca_id;
 
+        $ncsc_rrn = $seniorData['date_applied']->format('Ymd') . '-' . $osca_id;
+
+        $seniorData['ncsc_rrn'] = $ncsc_rrn;
+
         $seniorData['user_type_id'] = $user_type_id;
-
         $seniorData['application_status_id'] = $application_status_id;
-
         $seniorData['date_approved'] = $date_approved;
 
         if (empty($request->input('g-recaptcha-response'))) {
@@ -153,17 +171,18 @@ class SeniorsController extends Controller
 
         $seniorData['password'] = Hash::make($seniorData['password']);
 
-        $seniorData['date_applied'] = now();
-
         $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+        $hashedVerificationCode = Hash::make($verificationCode);
+
         $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
 
-        $seniorData['verification_code'] = $verificationCode;
+        $seniorData['verification_code'] = $hashedVerificationCode;
         $seniorData['verification_expires_at'] = $expirationTime;
 
         $seniors = Seniors::create($seniorData);
 
         Mail::to($seniorData['email'])->send(new SeniorVerificationEmail($verificationCode, $expirationTime));
+        Mail::to($seniorData['email'])->send(new SeniorReferenceNumber($ncsc_rrn));
 
         $lastSourceId = DB::table('source_list')->latest('id')->value('id');
 
@@ -275,15 +294,12 @@ class SeniorsController extends Controller
 
     public function verifyEmailCodeRegister(Request $request)
     {
-
         $email = $request->input('email');
         $code = $request->input('code');
 
-        $senior = Seniors::where('email', $email)
-            ->where('verification_code', $code)
-            ->first();
+        $senior = Seniors::where('email', $email)->first();
 
-        if ($senior) {
+        if ($senior && Hash::check($code, $senior->verification_code)) {
 
             if ($senior->verification_expires_at && $senior->verification_expires_at->isPast()) {
                 return response()->json(['error' => 'Verification code has expired. Please request a new one.'], 400);
@@ -305,6 +321,7 @@ class SeniorsController extends Controller
         return response()->json(['error' => 'Invalid verification code.'], 400);
     }
 
+
     public function resendVerificationCode(Request $request)
     {
         $email = $request->input('email');
@@ -322,9 +339,11 @@ class SeniorsController extends Controller
             }
 
             $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+            $hashedVerificationCode = Hash::make($verificationCode);
+
             $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
 
-            $senior->verification_code = $verificationCode;
+            $senior->verification_code = $hashedVerificationCode;
             $senior->verification_expires_at = $expirationTime;
             $senior->save();
 
@@ -393,18 +412,16 @@ class SeniorsController extends Controller
         ], $loginMessages);
 
         $email = $validated['email'];
-        $ipAddress = $request->ip();
         $throttleTime = Carbon::now()->format('Y-m-d H:i:s');
 
         if (RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
             DB::table('senior_login_attempts')->insert([
                 'email' => $email,
-                'ip_address' => $ipAddress,
-                'status' => 'throttled',
+                'status' => 'Throttled',
                 'created_at' => now(),
             ]);
 
-            Mail::to($email)->send(new SeniorLoginAttempt($email, $ipAddress, $throttleTime));
+            Mail::to($email)->send(new SeniorLoginAttempt($email, $throttleTime));
 
             return redirect('/')->with([
                 'error-message-header' => 'Too many attempts',
@@ -416,8 +433,7 @@ class SeniorsController extends Controller
         if (!$senior_login) {
             DB::table('senior_login_attempts')->insert([
                 'email' => $email,
-                'ip_address' => $ipAddress,
-                'status' => 'failed',
+                'status' => 'Failed',
                 'created_at' => now(),
             ]);
 
@@ -437,8 +453,7 @@ class SeniorsController extends Controller
         if (!Hash::check($validated['password'], $senior_login->password)) {
             DB::table('senior_login_attempts')->insert([
                 'email' => $email,
-                'ip_address' => $ipAddress,
-                'status' => 'failed',
+                'status' => 'Failed',
                 'created_at' => now(),
             ]);
 
@@ -453,8 +468,7 @@ class SeniorsController extends Controller
 
         DB::table('senior_login_attempts')->insert([
             'email' => $email,
-            'ip_address' => $ipAddress,
-            'status' => 'successful',
+            'status' => 'Successful',
             'created_at' => now(),
         ]);
 

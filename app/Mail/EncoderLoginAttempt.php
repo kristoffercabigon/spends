@@ -11,13 +11,11 @@ class EncoderLoginAttempt extends Mailable
     use Queueable, SerializesModels;
 
     public $encoder_email;
-    public $encoder_ipAddress;
     public $encoder_throttleTime;
 
-    public function __construct($encoder_email, $encoder_ipAddress, $encoder_throttleTime)
+    public function __construct($encoder_email, $encoder_throttleTime)
     {
         $this->encoder_email = $encoder_email;
-        $this->encoder_ipAddress = $encoder_ipAddress;
         $this->encoder_throttleTime = $encoder_throttleTime;
     }
 
@@ -29,7 +27,6 @@ class EncoderLoginAttempt extends Mailable
             ->view('emails.encoder.loginattempt')
             ->with([
                 'encoder_email' => $this->encoder_email,
-                'encoder_ipAddress' => $this->encoder_ipAddress,
                 'encoder_throttleTime' => $this->encoder_throttleTime,
                 'logoPath' => $logoPath,
             ]);

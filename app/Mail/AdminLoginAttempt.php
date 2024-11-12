@@ -11,13 +11,11 @@ class AdminLoginAttempt extends Mailable
     use Queueable, SerializesModels;
 
     public $admin_email;
-    public $admin_ipAddress;
     public $admin_throttleTime;
 
-    public function __construct($admin_email, $admin_ipAddress, $admin_throttleTime)
+    public function __construct($admin_email, $admin_throttleTime)
     {
         $this->admin_email = $admin_email;
-        $this->admin_ipAddress = $admin_ipAddress;
         $this->admin_throttleTime = $admin_throttleTime;
     }
 
@@ -29,7 +27,6 @@ class AdminLoginAttempt extends Mailable
             ->view('emails.admin.loginattempt')
             ->with([
                 'admin_email' => $this->admin_email,
-                'admin_ipAddress' => $this->admin_ipAddress,
                 'admin_throttleTime' => $this->admin_throttleTime,
                 'logoPath' => $logoPath,
             ]);

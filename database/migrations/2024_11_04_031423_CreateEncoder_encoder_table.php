@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('encoder_email');
             $table->string('encoder_password');
             $table->string('encoder_profile_picture')->nullable();
-            $table->integer('encoder_verification_code')->nullable();
+            $table->string('encoder_verification_code')->nullable();
             $table->dateTime('encoder_verification_expires_at')->nullable();
             $table->dateTime('encoder_verified_at')->nullable();
             $table->string('encoder_token')->nullable();

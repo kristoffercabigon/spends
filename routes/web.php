@@ -18,6 +18,7 @@ Route::controller(SeniorsController::class)->group(function () {
     Route::put('/reset-password', 'resetPassword');
     Route::post('/login', 'login')->name('login')->middleware('guest:senior');
     Route::post('/store', 'store');
+    Route::post('/contact-us', 'send_message');
     Route::post('/resend-code', 'resendVerificationCode')->name('resend-code');
     Route::post('/verify-email', 'verifyEmailCodeRegister');
     Route::post('/verify-email-login', 'verifyEmailCodeLogin');

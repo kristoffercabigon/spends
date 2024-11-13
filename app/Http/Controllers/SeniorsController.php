@@ -8,6 +8,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Seniors;
+use App\Models\Guest;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail; 
 use App\Mail\SeniorResendCodeEmail;
@@ -41,6 +42,28 @@ class SeniorsController extends Controller
     public function contact_us()
     {
         return view('senior_citizen.contact_us')->with('title', 'SPENDS: Home ');
+    }
+
+    public function send_message(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+        ]);
+
+        Guest::create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'subject' => $request->input('subject'),
+            'message' => $request->input('message'),
+        ]);
+
+        return redirect()->back()->with([
+            'message-header' => 'Success',
+            'message-body' => 'Your message has been sent successfully!'
+        ]);
     }
 
     public function about_us()

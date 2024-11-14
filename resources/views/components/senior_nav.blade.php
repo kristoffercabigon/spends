@@ -25,7 +25,7 @@
 
         <div class="hidden lg:flex flex-1 justify-center">
             <ul class="flex justify-center space-x-8">
-                <li><a href="/" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Homed</a></li>
+                <li><a href="/" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Home</a></li>
                 <li><a href="/announcement" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Announcement</a></li>
                 <li><a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">About Us</a></li>
                 <li><a href="/contact-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Contact Us</a></li>

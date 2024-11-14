@@ -95,7 +95,7 @@
     @click.away="showAdminVerificationModal = false; localStorage.setItem('showAdminVerificationModal', 'false'); showAdminLoginModal = false;">
     
     <div @click.stop>
-        <section class="bg-gray-50 relative">
+        <section class="bg-gray-50 relative mx-4">
             <button @click="showAdminVerificationModal = false; localStorage.setItem('showAdminVerificationModal', 'false')" 
                     class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -126,7 +126,7 @@
                             <p x-text="verifyStatusMessage" class="mt-2 text-sm" :class="verifyStatusMessage.includes('error') || verifyStatusMessage.includes('Invalid') || verifyStatusMessage.includes('Expired') ? 'text-red-600' : 'text-red-600'"></p>
 
                             <button type="submit" 
-                                    class="relative hover:animate-pop w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
+                                    class="relative hover:scale-105 transition duration-150 ease-in-out w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
                                 <span x-show="!isLoadingVerify">Verify Code</span>
                                 <span x-show="isLoadingVerify" style="display: none" class="flex items-center justify-center">
                                     <svg aria-hidden="true" class="inline w-4 h-4 me-2 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

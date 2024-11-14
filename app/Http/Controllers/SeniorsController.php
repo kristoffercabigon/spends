@@ -30,27 +30,38 @@ class SeniorsController extends Controller
     public function index()
     {
         $data = array("seniors" => DB::table('seniors')->orderBy('created_at', 'desc')->paginate(10));
-        return view('senior_citizen.index', $data)->with('title', 'SPENDS: Home ');
+        return view('senior_citizen.index', $data)->with('title', 'Home ');
     }
 
     public function announcement()
     {
-        $senior = array("seniors" => DB::table('seniors')->orderBy('created_at', 'desc')->paginate(10));
-        return view('senior_citizen.index', $senior)->with('title', 'SPENDS: Home ');
+        return view('senior_citizen.announcement')->with('title', 'Announcement ');
     }
 
     public function contact_us()
     {
-        return view('senior_citizen.contact_us')->with('title', 'SPENDS: Home ');
+        return view('senior_citizen.contact_us')->with('title', 'Contact Us ');
     }
 
     public function send_message(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'subject' => 'required|string|max:255',
-            'message' => 'required|string',
+            'name' => 'required|max:50',
+            'email' => 'required|email|max:40',
+            'subject' => 'required|max:100',
+            'message' => 'required',
+        ], [
+            'name.required' => 'Please enter your name.',
+            'name.max' => 'The name should not exceed 50 characters.',
+
+            'email.required' => 'Please enter your email address.',
+            'email.email' => 'Please enter a valid email address.',
+            'email.max' => 'The email should not exceed 40 characters.',
+
+            'subject.required' => 'Please enter a subject for your message.',
+            'subject.max' => 'The subject should not exceed 100 characters.',
+
+            'message.required' => 'Please enter your message.',
         ]);
 
         Guest::create([
@@ -68,7 +79,7 @@ class SeniorsController extends Controller
 
     public function about_us()
     {
-        return view('senior_citizen.about_us')->with('title', 'SPENDS: Home ');
+        return view('senior_citizen.about_us')->with('title', 'About Us ');
     }
 
     public function create()
@@ -83,7 +94,7 @@ class SeniorsController extends Controller
         $barangay = DB::table('barangay_list')->get();
 
         return view('senior_citizen.create')->with([
-            'title' => 'SPENDS: Register',
+            'title' => 'Register',
             'income_sources' => $income_sources,
             'incomes' => $incomes,
             'pensions' => $pensions,

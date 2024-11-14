@@ -35,11 +35,11 @@
     
     <div class="min-h-screen flex items-center justify-center font-poppins">
         <div class="w-full max-w-7xl mx-auto font-[poppins]">
-            <div class="bg-white mt-4 shadow-lg rounded-md">              
-                <div class="w-full mt-5 mb-16 p-5 px-6 py-10 md:px-12">
-                    <div class="text-2xl font-bold mb-6 leading-tight tracking-tight text-gray-900 md:text-2xl">
+            <div class="bg-white mt-4 ml-4 mr-4 mb-16 shadow-lg rounded-md">              
+                <div class="mb-16 mt-5 p-5 px-6 py-10 lg:px-12">
+                    <div class="text-2xl font-bold mb-6 leading-tight tracking-tight text-gray-900 md:text-4xl">
                         <p class="mx-4 text-center">
-                            Profile Settings
+                            Profile
                         </p>
                     </div>
 
@@ -54,32 +54,29 @@
                         <div class="md:flex no-wrap ">
                             <div class="w-full md:w-3/12 md:mx-2">
                                 <div class="bg-white p-3 shadow-md border-t-4 border-b-4 rounded-md border-gray-400">
-                                    <div class="flex items-center hover:animate-scale cursor-pointer justify-center image overflow-hidden"
-                                        @click="showAdminRegisteredProfilePicModal = true">
+                                    <div class="relative flex items-center justify-center cursor-pointer">
                                         @php
                                             $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$admin->admin_first_name."-".$admin->admin_last_name;
                                         @endphp
-                                        <img class="w-48 h-48 rounded-full border-4 border-gray-400"
-                                            src="{{ $admin->admin_profile_picture ? asset('storage/images/admin/admin_profile_picture/'.$admin->admin_profile_picture) : $default_profile }}"
-                                            alt="">
-                                    </div>
-                                    <div class="flex items-center justify-center">
-                                    <button 
-                                        type="button" 
-                                        class="hover:animate-scale py-1 px-2 md:w-auto text-xs cursor-pointer tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none mt-4" 
-                                        @click.prevent="showAdminEditProfilePictureModal = true; localStorage.setItem('showAdminEditProfilePictureModal', 'true')"
-                                    >
-                                       <span class="text-green-500">
-                                            <img src="../../images/edit-image.png" alt="Key Icon" class="h-5 inline ">
-                                        </span> Change Photo
-                                    </button>
+
+                                        <img class="w-48 h-48 hover:animate-scale rounded-full border-4 border-gray-400"
+                                            src="{{ $admin->admin_profile_picture ? asset('storage/images/admin/admin_profile_picture/'.$admin->admin_profile_picture) : $default_profile }}" 
+                                            @click="showAdminRegisteredProfilePicModal = true"
+                                            alt="Profile Picture">
+
+                                        <button 
+                                            type="button" 
+                                            class="absolute bottom-[20px] right-[0.75rem] transform translate-x-1/2 translate-y-1/2 hover:scale-105 transition duration-150 ease-in-out p-2 w-10 h-10 rounded-full text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none mt-2 mr-2"
+                                            @click.prevent="showAdminEditProfilePictureModal = true; localStorage.setItem('showAdminEditProfilePictureModal', 'true')">
+                                            <img src="../../images/pencil.png" alt="Pencil Icon" class="w-5 h-5 mx-auto">
+                                        </button>
                                     </div>
                                     <h1 class="text-gray-900 font-bold text-xl mt-4 leading-8 my-1">{{ $admin->admin_first_name }} {{ $admin->admin_last_name }}</h1>
                                     <h3 class="text-gray-600 font-lg text-semibold leading-6">Administrator</span></h3>
                                     <div class="flex items-center justify-center">
                                     <button 
                                         type="button" 
-                                        class="hover:animate-scale py-3 px-4 md:w-auto text-sm cursor-pointer tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none mt-4" 
+                                        class="hover:scale-105 transition duration-150 ease-in-out py-3 px-4 md:w-auto text-sm cursor-pointer tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none mt-4" 
                                         @click.prevent="showAdminEditProfileModal = true; localStorage.setItem('showAdminEditProfileModal', 'true')"
                                     >
                                        <span class="text-green-500">
@@ -94,7 +91,7 @@
                                         </li>
                                         <li class="flex items-center py-3">
                                             <span>Date Registered</span>
-                                            <span class="ml-auto">Nov 07, 2016</span>
+                                            <span class="ml-auto">Nov 07, 2024</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -111,7 +108,7 @@
                                                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                             </svg>
                                         </span>
-                                        <span class="tracking-wide text-white font-light">Basic Information</span>
+                                        <span class="tracking-wide text-white font-light">Admin Information</span>
                                     </div>
                                     <div class="text-gray-700">
                                         <div class="grid md:grid-cols-2 text-sm">
@@ -167,7 +164,7 @@
                                                 <div class="px-4 py-2">
                                                     <button 
                                                         type="button" 
-                                                        class="hover:animate-scale py-3 px-4 md:w-auto text-sm cursor-pointer tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none" 
+                                                        class="hover:scale-105 transition duration-150 ease-in-out py-3 px-4 md:w-auto text-sm cursor-pointer tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none" 
                                                         @click.prevent="showAdminChangePasswordModal = true; localStorage.setItem('showAdminChangePasswordModal', 'true'); localStorage.setItem('adminEmail', '{{ $admin->admin_email }}')"
                                                     >
                                                         Change Password

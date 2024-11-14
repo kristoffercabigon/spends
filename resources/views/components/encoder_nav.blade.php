@@ -9,41 +9,41 @@
         showEncoderVerificationModal: {{ session('showEncoderVerificationModal') ? 'true' : 'false' }},
     }"
     class="bg-customGreen fixed h-[80px] w-full z-20 top-0 left-0 right-0 text-white shadow-2xl">
-    <div class="container flex items-center h-full justify-between relative font-poppins">
+    <div class="container max-w-screen-xl flex items-center h-full w-full justify-between relative font-poppins">
         <a href="/encoder" class="flex items-center">
-            <img src="{{ asset('images/osca_image.jfif') }}" alt="Description of image" class="inline-block ml-4 md:ml-[48px] h-[60px] w-[60px] rounded-full object-cover" />
-            <span class="self-center font-bold whitespace-nowrap text-30px ml-[12px]">
+            <img src="{{ asset('images/osca_image.jfif') }}" alt="Description of image" class="animate-zoom-in inline-block ml-4 lg:ml-[48px] h-[60px] w-[60px] rounded-full object-cover" />
+            <span class="animate-fade-in-right self-center font-bold whitespace-nowrap text-30px ml-[12px]">
                 {{ $data['title'] }}
             </span>
         </a>
 
-        <button @click="open = !open" data-collapse-toggle="navbar-main" class="md:hidden">
-            <svg class="text-white mr-4" xmlns="http://www.w3.org/2000/svg" alt="burger_icon" height="40px" viewBox="0 -960 960 960" width="40px" fill="#fff">
+        <button @click="open = !open" data-collapse-toggle="navbar-main" class="lg:hidden">
+            <svg class="text-white mr-4 hover:animate-squeeze" xmlns="http://www.w3.org/2000/svg" alt="burger_icon" height="40px" viewBox="0 -960 960 960" width="40px" fill="#fff">
                 <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
             </svg>
         </button>
 
-        <div class="hidden md:flex flex-1 justify-center">
+        <div class="hidden lg:flex flex-1 justify-center">
             <ul class="flex justify-center space-x-8">
-                <li><a href="/encoder" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/announcement" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Announcement</a></li>
-                <li><a href="/about-us" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">About Us</a></li>
-                <li><a href="/contact-us" class="hover:animate-pop block py-2 text-16px hover:text-orange-300">Contact Us</a></li>
+                <li><a href="/encoder" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Home</a></li>
+                <li><a href="/announcement" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Announcement</a></li>
+                <li><a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">About Us</a></li>
+                <li><a href="/encoder/contact-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Contact Us</a></li>
                 @guest('encoder')
-                <li><a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')" class="hover:animate-pop block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>    
+                <li><a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 @endguest
             </ul>
         </div>
 
-        <div class="hidden md:block items-center">
+        <div class="hidden lg:block items-center">
             @auth('encoder')
                 @php
                     $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$encoder->encoder_first_name."-".$encoder->encoder_last_name;
                 @endphp
                 <div class="flex items-center cursor-pointer relative" @click="EncoderdropdownOpen = !EncoderdropdownOpen">
-                    <img id="avatarButton" class="w-10 h-10 rounded-full ring-2 ring-white" src="{{ $encoder->encoder_profile_picture ? asset('storage/images/encoder/encoder_thumbnail_profile/'.$encoder->encoder_profile_picture) : $default_profile }}" alt="Profile Picture">
+                    <img id="avatarButton" class="animate-zoom-in w-10 h-10 rounded-full ring-2 ring-white" src="{{ $encoder->encoder_profile_picture ? asset('storage/images/encoder/encoder_thumbnail_profile/'.$encoder->encoder_profile_picture) : $default_profile }}" alt="Profile Picture">
                     <div class="ml-4">
-                        <div>{{ $encoder->encoder_first_name }} {{ $encoder->encoder_last_name }}</div>
+                        <div class="mr-6 lg:mr-[48px] animate-fade-in-right">{{ $encoder->encoder_first_name }} {{ $encoder->encoder_last_name }}</div>
                     </div>
                     <div 
                         x-show="EncoderdropdownOpen"
@@ -90,14 +90,14 @@
             x-transition:leave-start="opacity-100 transform translate-y-0" 
             x-transition:leave-end="opacity-0 transform -translate-y-10"
             style="display: none" 
-            class="absolute top-full left-0 w-full bg-customGreen bg-opacity-90 md:hidden" 
+            class="absolute top-full left-0 w-full bg-customGreen bg-opacity-90 lg:hidden" 
             id="navbar-main"
         >
             <ul class="block flex-col px-4">
                 @auth('encoder')
                     <li @click="EncoderdropdownOpen = !EncoderdropdownOpen" class="flex items-center right-0 cursor-pointer py-2 pr-4 pl-3 text-16px hover:text-orange-300 relative">
-                        <img id="avatarButton" class="w-10 h-10 rounded-full ring-2 ring-white" src="{{ $encoder->encoder_profile_picture ? asset("storage/images/encoder/encoder_thumbnail_profile/".$encoder->encoder_profile_picture) : $default_profile }}" alt="Profile Picture">
-                        <div class="ml-4">{{ $encoder->encoder_first_name }} {{ $encoder->encoder_last_name }}</div>
+                        <img id="avatarButton" class="animate-zoom-in w-10 h-10 rounded-full ring-2 ring-white" src="{{ $encoder->encoder_profile_picture ? asset("storage/images/encoder/encoder_thumbnail_profile/".$encoder->encoder_profile_picture) : $default_profile }}" alt="Profile Picture">
+                        <div class="ml-4 animate-fade-in-right">{{ $encoder->encoder_first_name }} {{ $encoder->encoder_last_name }}</div>
                     </li>
                     <div 
                         x-show="EncoderdropdownOpen"
@@ -127,12 +127,12 @@
                         </div>
                     </div>
                 @endauth
-                <li><a href="/encoder" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/announcement" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Announcement</a></li>
-                <li><a href="/about-us" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
-                <li><a href="/contact-us" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Contact Us</a></li>
+                <li><a href="/encoder" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
+                <li><a href="/announcement" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Announcement</a></li>
+                <li><a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
+                <li><a href="/encoder/contact-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Contact Us</a></li>
                 @guest('encoder')
-                <li><a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')" class="hover:animate-pop block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
+                <li><a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 @endguest
             </ul>
         </div>

@@ -8,11 +8,11 @@
                 class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
     <div class="min-h-screen flex items-center justify-center font-poppins">
         <div class="w-full max-w-7xl mx-auto font-[poppins]">
-            <div class="bg-white mt-4 shadow-lg rounded-md">              
-                <div class="w-full mb-16 mt-5 p-5 px-6 py-10 md:px-12">
-                    <div class="text-2xl font-bold mb-6 leading-tight tracking-tight text-gray-900 md:text-2xl">
+            <div class="bg-white mt-4 ml-4 mr-4 mb-16 shadow-lg rounded-md">              
+                <div class="mb-16 mt-5 p-5 px-6 py-10 lg:px-12">
+                    <div class="text-2xl font-bold mb-6 leading-tight tracking-tight text-gray-900 lg:text-4xl">
                         <p class="mx-4 text-center">
-                            Profile Settings
+                            Profile
                         </p>
                     </div>
 
@@ -27,12 +27,12 @@
                         <div class="md:flex no-wrap ">
                             <div class="w-full md:w-3/12 md:mx-2">
                                 <div class="bg-white p-3 shadow-md border-t-4 border-b-4 rounded-md border-green-400">
-                                    <div class="flex items-center hover:animate-scale cursor-pointer justify-center image overflow-hidden"
+                                    <div class="flex items-center cursor-pointer justify-center image overflow-hidden"
                                         @click="showRegisteredProfilePicModal = true">
                                         @php
                                             $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$senior->first_name."-".$senior->last_name;
                                         @endphp
-                                        <img class="w-48 h-48 rounded-full border-4 border-green-400"
+                                        <img class="w-48 h-48 hover:animate-scale rounded-full border-4 border-green-400"
                                             src="{{ $senior->profile_picture ? asset('storage/images/senior_citizen/profile_picture/'.$senior->profile_picture) : $default_profile }}"
                                             alt="">
                                     </div>
@@ -45,7 +45,7 @@
                                         </li>
                                         <li class="flex items-center py-3">
                                             <span>Date Approved</span>
-                                            <span class="ml-auto">Nov 07, 2016</span>
+                                            <span class="ml-auto">Nov 07, 2024</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -172,7 +172,7 @@
                                                 <div class="px-4 py-2">
                                                     <button 
                                                         type="button" 
-                                                        class="hover:animate-scale py-3 px-4 md:w-auto text-sm cursor-pointer tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none" 
+                                                        class="hover:scale-105 transition duration-150 ease-in-out py-3 px-4 md:w-auto text-sm cursor-pointer tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none" 
                                                         @click.prevent="showChangePasswordModal = true; localStorage.setItem('showChangePasswordModal', 'true'); localStorage.setItem('seniorEmail', '{{ $senior->email }}')"
                                                     >
                                                         Change Password

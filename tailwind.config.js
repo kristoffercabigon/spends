@@ -1,6 +1,6 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
-import forms from '@tailwindcss/forms';
-import animations from '@midudev/tailwind-animations';
+import defaultTheme from "tailwindcss/defaultTheme";
+import forms from "@tailwindcss/forms";
+import animations from "@midudev/tailwind-animations";
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -69,6 +69,25 @@ export default {
             fontSize: {
                 "30px": "30px",
                 "16px": "16px",
+            },
+            animation: {
+                "scale-up": "scaleUp 0.3s ease-in-out",
+                "slide-out-right": "slideOutRight 2s ease-out forwards",
+                "fade-in-up": "fadeInUp 2.5s ease-out",
+            },
+            keyframes: {
+                scaleUp: {
+                    "0%": { transform: "scale(1)" },
+                    "100%": { transform: "scale(1.05)" },
+                },
+                slideOutRight: {
+                    "0%": { opacity: 1, transform: "translateX(0)" },
+                    "100%": { opacity: 0, transform: "translateX(100%)" },
+                },
+                fadeInUp: {
+                    "0%": { opacity: 0, transform: "translateY(70px)" }, 
+                    "100%": { opacity: 1, transform: "translateY(0)" }, 
+                },
             },
         },
     },

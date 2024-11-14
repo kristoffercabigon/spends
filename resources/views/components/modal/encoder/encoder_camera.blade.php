@@ -5,7 +5,7 @@
      x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
     @click.away="showEncoderCameraModal = false"
     @open-encoder-camera-modal.window="initWebcam()">
-    <div @click.stop class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-[715px] w-full">
+    <div @click.stop class="bg-white mx-4 rounded-lg overflow-hidden shadow-xl transform transition-all max-w-[715px] w-full">
         <section class="bg-gray-50 relative">
             <button type="button" @click="showEncoderCameraModal = false" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

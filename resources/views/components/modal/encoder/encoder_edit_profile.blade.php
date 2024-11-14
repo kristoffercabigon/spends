@@ -12,7 +12,7 @@
      x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
     @click.away="showEncoderEditProfileModal = false; localStorage.setItem('showEncoderEditProfileModal', 'false')">
     <div @click.stop>
-        <section class="bg-gray-50 relative">
+        <section class="bg-gray-50 relative mx-4">
             <button @click="showEncoderEditProfileModal = false; localStorage.setItem('showEncoderEditProfileModal', 'false')" 
                     class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -95,7 +95,7 @@
                             @endif
                         </div>
 
-                        <button type="submit" class="relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
+                        <button type="submit" class="hover:scale-105 transition duration-150 ease-in-out relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
                             <span x-show="!isEncoderLoadingSignUp">Update</span>
                             <span x-show="isEncoderLoadingSignUp" style="display: none;" class="flex items-center justify-center">
                                 <svg aria-hidden="true" class="inline w-4 h-4 mr-2 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

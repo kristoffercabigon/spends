@@ -33,11 +33,15 @@ Route::controller(SeniorsController::class)->group(function () {
 
 Route::controller(EncoderController::class)->group(function () {
     Route::get('/encoder', 'showEncoderIndex')->name('encoder');
+    Route::get('/encoder/announcement', 'announcement');
+    Route::get('/encoder/about-us', 'about_us');
+    Route::get('/encoder/contact-us', 'contact_us');
     Route::get('/encoder/verify-email-login', 'showEncoderVerificationFormLogin')->name('encoder-verify-email-login');
     Route::get('/encoder/reset-password', 'showEncoderResetPasswordForm')->name('encoder-reset-password');
     Route::put('/encoder/forgot-password', 'sendEncoderEmailForReset')->name('encoder-forgot-password');
     Route::put('/encoder/reset-password', 'resetEncoderPassword');
     Route::post('/encoder/login', 'encoder_login')->name('encoder_login')->middleware('guest:encoder');
+    Route::post('/encoder/send-message', 'send_message');
     Route::post('/encoder/verify-email', 'verifyEncoderEmailCodeRegister');
     Route::post('/encoder/verify-email-login', 'verifyEncoderEmailCodeLogin');
     Route::post('/encoder/resend-code', 'resendEncoderVerificationCode')->name('encoder-resend-code');

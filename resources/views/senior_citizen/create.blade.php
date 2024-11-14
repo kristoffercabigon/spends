@@ -39,7 +39,7 @@
                 <div class="mt-8 sm:mt-8">
                     <div id="content1" class="font-poppins">
                         <div class="max-h-[80vh] shadow-lg mt-[-17px] overflow-y-auto">
-                            <div class="w-full bg-white sm:pt-2 px-6 py-10 rounded-md md:px-12">
+                            <div class="w-full bg-white sm:pt-2 px-6 py-10 rounded-md lg:px-12">
                                 <div class="text-2xl font-bold mt-[15px] mb-6 leading-tight tracking-tight text-gray-900 md:text-2xl">
                                     <p class="mx-4 text-center">
                                         Requirements <span class="italic">(Mga Kinakailangan)</span>
@@ -137,7 +137,7 @@
                     </div>
                     <div id="content2" class="shadow-lg font-poppins" style="display: none;">
                         <div class="max-h-[80vh] shadow-lg mt-[-17px] overflow-y-auto">
-                            <form id="form" action="/store" enctype="multipart/form-data" method="POST" class="w-full bg-white sm:pt-2 px-6 py-10 rounded-md md:px-12">
+                            <form id="form" action="/store" enctype="multipart/form-data" method="POST" class="w-full bg-white sm:pt-2 px-6 py-10 rounded-md lg:px-12">
                                 @csrf
                                 <div class="text-2xl font-bold mt-[15px] leading-tight tracking-tight text-gray-900 md:text-2xl">
                                     <p class="mx-4 text-center">
@@ -1490,7 +1490,7 @@
                                 @endif
 
                                 <div class="mt-8 flex justify-center">
-                                    <button type="submit" id="submit" name="submit" class="hover:animate-pop py-3 px-6 md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
+                                    <button type="submit" id="submit" name="submit" class="hover:scale-105 transition duration-150 ease-in-out py-3 px-6 md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
                                         Sign up
                                     </button>
                                 </div>

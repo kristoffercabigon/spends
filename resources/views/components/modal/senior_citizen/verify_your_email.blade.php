@@ -92,7 +92,7 @@
      x-transition:leave="transition-opacity ease-linear duration-300"
      x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
     style="display: none"
-    @click.away="showVerificationModal = false; localStorage.setItem('showVerificationModal', 'false'); showLoginModal = false;" class="w-full bg-white rounded-lg shadow sm:max-w-md xl:p-0">
+    @click.away="showVerificationModal = false; localStorage.setItem('showVerificationModal', 'false'); showLoginModal = false;" class="w-full bg-white mx-4 rounded-lg shadow sm:max-w-md xl:p-0">
     
     <div @click.stop>
         <section class="bg-gray-50 relative">
@@ -127,7 +127,7 @@
                             <p x-text="verifyStatusMessage" class="mt-2 text-sm" :class="verifyStatusMessage.includes('error') || verifyStatusMessage.includes('Invalid') || verifyStatusMessage.includes('Expired') ? 'text-red-600' : 'text-red-600'"></p>
 
                             <button type="submit" 
-                                    class="hover:animate-pop relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
+                                    class="hover:scale-105 transition duration-150 ease-in-out relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
                                 <span x-show="!isLoadingVerify">Verify Code</span>
                                 <span x-show="isLoadingVerify" style="display: none" class="flex items-center justify-center">
                                     <svg aria-hidden="true" class="inline w-4 h-4 me-2 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -11,13 +11,13 @@
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
         @click.away="showChangePasswordModal = false; localStorage.setItem('showChangePasswordModal', 'false')">
     <div @click.stop>
-        <section class="bg-gray-50 relative">
+        <section class="bg-gray-50 relative mx-4">
             <button @click="showChangePasswordModal = false; localStorage.setItem('showChangePasswordModal', 'false')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-            <div class="w-full bg-white rounded-lg shadow sm:max-w-md xl:p-0">
+            <div class="bg-white rounded-lg shadow sm:max-w-md max-w-sm xl:p-0">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                     <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                         Change Password
@@ -38,7 +38,7 @@
                                     class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                                 
                                 <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 
-                                            @error('old_password') h-[46%] mt-[8%] right-[-2px] @else h-[65%] mt-[8%] right-[-2px] @enderror" 
+                                            @error('old_password') h-[46%] mt-[7.5%] right-[-2px] @else h-[65%] mt-[7.5%] right-[-2px] @enderror" 
                                         type="button" onclick="togglePassword('old_password', 'togglePasswordIcon5')">
                                     <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIcon5">
                                 </button>
@@ -55,7 +55,7 @@
                                     class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
                                 <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 
-                                            @error('password') h-[24%] mt-[8%] right-[-2px] @else mt-[8%] h-[28%] right-[-2px] @enderror" 
+                                            @error('password') h-[24%] mt-[7.5%] right-[-2px] @else mt-[7.5%] h-[27.5%] right-[-2px] @enderror" 
                                         type="button" onclick="togglePassword('password7', 'togglePasswordIcon6')">
                                     <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIcon6">
                                 </button>
@@ -81,7 +81,7 @@
                                     class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
                                 <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 hover:bg-gray-600 
-                                            @if('password_confirmation') h-[65%] mt-[8%] right-[-2px]@endif" 
+                                            @if('password_confirmation') h-[65%] mt-[7.5%] right-[-2px]@endif" 
                                         type="button" onclick="togglePassword('password_confirmation', 'togglePasswordIcon2')">
                                     <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5 hover:animate-jiggle" id="togglePasswordIcon2">
                                 </button>
@@ -100,7 +100,7 @@
                         </div>
 
                         <button type="submit"
-                                class="hover:animate-pop relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
+                                class="hover:scale-105 transition duration-150 ease-in-out relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
                             <span x-show="!isLoadingChangePassword">Change Password</span>
                             <span x-show="isLoadingChangePassword" style="display: none;" class="flex items-center justify-center">
                                 <svg aria-hidden="true" class="inline w-4 h-4 mr-2 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

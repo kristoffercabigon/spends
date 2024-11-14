@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Encoder;
+use App\Models\Guest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -27,7 +28,46 @@ class EncoderController extends Controller
 {
     public function showEncoderIndex()
     {
-        return view('encoder.encoder_index')->with('title', 'SPENDS: Home ');
+        return view('encoder.encoder_index')->with('title', 'Home');
+    }
+
+    public function contact_us()
+    {
+        return view('encoder.encoder_contact_us')->with('title', 'Contact Us ');
+    }
+
+    public function send_message(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|max:50',
+            'email' => 'required|email|max:40',
+            'subject' => 'required|max:100',
+            'message' => 'required',
+        ], [
+            'name.required' => 'Please enter your name.',
+            'name.max' => 'The name should not exceed 50 characters.',
+
+            'email.required' => 'Please enter your email address.',
+            'email.email' => 'Please enter a valid email address.',
+            'email.max' => 'The email should not exceed 40 characters.',
+
+            'subject.required' => 'Please enter a subject for your message.',
+            'subject.max' => 'The subject should not exceed 100 characters.',
+
+            'message.required' => 'Please enter your message.',
+        ]);
+
+        Guest::create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'subject' => $request->input('subject'),
+            'message' => $request->input('message'),
+        ]);
+
+        return redirect()->back()->with([
+            'message-header' => 'Success',
+            'message-body' => 'Your message has been sent successfully!'
+        ]);
     }
 
     public function encoder_login(Request $request)

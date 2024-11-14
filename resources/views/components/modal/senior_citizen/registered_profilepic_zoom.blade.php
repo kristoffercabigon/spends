@@ -32,7 +32,7 @@
          @mouseup="endDrag" 
          @mouseleave="endDrag"> 
 
-        <div @click.stop class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-3xl w-full relative">
+        <div @click.stop class="bg-white mx-4 rounded-lg overflow-hidden shadow-xl transform transition-all max-w-3xl w-full relative">
             <section class="p-4 bg-gray-50">
                 <button type="button" @click="showRegisteredProfilePicModal = false" 
                         class="absolute top-4 right-4 z-40 focus:outline-none">

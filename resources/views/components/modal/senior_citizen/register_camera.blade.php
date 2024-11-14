@@ -5,7 +5,7 @@
      x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
     @click.away="showCameraModal = false"
     @open-camera-modal.window="initWebcam()">
-    <div @click.stop class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-[715px] w-full">
+    <div @click.stop class="bg-white mx-4 rounded-lg overflow-hidden shadow-xl transform transition-all max-w-[715px] w-full">
         <section class="bg-gray-50 relative">
             <button type="button" @click="showCameraModal = false" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -53,7 +53,7 @@
                         </div>
                     </div>
                     <div class="mt-8 items-center justify-center">
-                        <button class="hover:animate-pop py-3 px-6 w-full md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none" type="button" onclick="useCapturedPhoto()">Use this photo</button>
+                        <button class="hover:scale-105 transition duration-150 ease-in-out py-3 px-6 w-full md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none" type="button" onclick="useCapturedPhoto()">Use this photo</button>
                     </div>
                 </div>
             </div>

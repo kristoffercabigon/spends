@@ -569,8 +569,8 @@ class SeniorsFactory extends Factory
         $date_approved = date('Y-m-d H:i:s', $date_approved_timestamp);
         $has_illness = $this->faker->numberBetween(0, 1);
         $has_disability = $this->faker->randomElement([0, 0, 0, 1]);
-        $permanent_source = $this->faker->randomElement([0, 0, 0, 1]);
-        $pensioner = $this->faker->randomElement([0, 0, 0, 1]);
+        $permanent_source = $this->faker->randomElement([0, 1]);
+        $pensioner = $this->faker->randomElement([0, 1]);
         $assisted_by = $this->faker->numberBetween(2, 3);
         $type_of_living_arrangement = $this->faker->numberBetween(1, 5);
         $isMale = $this->faker->boolean();
@@ -589,7 +589,7 @@ class SeniorsFactory extends Factory
             },
             'date_applied' => $date_applied,
             'ncsc_rrn' => function (array $attributes) {
-                return $attributes['date_applied'] . '-' . $attributes['osca_id'];
+                return date('Y-m-d', strtotime($attributes['date_applied'])) . '-' . $attributes['osca_id'];
             },
             'application_status_id' => 1,
             'account_status_id' => null,

@@ -30,12 +30,12 @@
         <div class="w-full max-w-7xl mx-auto flex-fol items-center justify-center font-[poppins]">
     
             <div class="text-2xl font-bold mb-6 mt-12 leading-tight tracking-tight text-gray-900 md:text-2xl">
-                                <p class="text-left">
-                                    Pension Distribution
-                                </p>
+                <p class="text-left">
+                    Pension Distribution
+                </p>
             </div>
 
-            <table class="min-w-full table-auto drop-shadow-lg relative bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 leading-8">
+            <table class="min-w-full table-auto drop-shadow-lg relative bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 leading-8" data-aos="zoom-in-up">
                 <thead>
                     <tr class="bg-[#FF4802] text-white">
                         <th class="px-4 py-2 font-semibold rounded-t-md text-left">#</th>

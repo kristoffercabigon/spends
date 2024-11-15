@@ -63,7 +63,7 @@
   </div>
   <hr class="border-t-2 border-white mx-auto w-[80%] my-4">
 
-  <div class="w-full pb-4 pt-2 text-center text-white">
+  <div class=" mx-4 pb-4 pt-2 text-center text-white">
     © 2024 Socal Pension Network of DSWD for Senior Citizens. All rights reserved  
   </div>
 </footer>

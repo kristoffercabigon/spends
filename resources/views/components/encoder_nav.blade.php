@@ -26,9 +26,7 @@
         <div class="hidden lg:flex flex-1 justify-center">
             <ul class="flex justify-center space-x-8">
                 <li><a href="/encoder" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/announcement" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Announcement</a></li>
                 <li><a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">About Us</a></li>
-                <li><a href="/encoder/contact-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Contact Us</a></li>
                 @guest('encoder')
                 <li><a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 @endguest
@@ -128,9 +126,7 @@
                     </div>
                 @endauth
                 <li><a href="/encoder" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/announcement" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Announcement</a></li>
                 <li><a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
-                <li><a href="/encoder/contact-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Contact Us</a></li>
                 @guest('encoder')
                 <li><a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 @endguest

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Seniors;
+use App\Models\IncomeSource;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Database\Seeders\LivingArrangementSeeder;
@@ -10,13 +11,19 @@ use Database\Seeders\BarangaySeeder;
 use Database\Seeders\SexSeeder;
 use Database\Seeders\CivilStatusSeeder;
 use Database\Seeders\SourceSeeder;
+use Database\Seeders\SourceDatasSeeder;
 use Database\Seeders\PensionSeeder;
 use Database\Seeders\IncomeSeeder;
 use Database\Seeders\IncomeSourceSeeder;
+use Database\Seeders\IncomeSourceDataSeeder;
 use Database\Seeders\EncoderRolesSeeder;
+use Database\Seeders\EncoderSeeder;
+use Database\Seeders\EncoderRolesDatasSeeder;
 use Database\Seeders\SeniorApplicationStatusSeeder;
 use Database\Seeders\SeniorAccountStatusSeeder;
 use Database\Seeders\UserTypeSeeder;
+use Database\Seeders\FamilyCompositionSeeder;
+use Database\Seeders\AdminSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -35,9 +42,15 @@ class DatabaseSeeder extends Seeder
         $this->call(IncomeSeeder::class);
         $this->call(IncomeSourceSeeder::class);
         $this->call(EncoderRolesSeeder::class);
+        $this->call(EncoderSeeder::class);
+        $this->call(EncoderRolesDatasSeeder::class);
+        $this->call(AdminSeeder::class);
         $this->call(SeniorApplicationStatusSeeder::class);
         $this->call(SeniorAccountStatusSeeder::class);
         Seniors::factory(10)->create();
+        $this->call(FamilyCompositionSeeder::class);
+        $this->call(IncomeSourceDataSeeder::class);
+        $this->call(SourceDatasSeeder::class);
 
         // You can also uncomment and modify the user factory as needed
         // User::factory()->create([

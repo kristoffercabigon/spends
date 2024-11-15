@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('barangay_list', function (Blueprint $table) {
             $table->id();
             $table->string('barangay_no');
+            $table->string('barangay_locality');
             $table->timestamps();
         });
     }

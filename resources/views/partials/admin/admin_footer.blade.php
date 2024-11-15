@@ -8,6 +8,7 @@
     <div class="mb-6 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-10">
         <a href="/home" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">Home</a>
         <a href="/announcement" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">Announcement</a>
+        <a href="/contact-us" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">Contact Us</a>
         <a href="/about-us" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">About Us</a>
     </div>
     <div class="mb-2 flex justify-center space-x-2">
@@ -62,7 +63,7 @@
   </div>
   <hr class="border-t-2 border-white mx-auto w-[80%] my-4">
 
-  <div class="w-full pb-4 pt-2 text-center text-white">
+  <div class=" mx-4 pb-4 pt-2 text-center text-white">
     © 2024 Socal Pension Network of DSWD for Senior Citizens. All rights reserved  
   </div>
 </footer>

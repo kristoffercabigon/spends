@@ -10,7 +10,7 @@
         <div class="w-full max-w-7xl mx-auto font-[poppins]">
             <div class="bg-white mt-4 ml-4 mr-4 mb-16 shadow-lg rounded-md">              
                 <div class="mb-16 mt-5 p-5 px-6 py-10 lg:px-12">
-                    <div class="text-2xl font-bold mb-6 leading-tight tracking-tight text-gray-900 lg:text-4xl">
+                    <div class="text-2xl font-bold mb-6 leading-tight tracking-tight text-gray-900 md:text-4xl">
                         <p class="mx-4 text-center">
                             Profile
                         </p>

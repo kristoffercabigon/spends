@@ -41,9 +41,42 @@ class BarangaySeeder extends Seeder
             'Barangay 188'
         ];
 
-        foreach ($barangayNo as $barangay) {
+        $barangayLocality = [
+            'Bagbaguin',
+            'Kaybiga',
+            'Llano',
+            'Deparo',
+            'BF Homes Caloocan',
+            'Deparo 2',
+            'Bagumbong',
+            'Urduja Village',
+            'Congress',
+            'Camarin (Central)',
+            'Camarin',
+            'Bagong Silang',
+            'Bagong Silang',
+            'Bagong Silang',
+            'Bagong Silang',
+            'Bagong Silang',
+            'Bagong Silang',
+            'Camarin (Cielito)',
+            'Camarin (Kiko)',
+            'Amparo',
+            'Tala',
+            'Pangarap Village, Tala',
+            'Pangarap Village, Tala',
+            'Tala',
+            'Tala',
+            'Tala',
+            'Tala',
+            'Tala',
+            'Tala',
+        ];
+
+        foreach ($barangayNo as $index => $barangay) {
             DB::table('barangay_list')->insert([
                 'barangay_no' => $barangay,
+                'barangay_locality' => $barangayLocality[$index],
             ]);
         }
     }

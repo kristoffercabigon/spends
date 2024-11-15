@@ -2,30 +2,37 @@
 
 namespace Database\Factories;
 
+use App\Models\IncomeSource;
+use App\Models\Seniors;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\DB;
-use App\Models\Seniors;
 
 class IncomeSourceFactory extends Factory
 {
-    protected $model = 'App\Models\IncomeSource';
+    protected $model = IncomeSource::class;
 
     public function definition()
     {
-        $senior = Seniors::inRandomOrder()->first();
+        $senior = Seniors::where('permanent_source', 1)->inRandomOrder()->first();
 
-        $permanentSource = $senior->permanent_source;
+        $maxIncomeSourceId = DB::table('where_income_source_list')->max('id');
 
-        $data = [
-            'senior_id' => $senior->id,
-            'income_source_id' => $this->faker->numberBetween(1, 11),
-            'other_income_source_remark' => $permanentSource == 0 ? $this->faker->sentence() : null,
+        $incomeSourceId = $this->faker->numberBetween(1, $maxIncomeSourceId);
+
+        $otherIncomeSources = [
+            'Pagsasaka',
+            'Pangingisda',
+            'Pagmimina',
+            'Paghahabi',
+            'Online Selling',
+            'Pagtuturo',
+            'Pagbalot ng prutas at gulay'
         ];
 
-        if ($permanentSource == 1) {
-            $data['other_income_source_remark'] = null;
-        }
-
-        return $data;
+        return [
+            'senior_id' => $senior->id,
+            'income_source_id' => $incomeSourceId,
+            'other_income_source_remark' => $incomeSourceId === $maxIncomeSourceId ? $this->faker->randomElement($otherIncomeSources) : null,
+        ];
     }
 }

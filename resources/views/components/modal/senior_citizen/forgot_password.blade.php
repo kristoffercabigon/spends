@@ -13,7 +13,7 @@
      style="display: none"
      @click.away="showForgotPasswordModal = false; localStorage.setItem('showForgotPasswordModal', 'false')">
     <div @click.stop >
-        <section class="bg-gray-50 mx-4 relative">
+        <section class="bg-gray-50 mx-4 relative rounded-lg">
             <button @click="showForgotPasswordModal = false; localStorage.setItem('showForgotPasswordModal', 'false')" 
                     class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -1,6 +1,27 @@
-@include('partials.encoder.encoder_header')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ $title !== "" ? $title : 'SPENDS System'}}</title>
+    @vite('resources/css/app.css')
+    @vite('resources/js/app.js')
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    {!!htmlScriptTagJsApi()!!}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.8/dist/lottie-player.js"></script>
+</head>
+<body class="bg-white font-poppins min-h-screen">
+    <x-messages.encoder.messages />
+    <x-messages.encoder.error_messages />
+
 @php $array = array('title' => 'SPENDS') @endphp
-<x-encoder_nav :data="$array"/>
+<x-encoder_dashboard_nav :data="$array"/>
 
 <section x-data="{ 
         showEncoderChangePasswordModal: localStorage.getItem('showEncoderChangePasswordModal') === 'true',
@@ -33,17 +54,17 @@
     class="bg-cover bg-center bg-no-repeat min-h-screen" 
     style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
     
-    <div class="min-h-screen flex items-center justify-center font-poppins">
-        <div class="w-full max-w-7xl mx-auto font-[poppins]">
-            <div class="bg-white mt-4 ml-4 mr-4 mb-16 shadow-lg rounded-md">              
-                <div class="mb-16 mt-5 p-5 px-6 py-10 lg:px-12">
-                    <div class="text-2xl font-bold mb-6 leading-tight tracking-tight text-gray-900 md:text-4xl">
-                        <p class="mx-4 text-center">
+    <div class="flex items-center justify-center font-poppins lg:pl-[80px]">
+        <div class="w-full mx-auto font-[poppins]">
+            <div class="bg-white mt-4 ml-4 mr-4 rounded-md">              
+                <div class="px-6 py-4 lg:px-12">
+                    <div class="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
+                        <p class="text-center md:text-left">
                             Profile
                         </p>
                     </div>
 
-                    <hr style="height: 2.5px; background: linear-gradient(to right, transparent, #1AA514, transparent); margin-top: 32px; margin-bottom: 32px;">
+                    <hr style="height: 2.5px; background: linear-gradient(to right, transparent, #1AA514, transparent); margin-top: 16px; margin-bottom: 32px;">
                     <div x-data="{ 
                             @php
                                 $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$encoder->encoder_first_name."-".$encoder->encoder_last_name;
@@ -53,8 +74,8 @@
                         }">
                         <div class="md:flex no-wrap ">
                             <div class="w-full md:w-3/12 md:mx-2">
-                                <div class="bg-white p-3 shadow-md border-t-4 border-b-4 rounded-md border-gray-400">
-                                    <div class="relative flex items-center justify-center cursor-pointer">
+                                <div class="bg-white p-3 shadow-md border-t-4 border-b-4 rounded-md border-gray-400 lg:mb-12">
+                                    <div class=" flex items-center justify-center cursor-pointer">
                                         @php
                                             $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$encoder->encoder_first_name."-".$encoder->encoder_last_name;
                                         @endphp
@@ -63,16 +84,16 @@
                                             src="{{ $encoder->encoder_profile_picture ? asset('storage/images/encoder/encoder_profile_picture/'.$encoder->encoder_profile_picture) : $default_profile }}" 
                                             @click="showEncoderRegisteredProfilePicModal = true"
                                             alt="Profile Picture">
-
+                                    </div>
+                                    <div class="flex items-center justify-center">
                                         <button 
                                             type="button" 
-                                            class="absolute bottom-[20px] right-[0.75rem] transform  translate-x-1/2 translate-y-1/2 hover:scale-105 transition duration-150 ease-in-out p-2 w-10 h-10 rounded-full text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none mt-2 mr-2"
+                                            class="hover:scale-105 transition duration-150 ease-in-out p-2 w-8 h-8 rounded-full text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none mt-2 mr-2"
                                             @click.prevent="showEncoderEditProfilePictureModal = true; localStorage.setItem('showEncoderEditProfilePictureModal', 'true')">
-                                            <img src="../../images/pencil.png" alt="Pencil Icon" class="w-5 h-5 mx-auto">
+                                            <img src="../../images/pencil.png" alt="Pencil Icon" class="w-4 h-4 mx-auto">
                                         </button>
                                     </div>
-
-                                    <h1 class="text-gray-900 font-bold text-xl mt-4 leading-8 my-1">{{ $encoder->encoder_first_name }} {{ $encoder->encoder_last_name }}</h1>
+                                    <h1 class="text-gray-900 font-bold text-xl mt-2 leading-8 my-1">{{ $encoder->encoder_first_name }} {{ $encoder->encoder_last_name }}</h1>
                                     <h3 class="text-gray-600 font-lg text-semibold leading-6">Encoder ID: <span class="font-semibold">{{ $encoder->encoder_id }}</span></h3>
                                     <div class="flex items-center justify-center">
                                     <button 
@@ -210,5 +231,6 @@
 </div>
 </section>
 
-@include('partials.encoder.encoder_footer')
+</body>
+</html>
 

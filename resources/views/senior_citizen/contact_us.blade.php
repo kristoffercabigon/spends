@@ -16,7 +16,7 @@
         <div class="w-full max-w-7xl mx-auto font-[poppins]">
             <div class="bg-white mt-4 ml-4 mr-4 mb-16 shadow-lg rounded-md">              
                 <div class="mt-5 p-5 px-6 py-10 lg:px-12">
-                    <div class="text-4xl font-bold mb-6 leading-tight tracking-tight text-gray-900 md:text-4xl">
+                    <div class="text-2xl font-bold mb-6 leading-tight tracking-tight text-gray-900 md:text-2xl">
                         <p class="mx-4 text-center">
                             Contact Us
                         </p>

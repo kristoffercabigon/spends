@@ -26,7 +26,7 @@
         <div class="hidden lg:flex flex-1 justify-center">
             <ul class="flex justify-center space-x-8">
                 <li><a href="/encoder" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">About Us</a></li>
+                <li><a href="/encoder/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">About Us</a></li>
                 @guest('encoder')
                 <li><a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 @endguest
@@ -62,7 +62,7 @@
                         </div>
                         <ul class="py-2 text-sm text-gray-700" aria-labelledby="avatarButton">
                             <li>
-                                <a href="#" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
+                                <a href="/encoder/dashboard" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
                             </li>
                             <li>
                                 <a href="/encoder/profile/{{$encoder->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
@@ -114,7 +114,7 @@
                             <div class="font-medium truncate">Encoder ID: {{ $encoder->encoder_id }}</div>
                         </div>
                         <ul class="py-2 text-sm text-gray-700">
-                            <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a></li>
+                            <li><a href="/encoder/dashboard" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a></li>
                             <li><a href="/encoder/profile/{{$encoder->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a></li>
                         </ul>
                         <div class="py-1">
@@ -126,7 +126,7 @@
                     </div>
                 @endauth
                 <li><a href="/encoder" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
+                <li><a href="/encoder/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
                 @guest('encoder')
                 <li><a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 @endguest

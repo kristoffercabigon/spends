@@ -27,6 +27,18 @@ class AdminController extends Controller
         return view('admin.admin_index')->with('title', 'SPENDS: Home ');
     }
 
+    public function about_us()
+    {
+        return view('admin.admin_about_us')->with('title', 'About Us ');
+    }
+
+    public function showAdminDashboard()
+    {
+        return view('admin.admin_dashboard', [
+            'title' => 'Admin Dashboard'
+        ]);
+    }
+
     public function admin_login(Request $request)
     {
         $AdminLoginMessages = [
@@ -114,7 +126,7 @@ class AdminController extends Controller
             'created_at' => now(),
         ]);
 
-        return redirect('/admin')->with([
+        return redirect('/admin/dashboard')->with([
             'admin-message-header' => 'Welcome back!',
             'admin-message-body' => 'Successfully logged in.',
             'clearAdminLoginModal' => true,

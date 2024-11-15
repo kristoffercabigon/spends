@@ -33,9 +33,7 @@ Route::controller(SeniorsController::class)->group(function () {
 
 Route::controller(EncoderController::class)->group(function () {
     Route::get('/encoder', 'showEncoderIndex')->name('encoder');
-    Route::get('/encoder/announcement', 'announcement');
     Route::get('/encoder/about-us', 'about_us');
-    Route::get('/encoder/contact-us', 'contact_us');
     Route::get('/encoder/verify-email-login', 'showEncoderVerificationFormLogin')->name('encoder-verify-email-login');
     Route::get('/encoder/reset-password', 'showEncoderResetPasswordForm')->name('encoder-reset-password');
     Route::put('/encoder/forgot-password', 'sendEncoderEmailForReset')->name('encoder-forgot-password');
@@ -48,6 +46,7 @@ Route::controller(EncoderController::class)->group(function () {
 
     Route::middleware('auth:encoder')->group(function () {
         Route::get('/encoder/profile/{encoder}', 'showEncoderProfile');
+        Route::get('/encoder/dashboard', 'showEncoderDashboard');
         Route::post('/encoder/logout', 'encoder_logout');
         Route::put('/encoder/change-password', 'changeEncoderPassword')->name('encoder-change-password');
         Route::put('/encoder/edit-profile', 'editEncoderProfile')->name('encoder-edit-profile');
@@ -59,6 +58,7 @@ Route::controller(EncoderController::class)->group(function () {
 
 Route::controller(AdminController::class)->group(function () {
     Route::get('/admin', 'showAdminIndex')->name('admin');
+    Route::get('/admin/about-us', 'about_us');
     Route::get('/admin/verify-email-login', 'showAdminVerificationFormLogin')->name('admin-verify-email-login');
     Route::get('/admin/reset-password', 'showAdminResetPasswordForm')->name('admin-reset-password');
     Route::put('/admin/forgot-password', 'sendAdminEmailForReset')->name('admin-forgot-password');
@@ -70,6 +70,7 @@ Route::controller(AdminController::class)->group(function () {
 
     Route::middleware('auth:admin')->group(function () {
         Route::get('/admin/profile/{admin}', 'showAdminProfile');
+        Route::get('/admin/dashboard', 'showAdminDashboard');
         Route::post('/admin/logout', 'admin_logout');
         Route::put('/admin/change-password', 'changeAdminPassword')->name('admin-change-password');
         Route::put('/admin/edit-profile', 'editAdminProfile')->name('admin-edit-profile');

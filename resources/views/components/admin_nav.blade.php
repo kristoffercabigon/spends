@@ -26,8 +26,7 @@
         <div class="hidden md:flex flex-1 justify-center">
             <ul class="flex justify-center space-x-8">
                 <li><a href="/admin" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/announcement" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Announcement</a></li>
-                <li><a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">About Us</a></li>
+                <li><a href="/admin/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">About Us</a></li>
                 @guest('admin')
                 <li><a @click.prevent="showAdminLoginModal = true; localStorage.setItem('showAdminLoginModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>    
                 @endguest
@@ -56,10 +55,10 @@
                     >
                         <div class="px-4 py-3 text-sm text-gray-900">
                             <div class="font-medium truncate">{{ $admin->admin_email }}</div>
-                            <div class="font-medium truncate">Admin ID: {{ $admin->admin_id }}</div>
+                            <div class="font-medium truncate">Administrator</div>
                         </div>
                         <ul class="py-2 text-sm text-gray-700" aria-labelledby="avatarButton">
-                            <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a></li>
+                            <li><a href="/admin/dashboard" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a></li>
                             <li><a href="/admin/profile/{{$admin->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a></li>
                             <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Messages</a></li>
                         </ul>
@@ -109,7 +108,7 @@
                             <div class="font-medium truncate">Admin ID: {{ $admin->admin_id }}</div>
                         </div>
                         <ul class="py-2 text-sm text-gray-700">
-                            <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a></li>
+                            <li><a href="/admin/dashboard" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a></li>
                             <li><a href="/admin/profile/{{$admin->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a></li>
                             <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Messages</a></li>
                         </ul>
@@ -122,8 +121,7 @@
                     </div>
                 @endauth
                 <li><a href="/admin" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/announcement" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Announcement</a></li>
-                <li><a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
+                <li><a href="/admin/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
                 @guest('admin')
                     <li><a @click.prevent="showAdminLoginModal = true; localStorage.setItem('showAdminLoginModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>    
                 @endguest

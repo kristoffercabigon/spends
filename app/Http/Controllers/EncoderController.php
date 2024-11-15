@@ -31,9 +31,27 @@ class EncoderController extends Controller
         return view('encoder.encoder_index')->with('title', 'Home');
     }
 
-    public function contact_us()
+    public function about_us()
     {
-        return view('encoder.encoder_contact_us')->with('title', 'Contact Us ');
+        return view('encoder.encoder_about_us')->with('title', 'About Us ');
+    }
+
+    public function showEncoderProfile($encoder_id)
+    {
+        $encoder = Encoder::findOrFail($encoder_id);
+
+        return view('encoder.encoder_profile', [
+            'encoder' => $encoder,
+            'title' => 'Profile: ' . $encoder->encoder_first_name . ' ' . $encoder->encoder_last_name,
+        ]);
+    }
+
+    public function showEncoderDashboard()
+    {
+        return view('encoder.encoder_dashboard', [
+
+            'title' => 'Encoder Dashboard '
+        ]);
     }
 
     public function send_message(Request $request)
@@ -156,7 +174,7 @@ class EncoderController extends Controller
             'created_at' => now(),
         ]);
 
-        return redirect('/encoder')->with([
+        return redirect('/encoder/dashboard')->with([
             'encoder-message-header' => 'Welcome back!',
             'encoder-message-body' => 'Successfully logged in.',
             'clearEncoderLoginModal' => true,
@@ -465,16 +483,6 @@ class EncoderController extends Controller
         return redirect('/encoder')->with([
             'encoder-message-header' => 'Success',
             'encoder-message-body' => 'Successfully logged out.'
-        ]);
-    }
-
-    public function showEncoderProfile($encoder_id)
-    {
-        $encoder = Encoder::findOrFail($encoder_id);
-
-        return view('encoder.encoder_profile', [
-            'encoder' => $encoder,
-            'title' => 'Profile: ' . $encoder->encoder_first_name . ' ' . $encoder->encoder_last_name,
         ]);
     }
 

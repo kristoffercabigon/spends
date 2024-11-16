@@ -16,6 +16,6 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.8/dist/lottie-player.js"></script>
 </head>
-<body class="bg-white font-poppins min-h-screen pt-[80px]">
+<body class="bg-white font-poppins min-h-screen">
     <x-messages.admin.messages />
     <x-messages.admin.error_messages />

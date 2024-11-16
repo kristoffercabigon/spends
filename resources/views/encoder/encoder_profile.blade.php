@@ -56,7 +56,7 @@
     
     <div class="flex items-center justify-center font-poppins lg:pl-[80px]">
         <div class="w-full mx-auto font-[poppins]">
-            <div class="bg-white mt-4 ml-4 mr-4 rounded-md">              
+            <div class="bg-white mt-4 ml-4 mr-4 mb-4 rounded-md">              
                 <div class="px-6 py-4 lg:px-12">
                     <div class="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                         <p class="text-center md:text-left">
@@ -80,7 +80,7 @@
                                             $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$encoder->encoder_first_name."-".$encoder->encoder_last_name;
                                         @endphp
 
-                                        <img class="w-48 h-48 hover:animate-scale rounded-full border-4 border-gray-400"
+                                        <img class="w-48 h-48 rounded-full border-4 border-gray-400"
                                             src="{{ $encoder->encoder_profile_picture ? asset('storage/images/encoder/encoder_profile_picture/'.$encoder->encoder_profile_picture) : $default_profile }}" 
                                             @click="showEncoderRegisteredProfilePicModal = true"
                                             alt="Profile Picture">

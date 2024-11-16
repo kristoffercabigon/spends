@@ -673,7 +673,7 @@ class SeniorsController extends Controller
 
         return view('senior_citizen.profile', [
             'senior' => $senior,
-            'title' => 'Profile: ' . $senior->first_name . ' ' . $senior->last_name,
+            'title' => 'Profile',
             'sex' => $sex_list,
             'civil_status' => $civil_status_list,
             'barangay' => $barangay_list,

@@ -32,7 +32,7 @@
                                         @php
                                             $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$senior->first_name."-".$senior->last_name;
                                         @endphp
-                                        <img class="w-48 h-48 hover:animate-scale rounded-full border-4 border-green-400"
+                                        <img class="w-48 h-48 rounded-full border-4 border-green-400"
                                             src="{{ $senior->profile_picture ? asset('storage/images/senior_citizen/profile_picture/'.$senior->profile_picture) : $default_profile }}"
                                             alt="">
                                     </div>

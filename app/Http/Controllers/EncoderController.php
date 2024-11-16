@@ -42,7 +42,7 @@ class EncoderController extends Controller
 
         return view('encoder.encoder_profile', [
             'encoder' => $encoder,
-            'title' => 'Profile: ' . $encoder->encoder_first_name . ' ' . $encoder->encoder_last_name,
+            'title' => 'Profile'
         ]);
     }
 

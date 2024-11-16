@@ -1,24 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $title !== "" ? $title : 'SPENDS System'}}</title>
-    @vite('resources/css/app.css')
-    @vite('resources/js/app.js')
-    <script src="//unpkg.com/alpinejs" defer></script>
-    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    {!!htmlScriptTagJsApi()!!}
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.8/dist/lottie-player.js"></script>
-</head>
-<body class="bg-white font-poppins min-h-screen">
-    <x-messages.admin.messages />
-    <x-messages.admin.error_messages />
+@include('partials.admin.admin_header')
 
 @php $array = array('title' => 'SPENDS') @endphp
 <x-admin_dashboard_nav :data="$array"/>
@@ -56,7 +36,7 @@
     
     <div class="flex items-center justify-center font-poppins lg:pl-[80px]">
         <div class="w-full mx-auto font-[poppins]">
-            <div class="bg-white mt-4 ml-4 mr-4 rounded-md">              
+            <div class="bg-white mt-4 ml-4 mr-4 mb-4 rounded-md">              
                 <div class="px-6 py-4 lg:px-12">
                     <div class="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                         <p class="text-center md:text-left">
@@ -80,7 +60,7 @@
                                             $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$admin->admin_first_name."-".$admin->admin_last_name;
                                         @endphp
 
-                                        <img class="w-48 h-48 hover:animate-scale rounded-full border-4 border-gray-400"
+                                        <img class="w-48 h-48 rounded-full border-4 border-gray-400"
                                             src="{{ $admin->admin_profile_picture ? asset('storage/images/admin/admin_profile_picture/'.$admin->admin_profile_picture) : $default_profile }}" 
                                             @click="showAdminRegisteredProfilePicModal = true"
                                             alt="Profile Picture">

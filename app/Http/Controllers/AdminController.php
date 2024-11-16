@@ -385,7 +385,7 @@ class AdminController extends Controller
 
         return view('admin.admin_profile', [
             'admin' => $admin,
-            'title' => 'Profile: ' . $admin->admin_first_name . ' ' . $admin->admin_last_name,
+            'title' => 'Profile'
         ]);
     }
 

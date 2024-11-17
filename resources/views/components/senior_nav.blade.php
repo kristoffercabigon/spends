@@ -24,17 +24,51 @@
         </button>
 
         <div class="hidden lg:flex flex-1 justify-center">
-            <ul class="flex justify-center space-x-8">
-                <li><a href="/" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Homedede</a></li>
-                <li><a href="/announcement" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Announcement</a></li>
-                <li><a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">About Us</a></li>
-                <li><a href="/contact-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Contact Us</a></li>
-                @guest('senior')
-                <li><a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
-                <li><a href="/register" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Sign Up</a></li>
-                @endguest
-            </ul>
+    <!-- Navbar Links -->
+    <ul class="flex items-center space-x-8">
+        <li>
+            <a href="/" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">
+                Home
+            </a>
+        </li>
+        <li>
+            <a href="/announcement" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">
+                Announcement
+            </a>
+        </li>
+        <li>
+            <a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">
+                About Us
+            </a>
+        </li>
+        <li>
+            <a href="/contact-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">
+                Contact Us
+            </a>
+        </li>
+
+        <!-- Authentication Buttons (Visible when guest) -->
+        @guest('senior')
+        <div class="flex items-center space-x-4">
+            <!-- Sign In Button -->
+            <a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" 
+               class="hover:scale-105 transition duration-150 ease-in-out text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-6 py-2.5 text-center shadow-md">
+                Sign In
+            </a>
+            
+            <!-- Sign Up Button -->
+            <a href="/register" 
+               class="hover:scale-105 transition duration-150 ease-in-out text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-6 py-2.5 text-center shadow-md">
+                Sign Up
+            </a>
         </div>
+        @endguest
+    </ul>
+</div>
+
+
+
+
 
         <div class="hidden lg:block items-center">
             @auth('senior')

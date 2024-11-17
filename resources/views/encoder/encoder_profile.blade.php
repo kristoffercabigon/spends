@@ -53,6 +53,19 @@
     @close-encoder-camera-modal.window="showEncoderCameraModal = false; localStorage.setItem('showEncoderCameraModal', 'false')" 
     class="bg-cover bg-center bg-no-repeat min-h-screen" 
     style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
+
+    <ul class="circles">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
     
     <div class="absolute inset-0 rounded-md bg-white mx-4 my-4 lg:ml-[95px] z-10"></div>
     

@@ -36,7 +36,6 @@
         <li></li>
         <li></li>
     </ul>
-
     
     <div class="absolute inset-0 rounded-md bg-white mx-4 my-4 lg:ml-[95px] z-10"></div>
     

@@ -71,12 +71,19 @@ export default {
                 "16px": "16px",
             },
             animation: {
+                spin: "spin 1s linear infinite",
                 "scale-up": "scaleUp 0.3s ease-in-out",
                 "slide-out-right": "slideOutRight 2s ease-out forwards",
                 "fade-in-up": "fadeInUp 2.5s ease-out",
                 "custom-fade-in-right": "fadeInRight 150ms ease-in-out",
+                "fade-in-bounce-right": "fadeInBounceRight .8s ease-in-out",
+                "fly-in-left": "flyInLeft .5s ease-out",
             },
             keyframes: {
+                spin: {
+                    "0%": { transform: "rotate(0deg)" },
+                    "100%": { transform: "rotate(360deg)" },
+                },
                 scaleUp: {
                     "0%": { transform: "scale(1)" },
                     "100%": { transform: "scale(1.05)" },
@@ -93,8 +100,47 @@ export default {
                     "0%": { transform: "translateX(-100%)", opacity: "0" },
                     "100%": { transform: "translateX(0)", opacity: "1" },
                 },
+                fadeInBounceRight: {
+                    "0%": {
+                        opacity: 0,
+                        transform: "translate3d(100%, 0%, 0)",
+                    },
+                    "33%": {
+                        opacity: 0.5,
+                        transform: "translate3d(0%, 0%, 0)",
+                    },
+                    "66%": {
+                        opacity: 0.7,
+                        transform: "translate3d(20%, 0%, 0)",
+                    },
+                    "100%": {
+                        opacity: 1,
+                        transform: "translate3d(0, 0, 0)",
+                    },
+                },
+                flyInLeft: {
+                    "0%": {
+                        opacity: "0",
+                        transform: "translate3d(1500px, 0, 0)",
+                        transitionTimingFunction:
+                            "cubic-bezier(0.215, 0.61, 0.355, 1)",
+                    },
+                    "60%": {
+                        opacity: "1",
+                        transform: "translate3d(-25px, 0, 0)",
+                    },
+                    "75%": {
+                        transform: "translate3d(10px, 0, 0)",
+                    },
+                    "90%": {
+                        transform: "translate3d(-5px, 0, 0)",
+                    },
+                    "100%": {
+                        transform: "none",
+                    },
+                },
             },
         },
     },
-    plugins: [require("@tailwindcss/forms"), animations],
+    plugins: [forms, animations],
 };

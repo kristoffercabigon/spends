@@ -82,6 +82,33 @@ class SeniorsController extends Controller
         return view('senior_citizen.about_us')->with('title', 'About Us ');
     }
 
+    public function track_request(Request $request)
+    {
+        $senior_application_status_list = DB::table('senior_application_status_list')->get();
+
+        $validated = $request->validate([
+            'ncsc_rrn' => 'required|max:255',
+        ], [
+            'ncsc_rrn.required' => 'Reference number is required.'
+        ]);
+
+        $senior = Seniors::where('ncsc_rrn', $validated['ncsc_rrn'])->first();
+
+        if ($senior) {
+            
+            return redirect()->back()->with([
+                'clearRequestTrackerModal' => true,
+                'showRequestStatusModal' => true,
+                'senior_application_status_list' => $senior_application_status_list,
+                'seniorApplicationStatus' => $senior->application_status_id,
+            ]);
+        } else {
+            return redirect()->back()->withErrors([
+                'ncsc_rrn' => 'The reference number does not exist in our records.',
+            ]);
+        }
+    }
+
     public function create()
     {
         $income_sources = DB::table('where_income_source_list')->get();
@@ -484,6 +511,13 @@ class SeniorsController extends Controller
             ]);
         }
 
+        if ($senior_login->application_status_id !== 3) {
+            return back()->with([
+                'error-message-header' => 'Login Failed',
+                'error-message-body' => 'Your account is not approved yet.',
+            ])->onlyInput('email');
+        }
+
         if (!Hash::check($validated['password'], $senior_login->password)) {
             DB::table('senior_login_attempts')->insert([
                 'email' => $email,
@@ -496,7 +530,9 @@ class SeniorsController extends Controller
             return back()->withErrors(['password' => 'Password incorrect.'])->onlyInput('email');
         }
 
-        FacadesAuth::guard('senior')->login($senior_login);
+        $remember = $request->has('remember');
+
+        FacadesAuth::guard('senior')->login($senior_login, $remember);
         $request->session()->regenerate();
         $request->session()->put('senior', $senior_login);
 
@@ -512,6 +548,7 @@ class SeniorsController extends Controller
             'clearLoginModal' => true,
         ]);
     }
+
 
     public function throttleKey(Request $request)
     {

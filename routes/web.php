@@ -10,6 +10,7 @@ Route::controller(SeniorsController::class)->group(function () {
     Route::get('/announcement', 'announcement');
     Route::get('/about-us', 'about_us');
     Route::get('/contact-us', 'contact_us');
+    Route::post('/request-tracker', 'track_request')->name('track-request');
     Route::get('/register', 'create');
     Route::get('/verify-email', 'showVerificationFormRegister')->name('verify-email');
     Route::get('/verify-email-login', 'showVerificationFormLogin')->name('verify-email-login');

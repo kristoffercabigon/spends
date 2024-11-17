@@ -26,6 +26,7 @@ return new class extends Migration
             $table->dateTime('admin_verification_expires_at')->nullable();
             $table->dateTime('admin_verified_at')->nullable();
             $table->string('admin_token')->nullable();
+            $table->string('remember_token')->nullable();
             $table->dateTime('admin_token_expiration')->nullable();
             $table->date('admin_date_registered');
             $table->timestamps();

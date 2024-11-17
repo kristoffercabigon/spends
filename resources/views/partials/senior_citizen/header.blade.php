@@ -19,4 +19,6 @@
 <body class="bg-white font-poppins min-h-screen pt-[80px]">
     <x-messages.senior_citizen.messages />
     <x-messages.senior_citizen.error_messages />
+
+
     

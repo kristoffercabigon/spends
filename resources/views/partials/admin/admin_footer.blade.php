@@ -6,10 +6,8 @@
 
   <div class="container pt-16">
     <div class="mb-6 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-10">
-        <a href="/home" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">Home</a>
-        <a href="/announcement" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">Announcement</a>
-        <a href="/contact-us" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">Contact Us</a>
-        <a href="/about-us" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">About Us</a>
+        <a href="/admin" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">Home</a>
+        <a href="/admin/about-us" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">About Us</a>
     </div>
     <div class="mb-2 flex justify-center space-x-2">
       <a

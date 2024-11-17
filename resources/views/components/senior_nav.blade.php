@@ -5,6 +5,8 @@
     open: false,
     dropdownOpen: false,
     showLoginModal: localStorage.getItem('showLoginModal') === 'true',
+    showRequestTrackerModal: localStorage.getItem('showRequestTrackerModal') === 'true',
+    showRequestStatusModal: localStorage.getItem('showRequestStatusModal') === 'true',
     showForgotPasswordModal: localStorage.getItem('showForgotPasswordModal') === 'true',
     showVerificationModal: {{ session('showVerificationModal') ? 'true' : 'false' }}
     }"
@@ -30,6 +32,7 @@
                 <li><a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">About Us</a></li>
                 <li><a href="/contact-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Contact Us</a></li>
                 @guest('senior')
+                <li><a @click.prevent="showRequestTrackerModal = true; localStorage.setItem('showRequestTrackerModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 cursor-pointer">Request Tracker</a></li>
                 <li><a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 <li><a href="/register" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Sign Up</a></li>
                 @endguest
@@ -79,7 +82,6 @@
                 </div>
             @endauth
         </div>
-
 
         <div 
             x-show="open"
@@ -131,6 +133,7 @@
                 <li><a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
                 <li><a href="/contact-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Contact Us</a></li>
                 @guest('senior')
+                <li><a @click.prevent="showRequestTrackerModal = true; localStorage.setItem('showRequestTrackerModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Request Tracker</a></li>
                 <li><a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>
                 <li><a href="/register" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Sign Up</a></li>
                 @endguest
@@ -140,6 +143,7 @@
 
     <x-modal.senior_citizen.senior_login />
     <x-modal.senior_citizen.forgot_password />
-    
+    <x-modal.senior_citizen.request_tracker />
+    <x-modal.senior_citizen.request_status />
     <x-modal.senior_citizen.verify_your_email />
 </nav>

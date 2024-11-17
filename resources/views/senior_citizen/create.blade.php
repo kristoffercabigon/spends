@@ -3,6 +3,18 @@
 <x-senior_nav :data="$array"/>
 
 <section class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
+    <ul class="circles absolute">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
     <div class="min-h-screen flex items-center justify-center font-poppins">
         <div class="w-full max-w-7xl mx-auto font-[sans-serif]">
             <div class="mx-4">
@@ -36,7 +48,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="mt-8 sm:mt-8">
+                <div class="mt-8 relative sm:mt-8">
                     <div id="content1" class="font-poppins">
                         <div class="max-h-[80vh] shadow-lg mt-[-17px] overflow-y-auto">
                             <div class="w-full bg-white sm:pt-2 px-6 py-10 rounded-md lg:px-12">
@@ -1498,7 +1510,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-3 mb-8 flex justify-between items-center">
+                <div class="mt-3 mb-8 flex justify-between items-center relative">
                     <div>
                         <button type="button" id="backButton" class="hover:animate-scale py-3 px-6 shadow-lg text-sm tracking-wider font-light rounded-md text-gray-800 bg-white border border-gray-200 shadow-sm hover:bg-gray-300 focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
                             <svg class="shrink-0 w-5 h-5 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

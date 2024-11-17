@@ -164,7 +164,9 @@ class EncoderController extends Controller
             return back()->withErrors(['encoder_password' => 'Password incorrect.'])->onlyInput('encoder_email');
         }
 
-        FacadesAuth::guard('encoder')->login($encoder_login);
+        $remember = $request->has('remember');
+
+        FacadesAuth::guard('encoder')->login($encoder_login, $remember);
         $request->session()->regenerate();
         $request->session()->put('encoder', $encoder_login);
 

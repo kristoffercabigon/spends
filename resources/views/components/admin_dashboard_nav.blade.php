@@ -7,7 +7,7 @@
       x-init="$refs.loading.classList.add('hidden'); "
       @resize.window="watchScreen()"
     >
-      <div class="flex fixed top-0 left-0 h-screen antialiased text-gray-900">
+      <div class="flex fixed top-0 left-0 z-50 h-screen antialiased text-gray-900">
 
         <div
           x-ref="loading"
@@ -164,18 +164,17 @@
                     class="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100"
                   >
                     Profile
+                  <a
+                      role="menuitem"
+                      class="block px-4 py-2 text-sm text-gray-700 cursor-pointer transition-colors hover:bg-gray-100"
+                  >
+                      <form action="/admin/logout" method="POST">
+                          @csrf
+                          <button type="submit" class="w-full text-left">
+                              Sign out
+                          </button>
+                      </form>
                   </a>
-                    <a
-                    role="menuitem"
-                    class="block px-4 py-2 text-sm text-gray-700 cursor-pointer transition-colors hover:bg-gray-100"
-                    >
-                        <form action="/admin/logout" method="POST">
-                        @csrf
-                            <button type="submit" >
-                                Sign out
-                            </button>
-                        </form>
-                    </a>
                 </div>
               </div>
             </div>

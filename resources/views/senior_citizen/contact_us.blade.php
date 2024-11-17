@@ -12,7 +12,19 @@
 </style>
 
 <section class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
-    <div class="min-h-screen flex items-center justify-center font-poppins">
+    <ul class="circles ">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <div class="min-h-screen relative flex items-center justify-center font-poppins">
         <div class="w-full max-w-7xl mx-auto font-[poppins]">
             <div class="bg-white mt-4 ml-4 mr-4 mb-16 shadow-lg rounded-md">              
                 <div class="mt-5 p-5 px-6 py-10 lg:px-12">

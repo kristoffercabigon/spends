@@ -52,6 +52,7 @@ return new class extends Migration
             $table->dateTime('verification_expires_at')->nullable();
             $table->dateTime('verified_at')->nullable();
             $table->string('token')->nullable();
+            $table->string('remember_token')->nullable();
             $table->dateTime('expiration')->nullable();
             $table->foreignId('assisted_by_id')->nullable()->constrained('user_type_list');
             $table->date('date_approved')->nullable();

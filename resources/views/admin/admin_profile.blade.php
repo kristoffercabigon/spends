@@ -34,9 +34,11 @@
     class="bg-cover bg-center bg-no-repeat min-h-screen" 
     style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
     
-    <div class="flex items-center justify-center font-poppins lg:pl-[80px]">
+    <div class="absolute inset-0 rounded-md bg-white mx-4 my-4 lg:ml-[95px] z-10"></div>
+    
+    <div class="relative flex items-center justify-center font-poppins lg:pl-[80px] z-20">
         <div class="w-full mx-auto font-[poppins]">
-            <div class="bg-white mt-4 ml-4 mr-4 mb-4 rounded-md">              
+            <div class="bg-white mt-4 ml-4 mr-4 rounded-md">              
                 <div class="px-6 py-4 lg:px-12">
                     <div class="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                         <p class="text-center md:text-left">
@@ -60,7 +62,7 @@
                                             $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$admin->admin_first_name."-".$admin->admin_last_name;
                                         @endphp
 
-                                        <img class="w-48 h-48 rounded-full border-4 border-gray-400"
+                                        <img class="w-48 h-48 hover:animate-scale rounded-full border-4 border-gray-400"
                                             src="{{ $admin->admin_profile_picture ? asset('storage/images/admin/admin_profile_picture/'.$admin->admin_profile_picture) : $default_profile }}" 
                                             @click="showAdminRegisteredProfilePicModal = true"
                                             alt="Profile Picture">

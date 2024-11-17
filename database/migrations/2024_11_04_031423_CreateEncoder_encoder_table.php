@@ -26,6 +26,7 @@ return new class extends Migration
             $table->dateTime('encoder_verification_expires_at')->nullable();
             $table->dateTime('encoder_verified_at')->nullable();
             $table->string('encoder_token')->nullable();
+            $table->string('remember_token')->nullable();
             $table->dateTime('encoder_token_expiration')->nullable();
             $table->date('encoder_date_registered');
             $table->timestamps();

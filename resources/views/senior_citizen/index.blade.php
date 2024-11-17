@@ -6,7 +6,7 @@
     <div class="bg-white bg-opacity-50 min-h-screen flex items-center justify-center">
         <div class="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12 font-poppins">
             <div class="mr-auto place-self-center lg:col-span-7">
-                <h1 class="max-w-2xl text-[120px] font-extrabold tracking-tight leading-none text-customOrange">SPENDS</h1>
+                <h1 class="max-w-2xl animate-fade-in-bounce-right text-[120px] font-extrabold tracking-tight leading-none text-customOrange">SPENDS</h1>
                 <p class="max-w-2xl font-semibold text-black text-[50px]">Social Pension Network of DSWD for Senior Citizens</p>
                 <p class="max-w-2xl mb-6 font-semibold text-[30px] text-black">North Caloocan City</p>
                 @guest

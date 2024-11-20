@@ -126,7 +126,7 @@ class AdminController extends Controller
             'created_at' => now(),
         ]);
 
-        return redirect('/admin/dashboard')->with([
+        return redirect('/admin')->with([
             'admin-message-header' => 'Welcome back!',
             'admin-message-body' => 'Successfully logged in.',
             'clearAdminLoginModal' => true,

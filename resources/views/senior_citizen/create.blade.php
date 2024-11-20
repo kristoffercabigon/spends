@@ -591,6 +591,84 @@
                                     </div>
                                 </div>
 
+                                <div class="text-xl font-bold mt-8 mb-8 leading-tight tracking-tight text-gray-900 md:text-xl">
+                                    <p class="text-left">
+                                        Guardian
+                                    </p>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                                    <div class="relative">
+                                        <label class="text-sm mb-2 block">
+                                            First Name <span class="italic"> (Unang Pangalan) </span>
+                                        </label>
+                                        <input name="guardian_first_name" id="guardian_first_name" type="text" value="{{ old('guardian_first_name') }}" 
+                                            class="w-full bg-gray-100 text-sm px-4 py-3 rounded-md transition-all pr-10" 
+                                            placeholder="Enter first name" />
+                                    </div>
+
+                                    <div class="relative">
+                                        <label class="text-sm mb-2 block">
+                                            Middle Name <span class="italic"> (Gitnang Pangalan) </span>
+                                        </label>
+                                        <input name="guardian_middle_name" id="guardian_middle_name" type="text" value="{{ old('guardian_middle_name') }}" 
+                                            class="w-full bg-gray-100 text-sm px-4 py-3 rounded-md transition-all pr-10" 
+                                            placeholder="Enter middle name" />
+                                    </div>
+
+                                    <div class="relative">
+                                        <label class="text-sm mb-2 block">
+                                            Last Name <span class="italic"> (Huling Pangalan) </span>
+                                        </label>
+                                        <input name="guardian_last_name" id="guardian_last_name" type="text" value="{{ old('guardian_last_name') }}" 
+                                            class="w-full bg-gray-100 text-sm px-4 py-3 rounded-md transition-all pr-10" 
+                                            placeholder="Enter last name" />
+                                    </div>
+
+                                    <div class="relative">
+                                        <label class="text-sm mb-2 block">
+                                            Suffix <span class="italic"> (Karugtong na Pangalan) </span>
+                                        </label>
+                                        <input name="guardian_suffix" id="guardian_suffix" type="text" value="{{ old('guardian_suffix') }}" 
+                                            class="w-full bg-gray-100 text-sm px-4 py-3 rounded-md transition-all pr-10" 
+                                            placeholder="Enter suffix (e.g., Jr., Sr., III)" />
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                                    <div class="relative">
+                                        <label class="text-sm mb-2 block">
+                                            Relationship
+                                        </label>
+                                        <select name="guardian_relationship_id" class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md transition-all">
+                                            <option value="" disabled selected>Select relationship</option>
+                                            @foreach($relationship_list as $relationship1) 
+                                                <option value="{{ $relationship1->id }}" {{ old('guardian_relationship_id') == $relationship1->id ? 'selected' : '' }}>
+                                                    {{ $relationship1->relationship }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="relative">
+                                        <label class="text-sm mb-2 block">
+                                            Contact Number
+                                        </label>
+
+                                        <div class="flex">
+                                            <span class="inline-flex items-center px-3 bg-gray-200 text-gray-700 border border-gray-300 rounded-l-md">
+                                                +63
+                                            </span>
+                                            
+                                            <input name="guardian_contact_no" type="text" value="{{ old('guardian_contact_no') }}" 
+                                                class="w-full bg-gray-100 text-sm px-4 py-3 rounded-r-md transition-all pr-10" 
+                                                placeholder="Enter contact number (10 digits)" 
+                                                inputmode="numeric" pattern="[0-9]*" maxlength="10" 
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="text-xl font-bold mt-8 leading-tight tracking-tight text-gray-900 md:text-xl">
                                     <p class="text-left">
                                         Family Composition
@@ -619,16 +697,23 @@
                                                             <input type="text" name="relative_name[]" value="{{ $name }}" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter name" style="min-width: 150px;">
                                                         </td>
                                                         <td class="border border-gray-300 px-4 py-2">
-                                                            <input type="text" name="relative_relationship[]" value="{{ old('relative_relationship')[$index] }}" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter relationship" style="min-width: 150px;">
+                                                            <select name="relative_relationship_id[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
+                                                                <option value="" disabled selected>Select relationship</option>
+                                                                @foreach ($relationship_list as $relationship)
+                                                                    <option value="{{ $relationship->id }}" {{ (old('relative_relationship_id')[$index] ?? '') == $relationship->id ? 'selected' : '' }}>
+                                                                        {{ $relationship->relationship }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
                                                         </td>
                                                         <td class="border border-gray-300 px-4 py-2">
                                                             <input type="number" name="relative_age[]" value="{{ old('relative_age')[$index] }}" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter age" style="min-width: 150px;">
                                                         </td>
                                                         <td class="border border-gray-300 px-4 py-2">
-                                                            <select name="relative_civil_status[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
-                                                                <option value="" disabled>Select status</option>
+                                                            <select name="relative_civil_status_id[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
+                                                                <option value="" disabled selected>Select status</option>
                                                                 @foreach ($civil_status_list as $status)
-                                                                    <option value="{{ $status->id }}" {{ (old('relative_civil_status')[$index] ?? '') == $status->id ? 'selected' : '' }}>
+                                                                    <option value="{{ $status->id }}" {{ (old('relative_civil_status_id')[$index] ?? '') == $status->id ? 'selected' : '' }}>
                                                                         {{ $status->civil_status }}
                                                                     </option>
                                                                 @endforeach
@@ -655,14 +740,21 @@
                                                             <input type="text" name="relative_name[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter name" style="min-width: 150px;">
                                                         </td>
                                                         <td class="border border-gray-300 px-4 py-2">
-                                                            <input type="text" name="relative_relationship[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter relationship" style="min-width: 150px;">
+                                                            <select name="relative_relationship_id[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
+                                                                <option value="" disabled selected>Select relationship</option>
+                                                                @foreach ($relationship_list as $relationship)
+                                                                    <option value="{{ $relationship->id }}">
+                                                                        {{ $relationship->relationship }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
                                                         </td>
                                                         <td class="border border-gray-300 px-4 py-2">
                                                             <input type="number" name="relative_age[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter age" style="min-width: 150px;">
                                                         </td>
                                                         <td class="border border-gray-300 px-4 py-2">
-                                                            <select name="relative_civil_status[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
-                                                                <option value="" disabled>Select status</option>
+                                                            <select name="relative_civil_status_id[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
+                                                                <option value="" disabled selected>Select status</option>
                                                                 @foreach ($civil_status_list as $status)
                                                                     <option value="{{ $status->id }}">
                                                                         {{ $status->civil_status }}
@@ -1738,14 +1830,19 @@
                 <input type="text" name="relative_name[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter name" style="min-width: 150px;">
             </td>
             <td class="border border-gray-300 px-4 py-2">
-                <input type="text" name="relative_relationship[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter relationship" style="min-width: 150px;">
+                <select name="relative_relationship_id[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
+                    <option value="" disabled selected>Select relationship</option>
+                    @foreach ($relationship_list as $relationship)
+                        <option value="{{ $relationship->id }}">{{ $relationship->relationship }}</option>
+                    @endforeach
+                </select>
             </td>
             <td class="border border-gray-300 px-4 py-2">
                 <input type="number" name="relative_age[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter age" style="min-width: 150px;">
             </td>
             <td class="border border-gray-300 px-4 py-2">
-                <select name="relative_civil_status[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
-                    <option value="" disabled>Select status</option>
+                <select name="relative_civil_status_id[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
+                    <option value="" disabled selected>Select status</option>
                     @foreach ($civil_status_list as $status)
                         <option value="{{ $status->id }}">{{ $status->civil_status }}</option>
                     @endforeach

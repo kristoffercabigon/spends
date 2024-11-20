@@ -7,6 +7,7 @@ use App\Models\IncomeSource;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Database\Seeders\LivingArrangementSeeder;
+use Database\Seeders\RelationshipSeeder;
 use Database\Seeders\BarangaySeeder;
 use Database\Seeders\SexSeeder;
 use Database\Seeders\CivilStatusSeeder;
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(UserTypeSeeder::class);
         $this->call(LivingArrangementSeeder::class);
+        $this->call(RelationshipSeeder::class);
         $this->call(BarangaySeeder::class);
         $this->call(SexSeeder::class);
         $this->call(CivilStatusSeeder::class);
@@ -47,7 +49,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AdminSeeder::class);
         $this->call(SeniorApplicationStatusSeeder::class);
         $this->call(SeniorAccountStatusSeeder::class);
-        Seniors::factory(10)->create();
+        Seniors::factory(5)->create();
         $this->call(FamilyCompositionSeeder::class);
         $this->call(IncomeSourceDataSeeder::class);
         $this->call(SourceDatasSeeder::class);

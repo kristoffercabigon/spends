@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Encoder;
+use App\Models\Seniors;
 use App\Models\Guest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -50,7 +51,231 @@ class EncoderController extends Controller
     {
         return view('encoder.encoder_dashboard', [
 
-            'title' => 'Encoder Dashboard '
+            'title' => 'Dashboard'
+        ]);
+    }
+
+    public function showEncoderApplicationRequests()
+    {
+        $seniors = DB::table('seniors')
+        ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
+        ->leftJoin('senior_application_status_list', 'seniors.application_status_id', '=', 'senior_application_status_list.id')
+        ->leftJoin('barangay_list', 'seniors.barangay_id', '=', 'barangay_list.id')
+        ->select(
+            'seniors.*',
+            'sex_list.sex as sex_name',
+            'senior_application_status_list.senior_application_status as senior_application_status',
+            'barangay_list.barangay_no as barangay_no'
+        )
+            ->orderBy('seniors.id', 'asc')
+            ->paginate(10);
+
+        $applicationStatuses = DB::table('senior_application_status_list')->get();
+        $barangayList = DB::table('barangay_list')->get();
+
+        return view('encoder.encoder_application_requests', [
+            'title' => 'Application Requests',
+            'seniors' => $seniors,
+            'applicationStatuses' => $applicationStatuses,
+            'barangayList' => $barangayList,
+        ]);
+    }
+
+    public function filterSeniorsApplicationRequests(Request $request)
+    {
+        $barangayId = $request->input('barangay_id');
+        $statusIds = $request->input('status_ids', []);
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $searchQuery = $request->input('search_query', '');
+        $perPage = 10; 
+
+        $query = DB::table('seniors')
+        ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
+        ->leftJoin('senior_application_status_list', 'seniors.application_status_id', '=', 'senior_application_status_list.id')
+        ->leftJoin('barangay_list', 'seniors.barangay_id', '=', 'barangay_list.id')
+        ->select(
+            'seniors.*',
+            'sex_list.sex as sex_name',
+            'senior_application_status_list.senior_application_status as senior_application_status',
+            'barangay_list.barangay_no as barangay_no'
+        );
+
+        if (!empty($barangayId)) {
+            $query->where('seniors.barangay_id', $barangayId);
+        }
+
+        if (!empty($statusIds)) {
+            $query->whereIn('seniors.application_status_id', $statusIds);
+        }
+
+        if ($startDate) {
+            $query->whereDate('seniors.date_applied', '>=', $startDate);
+        }
+
+        if ($endDate) {
+            $query->whereDate('seniors.date_applied', '<=', $endDate);
+        }
+
+        if (!empty($searchQuery)) {
+            $terms = array_filter(explode(' ', strtolower($searchQuery))); 
+
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->whereRaw("LOWER(CONCAT_WS(' ', seniors.first_name, seniors.middle_name, seniors.last_name, seniors.suffix)) LIKE ?", ['%' . $term . '%']);
+                }
+            })->orWhere('seniors.osca_id', 'LIKE', '%' . $searchQuery . '%');
+        }
+
+        if ($startDate || $endDate) {
+            $query->orderBy('seniors.date_applied', 'asc');
+        } else {
+            $query->orderBy('seniors.id', 'asc');
+        }
+
+        $seniors = $query->paginate($perPage);
+
+        return response()->json($seniors);
+    }
+
+    public function showEncoderSeniorApplicant($id)
+    {
+        $seniors = Seniors::findOrFail($id);
+
+        $sex_list = DB::table('sex_list')->get();
+        $civil_status_list = DB::table('civil_status_list')->get();
+        $barangay_list = DB::table('barangay_list')->get();
+        $relationship_list = DB::table('relationship_list')->get();
+        $living_arrangement_list = DB::table('living_arrangement_list')->get();
+        $how_much_pension_list = DB::table('how_much_pension_list')->get();
+        $how_much_income_list = DB::table('how_much_income_list')->get();
+        $senior_account_status_list = DB::table('senior_account_status_list')->get();
+        $senior_application_status_list = DB::table('senior_application_status_list')->get();
+
+        $family_composition = DB::table('family_composition')
+        ->leftJoin('seniors', 'family_composition.senior_id', '=', 'seniors.id')
+        ->leftJoin('civil_status_list', 'family_composition.relative_civil_status_id', '=', 'civil_status_list.id')
+        ->leftJoin('relationship_list', 'family_composition.relative_relationship_id', '=', 'relationship_list.id')
+        ->where('seniors.id', $id)
+            ->select('family_composition.*', 'civil_status_list.civil_status', 'relationship_list.relationship')
+            ->get();
+
+        $sources = DB::table('source')
+        ->leftJoin('seniors', 'source.senior_id', '=', 'seniors.id')
+        ->leftJoin('source_list', 'source.source_id', '=', 'source_list.id')
+        ->where('seniors.id', $id)
+            ->select('source.*', 'source_list.source_list', 'source.other_source_remark')
+            ->get();
+
+        $income_sources = DB::table('income_source')
+        ->leftJoin('seniors', 'income_source.senior_id', '=', 'seniors.id')
+        ->leftJoin('where_income_source_list', 'income_source.income_source_id', '=', 'where_income_source_list.id')
+        ->where('seniors.id', $id)
+            ->select('income_source.*', 'where_income_source_list.where_income_source', 'income_source.other_income_source_remark')
+            ->get();
+
+        $encoderId = auth()->guard('encoder')->id();
+
+        $selectedSex = $sex_list->firstWhere('id', $seniors->sex_id);
+        $selectedBarangay = $barangay_list->firstWhere('id', $seniors->barangay_id);
+        $selectedCivil_Status = $civil_status_list->firstWhere('id', $seniors->civil_status_id);
+        $selectedLiving_Arrangement = $living_arrangement_list->firstWhere('id', $seniors->type_of_living_arrangement);
+        $selectedPension_Amount = $how_much_pension_list->firstWhere('id', $seniors->if_pensioner_yes);
+        $selectedIncome_Amount = $how_much_income_list->firstWhere('id', $seniors->if_permanent_yes_income);
+        $selectedAccount_Status = $senior_account_status_list->firstWhere('id', $seniors->account_status_id);
+        $selectedApplication_Status = $senior_application_status_list->firstWhere('id', $seniors->application_status_id);
+
+        $lastLivingArrangementId = $living_arrangement_list->last()->id ?? null;
+
+        return view('encoder.encoder_senior_applicant', [
+            'senior' => $seniors,
+            'title' => 'Applicant: ' . $seniors->first_name . ' ' . $seniors->last_name,
+            'sex' => $selectedSex,
+            'civil_status' => $selectedCivil_Status,
+            'barangay' => $selectedBarangay,
+            'living_arrangement' => $selectedLiving_Arrangement,
+            'lastLivingArrangementId' => $lastLivingArrangementId, 
+            'family_composition' => $family_composition,
+            'pension_amount' => $selectedPension_Amount,
+            'income_amount' => $selectedIncome_Amount,
+            'source' => $sources,
+            'income_source' => $income_sources,
+            'account_status' => $selectedAccount_Status,
+            'senior_account_status_list' => $senior_account_status_list,
+            'application_status' => $selectedApplication_Status,
+            'senior_application_status_list' => $senior_application_status_list,
+            'encoderId' => $encoderId,
+        ]);
+    }
+
+    public function updateEncoderSeniorApplicationStatus(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'status' => 'required|exists:senior_application_status_list,id',
+        ]);
+
+        $encoderUserTypeId = auth()->guard('encoder')->user()->encoder_user_type_id;
+
+        $senior = Seniors::findOrFail($id);
+
+        if ($senior->application_status_id == $validated['status']) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Update Unsuccessful',
+                'encoder-error-message-body' => 'No changes were detected in the application status.',
+            ]);
+        }
+
+        if ($senior->application_status_id == 3 && $validated['status'] != 3) {
+            $senior->account_status_id = null;
+            $senior->date_approved = null;
+        }
+
+        $senior->application_status_id = $validated['status'];
+
+        if ($validated['status'] == 3) {
+            $senior->account_status_id = 1;  
+            $senior->date_approved = now();  
+        }
+
+        $senior->assisted_by_id = $encoderUserTypeId;
+
+        $senior->save();
+
+        return redirect()->back()->with([
+            'encoder-message-header' => 'Success',
+            'encoder-message-body' => 'Application status updated successfully.',
+        ]);
+    }
+
+    public function updateEncoderSeniorAccountStatus(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'account_status' => 'required|exists:senior_application_status_list,id',
+        ]);
+
+        $senior = Seniors::findOrFail($id);
+
+        if ($senior->account_status_id == $validated['account_status']) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Update Unsuccessful',
+                'encoder-error-message-body' => 'No changes were detected in the application status.',
+            ]);
+        }
+
+        if ($senior->application_status_id != 3) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Update Unsuccessful',
+                'encoder-error-message-body' => 'This user is not approved yet.',
+            ]);
+        }
+
+        $senior->account_status_id = $validated['account_status'];
+
+        $senior->save();
+
+        return redirect()->back()->with([
+            'encoder-message-header' => 'Success',
+            'encoder-message-body' => 'Account status updated successfully.',
         ]);
     }
 
@@ -176,7 +401,7 @@ class EncoderController extends Controller
             'created_at' => now(),
         ]);
 
-        return redirect('/encoder/dashboard')->with([
+        return redirect('/encoder')->with([
             'encoder-message-header' => 'Welcome back!',
             'encoder-message-body' => 'Successfully logged in.',
             'clearEncoderLoginModal' => true,

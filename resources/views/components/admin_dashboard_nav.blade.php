@@ -219,7 +219,7 @@
 
             <div>
                 <a
-                href="/encoder/dashboard"
+                href="/admin/application-requests"
                 role="menuitem"
                 class="flex items-center p-2 mb-2 text-gray-500 transition-colors duration-200 rounded-md hover:text-gray-700 hover:bg-primary-100"
                 >

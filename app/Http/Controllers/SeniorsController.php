@@ -118,6 +118,7 @@ class SeniorsController extends Controller
         $arrangement_lists = DB::table('living_arrangement_list')->get();
         $sexes = DB::table('sex_list')->get();
         $civil_status_list = DB::table('civil_status_list')->get();
+        $relationship_list = DB::table('relationship_list')->get();
         $barangay = DB::table('barangay_list')->get();
 
         return view('senior_citizen.create')->with([
@@ -128,7 +129,8 @@ class SeniorsController extends Controller
             'sources' => $sources,
             'arrangement_lists' => $arrangement_lists,
             'sexes' => $sexes,
-            'civil_status_list' => $civil_status_list, 
+            'civil_status_list' => $civil_status_list,
+            'relationship_list' => $relationship_list,
             'barangay' => $barangay
         ]);
     }
@@ -299,14 +301,26 @@ class SeniorsController extends Controller
             }
         }
 
+        if ($request->guardian_first_name || $request->guardian_last_name) {
+            DB::table('senior_guardian')->insert([
+                'senior_id' => $seniors->id,
+                'guardian_first_name' => $request->guardian_first_name ?: null,
+                'guardian_middle_name' => $request->guardian_middle_name ?: null,
+                'guardian_last_name' => $request->guardian_last_name ?: null,
+                'guardian_suffix' => $request->guardian_suffix ?: null,
+                'guardian_relationship_id' => $request->guardian_relationship_id ?: null,
+                'guardian_contact_no' => $request->guardian_contact_no ?: null,
+            ]);
+        }
+
         foreach ($request->relative_name as $index => $name) {
             if (!empty($name)) {
                 DB::table('family_composition')->insert([
                     'senior_id' => $seniors->id,
                     'relative_name' => $name,
-                    'relative_relationship' => $request->relative_relationship[$index] ?: null,
+                    'relative_relationship_id' => $request->relative_relationship_id[$index] ?: null,
                     'relative_age' => $request->relative_age[$index] ?: null,
-                    'relative_civil_status' => $request->relative_civil_status[$index] ?: null,
+                    'relative_civil_status_id' => $request->relative_civil_status_id[$index] ?: null,
                     'relative_occupation' => $request->relative_occupation[$index] ?: null,
                     'relative_income' => $request->relative_income[$index] ?: null,
                 ]);
@@ -511,12 +525,12 @@ class SeniorsController extends Controller
             ]);
         }
 
-        if ($senior_login->application_status_id !== 3) {
-            return back()->with([
-                'error-message-header' => 'Login Failed',
-                'error-message-body' => 'Your account is not approved yet.',
-            ])->onlyInput('email');
-        }
+        // if ($senior_login->application_status_id !== 3) {
+        //     return back()->with([
+        //         'error-message-header' => 'Login Failed',
+        //         'error-message-body' => 'Your account is not approved yet.',
+        //     ])->onlyInput('email');
+        // }
 
         if (!Hash::check($validated['password'], $senior_login->password)) {
             DB::table('senior_login_attempts')->insert([

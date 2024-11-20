@@ -48,10 +48,16 @@ Route::controller(EncoderController::class)->group(function () {
     Route::middleware('auth:encoder')->group(function () {
         Route::get('/encoder/profile/{encoder}', 'showEncoderProfile');
         Route::get('/encoder/dashboard', 'showEncoderDashboard');
+        Route::post('/encoder/filter-application-requests', 'filterSeniorsApplicationRequests');
+        Route::get('/encoder/application-requests', 'showEncoderApplicationRequests');
+        Route::get('/encoder/view-applicant/{senior}', 'showEncoderSeniorApplicant');
         Route::post('/encoder/logout', 'encoder_logout');
         Route::put('/encoder/change-password', 'changeEncoderPassword')->name('encoder-change-password');
         Route::put('/encoder/edit-profile', 'editEncoderProfile')->name('encoder-edit-profile');
         Route::put('/encoder/edit-profile-picture', 'editEncoderProfilePicture')->name('encoder-edit-profile-picture');
+        Route::put('/encoder/view-applicant/{id}/update-application-status', 'updateEncoderSeniorApplicationStatus')->name('encoder-update-application-status');
+        Route::put('/encoder/view-applicant/{id}/update-account-status', 'updateEncoderSeniorAccountStatus')->name('encoder-update-account-status');
+
         Route::post('/encoder/verify-change-password-email', 'verifyEncoderChangePasswordCode')->name('encoder-verify-change-password-email');
         Route::post('/encoder/verify-password', 'verifyEncoderPasswordForEditProfile')->name('encoder-verify-password');
     });

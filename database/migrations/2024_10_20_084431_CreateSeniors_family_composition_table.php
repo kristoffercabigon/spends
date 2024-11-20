@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('senior_id')->nullable()->constrained('seniors');
             $table->string('relative_name')->nullable();
-            $table->string('relative_relationship')->nullable();
+            $table->foreignId('relative_relationship_id')->nullable()->constrained('relationship_list');
             $table->integer('relative_age')->nullable();
-            $table->foreignId('relative_civil_status')->nullable()->constrained('civil_status_list');
+            $table->foreignId('relative_civil_status_id')->nullable()->constrained('civil_status_list');
             $table->string('relative_occupation')->nullable();
             $table->string('relative_income')->nullable();
             $table->timestamps();

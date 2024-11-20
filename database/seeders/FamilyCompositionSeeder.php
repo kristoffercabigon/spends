@@ -11,24 +11,24 @@ class FamilyCompositionSeeder extends Seeder
     public function run(): void
     {
         $relationships = [
-            'Child' => [1, 30],
-            'Grandchild' => [1, 30],
-            'Sibling' => [30, 100],
-            'Spouse' => [30, 100],
-            'Parent' => [30, 100],
-            'Aunt' => [30, 80],
-            'Uncle' => [30, 80],
-            'Niece' => [1, 40],
-            'Nephew' => [1, 40],
-            'Cousin' => [10, 80],
-            'Grandparent' => [60, 100],
-            'Mother-in-law' => [40, 90],
-            'Father-in-law' => [40, 90],
-            'Brother-in-law' => [30, 80],
-            'Sister-in-law' => [30, 80],
-            'Stepchild' => [1, 30],
-            'Stepparent' => [30, 100],
-            'Stepsibling' => [1, 80],
+            1 => [1, 30],    
+            2 => [1, 30],    
+            3 => [30, 100],  
+            4 => [30, 100],  
+            5 => [30, 100],  
+            6 => [30, 80],   
+            7 => [30, 80],   
+            8 => [1, 40],    
+            9 => [1, 40],    
+            10 => [10, 80],  
+            11 => [60, 100], 
+            12 => [40, 90],  
+            13 => [40, 90],  
+            14 => [30, 80],  
+            15 => [30, 80],  
+            16 => [1, 30],   
+            17 => [30, 100], 
+            18 => [1, 80],   
         ];
 
         $occupationIncomeRanges = [
@@ -73,10 +73,6 @@ class FamilyCompositionSeeder extends Seeder
         $seniors = Seniors::all();
 
         foreach ($seniors as $senior) {
-            if (rand(1, 100) <= 95) {
-                continue;
-            }
-
             $familyMemberCount = (rand(1, 2) == 1) ? rand(5, 10) : rand(1, 4);
 
             for ($i = 0; $i < $familyMemberCount; $i++) {
@@ -84,14 +80,17 @@ class FamilyCompositionSeeder extends Seeder
                 $relativeLastName = $senior->last_name;
                 $relativeName = $relativeFirstName . ' ' . $relativeLastName;
 
-                $relationship = fake()->randomElement(array_keys($relationships));
-                $ageRange = $relationships[$relationship];
+                // Get a random relationship index (1, 2, ..., 18)
+                $relationshipIndex = fake()->randomElement(array_keys($relationships));
+
+                // Get the age range for the selected relationship
+                $ageRange = $relationships[$relationshipIndex];
                 $relativeAge = rand($ageRange[0], $ageRange[1]);
 
                 if ($relativeAge < 18) {
                     $civilStatus = 1;
                     $occupation = 'Student';
-                    $relativeIncome = rand(0, 5000);
+                    $relativeIncome = 0;
                 } elseif ($relativeAge >= 18 && $relativeAge < 30) {
                     $civilStatus = rand(1, 4);
                     $occupation = (rand(1, 100) <= 25) ? null : fake()->randomElement(['Intern', 'Junior Developer', 'Salesperson', 'Artist', 'Freelancer', 'Part-time Job', 'Photographer', 'Social Media Manager', 'Graphic Designer', 'Content Creator', 'Virtual Assistant']);
@@ -109,9 +108,9 @@ class FamilyCompositionSeeder extends Seeder
                 FamilyComposition::create([
                     'senior_id' => $senior->id,
                     'relative_name' => $relativeName,
-                    'relative_relationship' => $relationship,
+                    'relative_relationship_id' => $relationshipIndex, 
                     'relative_age' => $relativeAge,
-                    'relative_civil_status' => $civilStatus,
+                    'relative_civil_status_id' => $civilStatus,
                     'relative_occupation' => $occupation,
                     'relative_income' => $relativeIncome,
                 ]);

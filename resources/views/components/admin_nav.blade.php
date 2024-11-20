@@ -28,7 +28,11 @@
                 <li><a href="/admin" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Home</a></li>
                 <li><a href="/admin/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">About Us</a></li>
                 @guest('admin')
-                <li><a @click.prevent="showAdminLoginModal = true; localStorage.setItem('showAdminLoginModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>    
+                <li class="inline-block">
+                    <a @click.prevent="showAdminLoginModal = true; localStorage.setItem('showAdminLoginModal', 'true')"
+                    class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-gray-800 transition duration-150 ease-in-out block text-16px cursor-pointer">
+                        Sign In
+                 </a>  
                 @endguest
             </ul>
         </div>
@@ -123,7 +127,11 @@
                 <li><a href="/admin" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
                 <li><a href="/admin/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
                 @guest('admin')
-                    <li><a @click.prevent="showAdminLoginModal = true; localStorage.setItem('showAdminLoginModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Sign In</a></li>    
+                    <li class="inline-block">
+                    <a @click.prevent="showAdminLoginModal = true; localStorage.setItem('showAdminLoginModal', 'true')"
+                    class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-gray-800 transition duration-150 ease-in-out block text-16px cursor-pointer">
+                        Sign In
+                 </a>  
                 @endguest
             </ul>
         </div>

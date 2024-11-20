@@ -427,6 +427,10 @@ class SeniorsFactory extends Factory
             'Living with a Legal Guardian',
             'Incarcerated or Detained',
             'Institutional Living',
+            'Sa Kalsada lang po',
+            'Sa tabing Ilog',
+            'Naninirahan lang',
+            'Walang permanenteng tirahan',
         ];
 
         $existing_illness = [
@@ -452,11 +456,11 @@ class SeniorsFactory extends Factory
         ];
 
         $existing_disability = [
-            'visual_impairment',
-            'hearing_impairment',
-            'mobility_impairment',
-            'cognitive_disability', 
-            'mental_health_condition'
+            'Visual impairment',
+            'Hearing impairment',
+            'Mobility impairment',
+            'Cognitive disability', 
+            'Mental health condition'
         ];
 
 
@@ -591,8 +595,12 @@ class SeniorsFactory extends Factory
             'ncsc_rrn' => function (array $attributes) {
                 return date('Y-m-d', strtotime($attributes['date_applied'])) . '-' . $attributes['osca_id'];
             },
-            'application_status_id' => 1,
-            'account_status_id' => null,
+            'application_status_id' => $this->faker->numberBetween(1, 4),
+            'account_status_id' => function (array $attributes) {
+                return $attributes['application_status_id'] === 3
+                ? $this->faker->numberBetween(1, 4)
+                : null;
+            },
             'user_type_id' => 1,
             'assisted_by_id' => $assisted_by,
             'first_name' => $firstName,
@@ -600,9 +608,7 @@ class SeniorsFactory extends Factory
                 return $this->faker->randomElement(array_merge($filipinoLastNames, [null, null, null]));
             },
             'last_name' => $this->faker->randomElement($filipinoLastNames),
-            'suffix' => function () {
-                return $this->faker->randomElement([null, null, null, 'Jr.', 'Sr.', 'I', 'II', 'III']);
-            },
+            'suffix' => $isMale ? $this->faker->randomElement([null, null, null, 'Jr.', 'Sr.', 'I', 'II', 'III']) : null,
             'birthdate' => $birthdate,
             'age' => $age,
             'birthplace' => $this->faker->randomElement($philippineCities),
@@ -611,11 +617,11 @@ class SeniorsFactory extends Factory
             'contact_no' => $this->faker->regexify('\+639[0-9]{9}'),
             'address' => $address,
             'barangay_id' => $barangayIndex,
-            'valid_id' => null,
+            'valid_id' => 'sample4.png',
             'profile_picture' => null,
-            'indigency' => null,
-            'birth_certificate' => null,
-            'signature_data' => null,
+            'indigency' => 'sample5.jpg',
+            'birth_certificate' => 'sample3.jpg',
+            'signature_data' => 'sample6.png',
             'type_of_living_arrangement' => $type_of_living_arrangement,
             'other_arrangement_remark' => $type_of_living_arrangement == 5 ? $this->faker->randomElement($otherArrangements) : null,
             'pensioner' => $pensioner,

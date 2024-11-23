@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Seniors;
 use App\Mail\AdminResendCodeEmail;
 use App\Mail\AdminForgotPassword;
 use App\Mail\AdminLoginAttempt;
@@ -19,6 +20,11 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use App\Mail\SeniorReferenceNumber;
+use App\Mail\SeniorRegisteredByStaff;
+use App\Mail\SeniorChangedEmail;
+use App\Http\Requests\StoreAddBeneficiary;
+use App\Http\Requests\UpdateEditBeneficiary;
 
 class AdminController extends Controller
 {
@@ -37,6 +43,330 @@ class AdminController extends Controller
         return view('admin.admin_dashboard', [
             'title' => 'Admin Dashboard'
         ]);
+    }
+
+    public function showAdminApplicationRequests()
+    {
+        $seniors = DB::table('seniors')
+        ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
+        ->leftJoin('senior_application_status_list', 'seniors.application_status_id', '=', 'senior_application_status_list.id')
+        ->leftJoin('barangay_list', 'seniors.barangay_id', '=', 'barangay_list.id')
+        ->select(
+            'seniors.*',
+            'sex_list.sex as sex_name',
+            'senior_application_status_list.senior_application_status as senior_application_status',
+            'barangay_list.barangay_no as barangay_no'
+        )
+            ->orderBy('seniors.id', 'asc')
+            ->paginate(10);
+
+        $applicationStatuses = DB::table('senior_application_status_list')->get();
+        $barangayList = DB::table('barangay_list')->get();
+
+        return view('admin.admin_application_requests', [
+            'title' => 'Application Requests',
+            'seniors' => $seniors,
+            'applicationStatuses' => $applicationStatuses,
+            'barangayList' => $barangayList,
+        ]);
+    }
+
+    public function filterSeniorsApplicationRequests(Request $request)
+    {
+        $barangayId = $request->input('barangay_id');
+        $statusIds = $request->input('status_ids', []);
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $searchQuery = $request->input('search_query', '');
+        $orderDirection = $request->input('order', 'asc'); 
+        $perPage = 10;
+
+        $query = DB::table('seniors')
+        ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
+        ->leftJoin('senior_application_status_list', 'seniors.application_status_id', '=', 'senior_application_status_list.id')
+        ->leftJoin('barangay_list', 'seniors.barangay_id', '=', 'barangay_list.id')
+        ->select(
+            'seniors.*',
+            'sex_list.sex as sex_name',
+            'senior_application_status_list.senior_application_status as senior_application_status',
+            'barangay_list.barangay_no as barangay_no'
+        );
+
+        if (!empty($barangayId)) {
+            $query->where('seniors.barangay_id', $barangayId);
+        }
+
+        if (!empty($statusIds)) {
+            $query->whereIn('seniors.application_status_id', $statusIds);
+        }
+
+        if ($startDate) {
+            $query->whereDate('seniors.date_applied', '>=', $startDate);
+        }
+
+        if ($endDate) {
+            $query->whereDate('seniors.date_applied', '<=', $endDate);
+        }
+
+        if (!empty($searchQuery)) {
+            $terms = array_filter(explode(' ', strtolower($searchQuery)));
+
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->whereRaw("LOWER(CONCAT_WS(' ', seniors.first_name, seniors.middle_name, seniors.last_name, seniors.suffix)) LIKE ?", ['%' . $term . '%']);
+                }
+            })->orWhere('seniors.osca_id', 'LIKE', '%' . $searchQuery . '%');
+        }
+
+        if ($startDate || $endDate) {
+            $query->orderBy('seniors.date_applied', $orderDirection);
+        } else {
+            $query->orderBy('seniors.id', $orderDirection);
+        }
+
+        $seniors = $query->paginate($perPage);
+
+        return response()->json($seniors);
+    }
+
+    public function showAdminSeniorProfile($id)
+    {
+        $seniors = Seniors::findOrFail($id);
+
+        $sex_list = DB::table('sex_list')->get();
+        $civil_status_list = DB::table('civil_status_list')->get();
+        $barangay_list = DB::table('barangay_list')->get();
+        $user_type_list = DB::table('user_type_list')->get();
+        $living_arrangement_list = DB::table('living_arrangement_list')->get();
+        $how_much_pension_list = DB::table('how_much_pension_list')->get();
+        $how_much_income_list = DB::table('how_much_income_list')->get();
+        $senior_account_status_list = DB::table('senior_account_status_list')->get();
+        $senior_application_status_list = DB::table('senior_application_status_list')->get();
+
+        $family_composition = DB::table('family_composition')
+        ->leftJoin('seniors', 'family_composition.senior_id', '=', 'seniors.id')
+        ->leftJoin('civil_status_list', 'family_composition.relative_civil_status_id', '=', 'civil_status_list.id')
+        ->leftJoin('relationship_list', 'family_composition.relative_relationship_id', '=', 'relationship_list.id')
+        ->where('seniors.id', $id)
+            ->select('family_composition.*', 'civil_status_list.civil_status', 'relationship_list.relationship')
+            ->get();
+
+        $senior_guardian = DB::table('senior_guardian')
+        ->leftJoin('seniors', 'senior_guardian.senior_id', '=', 'seniors.id')
+        ->leftJoin('relationship_list', 'senior_guardian.guardian_relationship_id', '=', 'relationship_list.id')
+        ->where('seniors.id', $id)
+            ->select('senior_guardian.*', 'relationship_list.relationship')
+            ->first();
+
+        $sources = DB::table('source')
+        ->leftJoin('seniors', 'source.senior_id', '=', 'seniors.id')
+        ->leftJoin('source_list', 'source.source_id', '=', 'source_list.id')
+        ->where('seniors.id', $id)
+            ->select('source.*', 'source_list.source_list', 'source.other_source_remark')
+            ->get();
+
+        $income_sources = DB::table('income_source')
+        ->leftJoin('seniors', 'income_source.senior_id', '=', 'seniors.id')
+        ->leftJoin('where_income_source_list', 'income_source.income_source_id', '=', 'where_income_source_list.id')
+        ->where('seniors.id', $id)
+            ->select('income_source.*', 'where_income_source_list.where_income_source', 'income_source.other_income_source_remark')
+            ->get();
+
+        $adminId = auth()->guard('admin')->id();
+
+        $selectedSex = $sex_list->firstWhere('id', $seniors->sex_id);
+        $selectedBarangay = $barangay_list->firstWhere('id', $seniors->barangay_id);
+        $selectedApplicationAssistant = $user_type_list->firstWhere('id', $seniors->application_assistant_id);
+        $selectedRegistrationAssistant = $user_type_list->firstWhere('id', $seniors->registration_assistant_id);
+        $selectedCivil_Status = $civil_status_list->firstWhere('id', $seniors->civil_status_id);
+        $selectedLiving_Arrangement = $living_arrangement_list->firstWhere('id', $seniors->type_of_living_arrangement);
+        $selectedPension_Amount = $how_much_pension_list->firstWhere('id', $seniors->if_pensioner_yes);
+        $selectedIncome_Amount = $how_much_income_list->firstWhere('id', $seniors->if_permanent_yes_income);
+        $selectedAccount_Status = $senior_account_status_list->firstWhere('id', $seniors->account_status_id);
+        $selectedApplication_Status = $senior_application_status_list->firstWhere('id', $seniors->application_status_id);
+
+        $lastLivingArrangementId = $living_arrangement_list->last()->id ?? null;
+
+        return view('admin.admin_senior_profile', [
+            'senior' => $seniors,
+            'title' => 'Profile: ' . $seniors->first_name . ' ' . $seniors->last_name,
+            'sex' => $selectedSex,
+            'civil_status' => $selectedCivil_Status,
+            'barangay' => $selectedBarangay,
+            'living_arrangement' => $selectedLiving_Arrangement,
+            'lastLivingArrangementId' => $lastLivingArrangementId,
+            'family_composition' => $family_composition,
+            'senior_guardian' => $senior_guardian,
+            'pension_amount' => $selectedPension_Amount,
+            'income_amount' => $selectedIncome_Amount,
+            'source' => $sources,
+            'income_source' => $income_sources,
+            'account_status' => $selectedAccount_Status,
+            'senior_account_status_list' => $senior_account_status_list,
+            'application_status' => $selectedApplication_Status,
+            'senior_application_status_list' => $senior_application_status_list,
+            'application_assistant' => $selectedApplicationAssistant,
+            'registration_assistant' => $selectedRegistrationAssistant,
+            'adminId' => $adminId,
+        ]);
+    }
+
+    public function updateAdminSeniorApplicationStatus(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'status' => 'required|exists:senior_application_status_list,id',
+        ]);
+
+        $adminUser = auth()->guard('admin')->user();
+        $adminUserTypeId = $adminUser->admin_user_type_id;
+        $adminFirstName = $adminUser->admin_first_name;
+        $adminLastName = $adminUser->admin_last_name;
+
+        $senior = Seniors::findOrFail($id);
+
+        if ($senior->application_status_id == $validated['status']) {
+            return redirect()->back()->with([
+                'admin-error-message-header' => 'Update Unsuccessful',
+                'admin-error-message-body' => 'No changes were detected in the application status.',
+            ]);
+        }
+
+        if ($senior->application_status_id == 3 && $validated['status'] != 3) {
+            $senior->account_status_id = null;
+            $senior->application_assistant_id = null;
+            $senior->application_assistant_name = null;
+            $senior->date_approved = null;
+        }
+
+        $senior->application_status_id = $validated['status'];
+
+        if ($validated['status'] == 3) {
+            $senior->account_status_id = 1;
+            $senior->date_approved = now();
+            $senior->application_assistant_id = $adminUserTypeId;
+            $senior->application_assistant_name = "{$adminFirstName} {$adminLastName}";
+        }
+
+        $senior->save();
+
+        return redirect()->back()->with([
+            'admin-message-header' => 'Success',
+            'admin-message-body' => 'Application status updated successfully.',
+        ]);
+    }
+
+    public function updateAdminSeniorAccountStatus(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'account_status' => 'required|exists:senior_application_status_list,id',
+        ]);
+
+        $senior = Seniors::findOrFail($id);
+
+        if ($senior->account_status_id == $validated['account_status']) {
+            return redirect()->back()->with([
+                'admin-error-message-header' => 'Update Unsuccessful',
+                'admin-error-message-body' => 'No changes were detected in the application status.',
+            ]);
+        }
+
+        if ($senior->application_status_id != 3) {
+            return redirect()->back()->with([
+                'admin-error-message-header' => 'Update Unsuccessful',
+                'admin-error-message-body' => 'This user is not approved yet.',
+            ]);
+        }
+
+        $senior->account_status_id = $validated['account_status'];
+
+        $senior->save();
+
+        return redirect()->back()->with([
+            'admin-message-header' => 'Success',
+            'admin-message-body' => 'Account status updated successfully.',
+        ]);
+    }
+
+    public function showAdminBeneficiariesList()
+    {
+        $seniors = DB::table('seniors')
+        ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
+        ->leftJoin('senior_account_status_list', 'seniors.account_status_id', '=', 'senior_account_status_list.id')
+        ->leftJoin('barangay_list', 'seniors.barangay_id', '=', 'barangay_list.id')
+        ->select(
+            'seniors.*',
+            'sex_list.sex as sex_name',
+            'senior_account_status_list.senior_account_status as senior_account_status',
+            'barangay_list.barangay_no as barangay_no'
+        )
+            ->whereNotNull('seniors.account_status_id')
+            ->orderBy('seniors.id', 'asc')
+            ->paginate(10);
+
+        $accountStatuses = DB::table('senior_account_status_list')->get();
+        $barangayList = DB::table('barangay_list')->get();
+
+        return view('admin.admin_beneficiaries_list', [
+            'title' => 'Beneficiaries List',
+            'seniors' => $seniors,
+            'accountStatuses' => $accountStatuses,
+            'barangayList' => $barangayList,
+        ]);
+    }
+
+    public function filterSeniorsBeneficiaries(Request $request)
+    {
+        $barangayId = $request->input('barangay_id');
+        $statusIds = $request->input('status_ids', []);
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $searchQuery = $request->input('search_query', '');
+        $order = $request->input('order', 'asc');
+        $perPage = 10;
+
+        $query = DB::table('seniors')
+        ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
+        ->leftJoin('senior_account_status_list', 'seniors.account_status_id', '=', 'senior_account_status_list.id')
+        ->leftJoin('barangay_list', 'seniors.barangay_id', '=', 'barangay_list.id')
+        ->select(
+            'seniors.*',
+            'sex_list.sex as sex_name',
+            'senior_account_status_list.senior_account_status as senior_account_status',
+            'barangay_list.barangay_no as barangay_no'
+        )
+            ->whereNotNull('seniors.account_status_id'); 
+
+        if (!empty($barangayId)) {
+            $query->where('seniors.barangay_id', $barangayId);
+        }
+
+        if (!empty($statusIds)) {
+            $query->whereIn('seniors.account_status_id', $statusIds);
+        }
+
+        if ($startDate) {
+            $query->whereDate('seniors.date_applied', '>=', $startDate);
+        }
+
+        if ($endDate) {
+            $query->whereDate('seniors.date_applied', '<=', $endDate);
+        }
+
+        if (!empty($searchQuery)) {
+            $terms = array_filter(explode(' ', strtolower($searchQuery)));
+
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->whereRaw("LOWER(CONCAT_WS(' ', seniors.first_name, seniors.middle_name, seniors.last_name, seniors.suffix)) LIKE ?", ['%' . $term . '%']);
+                }
+            })->orWhere('seniors.osca_id', 'LIKE', '%' . $searchQuery . '%');
+        }
+
+        $query->orderBy('seniors.id', $order);
+
+        $seniors = $query->paginate($perPage);
+
+        return response()->json($seniors);
     }
 
     public function admin_login(Request $request)
@@ -166,6 +496,460 @@ class AdminController extends Controller
             'admin_email' => session('admin_email'),
             'admin-error-message-header' => 'Login Failed',
             'admin-error-message-body' => 'Verify your email first.'
+        ]);
+    }
+
+    public function showAdminAddBeneficiary()
+    {
+        $income_sources = DB::table('where_income_source_list')->get();
+        $incomes = DB::table('how_much_income_list')->get();
+        $pensions = DB::table('how_much_pension_list')->get();
+        $sources = DB::table('source_list')->get();
+        $arrangement_lists = DB::table('living_arrangement_list')->get();
+        $sexes = DB::table('sex_list')->get();
+        $civil_status_list = DB::table('civil_status_list')->get();
+        $relationship_list = DB::table('relationship_list')->get();
+        $barangay = DB::table('barangay_list')->get();
+
+        return view('admin.admin_add_beneficiary')->with([
+            'title' => 'Add Beneficiary',
+            'income_sources' => $income_sources,
+            'incomes' => $incomes,
+            'pensions' => $pensions,
+            'sources' => $sources,
+            'arrangement_lists' => $arrangement_lists,
+            'sexes' => $sexes,
+            'civil_status_list' => $civil_status_list,
+            'relationship_list' => $relationship_list,
+            'barangay' => $barangay
+        ]);
+    }
+
+    public function submitAdminAddBeneficiary(StoreAddBeneficiary $request)
+    {
+        //dd($request->all());
+
+        $validated = $request->validated();
+
+        $seniorData = $validated;
+        unset($seniorData['source'], $seniorData['other_source_remark']);
+        unset($seniorData['income_source'], $seniorData['other_income_source_remark']);
+        unset($seniorData['g-recaptcha-response']);
+
+        do {
+            $osca_id = rand(10000, 99999);
+        } while (DB::table('seniors')->where('osca_id', $osca_id)->exists());
+
+        $adminUser = auth()->guard('admin')->user();
+        $adminUserTypeId = $adminUser->admin_user_type_id;
+        $adminFirstName = $adminUser->admin_first_name;
+        $adminLastName = $adminUser->admin_last_name;
+
+        $seniorData['registration_assistant_id'] = $adminUserTypeId;
+        $seniorData['registration_assistant_name'] = "{$adminFirstName} {$adminLastName}";
+
+        $seniorData['application_assistant_id'] = $adminUserTypeId;
+        $seniorData['application_assistant_name'] = "{$adminFirstName} {$adminLastName}";
+
+        $user_type_id = 1;
+        $account_status_id = 1;
+        $application_status_id = 3;
+        $date_approved = now();
+
+        $seniorData['date_applied'] = now();
+        $seniorData['osca_id'] = $osca_id;
+
+        $ncsc_rrn = $seniorData['date_applied']->format('Ymd') . '-' . $osca_id;
+
+        $seniorData['ncsc_rrn'] = $ncsc_rrn;
+
+        $seniorData['user_type_id'] = $user_type_id;
+        $seniorData['account_status_id'] = $account_status_id;
+        $seniorData['application_status_id'] = $application_status_id;
+        $seniorData['date_approved'] = $date_approved;
+
+        if (empty($request->input('g-recaptcha-response'))) {
+            $seniorData['g-recaptcha-response'] = 'The ReCaptcha field is required.';
+        }
+
+        if ($request->hasFile('valid_id')) {
+            $validIdFilename = $osca_id;
+            $validIdExtension = $request->file('valid_id')->getClientOriginalExtension();
+            $validIdFilenameToStore = $validIdFilename . '.' . $validIdExtension;
+
+            $request->file('valid_id')->storeAs('images/senior_citizen/valid_id', $validIdFilenameToStore);
+            $seniorData['valid_id'] = $validIdFilenameToStore;
+        }
+
+        if ($request->hasFile('profile_picture')) {
+            $request->validate([
+                'profile_picture' => 'mimes:jpeg,png,bmp,tiff|max:4096',
+            ]);
+
+            $profilePictureFilename = $osca_id;
+            $profilePictureExtension = $request->file('profile_picture')->getClientOriginalExtension();
+            $profilePictureFilenameToStore = $profilePictureFilename . '.' . $profilePictureExtension;
+
+            $request->file('profile_picture')->storeAs('images/senior_citizen/profile_picture', $profilePictureFilenameToStore);
+            $seniorData['profile_picture'] = $profilePictureFilenameToStore;
+
+            $thumbnailFilename = $profilePictureFilename . '.' . $profilePictureExtension;
+            $thumbnailPath = 'storage/images/senior_citizen/thumbnail_profile/' . $thumbnailFilename;
+
+            $request->file('profile_picture')->storeAs('images/senior_citizen/thumbnail_profile', $thumbnailFilename);
+
+            $this->createThumbnail(public_path('storage/images/senior_citizen/profile_picture/' . $profilePictureFilenameToStore), public_path($thumbnailPath), 150, 150);
+        }
+
+        if ($request->hasFile('indigency')) {
+            $indigencyFilename = $osca_id;
+            $indigencyExtension = $request->file('indigency')->getClientOriginalExtension();
+            $indigencyFilenameToStore = $indigencyFilename . '.' . $indigencyExtension;
+            $request->file('indigency')->storeAs('images/senior_citizen/indigency', $indigencyFilenameToStore);
+            $seniorData['indigency'] = $indigencyFilenameToStore;
+        }
+
+        if ($request->hasFile('birth_certificate')) {
+            $birthCertificateFilename = $osca_id;
+            $birthCertificateExtension = $request->file('birth_certificate')->getClientOriginalExtension();
+            $birthCertificateFilenameToStore = $birthCertificateFilename . '.' . $birthCertificateExtension;
+
+            $request->file('birth_certificate')->storeAs('images/senior_citizen/birth_certificate', $birthCertificateFilenameToStore);
+            $seniorData['birth_certificate'] = $birthCertificateFilenameToStore;
+        }
+
+        if ($request->has('signature_data')) {
+            $signatureData = $request->input('signature_data');
+
+            $signatureData = str_replace('data:image/png;base64,', '', $signatureData);
+            $signatureData = str_replace(' ', '+', $signatureData);
+            $signatureData = base64_decode($signatureData);
+
+            $signatureFilename = $osca_id . '.png';
+            $path = storage_path('app/public/images/senior_citizen/signatures/');
+            file_put_contents($path . $signatureFilename, $signatureData);
+
+            $seniorData['signature_data'] = $signatureFilename;
+        }
+
+        $seniorData['contact_no'] = '+63' . $seniorData['contact_no'];
+
+        $seniorData['password'] = Hash::make($seniorData['password']);
+
+        $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+        $hashedVerificationCode = Hash::make($verificationCode);
+
+        $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
+
+        $seniorData['verification_code'] = $hashedVerificationCode;
+        $seniorData['verification_expires_at'] = $expirationTime;
+
+        $seniors = Seniors::create($seniorData);
+
+        Mail::to($seniorData['email'])->send(new SeniorRegisteredByStaff($verificationCode, $expirationTime));
+        Mail::to($seniorData['email'])->send(new SeniorReferenceNumber($ncsc_rrn));
+
+        $lastSourceId = DB::table('source_list')->latest('id')->value('id');
+
+        if (
+            $request->input('pensioner') == 1
+        ) {
+            $sourceInputs = $request->input('source') ?? [];
+
+            foreach ($sourceInputs as $source) {
+                $data = [];
+
+                if (!is_null($seniors->id)) {
+                    $data['senior_id'] = $seniors->id;
+                }
+
+                if (!is_null($source)) {
+                    $data['source_id'] = $source;
+                }
+
+                if ($source == $lastSourceId) {
+                    $data['other_source_remark'] = $request->input('other_source_remark');
+                }
+
+                if (!empty($data)) {
+                    DB::table('source')->insert($data);
+                }
+            }
+        }
+
+        $lastIncomeSourceId = DB::table('where_income_source_list')->latest('id')->value('id');
+
+        if ($request->input('permanent_source') == 1) {
+            $incomeSourceInputs = $request->input('income_source') ?? [];
+
+            foreach ($incomeSourceInputs as $income_source) {
+                $data = [];
+
+                if (!is_null($seniors->id)) {
+                    $data['senior_id'] = $seniors->id;
+                }
+
+                if (!is_null($income_source)) {
+                    $data['income_source_id'] = $income_source;
+                }
+
+                if (
+                    $income_source == $lastIncomeSourceId
+                ) {
+                    $data['other_income_source_remark'] = $request->input('other_income_source_remark');
+                }
+
+                if (!empty($data)) {
+                    DB::table('income_source')->insert($data);
+                }
+            }
+        }
+
+        if ($request->guardian_first_name || $request->guardian_last_name) {
+            DB::table('senior_guardian')->insert([
+                'senior_id' => $seniors->id,
+                'guardian_first_name' => $request->guardian_first_name ?: null,
+                'guardian_middle_name' => $request->guardian_middle_name ?: null,
+                'guardian_last_name' => $request->guardian_last_name ?: null,
+                'guardian_suffix' => $request->guardian_suffix ?: null,
+                'guardian_relationship_id' => $request->guardian_relationship_id ?: null,
+                'guardian_contact_no' => $request->guardian_contact_no ? '+63' . ltrim($request->guardian_contact_no, '0') : null,
+            ]);
+        }
+
+        foreach ($request->relative_name as $index => $name) {
+            if (!empty($name)) {
+                DB::table('family_composition')->insert([
+                    'senior_id' => $seniors->id,
+                    'relative_name' => $name,
+                    'relative_relationship_id' => $request->relative_relationship_id[$index] ?: null,
+                    'relative_age' => $request->relative_age[$index] ?: null,
+                    'relative_civil_status_id' => $request->relative_civil_status_id[$index] ?: null,
+                    'relative_occupation' => $request->relative_occupation[$index] ?: null,
+                    'relative_income' => $request->relative_income[$index] ?: null,
+                ]);
+            }
+        }
+
+        return back()->with([
+            'admin-message-header' => 'Registration successful',
+            'admin-message-body' => 'An email verification has been sent to the user.'
+        ]);
+    }
+
+    public function showAdminEditSeniorProfile($id)
+    {
+        $seniors = Seniors::findOrFail($id);
+
+        $income_sources = DB::table('where_income_source_list')->get();
+        $incomes = DB::table('how_much_income_list')->get();
+        $pensions = DB::table('how_much_pension_list')->get();
+        $sources = DB::table('source_list')->get();
+        $arrangement_lists = DB::table('living_arrangement_list')->get();
+        $sexes = DB::table('sex_list')->get();
+        $civil_status_list = DB::table('civil_status_list')->get();
+        $relationship_list = DB::table('relationship_list')->get();
+        $barangay = DB::table('barangay_list')->get();
+
+        $senior_guardian = DB::table('senior_guardian')
+        ->leftJoin('seniors', 'senior_guardian.senior_id', '=', 'seniors.id')
+        ->leftJoin('relationship_list', 'senior_guardian.guardian_relationship_id', '=', 'relationship_list.id')
+        ->where('seniors.id', $id)
+        ->select('senior_guardian.*', 'relationship_list.relationship')
+        ->first();
+
+        $family_composition = DB::table('family_composition')
+        ->leftJoin('seniors', 'family_composition.senior_id', '=', 'seniors.id')
+        ->leftJoin('civil_status_list', 'family_composition.relative_civil_status_id', '=', 'civil_status_list.id')
+        ->leftJoin('relationship_list', 'family_composition.relative_relationship_id', '=', 'relationship_list.id')
+        ->where('seniors.id', $id)
+        ->select('family_composition.*', 'civil_status_list.civil_status', 'relationship_list.relationship')
+        ->get();
+
+        $pension_sources = DB::table('source')
+        ->leftJoin('seniors', 'source.senior_id', '=', 'seniors.id')
+        ->leftJoin('source_list', 'source.source_id', '=', 'source_list.id')
+        ->where('seniors.id', $id)
+        ->select('source.source_id', 'source.other_source_remark', 'source_list.id', 'source_list.source_list')
+        ->get();
+
+        $income_sources_edit = DB::table('income_source')
+        ->leftJoin('seniors', 'income_source.senior_id', '=', 'seniors.id')
+        ->leftJoin('where_income_source_list', 'income_source.income_source_id', '=', 'where_income_source_list.id')
+        ->where('seniors.id', $id)
+        ->select('income_source.income_source_id', 'where_income_source_list.id' , 'where_income_source_list.where_income_source', 'income_source.other_income_source_remark')
+        ->get();
+
+        return view('admin.admin_edit_senior_profile')->with([
+            'senior' => $seniors,
+            'title' => 'Edit: ' . $seniors->first_name . ' ' . $seniors->last_name,
+            'income_sources' => $income_sources,
+            'incomes' => $incomes,
+            'pensions' => $pensions,
+            'sources' => $sources,
+            'arrangement_lists' => $arrangement_lists,
+            'sexes' => $sexes,
+            'civil_status_list' => $civil_status_list,
+            'relationship_list' => $relationship_list,
+            'barangay' => $barangay,
+            'senior_guardian' => $senior_guardian,
+            'family_composition' => $family_composition,
+            'pension_sources' => $pension_sources,
+            'income_sources_edit' => $income_sources_edit
+        ]);
+    }
+
+    public function updateAdminEditBeneficiary(UpdateEditBeneficiary $request, $senior)
+    {
+        $validated = $request->validated();
+
+        $senior = Seniors::findOrFail($senior);
+        $osca_id = $senior->osca_id;
+
+        $seniorData = $validated;
+
+        unset($seniorData['source'], $seniorData['other_source_remark']);
+        unset($seniorData['income_source'], $seniorData['other_income_source_remark']);
+        unset($seniorData['g-recaptcha-response']);
+
+        if ($request->hasFile('valid_id')) {
+            if ($senior->valid_id) {
+                @unlink(public_path('storage/images/senior_citizen/valid_id/' . $senior->valid_id));
+            }
+            $validIdFilename = $osca_id . '.' . $request->file('valid_id')->getClientOriginalExtension();
+            $request->file('valid_id')->storeAs('images/senior_citizen/valid_id', $validIdFilename);
+            $seniorData['valid_id'] = $validIdFilename;
+        }
+
+        if ($request->hasFile('profile_picture')) {
+            $request->validate(['profile_picture' => 'mimes:jpeg,png,bmp,tiff|max:4096']);
+            $profilePictureFilename = $osca_id . '.' . $request->file('profile_picture')->getClientOriginalExtension();
+            if ($senior->profile_picture) {
+                @unlink(public_path('storage/images/senior_citizen/profile_picture/' . $senior->profile_picture));
+                @unlink(public_path('storage/images/senior_citizen/thumbnail_profile/' . $senior->profile_picture));
+            }
+            $request->file('profile_picture')->storeAs('images/senior_citizen/profile_picture', $profilePictureFilename);
+            $seniorData['profile_picture'] = $profilePictureFilename;
+
+            $thumbnailPath = 'storage/images/senior_citizen/thumbnail_profile/' . $profilePictureFilename;
+            $this->createThumbnail(public_path('storage/images/senior_citizen/profile_picture/' . $profilePictureFilename), public_path($thumbnailPath), 150, 150);
+        }
+
+        if ($request->hasFile('indigency')) {
+            if ($senior->indigency) {
+                @unlink(public_path('storage/images/senior_citizen/indigency/' . $senior->indigency));
+            }
+            $indigencyFilename = $osca_id . '.' . $request->file('indigency')->getClientOriginalExtension();
+            $request->file('indigency')->storeAs('images/senior_citizen/indigency', $indigencyFilename);
+            $seniorData['indigency'] = $indigencyFilename;
+        }
+
+        if ($request->hasFile('birth_certificate')) {
+            if ($senior->birth_certificate) {
+                @unlink(public_path('storage/images/senior_citizen/birth_certificate/' . $senior->birth_certificate));
+            }
+            $birthCertificateFilename = $osca_id . '.' . $request->file('birth_certificate')->getClientOriginalExtension();
+            $request->file('birth_certificate')->storeAs('images/senior_citizen/birth_certificate', $birthCertificateFilename);
+            $seniorData['birth_certificate'] = $birthCertificateFilename;
+        }
+
+        $seniorData['contact_no'] = '+63' . ltrim($validated['contact_no'], '0');
+
+        $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+        $hashedVerificationCode = Hash::make($verificationCode);
+
+        $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
+
+        $seniorData['verification_code'] = $hashedVerificationCode;
+        $seniorData['verification_expires_at'] = $expirationTime;
+        $seniorData['verified_at'] = null; 
+
+        $originalEmail = $senior->email; 
+        $newEmail = $seniorData['email'];
+
+        if ($newEmail !== $originalEmail) {
+
+            Mail::to($newEmail)->send(new SeniorChangedEmail($verificationCode, $expirationTime));
+        }
+
+        $senior->fill($seniorData);
+        $senior->save();
+
+
+        $senior->fill($seniorData); 
+        $senior->save();
+
+        if ($request->input('pensioner') == 1) {
+            DB::table('source')->where('senior_id', $senior->id)->delete();
+
+            $lastSourceId = DB::table('source_list')->latest('id')->value('id');
+            $sourceInputs = $request->input('source') ?? [];
+
+            foreach ($sourceInputs as $source) {
+                $source = (int) $source; 
+
+                $otherSourceRemark = $source == $lastSourceId && $request->has("other_source_remark.{$source}")
+                    ? $request->input("other_source_remark.{$source}")
+                    : null;
+
+                DB::table('source')->insert([
+                    'senior_id' => $senior->id,
+                    'source_id' => $source,
+                    'other_source_remark' => $otherSourceRemark,
+                ]);
+            }
+        }
+
+        if ($request->input('permanent_source') == 1) {
+            DB::table('income_source')->where('senior_id', $senior->id)->delete();
+
+            $lastIncomeSourceId = DB::table('where_income_source_list')->latest('id')->value('id');
+
+            $incomeSourceInputs = $request->input('income_source') ?? [];
+
+            foreach ($incomeSourceInputs as $incomeSource) {
+                $incomeSource = (int) $incomeSource;
+
+                DB::table('income_source')->insert([
+                    'senior_id' => $senior->id,
+                    'income_source_id' => $incomeSource,
+                    'other_income_source_remark' => ($incomeSource == $lastIncomeSourceId && $request->has('other_income_source_remark'))
+                    ? $request->input('other_income_source_remark')
+                    : null,
+                ]);
+            }
+        }
+
+        DB::table('senior_guardian')->updateOrInsert(
+            ['senior_id' => $senior->id],
+            [
+                'guardian_first_name' => $request->guardian_first_name ?: null,
+                'guardian_middle_name' => $request->guardian_middle_name ?: null,
+                'guardian_last_name' => $request->guardian_last_name ?: null,
+                'guardian_suffix' => $request->guardian_suffix ?: null,
+                'guardian_relationship_id' => $request->guardian_relationship_id ?: null,
+                'guardian_contact_no' => $request->guardian_contact_no ? '+63' . ltrim($request->guardian_contact_no, '0') : null,
+            ]
+        );
+
+        DB::table('family_composition')->where('senior_id', $senior->id)->delete();
+        foreach ($request->relative_name as $index => $name) {
+            if (!empty($name)) {
+                DB::table('family_composition')->insert([
+                    'senior_id' => $senior->id,
+                    'relative_name' => $name,
+                    'relative_relationship_id' => $request->relative_relationship_id[$index] ?: null,
+                    'relative_age' => $request->relative_age[$index] ?: null,
+                    'relative_civil_status_id' => $request->relative_civil_status_id[$index] ?: null,
+                    'relative_occupation' => $request->relative_occupation[$index] ?: null,
+                    'relative_income' => $request->relative_income[$index] ?: null,
+                ]);
+            }
+        }
+
+        return back()->with([
+            'admin-message-header' => 'Update Successful',
+            'admin-message-body' => 'The beneficiary details have been successfully updated.',
         ]);
     }
 

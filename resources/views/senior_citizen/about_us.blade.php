@@ -9,7 +9,7 @@
         </p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start" style="background-color: #FFFFFF ;">
-        <div class="flex justify-center items-center h-full relative">
+        <div class="overflow-hidden lg:flex justify-center items-center h-full relative">
 
             <div class="absolute inset-0 bg-[#FFFFFF] animate-slide-out-right duration-[2000ms] delay-[1000ms]"></div>
 
@@ -26,7 +26,7 @@
             </p>
         </div>
     </div>
-    <div class="mx-4 lg:mx-[48px]">
+    <div class="mx-4 overflow-hidden lg:mx-[48px]">
         <div class="w-full max-w-7xl mx-auto flex-fol items-center justify-center font-[poppins]">
     
             <div class="text-2xl font-bold mb-6 mt-12 leading-tight tracking-tight text-gray-900 md:text-2xl">

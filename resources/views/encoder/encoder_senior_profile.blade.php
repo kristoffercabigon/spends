@@ -181,12 +181,15 @@
                                 <div class="bg-white p-3 shadow-lg border-t-4 border-b-4 rounded-md">
                                     <h1 class="text-gray-900 font-bold text-lg leading-8 my-1">Signature</h1>
 
-                                    <div class="flex items-center hover:animate-scale  cursor-pointer justify-center image overflow-hidden"
+                                    <div class="flex items-center hover:animate-scale cursor-pointer justify-center image overflow-hidden"
                                         @click="showEncoderApplicantSignatureModal = true">
-
-                                        <img class="w-64 h-24 my-5 rounded-md shadow-lg"
-                                            src="{{ $senior->signature_data ? asset('storage/images/senior_citizen/signatures/'.$senior->signature_data) : '' }}"
-                                            alt="">
+                                        @if ($senior->signature_data)
+                                            <img class="w-64 h-24 my-5 rounded-md shadow-lg"
+                                                src="{{ asset('storage/images/senior_citizen/signatures/' . $senior->signature_data) }}"
+                                                alt="Applicant's Signature">
+                                        @else
+                                            <span class="text-gray-500 text-center my-5" @click.stop>No signature yet.</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -287,6 +290,52 @@
                                 <div class="bg-[#ffece5] pb-3 shadow-md rounded-md">
                                     <div class="flex bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 font-semibold text-gray-900 leading-8">
                                         <span class="text-green-500">
+                                            <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke="white">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                        </span>
+                                        <span class="tracking-wide text-white font-semibold">Guardian</span>
+                                    </div>
+                                    <div class="text-gray-700">
+                                        @if (empty($senior_guardian))
+                                            <div class="px-4 py-2 text-center font-light text-gray-500">None</div>
+                                        @else
+                                            <div class="grid md:grid-cols-2 text-sm">
+                                                <div class="grid grid-cols-2">
+                                                    <div class="px-4 py-2 font-semibold">First Name</div>
+                                                    <div class="px-4 py-2">{{ $senior_guardian->guardian_first_name ?? 'None' }}</div>
+                                                </div>
+                                                <div class="grid grid-cols-2">
+                                                    <div class="px-4 py-2 font-semibold">Middle Name</div>
+                                                    <div class="px-4 py-2">{{ $senior_guardian->guardian_middle_name ?? 'None' }}</div>
+                                                </div>
+                                                <div class="grid grid-cols-2">
+                                                    <div class="px-4 py-2 font-semibold">Last Name</div>
+                                                    <div class="px-4 py-2">{{ $senior_guardian->guardian_last_name ?? 'None' }}</div>
+                                                </div>
+                                                <div class="grid grid-cols-2">
+                                                    <div class="px-4 py-2 font-semibold">Suffix</div>
+                                                    <div class="px-4 py-2">{{ $senior_guardian->guardian_suffix ?? 'None' }}</div>
+                                                </div>
+                                                <div class="grid grid-cols-2">
+                                                    <div class="px-4 py-2 font-semibold">Relationship</div>
+                                                    <div class="px-4 py-2">{{ $senior_guardian->relationship ?? 'None' }}</div>
+                                                </div>
+                                                <div class="grid grid-cols-2">
+                                                    <div class="px-4 py-2 font-semibold">Contact Number</div>
+                                                    <div class="px-4 py-2">{{ $senior_guardian->guardian_contact_no ?? 'None' }}</div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="my-6"></div>
+
+                                <div class="bg-[#ffece5] pb-3 shadow-md rounded-md">
+                                    <div class="flex bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 font-semibold text-gray-900 leading-8">
+                                        <span class="text-green-500">
                                             <img src="../../images/family.png" alt="Family Icon" class="h-5 inline">
                                         </span>
                                         <span class="tracking-wide text-white font-semibold">Family Composition</span>
@@ -376,9 +425,9 @@
                                             <div class="space-y-4">
                                                 <div class="grid grid-cols-2">
                                                     <div class="px-4 py-2 font-semibold">Has permanent source of income?</div>
-                                                    <div class="px-4 py-2">{{ $senior->permanent_income_source == 1 ? 'Yes' : 'No' }}</div>
+                                                    <div class="px-4 py-2">{{ $senior->permanent_source == 1 ? 'Yes' : 'No' }}</div>
                                                 </div>
-                                                @if($senior->permanent_income_source == 1)
+                                                @if($senior->permanent_source == 1)
                                                 <div class="grid grid-cols-2">
                                                     <div class="px-4 py-2 font-semibold">Income amount received</div>
                                                     <div class="px-4 py-2">{{ $income_amount->how_much_income ?? 'Unknown' }}</div>

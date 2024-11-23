@@ -54,7 +54,10 @@ return new class extends Migration
             $table->string('token')->nullable();
             $table->string('remember_token')->nullable();
             $table->dateTime('expiration')->nullable();
-            $table->foreignId('assisted_by_id')->nullable()->constrained('user_type_list');
+            $table->foreignId('application_assistant_id')->nullable()->constrained('user_type_list');
+            $table->string('application_assistant_name')->nullable();
+            $table->foreignId('registration_assistant_id')->nullable()->constrained('user_type_list');
+            $table->string('registration_assistant_name')->nullable();
             $table->date('date_approved')->nullable();
             $table->timestamps();
         });

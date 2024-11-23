@@ -54,7 +54,7 @@
             </div>
         </section>
 
-        <div class="absolute bottom-0 left-0 right-0 flex justify-between items-center p-4 bg-gray-50 z-40"> 
+        <div class="absolute bottom-0 left-0 right-0 flex justify-between items-center p-4 bg-transparent z-40"> 
             <button type="button" @click="zoom = zoom < 2 ? zoom + 0.1 : zoom" 
                     class="hover:animate-scale px-2 py-1 bg-gray-300 hover:bg-gray-400 rounded">Zoom In</button>
             <button type="button" @click="zoom = zoom > 1 ? zoom - 0.1 : zoom" 

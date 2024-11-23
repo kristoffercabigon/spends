@@ -22,13 +22,13 @@
         <div class="w-full max-w-7xl mx-auto font-[poppins]">
             <div class="bg-white mt-4 ml-4 mr-4 mb-16 shadow-lg rounded-md">              
                 <div class="mb-16 mt-5 p-5 px-6 py-10 lg:px-12">
-                    <div class="text-2xl font-bold mb-6 leading-tight tracking-tight text-gray-900 md:text-4xl">
+                    <div class="text-2xl font-bold mb-6 leading-tight tracking-tight text-gray-900 md:text-2xl">
                         <p class="mx-4 text-center">
                             Profile
                         </p>
                     </div>
 
-                    <hr style="height: 1.5px; background: linear-gradient(to right, transparent, #1AA514, transparent); margin-top: 32px; margin-bottom: 32px;">
+                    <hr style="height: 2.5px; background: linear-gradient(to right, transparent, #1AA514, transparent); margin-top: 16px; margin-bottom: 32px;">
                     <div x-data="{ 
                             @php
                                 $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$senior->first_name."-".$senior->last_name;
@@ -38,13 +38,21 @@
                         }">
                         <div class="md:flex no-wrap ">
                             <div class="w-full md:w-3/12 md:mx-2">
-                                <div class="bg-white p-3 shadow-md border-t-4 border-b-4 rounded-md border-green-400">
-                                    <div class="flex items-center hover:animate-scale  cursor-pointer justify-center image overflow-hidden"
+                                <div class="bg-white p-3 shadow-lg border-t-4 border-b-4 rounded-md 
+                                    {{ $account_status && $account_status->senior_account_status == 'Active' ? 'border-green-500' : 
+                                    ($account_status && $account_status->senior_account_status == 'Inactive' ? 'border-orange-500' : 
+                                    ($account_status && $account_status->senior_account_status == 'Disqualified' ? 'border-yellow-500' : 
+                                    ($account_status && $account_status->senior_account_status == 'Deactivated' ? 'border-red-500' : 'border-gray-500'))) }}">
+                                    <div class="flex items-center hover:animate-scale cursor-pointer justify-center image overflow-hidden"
                                         @click="showRegisteredProfilePicModal = true">
                                         @php
                                             $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$senior->first_name."-".$senior->last_name;
                                         @endphp
-                                        <img class="w-48 h-48 rounded-full border-4 border-green-400"
+                                        <img class="w-48 h-48 rounded-full border-4 
+                                            {{ $account_status && $account_status->senior_account_status == 'Active' ? 'border-green-500' : 
+                                            ($account_status && $account_status->senior_account_status == 'Inactive' ? 'border-orange-500' : 
+                                            ($account_status && $account_status->senior_account_status == 'Disqualified' ? 'border-yellow-500' : 
+                                            ($account_status && $account_status->senior_account_status == 'Deactivated' ? 'border-red-500' : 'border-gray-500'))) }}"
                                             src="{{ $senior->profile_picture ? asset('storage/images/senior_citizen/profile_picture/'.$senior->profile_picture) : $default_profile }}"
                                             alt="">
                                     </div>
@@ -52,13 +60,60 @@
                                     <h3 class="text-gray-600 font-lg text-semibold leading-6">OSCA ID: <span class="font-semibold">{{ $senior->osca_id }}</span></h3>
                                     <ul class="bg-gray-100 text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
                                         <li class="flex items-center py-3">
-                                            <span>Status</span>
-                                            <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm">Active</span></span>
+                                            <span>Account Status</span>
+                                            <span class="ml-auto">
+                                                <div class="relative inline-block text-left">
+                                                    <span 
+                                                        class="py-1 px-2 rounded text-white text-sm truncate w-32 text-center 
+                                                        {{ $account_status && $account_status->senior_account_status == 'Active' ? 'bg-green-500' : 
+                                                        ($account_status && $account_status->senior_account_status == 'Inactive' ? 'bg-orange-500' : 
+                                                        ($account_status && $account_status->senior_account_status == 'Disqualified' ? 'bg-yellow-500' : 
+                                                        ($account_status && $account_status->senior_account_status == 'Deactivated' ? 'bg-red-500' : 'bg-gray-500'))) }} "
+                                                        id="accountStatusDropdownButton">
+                                                        {{ $account_status ? ucfirst($account_status->senior_account_status) : '--' }}
+                                                    </span>
+                                                    <div 
+                                                        class="absolute right-0 mt-2 w-48 animate-drop-in bg-white border border-gray-200 rounded-md shadow-lg z-10 hidden"
+                                                        id="accountStatusDropdownMenu">
+                                                        
+                                                    </div>
+                                                </div>
+                                            </span>
                                         </li>
                                         <li class="flex items-center py-3">
-                                            <span>Date Approved</span>
-                                            <span class="ml-auto">Nov 07, 2024</span>
+                                            <span>Application Status</span>
+                                            <span class="ml-auto">
+                                                <div class="relative inline-block text-left">
+                                                    <span 
+                                                        class="py-1 px-2 rounded text-white text-sm truncate w-32 text-center 
+                                                        {{ $application_status && $application_status->senior_application_status == 'Under Evaluation' ? 'bg-gray-500' : 
+                                                        ($application_status && $application_status->senior_application_status == 'On Hold' ? 'bg-orange-500' : 
+                                                        ($application_status && $application_status->senior_application_status == 'Approved' ? 'bg-green-500' : 
+                                                        ($application_status && $application_status->senior_application_status == 'Rejected' ? 'bg-red-500' : 'bg-gray-500'))) }} "
+                                                        id="statusDropdownButton">
+                                                        {{ $application_status ? ucfirst($application_status->senior_application_status) : '--' }}
+                                                    </span>
+                                                    <div 
+                                                        class="absolute right-0 mt-2 w-48 animate-drop-in bg-white border border-gray-200 rounded-md shadow-lg z-10 hidden"
+                                                        id="statusDropdownMenu">
+                                                        
+                                                    </div>
+                                                </div>
+                                            </span>
                                         </li>
+
+                                        @if ($senior->account_status_id)
+                                            <li class="flex items-center py-3">
+                                                <span>Date Approved</span>
+                                                <span class="ml-auto">
+                                                    @if ($senior->date_approved)
+                                                        {{ \Carbon\Carbon::parse($senior->date_approved)->format('F j, Y') }}
+                                                    @else
+                                                        Not yet approved.
+                                                    @endif
+                                                </span>
+                                            </li>
+                                        @endif
                                     </ul>
                                 </div>
                             </div>

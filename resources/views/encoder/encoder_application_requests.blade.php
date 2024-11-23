@@ -47,7 +47,7 @@
                                 </div>
                             </div>
 
-                            <div id="date-range-picker" class="flex justify-start items-center">
+                            <div id="date-range-picker" class="flex justify-start mb-4 items-center">
                                 <div class="relative">
                                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                         <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -72,10 +72,18 @@
                                     </button>
                                 </div>
                             </div>
+                            <div class="flex justify-start relative">
+                                <div class="relative w-[50%] lg:w-[30%]">
+                                    <select id="order-dropdown" class="bg-gray-50 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full  p-2.5">
+                                        <option value="asc" selected>Ascending</option>
+                                        <option value="desc">Descending</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
                         <div>
-                            <div class="flex justify-end relative">
+                            <div class="flex relative justify-start md:justify-end">
                                 <div class="relative w-[50%]">
                                     <select id="barangay-dropdown" class="bg-gray-50 mb-4 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full p-2.5">
                                         <option value="all" selected>Show All Barangays</option>
@@ -86,7 +94,7 @@
                                 </div>
                             </div>
 
-                            <div class="flex justify-end relative">
+                            <div class="flex relative justify-start md:justify-end">
                                 <button id="dropdownCheckboxButton" data-dropdown-toggle="dropdownDefaultCheckbox" class="text-white bg-[#1AA514] hover:bg-[#148e10] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-md px-5 py-2 text-center inline-flex items-center" type="button">
                                     Application Status
                                     <svg class="w-2.5 h-2.5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
@@ -268,6 +276,10 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
     const savedEndDate = localStorage.getItem('endDate');
     const savedSearchQuery = localStorage.getItem('searchQuery') || '';
     const selectedStatuses = JSON.parse(localStorage.getItem('selectedStatuses')) || [];
+    const orderDropdown = document.getElementById("order-dropdown");
+    const savedOrder = localStorage.getItem('order') || 'asc';
+
+    orderDropdown.value = savedOrder;
 
     searchDropdown.value = savedSearchQuery;
 
@@ -339,12 +351,19 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         updateTable(1);
     });
 
+    orderDropdown.addEventListener("change", function () {
+        const order = this.value;
+        localStorage.setItem('order', order);
+        updateTable(1);
+    });
+
     function updateTable(page) {
         const barangayId = barangayDropdown.value === 'all' ? null : barangayDropdown.value;
         const startDate = startInput.value;
         const endDate = endInput.value;
         const searchQuery = searchDropdown.value.toLowerCase();
         const selectedStatuses = JSON.parse(localStorage.getItem('selectedStatuses')) || [];
+        const order = orderDropdown.value;
 
         fetch('/encoder/filter-application-requests?page=' + page, {
             method: 'POST',
@@ -357,7 +376,8 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
                 start_date: startDate,
                 end_date: endDate,
                 status_ids: selectedStatuses,
-                search_query: searchQuery
+                search_query: searchQuery,
+                order: order,
             }),
         })
             .then(response => response.json())
@@ -369,43 +389,41 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
     }
 
     function renderTable(data) {
-    const tbody = document.querySelector('tbody');
-    tbody.innerHTML = '';
-    data.forEach((senior, index) => {
-        const defaultProfile = `https://api.dicebear.com/9.x/initials/svg?seed=${senior.first_name}-${senior.last_name}`;
-        const profilePicture = senior.profile_picture
-            ? `/storage/images/senior_citizen/thumbnail_profile/${senior.profile_picture}`
-            : defaultProfile;
-        const fullName = `${senior.first_name} ${senior.middle_name || ''} ${senior.last_name}${senior.suffix ? `, ${senior.suffix}` : ''}`;
-        const formattedDate = new Date(senior.date_applied).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
+        const tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
+        data.forEach((senior, index) => {
+            const defaultProfile = `https://api.dicebear.com/9.x/initials/svg?seed=${senior.first_name}-${senior.last_name}`;
+            const profilePicture = senior.profile_picture
+                ? `/storage/images/senior_citizen/thumbnail_profile/${senior.profile_picture}`
+                : defaultProfile;
+            const fullName = `${senior.first_name} ${senior.middle_name || ''} ${senior.last_name}${senior.suffix ? `, ${senior.suffix}` : ''}`;
+            const formattedDate = new Date(senior.date_applied).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            });
+            const row = `
+                <tr class="${index % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]'}">
+                    <td class="px-4 py-2">${senior.id}</td>
+                    <td class="px-4 py-2">${senior.osca_id}</td>
+                    <td class="px-4 py-2 flex items-center">
+                        <img class="w-10 h-10 rounded-full ring-2 ring-white mr-2" src="${profilePicture}" alt="Profile Picture">
+                        ${fullName}
+                    </td>
+                    <td class="px-4 py-2">${senior.age}</td>
+                    <td class="px-4 py-2">${senior.sex_name || 'Unknown'}</td>
+                    <td class="px-4 py-2">${senior.senior_application_status || 'Unknown'}</td>
+                    <td class="px-4 py-2">${senior.barangay_no}</td>
+                    <td class="px-4 py-2">${formattedDate}</td>
+                    <td class="px-3 py-2 flex justify-center items-center">
+                        <a href="/encoder/view-senior-profile/${senior.id}" class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer">
+                            <img src="../images/view-senior.png" alt="View Senior" class="w-4 h-4">
+                        </a>
+                    </td>
+                </tr>`;
+            tbody.innerHTML += row;
         });
-        const row = `
-            <tr class="${index % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]'}">
-                <td class="px-4 py-2">${senior.id}</td>
-                <td class="px-4 py-2">${senior.osca_id}</td>
-                <td class="px-4 py-2 flex items-center">
-                    <img class="w-10 h-10 rounded-full ring-2 ring-white mr-2" src="${profilePicture}" alt="Profile Picture">
-                    ${fullName}
-                </td>
-                <td class="px-4 py-2">${senior.age}</td>
-                <td class="px-4 py-2">${senior.sex_name || 'Unknown'}</td>
-                <td class="px-4 py-2">${senior.senior_application_status || 'Unknown'}</td>
-                <td class="px-4 py-2">${senior.barangay_no}</td>
-                <td class="px-4 py-2">${formattedDate}</td>
-                <td class="px-3 py-2 flex justify-center items-center">
-                    <a href="/encoder/view-applicant/${senior.id}" class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer">
-                        <img src="../images/view-senior.png" alt="View Senior" class="w-4 h-4">
-                    </a>
-                </td>
-            </tr>`;
-        tbody.innerHTML += row;
-    });
-}
-
-
+    }
 
     function renderPagination(data) {
         paginationContainer.innerHTML = '';

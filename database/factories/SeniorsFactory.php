@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -571,11 +572,13 @@ class SeniorsFactory extends Factory
         $date_applied = date('Y-m-d H:i:s', $timestamp);
         $date_approved_timestamp = strtotime('+1 month', $timestamp);
         $date_approved = date('Y-m-d H:i:s', $date_approved_timestamp);
+
         $has_illness = $this->faker->numberBetween(0, 1);
         $has_disability = $this->faker->randomElement([0, 0, 0, 1]);
         $permanent_source = $this->faker->randomElement([0, 1]);
         $pensioner = $this->faker->randomElement([0, 1]);
-        $assisted_by = $this->faker->numberBetween(2, 3);
+        $application_assistant_id = $this->faker->numberBetween(2, 3);
+        $registration_assistant_id = $this->faker->numberBetween(2, 3);
         $type_of_living_arrangement = $this->faker->numberBetween(1, 5);
         $isMale = $this->faker->boolean();
         $firstName = $isMale ? $this->faker->randomElement($maleNames) : $this->faker->randomElement($femaleNames);
@@ -592,17 +595,53 @@ class SeniorsFactory extends Factory
                 return $oscaId;
             },
             'date_applied' => $date_applied,
+            'date_approved' => $date_approved,
             'ncsc_rrn' => function (array $attributes) {
                 return date('Y-m-d', strtotime($attributes['date_applied'])) . '-' . $attributes['osca_id'];
             },
             'application_status_id' => $this->faker->numberBetween(1, 4),
             'account_status_id' => function (array $attributes) {
                 return $attributes['application_status_id'] === 3
-                ? $this->faker->numberBetween(1, 4)
-                : null;
+                    ? $this->faker->numberBetween(1, 4)
+                    : null;
             },
+            'application_assistant_id' => function (array $attributes) use ($application_assistant_id) {
+                return $attributes['application_status_id'] === 3
+                    ? $application_assistant_id
+                    : null;
+            },
+            'application_assistant_name' => function (array $attributes) use ($application_assistant_id) {
+                if ($attributes['application_status_id'] === 3 && $application_assistant_id) {
+                    if ($application_assistant_id === 2) {
+                        $encoder = \App\Models\Encoder::inRandomOrder()->first();
+                        return $encoder ? $encoder->encoder_first_name . ' ' . $encoder->encoder_last_name : null;
+                    } elseif ($application_assistant_id === 3) {
+                        $admin = \App\Models\Admin::find(1);
+                        return $admin ? $admin->admin_first_name . ' ' . $admin->admin_last_name : null;
+                    }
+                }
+                return null;
+            },
+            'registration_assistant_id' => function (array $attributes) use ($registration_assistant_id) {
+                return $attributes['application_status_id'] === 3
+                    ? ($registration_assistant_id ?? null)
+                    : null;
+            },
+            'registration_assistant_name' => function (array $attributes) use ($registration_assistant_id) {
+                if ($attributes['application_status_id'] === 3 && $registration_assistant_id) {
+                    if ($registration_assistant_id === 2) {
+                        $encoder = \App\Models\Encoder::inRandomOrder()->first();
+                        return $encoder ? $encoder->encoder_first_name . ' ' . $encoder->encoder_last_name : null;
+                    } elseif ($registration_assistant_id === 3) {
+                        $admin = \App\Models\Admin::find(1);
+                        return $admin ? $admin->admin_first_name . ' ' . $admin->admin_last_name : null;
+                    }
+                }
+                return null;
+            },
+
             'user_type_id' => 1,
-            'assisted_by_id' => $assisted_by,
+
             'first_name' => $firstName,
             'middle_name' => function () use ($filipinoLastNames) {
                 return $this->faker->randomElement(array_merge($filipinoLastNames, [null, null, null]));
@@ -629,7 +668,6 @@ class SeniorsFactory extends Factory
             'permanent_source' => $permanent_source,
             'if_permanent_yes_income' => $permanent_source == 1 ? $this->faker->numberBetween(1, 11) : null,
             'has_illness' => $has_illness,
-            'date_approved' => $date_approved,
             'has_disability' => $has_disability,
             'if_illness_yes' => $has_illness == 1 ? $this->faker->randomElement($existing_illness) : null,
             'if_disability_yes' => $has_disability == 1 ? $this->faker->randomElement($existing_disability) : null,
@@ -643,6 +681,10 @@ class SeniorsFactory extends Factory
             'password' => Hash::make('password'),
             'verified_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
+
+
+
+
     }
 
     /**

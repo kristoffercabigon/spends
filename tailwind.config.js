@@ -80,6 +80,7 @@ export default {
                 "fly-in-left": "flyInLeft .5s ease-out",
                 "fly-in-down": "flyInDown .5s ease-in-out",
                 "drop-in": "dropIn .2s ease-in-out",
+                "spin-slow-stop": 'spinSlowStop 1.5s cubic-bezier(0.25, 0.8, 0.5, 1) forwards',
             },
             keyframes: {
                 spin: {
@@ -172,6 +173,19 @@ export default {
                     "100%": {
                         opacity: "1",
                         transform: "scale(1)",
+                    },
+                },
+                spinSlowStop: {
+                    '0%': {
+                        transform: 'rotateY(0deg)',
+                        animationTimingFunction: 'ease-in',
+                    },
+                    '70%': {
+                        transform: 'rotateY(720deg)',
+                        animationTimingFunction: 'ease-out',
+                    },
+                    '100%': {
+                        transform: 'rotateY(720deg)', // Stops upright
                     },
                 },
             },

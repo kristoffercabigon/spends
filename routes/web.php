@@ -50,7 +50,13 @@ Route::controller(EncoderController::class)->group(function () {
         Route::get('/encoder/dashboard', 'showEncoderDashboard');
         Route::post('/encoder/filter-application-requests', 'filterSeniorsApplicationRequests');
         Route::get('/encoder/application-requests', 'showEncoderApplicationRequests');
-        Route::get('/encoder/view-applicant/{senior}', 'showEncoderSeniorApplicant');
+        Route::get('/encoder/view-senior-profile/{senior}', 'showEncoderSeniorProfile');
+        Route::get('/encoder/beneficiaries', 'showEncoderBeneficiariesList');
+        Route::post('/encoder/filter-beneficiaries', 'filterSeniorsBeneficiaries');
+        Route::get('/encoder/add-beneficiary', 'showEncoderAddBeneficiary');
+        Route::post('/encoder/submit-beneficiary', 'submitEncoderAddBeneficiary')->name('encoder-submit-add-beneficiary');
+        Route::get('/encoder/edit-senior-profile/{senior}', 'showEncoderEditSeniorProfile');
+        Route::put('/encoder/edit-senior-profile/{senior}', 'updateEncoderEditBeneficiary')->name('encoder-submit-edit-beneficiary');
         Route::post('/encoder/logout', 'encoder_logout');
         Route::put('/encoder/change-password', 'changeEncoderPassword')->name('encoder-change-password');
         Route::put('/encoder/edit-profile', 'editEncoderProfile')->name('encoder-edit-profile');
@@ -78,10 +84,22 @@ Route::controller(AdminController::class)->group(function () {
     Route::middleware('auth:admin')->group(function () {
         Route::get('/admin/profile/{admin}', 'showAdminProfile');
         Route::get('/admin/dashboard', 'showAdminDashboard');
+        Route::get('/admin/application-requests', 'showAdminApplicationRequests');
+        Route::post('/admin/filter-application-requests', 'filterSeniorsApplicationRequests');
+        Route::get('/admin/view-senior-profile/{senior}', 'showAdminSeniorProfile');
+        Route::get('/admin/beneficiaries', 'showAdminBeneficiariesList');
+        Route::post('/admin/filter-beneficiaries', 'filterSeniorsBeneficiaries');
+        Route::get('/admin/add-beneficiary', 'showAdminAddBeneficiary');
+        Route::post('/admin/submit-beneficiary', 'submitAdminAddBeneficiary')->name('admin-submit-add-beneficiary');
+        Route::get('/admin/edit-senior-profile/{senior}', 'showAdminEditSeniorProfile');
+        Route::put('/admin/edit-senior-profile/{senior}', 'updateAdminEditBeneficiary')->name('admin-submit-edit-beneficiary');
         Route::post('/admin/logout', 'admin_logout');
         Route::put('/admin/change-password', 'changeAdminPassword')->name('admin-change-password');
         Route::put('/admin/edit-profile', 'editAdminProfile')->name('admin-edit-profile');
         Route::put('/admin/edit-profile-picture', 'editAdminProfilePicture')->name('admin-edit-profile-picture');
+        Route::put('/admin/view-applicant/{id}/update-application-status', 'updateAdminSeniorApplicationStatus')->name('admin-update-application-status');
+        Route::put('/admin/view-applicant/{id}/update-account-status', 'updateAdminSeniorAccountStatus')->name('admin-update-account-status');
+
         Route::post('/admin/verify-change-password-email', 'verifyAdminChangePasswordCode')->name('admin-verify-change-password-email');
         Route::post('/admin/verify-password', 'verifyAdminPasswordForEditProfile')->name('admin-verify-password');
     });

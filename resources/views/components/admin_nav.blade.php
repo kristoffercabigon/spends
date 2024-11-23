@@ -30,7 +30,7 @@
                 @guest('admin')
                 <li class="inline-block">
                     <a @click.prevent="showAdminLoginModal = true; localStorage.setItem('showAdminLoginModal', 'true')"
-                    class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-gray-800 transition duration-150 ease-in-out block text-16px cursor-pointer">
+                    class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-orange-300 transition duration-150 ease-in-out block text-16px cursor-pointer">
                         Sign In
                  </a>  
                 @endguest
@@ -129,7 +129,7 @@
                 @guest('admin')
                     <li class="inline-block">
                     <a @click.prevent="showAdminLoginModal = true; localStorage.setItem('showAdminLoginModal', 'true')"
-                    class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-gray-800 transition duration-150 ease-in-out block text-16px cursor-pointer">
+                    class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-orange-300 transition duration-150 ease-in-out block text-16px cursor-pointer">
                         Sign In
                  </a>  
                 @endguest

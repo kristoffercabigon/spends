@@ -237,14 +237,14 @@
               </a>
               <div role="menu" x-show="open" class="mt-2 animate-custom-fade-in-right space-y-2 px-7" aria-label="Dashboards">
                 <a
-                  href="../index.html"
+                  href="/encoder/beneficiaries"
                   role="menuitem"
                   class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700"
                 >
                   Beneficiaries List
                 </a>
                 <a
-                  href="#"
+                  href="/encoder/add-beneficiary"
                   role="menuitem"
                   class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700"
                 >
@@ -269,7 +269,7 @@
                     class="w-5 h-5"
                     aria-hidden="true"
                 />
-                <span class="ml-2 text-sm"> Announcement Page </span>
+                <span class="ml-2 text-sm"> Announcements </span>
                 <span class="ml-auto" aria-hidden="true">
                   <svg
                     class="w-4 h-4 transition-transform transform"
@@ -285,28 +285,28 @@
               </a>
               <div role="menu" x-show="open" class="mt-2 animate-custom-fade-in-right  space-y-2 px-7" aria-label="Dashboards">
                 <a
-                  href="../index.html"
+                  href="/encoder/pension-distribution-list"
                   role="menuitem"
                   class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700"
                 >
                   Pension Distribution List
                 </a>
                 <a
-                  href="../index.html"
+                  href="/encoder/add-pension-distribution"
                   role="menuitem"
                   class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700"
                 >
                   Add Pension Distribution Program
                 </a>
                 <a
-                  href="#"
+                  href="/encoder/events-list"
                   role="menuitem"
                   class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700"
                 >
                   Events List
                 </a>
                 <a
-                  href="#"
+                  href="/encoder/add-event"
                   role="menuitem"
                   class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700"
                 >

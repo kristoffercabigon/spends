@@ -29,17 +29,30 @@ class SeniorsController extends Controller
 {
     public function index()
     {
-        $data = array("seniors" => DB::table('seniors')->orderBy('created_at', 'desc')->paginate(10));
+        $data = [
+            "seniors" => DB::table('seniors')->orderBy('created_at', 'desc')->paginate(10)
+        ];
+
         return view('senior_citizen.index', $data)->with('title', 'Home ');
     }
 
     public function announcement()
     {
+        if (!session()->has('senior') && !session()->has('sticky-body-message')) {
+            session()->flash('sticky-body-message', 'Take the first step towards applying for the OSCA pension program today');
+            session()->flash('sticky-button-message', 'Apply Now');
+        }
+
         return view('senior_citizen.announcement')->with('title', 'Announcement ');
     }
 
     public function contact_us()
     {
+        if (!session()->has('senior') && !session()->has('sticky-body-message')) {
+            session()->flash('sticky-body-message', 'Take the first step towards applying for the OSCA pension program today');
+            session()->flash('sticky-button-message', 'Apply Now');
+        }
+
         return view('senior_citizen.contact_us')->with('title', 'Contact Us ');
     }
 
@@ -79,6 +92,11 @@ class SeniorsController extends Controller
 
     public function about_us()
     {
+        if (!session()->has('senior') && !session()->has('sticky-body-message')) {
+            session()->flash('sticky-body-message', 'Take the first step towards applying for the OSCA pension program today');
+            session()->flash('sticky-button-message', 'Apply Now');
+        }
+        
         return view('senior_citizen.about_us')->with('title', 'About Us ');
     }
 
@@ -153,7 +171,13 @@ class SeniorsController extends Controller
 
         $user_type_id = 1;
         $application_status_id = 1;
+        $account_status_id = null;
         $date_approved = null;
+
+        $seniorData['registration_assistant_id'] = null;
+        $seniorData['registration_assistant_name'] = null;
+        $seniorData['application_assistant_id'] = null;
+        $seniorData['application_assistant_name'] = null;
 
         $seniorData['date_applied'] = now();
         $seniorData['osca_id'] = $osca_id;
@@ -164,6 +188,7 @@ class SeniorsController extends Controller
 
         $seniorData['user_type_id'] = $user_type_id;
         $seniorData['application_status_id'] = $application_status_id;
+        $seniorData['account_status_id'] = $account_status_id;
         $seniorData['date_approved'] = $date_approved;
 
         if (empty($request->input('g-recaptcha-response'))) {
@@ -309,7 +334,7 @@ class SeniorsController extends Controller
                 'guardian_last_name' => $request->guardian_last_name ?: null,
                 'guardian_suffix' => $request->guardian_suffix ?: null,
                 'guardian_relationship_id' => $request->guardian_relationship_id ?: null,
-                'guardian_contact_no' => $request->guardian_contact_no ?: null,
+                'guardian_contact_no' => $request->guardian_contact_no ? '+63' . ltrim($request->guardian_contact_no, '0') : null,
             ]);
         }
 
@@ -721,6 +746,11 @@ class SeniorsController extends Controller
         $sex_list = DB::table('sex_list')->get();
         $civil_status_list = DB::table('civil_status_list')->get();
         $barangay_list = DB::table('barangay_list')->get();
+        $senior_account_status_list = DB::table('senior_account_status_list')->get();
+        $senior_application_status_list = DB::table('senior_application_status_list')->get();
+
+        $selectedAccount_Status = $senior_account_status_list->firstWhere('id', $senior->account_status_id);
+        $selectedApplication_Status = $senior_application_status_list->firstWhere('id', $senior->application_status_id);
 
         return view('senior_citizen.profile', [
             'senior' => $senior,
@@ -728,6 +758,8 @@ class SeniorsController extends Controller
             'sex' => $sex_list,
             'civil_status' => $civil_status_list,
             'barangay' => $barangay_list,
+            'account_status' => $selectedAccount_Status,
+            'application_status' => $selectedApplication_Status,
         ]);
     }
 

@@ -24,6 +24,7 @@ use Database\Seeders\SeniorApplicationStatusSeeder;
 use Database\Seeders\SeniorAccountStatusSeeder;
 use Database\Seeders\UserTypeSeeder;
 use Database\Seeders\FamilyCompositionSeeder;
+use Database\Seeders\GuardianSeeder;
 use Database\Seeders\AdminSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -49,7 +50,8 @@ class DatabaseSeeder extends Seeder
         $this->call(AdminSeeder::class);
         $this->call(SeniorApplicationStatusSeeder::class);
         $this->call(SeniorAccountStatusSeeder::class);
-        Seniors::factory(5)->create();
+        Seniors::factory(50)->create();
+        $this->call(GuardianSeeder::class);
         $this->call(FamilyCompositionSeeder::class);
         $this->call(IncomeSourceDataSeeder::class);
         $this->call(SourceDatasSeeder::class);

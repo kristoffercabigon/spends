@@ -1,6 +1,7 @@
 @php
-    $senior = session('senior'); 
+    $senior = session('senior');
 @endphp
+
 <nav x-data="{
     open: false,
     dropdownOpen: false,
@@ -35,7 +36,7 @@
                 <li><a @click.prevent="showRequestTrackerModal = true; localStorage.setItem('showRequestTrackerModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 cursor-pointer">Request Tracker</a></li>
                 <li class="inline-block">
                     <a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')"
-                    class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-gray-800 transition duration-150 ease-in-out block text-16px cursor-pointer">
+                    class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-orange-300 transition duration-150 ease-in-out block text-16px cursor-pointer">
                         Sign In
                  </a>
                 </li>
@@ -146,7 +147,7 @@
                 <li><a @click.prevent="showRequestTrackerModal = true; localStorage.setItem('showRequestTrackerModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Request Tracker</a></li>
                 <li class="inline-block">
                     <a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')"
-                    class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-gray-800 transition duration-150 ease-in-out block text-16px cursor-pointer">
+                    class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-orange-300 transition duration-150 ease-in-out block text-16px cursor-pointer">
                         Sign In
                  </a>
                 </li> <br>
@@ -166,4 +167,5 @@
     <x-modal.senior_citizen.request_tracker />
     <x-modal.senior_citizen.request_status />
     <x-modal.senior_citizen.verify_your_email />
+    <x-sticky_banners.senior_citizen.guest_apply />
 </nav>

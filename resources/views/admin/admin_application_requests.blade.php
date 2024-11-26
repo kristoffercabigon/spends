@@ -102,7 +102,7 @@
                                     </svg>
                                 </button>
 
-                                <div id="dropdownDefaultCheckbox" class="z-10 hidden animate-drop-in w-48 bg-white divide-y shadow-lg divide-gray-100 rounded-lg shadow absolute right-0 top-12">
+                                <div id="dropdownDefaultCheckbox" class="z-10 hidden animate-drop-in w-48 bg-white divide-y shadow-lg divide-gray-100 rounded-lg shadow absolute top-12 lg:right-0">
                                     <ul class="p-3 space-y-3 text-sm text-gray-700" aria-labelledby="dropdownCheckboxButton">
                                         @foreach ($applicationStatuses as $status)
                                         <li>
@@ -119,7 +119,7 @@
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto lg:overflow-hidden">
+                    <div class="overflow-x-auto lg:overflow-visible">
                         <table class="min-w-full table-auto drop-shadow-lg relative bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 leading-8" data-aos="zoom-in">
                             <thead>
                                 <tr class="bg-[#FF4802] text-white">

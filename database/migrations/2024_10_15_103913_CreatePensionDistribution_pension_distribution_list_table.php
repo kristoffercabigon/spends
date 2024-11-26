@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('encoder_roles_list', function (Blueprint $table) {
+        Schema::create('pension_distribution_list', function (Blueprint $table) {
             $table->id();
-            $table->string('encoder_role');
-            $table->string('encoder_role_category');
+            $table->foreignId('barangay_id')->nullable()->constrained('barangay_list');
+            $table->string('venue')->nullable();
+            $table->dateTime('date_of_distribution')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('encoder_roles_list');
+        Schema::dropIfExists('pension_distribution_list');
     }
 };

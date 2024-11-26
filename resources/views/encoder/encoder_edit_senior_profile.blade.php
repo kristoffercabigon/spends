@@ -546,13 +546,53 @@
                                                     <td class="border border-gray-300 px-4 py-2">
                                                         <input type="text" name="relative_income[]" value="{{ $family->relative_income }}" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter income" style="min-width: 150px;">
                                                     </td>
-                                                    <td class="border border-gray-300 px-4 py-2 flex items-center justify-center">
+                                                    <td class="border border-gray-300 px-4 py-2 flex items-center justify-center" id="removeCell-0">
                                                         <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
                                                             <img src="../../images/trashbin.png" alt="Delete" class="h-5 w-5" />
                                                         </button>
                                                     </td>
                                                 </tr>
                                                 @endforeach
+                                            @else
+                                                <tr>
+                                                    <td class="border border-gray-300 px-4 py-2">
+                                                        <input type="text" name="relative_name[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter name" style="min-width: 150px;">
+                                                    </td>
+                                                    <td class="border border-gray-300 px-4 py-2">
+                                                        <select name="relative_relationship_id[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
+                                                            <option value="" disabled selected>Select relationship</option>
+                                                            @foreach ($relationship_list as $relationship)
+                                                                <option value="{{ $relationship->id }}">
+                                                                    {{ $relationship->relationship }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                    <td class="border border-gray-300 px-4 py-2">
+                                                        <input type="number" name="relative_age[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter age" style="min-width: 150px;">
+                                                    </td>
+                                                    <td class="border border-gray-300 px-4 py-2">
+                                                        <select name="relative_civil_status_id[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
+                                                            <option value="" disabled selected>Select status</option>
+                                                            @foreach ($civil_status_list as $status)
+                                                                <option value="{{ $status->id }}">
+                                                                    {{ $status->civil_status }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                    <td class="border border-gray-300 px-4 py-2">
+                                                        <input type="text" name="relative_occupation[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter occupation" style="min-width: 150px;">
+                                                    </td>
+                                                    <td class="border border-gray-300 px-4 py-2">
+                                                        <input type="text" name="relative_income[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter income" style="min-width: 150px;">
+                                                    </td>
+                                                    <td class="border border-gray-300 px-4 py-2 hidden flex items-center justify-center" id="removeCell-0">
+                                                        <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
+                                                            <img src="images/trashbin.png" alt="Delete" class="h-5 w-5" />
+                                                        </button>
+                                                    </td>
+                                                </tr>
                                             @endif
                                         </tbody>
                                     </table>

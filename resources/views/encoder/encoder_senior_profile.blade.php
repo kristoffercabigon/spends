@@ -298,7 +298,7 @@
                                         <span class="tracking-wide text-white font-semibold">Guardian</span>
                                     </div>
                                     <div class="text-gray-700">
-                                        @if (empty($senior_guardian))
+                                        @if (empty($senior_guardian) || (is_null($senior_guardian->guardian_first_name) && is_null($senior_guardian->guardian_last_name)))
                                             <div class="px-4 py-2 text-center font-light text-gray-500">None</div>
                                         @else
                                             <div class="grid md:grid-cols-2 text-sm">

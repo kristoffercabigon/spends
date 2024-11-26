@@ -369,6 +369,103 @@ class AdminController extends Controller
         return response()->json($seniors);
     }
 
+    public function showAdminEncodersList()
+    {
+        $barangay_list = DB::table('barangay_list')->get();
+
+        $encoders = DB::table('encoder')
+        ->leftJoin('encoder_roles', 'encoder_roles.encoder_user_id', '=', 'encoder.id')
+        ->leftJoin('encoder_roles_list', 'encoder_roles.encoder_roles_id', '=', 'encoder_roles_list.id')
+        ->select(
+            'encoder.id',
+            'encoder.encoder_id',
+            'encoder.encoder_first_name',
+            'encoder.encoder_middle_name',
+            'encoder.encoder_last_name',
+            'encoder.encoder_suffix',
+            'encoder.encoder_profile_picture',
+            'encoder.encoder_date_registered',
+            DB::raw('GROUP_CONCAT(DISTINCT encoder_roles_list.encoder_role_category ORDER BY encoder_roles_list.id) as role_categories'),
+            DB::raw('GROUP_CONCAT(DISTINCT encoder_roles_list.encoder_role ORDER BY encoder_roles_list.id) as roles')
+        )
+            ->groupBy(
+                'encoder.id',
+                'encoder.encoder_id',
+                'encoder.encoder_first_name',
+                'encoder.encoder_middle_name',
+                'encoder.encoder_last_name',
+                'encoder.encoder_suffix',
+                'encoder.encoder_profile_picture',
+                'encoder.encoder_date_registered'
+            )
+            ->orderBy('encoder.id', 'asc')
+            ->paginate(10);
+
+        $encoderRolesDropdown = DB::table('encoder_roles_list')
+        ->select('id', 'encoder_role', 'encoder_role_category')
+        ->distinct()
+            ->get()
+            ->groupBy('encoder_role_category');
+
+        return view('admin.admin_encoders_list', [
+            'title' => 'Encoders List',
+            'encoderRoles_dropdown' => $encoderRolesDropdown,
+            'encoders' => $encoders,
+            'barangay_list' => $barangay_list
+        ]);
+    }
+
+    public function filterEncoders(Request $request)
+    {
+        $roleCategory = $request->input('encoder_roles_ids', []);
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $searchQuery = $request->input('search_query', '');
+        $order = $request->input('order', 'asc');
+        $perPage = 10;
+
+        $query = DB::table('encoder')
+        ->leftJoin('encoder_roles', 'encoder_roles.encoder_user_id', '=', 'encoder.id')
+        ->leftJoin('encoder_roles_list', 'encoder_roles.encoder_roles_id', '=', 'encoder_roles_list.id')
+        ->select(
+            'encoder.id',
+            'encoder.encoder_id',
+            'encoder.encoder_first_name',
+            'encoder.encoder_middle_name',
+            'encoder.encoder_last_name',
+            'encoder.encoder_suffix',
+            'encoder.encoder_date_registered',
+            DB::raw('GROUP_CONCAT(DISTINCT encoder_roles_list.encoder_role_category ORDER BY encoder_roles_list.id) as role_categories'),
+            DB::raw('GROUP_CONCAT(encoder_roles_list.encoder_role ORDER BY encoder_roles_list.id) as roles')
+        )
+        ->groupBy('encoder.id', 'encoder.encoder_id', 'encoder.encoder_first_name','encoder.encoder_middle_name', 'encoder.encoder_last_name','encoder.encoder_suffix', 'encoder.encoder_date_registered')
+        ->orderBy('encoder.id', $order);
+
+        if (!empty($roleCategory)) {
+            $query->whereIn('encoder_roles_list.id', $roleCategory);
+        }
+
+        if ($startDate) {
+            $query->whereDate('encoder.encoder_date_registered', '>=', $startDate);
+        }
+
+        if ($endDate) {
+            $query->whereDate('encoder.encoder_date_registered', '<=', $endDate);
+        }
+
+        if (!empty($searchQuery)) {
+            $query->where(function ($q) use ($searchQuery) {
+                $q->whereRaw("LOWER(CONCAT_WS(' ', encoder.encoder_first_name, encoder.encoder_middle_name, encoder.encoder_last_name, encoder.encoder_suffix)) LIKE ?", ['%' . strtolower($searchQuery) . '%'])
+                    ->orWhere('encoder.encoder_id', 'LIKE', '%' . $searchQuery . '%');
+            });
+        }
+
+        $encoders = $query->paginate($perPage);
+
+        return response()->json($encoders);
+    }
+
+
     public function admin_login(Request $request)
     {
         $AdminLoginMessages = [

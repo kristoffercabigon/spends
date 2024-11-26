@@ -11,7 +11,7 @@ class EncoderRolesDatasSeeder extends Seeder
     public function run(): void
     {
         $encoders = Encoder::all();
-        $roleIds = [1, 2, 3];
+        $roleIds = [1, 2, 3, 4, 5, 6, 7, 8, 9 ,10, 11, 12, 13, 14, 15];
 
         foreach ($encoders as $encoder) {
             $roles = array_rand(array_flip($roleIds), rand(1, count($roleIds)));

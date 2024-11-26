@@ -1,19 +1,19 @@
-@if (session('clearEncoderRegisterModal'))
+@if (session('clearAdminAddEncoderModal'))
 <script>
-    localStorage.removeItem('showEncoderRegisterModal');
+    localStorage.removeItem('showAdminAddEncoderModal');
 </script>
 @endif
 
 <div style="display: none" class="fixed inset-0 bg-black bg-opacity-50 z-10 flex items-center justify-center font-poppins"
-    x-show="showEncoderRegisterModal"
+    x-show="showAdminAddEncoderModal"
     x-transition:enter="transition-opacity ease-linear duration-300"
      x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
      x-transition:leave="transition-opacity ease-linear duration-300"
      x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-    @click.away="showEncoderRegisterModal = false; localStorage.setItem('showEncoderRegisterModal', 'false')">
+    @click.away="showAdminAddEncoderModal = false; localStorage.setItem('showAdminAddEncoderModal', 'false')">
     <div @click.stop>
         <section class="bg-gray-50 relative mx-4 rounded-lg">
-            <button @click="showEncoderRegisterModal = false; localStorage.setItem('showEncoderRegisterModal', 'false')" 
+            <button @click="showAdminAddEncoderModal = false; localStorage.setItem('showAdminAddEncoderModal', 'false')" 
                     class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -22,7 +22,7 @@
             <div class="w-[400px] bg-white rounded-lg shadow sm:max-w-md xl:p-0">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                     <h1 class="text-xl font-bold mt-4 leading-tight tracking-tight text-gray-900 md:text-2xl">
-                        Register as Encoder
+                        Add Encoder
                     </h1>
                     <div class="relative">
                         <div id="progressLeft" class="absolute top-[35%] left-0 h-[2px] z-0 transform -translate-y-1/2 bg-gray-500" style="width: 50%;"></div>
@@ -108,6 +108,55 @@
                             </div>
 
                             <div>
+                                <label for="encoder_address" class="block mb-2 text-sm font-medium text-gray-900">Address</label>
+                                <input type="text" name="encoder_address" id="encoder_address" placeholder="Address"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ old('encoder_address') }}">
+
+                                @error('encoder_address')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @elseif(old('encoder_address'))
+                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="encoder_barangay_id" class="block mb-2 text-sm font-medium text-gray-900">Barangay</label>
+                                <select name="encoder_barangay_id" id="encoder_barangay_id"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                                    <option value="" disabled selected>Select Barangay</option>
+                                    @foreach ($barangay_list as $barangay)
+                                        <option value="{{ $barangay->id }}" {{ old('encoder_barangay_id') == $barangay->id ? 'selected' : '' }}>
+                                            {{ $barangay->barangay_no }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                @error('encoder_barangay_id')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @elseif(old('encoder_barangay_id'))
+                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label class="text-sm mb-2 block">
+                                    Contact Number
+                                </label>
+
+                                <div class="flex">
+                                    <span class="inline-flex items-center px-3 bg-gray-200 text-gray-700 border border-gray-300 rounded-l-md">
+                                        +63
+                                    </span>
+                                    
+                                    <input name="encoder_contact_no" type="text" value="{{ old('encoder_contact_no') }}" 
+                                        class="w-full text-sm px-4 py-3 rounded-r-md transition-all pr-10" 
+                                        placeholder="(10 digits)" 
+                                        inputmode="numeric" pattern="[0-9]*" maxlength="10" 
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                                </div>
+                            </div>
+
+                            <div>
                                 <label for="encoder_email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
                                 <input type="email" name="encoder_email" id="encoder_email" placeholder="email@example.com"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ old('encoder_email') }}">
@@ -178,7 +227,7 @@
 
                             <div class="flex justify-center items-center mt-4">
                                 <img :src="previewEncoderUrl" id="encoder_profile_picture_preview" class="max-h-48 rounded-md shadow-lg cursor-pointer" style="display: none;" alt="Profile Picture Preview"
-                                    @click="showEncoderProfilePicModal = true">
+                                    @click="showAdminEncoderProfilePicModal = true">
                             </div>
 
                             <div>

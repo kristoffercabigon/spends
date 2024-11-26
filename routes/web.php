@@ -89,6 +89,8 @@ Route::controller(AdminController::class)->group(function () {
         Route::get('/admin/view-senior-profile/{senior}', 'showAdminSeniorProfile');
         Route::get('/admin/beneficiaries', 'showAdminBeneficiariesList');
         Route::post('/admin/filter-beneficiaries', 'filterSeniorsBeneficiaries');
+        Route::get('/admin/encoders', 'showAdminEncodersList');
+        Route::post('/admin/filter-encoders', 'filterEncoders');
         Route::get('/admin/add-beneficiary', 'showAdminAddBeneficiary');
         Route::post('/admin/submit-beneficiary', 'submitAdminAddBeneficiary')->name('admin-submit-add-beneficiary');
         Route::get('/admin/edit-senior-profile/{senior}', 'showAdminEditSeniorProfile');

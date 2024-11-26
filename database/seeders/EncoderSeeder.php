@@ -237,7 +237,138 @@ class EncoderSeeder extends Seeder
             'Soriano',
         ];
 
-        $numberOfRecords = 10;
+        $barangays = [
+            'Barangay 165',
+            'Barangay 166',
+            'Barangay 167',
+            'Barangay 168',
+            'Barangay 169',
+            'Barangay 170',
+            'Barangay 171',
+            'Barangay 172',
+            'Barangay 173',
+            'Barangay 174',
+            'Barangay 175',
+            'Barangay 176-A',
+            'Barangay 176-B',
+            'Barangay 176-C',
+            'Barangay 176-D',
+            'Barangay 176-E',
+            'Barangay 176-F',
+            'Barangay 177',
+            'Barangay 178',
+            'Barangay 179',
+            'Barangay 180',
+            'Barangay 181',
+            'Barangay 182',
+            'Barangay 183',
+            'Barangay 184'
+        ];
+
+        $filipinoStreet = [
+            'Maligaya Street',
+            'Mabait Drive',
+            'Malolos Avenue',
+            'Daisy Road',
+            'Camia Boulevard',
+            'Sampaguita Street',
+            'Rosal Drive',
+            'Ruby Avenue',
+            'Emerald Boulevard',
+            'Gemini Street',
+            'Sunflower Drive',
+            'Tulip Road',
+            'Jade Avenue',
+            'Pearl Boulevard',
+            'Santos Street',
+            'Magnolia Avenue',
+            'Ilang-Ilang Drive',
+            'Waling-Waling Boulevard',
+            'Champaca Street',
+            'Dama de Noche Avenue',
+            'Venus Road',
+            'Saturn Street',
+            'Mars Drive',
+            'Orion Boulevard',
+            'Aurora Avenue',
+            'Luna Street',
+            'Kalayaan Drive',
+            'Masaya Road',
+            'Pag-asa Street',
+            'Matahimik Avenue',
+            'Makisig Boulevard',
+            'Marangal Drive',
+            'Magiting Street',
+            'Mabuhay Road',
+            'Mapayapa Avenue',
+            'Matatag Drive',
+            'Matapat Boulevard',
+            'Matamis Street',
+            'Mahinhin Drive',
+            'Maharlika Avenue',
+            'Anahaw Road',
+            'Acacia Street',
+            'Yakal Boulevard',
+            'Narra Drive',
+            'Kamagong Street',
+            'Molave Avenue',
+            'Banaba Road',
+            'Talisay Drive',
+            'Santol Street',
+            'Mangga Avenue',
+            'Bayabas Drive',
+            'Makopa Street',
+            'Kalamansi Road',
+            'Atis Drive',
+            'Langka Street',
+            'Papaya Boulevard',
+            'Guyabano Avenue',
+            'Siniguelas Drive',
+            'Avocado Street',
+            'Chico Road',
+            'Guava Drive',
+            'Balete Boulevard',
+            'Pineapple Avenue',
+            'Cherry Drive',
+            'Rambutan Street',
+            'Dalandan Road',
+            'Jasmine Street',
+            'Azucena Drive',
+            'Gardenia Boulevard',
+            'Lily Avenue',
+            'Poinsettia Street',
+            'Gumamela Drive',
+            'Hydrangea Road',
+            'Bluebell Boulevard',
+            'Iris Avenue',
+            'Violeta Street',
+            'Zinnia Drive',
+            'Carnation Road',
+            'Hibiscus Boulevard',
+            'Marigold Street',
+            'Cosmos Drive',
+            'Petunia Road',
+            'Lavender Avenue',
+            'Rose Street',
+            'Gladiola Boulevard',
+            'Peridot Avenue',
+            'Topaz Street',
+            'Amethyst Drive',
+            'Opal Road',
+            'Diamond Boulevard',
+            'Sapphire Street',
+            'Garnet Drive',
+            'Turquoise Road',
+            'Citrine Avenue',
+            'Amber Street',
+            'Coral Boulevard',
+            'Onyx Drive',
+            'Aquamarine Avenue',
+            'Silver Street',
+            'Gold Boulevard'
+        ];
+
+        $numberOfRecords = 30;
         $usedEncoderIds = [];
 
         for ($i = 0; $i < $numberOfRecords; $i++) {
@@ -255,6 +386,9 @@ class EncoderSeeder extends Seeder
                     'encoder_first_name' => 'Kristoffer',
                     'encoder_middle_name' => 'Dela Cruz',
                     'encoder_last_name' => 'Cabigon',
+                    'encoder_address' => '1089 Phase3B Block10 Lot 2 Camarin Caloocan city',
+                    'encoder_barangay_id' => 11,
+                    'encoder_contact_no' => '+639278147238',
                     'encoder_suffix' => null, 
                     'encoder_email' => 'kristoffercabigon@gmail.com',
                     'encoder_password' => bcrypt('Abaayos!'),
@@ -276,18 +410,33 @@ class EncoderSeeder extends Seeder
                     ($suffix ? strtolower(str_replace(' ', '', $suffix)) : '') .
                     rand(10, 99) . '@example.com';
 
+                $houseNumber = fake()->numberBetween(1000, 9999);
+                $phase = 'Phase ' . fake()->numberBetween(1, 10);
+                $block = 'Block ' . fake()->numberBetween(1, 90);
+                $lot = 'Lot ' . fake()->numberBetween(1, 90);
+                $barangayNo = fake()->randomElement($barangays);
+                $barangayIndex = array_search($barangayNo, $barangays) + 1;
+                $filipinoStreetName = fake()->randomElement($filipinoStreet);
+                $encoder_address = "{$houseNumber} {$phase} {$block} {$lot} {$filipinoStreetName}, {$barangayNo}, Caloocan City";
+
+                $encoder_contact_no = fake()->regexify('\+639[0-9]{9}');
+
                 Encoder::create([
                     'encoder_id' => $encoderId,
                     'encoder_user_type_id' => 2,
                     'encoder_first_name' => $firstName,
                     'encoder_middle_name' => $middleName,
                     'encoder_last_name' => $lastName,
+                    'encoder_address' => $encoder_address,
+                    'encoder_barangay_id' => $barangayIndex,
+                    'encoder_contact_no' => $encoder_contact_no,
                     'encoder_suffix' => $suffix,
                     'encoder_email' => $email,
                     'encoder_password' => bcrypt('password'),
-                    'encoder_verified_at' => $faker->dateTimeThisDecade()->format('Y-m-d H:i:s'),
-                    'encoder_date_registered' => $faker->dateTimeThisDecade()->format('Y-m-d H:i:s'),
+                    'encoder_verified_at' => fake()->dateTimeThisDecade()->format('Y-m-d H:i:s'),
+                    'encoder_date_registered' => fake()->dateTimeThisDecade()->format('Y-m-d H:i:s'),
                 ]);
+
             }
         }
     }

@@ -43,11 +43,69 @@ class EncoderController extends Controller
 
     public function showEncoderProfile($encoder_id)
     {
-        $encoder = Encoder::findOrFail($encoder_id);
+        $encoder = Encoder::leftJoin('barangay_list', 'encoder.encoder_barangay_id', '=', 'barangay_list.id')
+        ->leftJoin('encoder_roles', 'encoder_roles.encoder_user_id', '=', 'encoder.id')
+        ->leftJoin('encoder_roles_list', 'encoder_roles.encoder_roles_id', '=', 'encoder_roles_list.id')
+        ->select(
+            'encoder.id',
+            'encoder.encoder_id',
+            'encoder.encoder_first_name',
+            'encoder.encoder_middle_name',
+            'encoder.encoder_last_name',
+            'encoder.encoder_address',
+            'encoder.encoder_email',
+            'encoder.encoder_contact_no',
+            'encoder.encoder_suffix',
+            'encoder.encoder_date_registered',
+            'encoder.encoder_profile_picture',
+            'encoder.encoder_barangay_id',
+            'barangay_list.barangay_no',
+            DB::raw('GROUP_CONCAT(encoder_roles_list.encoder_role) as roles')
+        )
+        ->where('encoder.id', $encoder_id)
+        ->groupBy(
+            'encoder.id',
+            'encoder.encoder_id',
+            'encoder.encoder_first_name',
+            'encoder.encoder_middle_name',
+            'encoder.encoder_last_name',
+            'encoder.encoder_address',
+            'encoder.encoder_email',
+            'encoder.encoder_contact_no',
+            'encoder.encoder_suffix',
+            'encoder.encoder_date_registered',
+            'encoder.encoder_profile_picture',
+            'encoder.encoder_barangay_id',
+            'barangay_list.barangay_no'
+        )
+        ->firstOrFail();
+
+        // Categories and role filtering
+        $categories = ['view', 'create', 'update', 'delete'];
+        $roles = collect(explode(',', $encoder->roles))
+            ->groupBy(function ($role) use ($categories) {
+                foreach ($categories as $category) {
+                    if (str_contains(strtolower($role), $category)) {
+                        return $category;
+                    }
+                }
+                return 'other';
+            });
+
+        // Assign category colors for buttons
+        $categoryColors = [
+            'view' => 'green-500',
+            'create' => 'blue-500',
+            'update' => 'orange-500',
+            'delete' => 'red-500',
+        ];
 
         return view('encoder.encoder_profile', [
             'encoder' => $encoder,
-            'title' => 'Profile'
+            'title' => 'Profile',
+            'categories' => $categories,
+            'roles' => $roles,
+            'categoryColors' => $categoryColors,
         ]);
     }
 

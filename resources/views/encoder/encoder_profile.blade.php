@@ -104,13 +104,33 @@
                                     <ul class="bg-gray-100 text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
                                         <li class="flex items-center py-3">
                                             <span>Encoder Roles</span>
-                                            <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm">Edit</span></span>
+                                            <div class="flex flex-wrap items-center justify-center my-2 mx-2 gap-2">
+                                                @foreach ($categories as $category)
+                                                    @if (!empty($roles[$category]))
+                                                        <div class="relative group">
+                                                            <span class="cursor-pointer bg-{{ $categoryColors[$category] }} py-1 px-2 rounded text-white text-sm">
+                                                                {{ ucfirst($category) }}
+                                                            </span>
+                                                            <div class="hidden group-hover:block absolute z-10 bg-white border border-gray-200 shadow-lg rounded-md p-2 w-max">
+                                                                <ul class="text-sm text-gray-700">
+                                                                    @foreach ($roles[$category] as $role)
+                                                                        <li class="list-disc ml-4">{{ $role }}</li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                @endforeach
+                                            </div>
                                         </li>
                                         <li class="flex items-center py-3">
                                             <span>Date Registered</span>
-                                            <span class="ml-auto">Nov 07, 2024</span>
+                                            <span class="ml-auto">
+                                                {{ \Carbon\Carbon::parse($encoder->encoder_date_registered)->format('F j, Y') }}
+                                            </span>
                                         </li>
                                     </ul>
+
                                 </div>
                             </div>
                             
@@ -157,6 +177,14 @@
                                                     @endif
                                                 </div>
                                             </div>
+                                            <div class="grid grid-cols-2">
+                                                <div class="px-4 py-2 font-semibold">Address</div>
+                                                <div class="px-4 py-2">{{ $encoder->encoder_address }}</div>
+                                            </div>
+                                            <div class="grid grid-cols-2">
+                                                <div class="px-4 py-2 font-semibold">Address</div>
+                                                <div class="px-4 py-2">{{ $encoder->barangay_no }}</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -187,6 +215,10 @@
                                                         Change Password
                                                     </button>
                                                 </div>
+                                            </div>
+                                            <div class="grid grid-cols-2">
+                                                <div class="px-4 py-2 font-semibold">Contact Number</div>
+                                                <div class="px-4 py-2 break-words">{{ $encoder->encoder_contact_no }}</div>
                                             </div>
                                         </div>
                                     </div>

@@ -265,102 +265,38 @@
                 </a>
             </div>
 
-            <div x-data="{ isActive: false, open: false}">
-              <a
-                href="#"
-                @click="$event.preventDefault(); open = !open"
-                class="flex items-center p-2 text-gray-500 transition-colors rounded-md hover:bg-primary-100"
-                :class="{'bg-primary-100': isActive || open}"
-                role="button"
-                aria-haspopup="true"
-                :aria-expanded="(open || isActive) ? 'true' : 'false'"
-              >
-              <img 
-                  src="{{ asset('images/user.png') }}" 
-                  alt="User Icon" 
-                  class="w-5 h-5"
-                  aria-hidden="true"
-              />
-                <span class="ml-2 text-sm">Beneficiaries</span>
-                <span class="ml-auto" aria-hidden="true">
-                    <svg
-                    class="w-4 h-4 transition-transform transform"
-                    :class="{ 'rotate-180': open }"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </span>
-              </a>
-              <div role="menu" x-show="open" class="mt-2 animate-custom-fade-in-right space-y-2 px-7" aria-label="Dashboards">
+            <div>
                 <a
-                  href="/admin/beneficiaries"
-                  role="menuitem"
-                  class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700"
+                href="/admin/beneficiaries"
+                role="menuitem"
+                class="flex items-center p-2 mb-2 text-gray-500 transition-colors duration-200 rounded-md hover:text-gray-700 hover:bg-primary-100"
                 >
-                  Beneficiaries List
+                  <img 
+                      src="{{ asset('images/user.png') }}" 
+                      alt="Dashboard Icon" 
+                      class="w-5 h-5"
+                      aria-hidden="true"
+                  />
+                  <span class="ml-2 text-sm">Beneficiaries</span>
                 </a>
-                <a
-                  href="/admin/add-beneficiary"
-                  role="menuitem"
-                  class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700"
-                >
-                  Add Beneficiary
-                </a>
-              </div>
             </div>
 
-            <div x-data="{ isActive: false, open: false}">
-              <a
-                href="#"
-                @click="$event.preventDefault(); open = !open"
-                class="flex items-center p-2 text-gray-500 transition-colors rounded-md hover:bg-primary-100"
-                :class="{'bg-primary-100': isActive || open}"
-                role="button"
-                aria-haspopup="true"
-                :aria-expanded="(open || isActive) ? 'true' : 'false'"
-              >
-              <img 
-                  src="{{ asset('images/user.png') }}" 
-                  alt="User Icon" 
-                  class="w-5 h-5"
-                  aria-hidden="true"
-              />
-                <span class="ml-2 text-sm">Encoders</span>
-                <span class="ml-auto" aria-hidden="true">
-                    <svg
-                    class="w-4 h-4 transition-transform transform"
-                    :class="{ 'rotate-180': open }"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </span>
-              </a>
-              <div role="menu" x-show="open" class="mt-2 animate-custom-fade-in-right space-y-2 px-7" aria-label="Dashboards">
+            <div>
                 <a
-                  href="/admin/encoders"
-                  role="menuitem"
-                  class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700"
+                href="/admin/encoders"
+                role="menuitem"
+                class="flex items-center p-2 mb-2 text-gray-500 transition-colors duration-200 rounded-md hover:text-gray-700 hover:bg-primary-100"
                 >
-                  Encoders List
+                  <img 
+                      src="{{ asset('images/user.png') }}" 
+                      alt="Dashboard Icon" 
+                      class="w-5 h-5"
+                      aria-hidden="true"
+                  />
+                  <span class="ml-2 text-sm">Encoders</span>
                 </a>
-                <a
-                  href="/admin/add-encoder"
-                  role="menuitem"
-                  class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700"
-                >
-                  Add Encoder
-                </a>
-              </div>
             </div>
-            
+
             <!-- Dashboards links -->
             <div x-data="{ isActive: false, open: false}">
               <a

@@ -50,7 +50,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AdminSeeder::class);
         $this->call(SeniorApplicationStatusSeeder::class);
         $this->call(SeniorAccountStatusSeeder::class);
-        Seniors::factory(50)->create();
+        Seniors::factory(100)->create();
         $this->call(GuardianSeeder::class);
         $this->call(FamilyCompositionSeeder::class);
         $this->call(IncomeSourceDataSeeder::class);

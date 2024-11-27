@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Verification</title>
+    <title>Password</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
         @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
@@ -23,17 +23,17 @@
             </div>
 
             <div style="background-color: #fff; padding: 20px; text-align: center; justify-content: center; align-items: center;">
-                <h1 class="text-2xl font-bold text-gray-900 text-center mb-4">Email Verification</h1>
+                <h1 class="text-2xl font-bold text-gray-900 text-center mb-4">Password</h1>
                 <p style="font-size: 18px; color: #4a5568; margin-bottom: 24px;">
-                    Registration successful! Please use the code below to verify your email address:
+                   Below is your temporary password. Use it to log in into your account.
                 </p>
                 <div class="text-center mb-6">
                     <span style="display: inline-block; background-color: #ff4802; color: white; padding: 10px 20px; border-radius: 5px; font-size: 25px; text-decoration: none; font-weight: bold;">
-                        {{ $verificationCode }}
+                        {{ $generatedPassword }}
                     </span>
                 </div>
                 <p style="font-size: 18px; color: #4a5568; margin-bottom: 24px;">
-                    This code will expire after 1 hour: {{ $expirationTime->format('l, F j, Y g:i A') }}
+                    You can change your password after logging in. Just simply go to your profile.
                 </p>
             </div>
 

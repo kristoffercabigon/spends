@@ -18,10 +18,10 @@ return new class extends Migration
             $table->string('encoder_first_name');
             $table->string('encoder_middle_name')->nullable();
             $table->string('encoder_last_name');
+            $table->string('encoder_suffix')->nullable();
             $table->string('encoder_address');
             $table->foreignId('encoder_barangay_id')->constrained('barangay_list');
             $table->string('encoder_contact_no');
-            $table->string('encoder_suffix')->nullable();
             $table->string('encoder_email');
             $table->string('encoder_password');
             $table->string('encoder_profile_picture')->nullable();

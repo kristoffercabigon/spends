@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use App\Models\Seniors;
+use App\Models\Encoder;
 use App\Mail\AdminResendCodeEmail;
 use App\Mail\AdminForgotPassword;
 use App\Mail\AdminLoginAttempt;
@@ -25,12 +26,16 @@ use App\Mail\SeniorRegisteredByStaff;
 use App\Mail\SeniorChangedEmail;
 use App\Http\Requests\StoreAddBeneficiary;
 use App\Http\Requests\UpdateEditBeneficiary;
+use App\Mail\SeniorPassword;
+use App\Mail\EncoderVerificationEmail;
+use App\Mail\EncoderPassword;
+use App\Http\Requests\StoreEncoderRequest;
 
 class AdminController extends Controller
 {
     public function showAdminIndex()
     {
-        return view('admin.admin_index')->with('title', 'SPENDS: Home ');
+        return view('admin.admin_index')->with('title', 'Home ');
     }
 
     public function about_us()
@@ -465,6 +470,142 @@ class AdminController extends Controller
         return response()->json($encoders);
     }
 
+    public function submitAdminAddEncoder(StoreEncoderRequest $request)
+    {
+        $validated = $request->validated();
+
+        $encoderData = $validated;
+        unset($encoderData['g-recaptcha-response']);
+
+        do {
+            $encoder_id = rand(1000, 9999);
+        } while (DB::table('encoder')->where('encoder_id', $encoder_id)->exists());
+
+        $encoderData['encoder_id'] = $encoder_id;
+
+        if ($request->hasFile('encoder_profile_picture')) {
+            $request->validate([
+                'encoder_profile_picture' => 'mimes:jpeg,png,bmp,tiff|max:4096',
+            ]);
+
+            $profilePictureFilename = $encoder_id;
+            $profilePictureExtension = $request->file('encoder_profile_picture')->getClientOriginalExtension();
+            $profilePictureFilenameToStore = $profilePictureFilename . '.' . $profilePictureExtension;
+
+            $request->file('encoder_profile_picture')->storeAs('images/encoder/encoder_profile_picture', $profilePictureFilenameToStore);
+            $encoderData['encoder_profile_picture'] = $profilePictureFilenameToStore;
+
+            $thumbnailFilename = $profilePictureFilename . '.' . $profilePictureExtension;
+            $thumbnailPath = 'storage/images/encoder/encoder_thumbnail_profile/' . $thumbnailFilename;
+
+            $request->file('encoder_profile_picture')->storeAs('images/encoder/encoder_thumbnail_profile', $thumbnailFilename);
+
+            $this->createThumbnail(public_path('storage/images/encoder/encoder_profile_picture/' . $profilePictureFilenameToStore), public_path($thumbnailPath), 150, 150);
+        }
+
+        $encoderData['encoder_contact_no'] = '+63' . $encoderData['encoder_contact_no'];
+
+        $encoder_user_type_id = 2;
+        $encoderData['encoder_user_type_id'] = $encoder_user_type_id;
+
+        $encoderData['encoder_date_registered'] = now();
+
+        $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+        $hashedVerificationCode = Hash::make($verificationCode);
+
+        $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
+
+        $encoderData['encoder_verification_code'] = $hashedVerificationCode;
+        $encoderData['encoder_verification_expires_at'] = $expirationTime;
+
+        $unhashedPassword = $encoderData['encoder_last_name'];
+        $randomChars = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'), 0, 5);
+        $randomNumbers = rand(10, 99);
+        $generatedPassword = $unhashedPassword . $randomChars . '@' . $randomNumbers;
+
+        $encoderData['encoder_password'] = Hash::make($generatedPassword);
+
+        Encoder::create($encoderData);
+
+        Mail::to($encoderData['encoder_email'])->send(
+            new EncoderVerificationEmail($verificationCode, $expirationTime)
+        );
+
+        Mail::to($encoderData['encoder_email'])->send(
+            new EncoderPassword($generatedPassword)
+        );
+
+        return back()->with([
+            'admin-message-header' => 'Registration successful',
+            'admin-message-body' => 'An email verification has been sent to the user.'
+        ]);
+    }
+
+    public function showAdminEncoderProfile($encoder_id)
+    {
+        $encoder = Encoder::leftJoin('barangay_list', 'encoder.encoder_barangay_id', '=', 'barangay_list.id')
+        ->leftJoin('encoder_roles', 'encoder_roles.encoder_user_id', '=', 'encoder.id')
+        ->leftJoin('encoder_roles_list', 'encoder_roles.encoder_roles_id', '=', 'encoder_roles_list.id')
+        ->select(
+            'encoder.id',
+            'encoder.encoder_id',
+            'encoder.encoder_first_name',
+            'encoder.encoder_middle_name',
+            'encoder.encoder_last_name',
+            'encoder.encoder_address',
+            'encoder.encoder_email',
+            'encoder.encoder_contact_no',
+            'encoder.encoder_suffix',
+            'encoder.encoder_date_registered',
+            'encoder.encoder_profile_picture',
+            'encoder.encoder_barangay_id',
+            'barangay_list.barangay_no',
+            DB::raw('GROUP_CONCAT(encoder_roles_list.encoder_role) as roles')
+        )
+            ->where('encoder.id', $encoder_id)
+            ->groupBy(
+                'encoder.id',
+                'encoder.encoder_id',
+                'encoder.encoder_first_name',
+                'encoder.encoder_middle_name',
+                'encoder.encoder_last_name',
+                'encoder.encoder_address',
+                'encoder.encoder_email',
+                'encoder.encoder_contact_no',
+                'encoder.encoder_suffix',
+                'encoder.encoder_date_registered',
+                'encoder.encoder_profile_picture',
+                'encoder.encoder_barangay_id',
+                'barangay_list.barangay_no'
+            )
+            ->firstOrFail();
+
+        $categories = ['view', 'create', 'update', 'delete'];
+        $roles = collect(explode(',', $encoder->roles))
+            ->groupBy(function ($role) use ($categories) {
+                foreach ($categories as $category) {
+                    if (str_contains(strtolower($role), $category)) {
+                        return $category;
+                    }
+                }
+                return 'other';
+            });
+
+        $categoryColors = [
+            'view' => 'green-500',
+            'create' => 'blue-500',
+            'update' => 'orange-500',
+            'delete' => 'red-500',
+        ];
+
+        return view('admin.admin_encoder_profile', [
+            'encoder' => $encoder,
+            'title' => 'Profile: '. $encoder->encoder_first_name . ' ' . $encoder->encoder_last_name,
+            'categories' => $categories,
+            'roles' => $roles,
+            'categoryColors' => $categoryColors,
+        ]);
+    }
 
     public function admin_login(Request $request)
     {
@@ -731,7 +872,12 @@ class AdminController extends Controller
 
         $seniorData['contact_no'] = '+63' . $seniorData['contact_no'];
 
-        $seniorData['password'] = Hash::make($seniorData['password']);
+        $unhashedPassword = $seniorData['last_name'];
+        $randomChars = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'), 0, 5);
+        $randomNumbers = rand(10, 99);
+        $generatedPassword = $unhashedPassword . $randomChars . '@' . $randomNumbers;
+
+        $seniorData['password'] = Hash::make($generatedPassword);
 
         $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
         $hashedVerificationCode = Hash::make($verificationCode);
@@ -744,6 +890,7 @@ class AdminController extends Controller
         $seniors = Seniors::create($seniorData);
 
         Mail::to($seniorData['email'])->send(new SeniorRegisteredByStaff($verificationCode, $expirationTime));
+        Mail::to($seniorData['email'])->send(new SeniorPassword($generatedPassword));
         Mail::to($seniorData['email'])->send(new SeniorReferenceNumber($ncsc_rrn));
 
         $lastSourceId = DB::table('source_list')->latest('id')->value('id');

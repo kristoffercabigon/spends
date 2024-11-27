@@ -644,7 +644,7 @@
                                                 </td>
                                                 <td class="border border-gray-300 px-4 py-2 hidden flex items-center justify-center" id="removeCell-0">
                                                     <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
-                                                        <img src="images/trashbin.png" alt="Delete" class="h-5 w-5" />
+                                                        <img src="../../images/trashbin.png" alt="Delete" class="h-5 w-5" />
                                                     </button>
                                                 </td>
                                             </tr>
@@ -1054,14 +1054,14 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
                             <div x-data="{
-                                showValidIdModal: false,
-                                validIdPreviewUrl: '', // Corrected to use 'validIdPreviewUrl'
+                                showEncoderApplicantValidIDModal: false,
+                                previewEncoderApplicantValidIDUrl: '', 
                                 previewValidIdImage(event) {
                                     const input = event.target;
                                     if (input.files && input.files[0]) {
                                         const reader = new FileReader();
                                         reader.onload = (e) => {
-                                            this.validIdPreviewUrl = e.target.result; // Correct variable name
+                                            this.previewEncoderApplicantValidIDUrl = e.target.result; 
                                             document.getElementById('valid_id_preview').style.display = 'block';
                                         };
                                         reader.readAsDataURL(input.files[0]);
@@ -1084,8 +1084,8 @@
                                 <p id="valid_id_filename" class="text-gray-700 text-xs mt-2"></p>
 
                                 <div class="flex justify-center items-center mt-4">
-                                    <img :src="validIdPreviewUrl" id="valid_id_preview" class="animate-blurred-fade-in max-h-48 rounded-md shadow-lg cursor-pointer" 
-                                        style="display: none;" alt="Valid ID Preview" @click="showValidIdModal = true">
+                                    <img :src="previewEncoderApplicantValidIDUrl" id="valid_id_preview" class="animate-blurred-fade-in max-h-48 rounded-md shadow-lg cursor-pointer" 
+                                        style="display: none;" alt="Valid ID Preview" @click="showEncoderApplicantValidIDModal = true">
                                 </div>
 
                                 @if(old('valid_id'))
@@ -1102,27 +1102,27 @@
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
 
-                                @include('components.modal.senior_citizen.validid_zoom')
+                                @include('components.modal.encoder.encoder_applicant_valid_id_zoom')
                             </div>
                             
                             <div x-data="{
-                                    showCameraModal: false,
-                                    showProfilePicModal: false,
-                                    previewUrl: '',
+                                    showEncoderApplicantCameraModal: false,
+                                    showEncoderApplicantProfilePicModal: false,
+                                    previewEncoderApplicantProfilePicUrl: '',
                                     previewImage(event) {
                                         const input = event.target;
                                         if (input.files && input.files[0]) {
                                             const reader = new FileReader();
                                             reader.onload = (e) => {
-                                                this.previewUrl = e.target.result;
+                                                this.previewEncoderApplicantProfilePicUrl = e.target.result;
                                                 document.getElementById('profile_picture_preview').style.display = 'block';
                                             };
                                             reader.readAsDataURL(input.files[0]);
                                         }
                                     }
                                 }" 
-                                @open-camera-modal.window="showCameraModal = true; localStorage.setItem('showCameraModal', 'true')" 
-                                @close-camera-modal.window="showCameraModal = false; localStorage.setItem('showCameraModal', 'false')">
+                                @open-encoder-applicant-camera-modal.window="showEncoderApplicantCameraModal = true; localStorage.setItem('showEncoderApplicantCameraModal', 'true')" 
+                                @close-encoder-applicant-camera-modal.window="showEncoderApplicantCameraModal = false; localStorage.setItem('showEncoderApplicantCameraModal', 'false')">
 
                                 <label class="text-sm mb-2 block 
                                     @error('profile_picture') text-red-700
@@ -1140,18 +1140,18 @@
                                         placeholder="Upload photo of Pensioner" id="profilePictureField" 
                                         @change="previewImage">
 
-                                    <button @click="$dispatch('open-camera-modal')" 
+                                    <button @click="$dispatch('open-encoder-applicant-camera-modal')" 
                                             class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12" 
                                             type="button">
-                                        <img src="../images/camera.png" alt="Toggle Profile Picture" class="hover:animate-jiggle camera-icon w-7 h-7" id="toggleCameraIcon">
+                                        <img src="../../images/camera.png" alt="Toggle Profile Picture" class="hover:animate-jiggle camera-icon w-7 h-7" id="toggleCameraIcon">
                                     </button>
                                 </div>
 
                                 <p id="profile_picture_filename" class="text-gray-700 text-xs mt-2"></p>
 
                                 <div class="flex justify-center items-center mt-4">
-                                    <img :src="previewUrl" id="profile_picture_preview" class="animate-blurred-fade-in max-h-48 rounded-md shadow-lg cursor-pointer" style="display: none;" alt="Profile Picture Preview"
-                                        @click="showProfilePicModal = true">
+                                    <img :src="previewEncoderApplicantProfilePicUrl" id="profile_picture_preview" class="animate-blurred-fade-in max-h-48 rounded-md shadow-lg cursor-pointer" style="display: none;" alt="Profile Picture Preview"
+                                        @click="showEncoderApplicantProfilePicModal = true">
                                 </div>
 
                                 @if(old('profile_picture'))
@@ -1168,19 +1168,19 @@
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
 
-                                @include('components.modal.senior_citizen.register_camera')
-                                @include('components.modal.senior_citizen.profilepic_zoom')
+                                @include('components.modal.encoder.encoder_applicant_camera')
+                                @include('components.modal.encoder.encoder_applicant_profile_pic_zoom')
                             </div>
 
                             <div x-data="{
-                                    showIndigencyModal: false,
-                                    indigencyPreviewUrl: '',
+                                    showEncoderApplicantIndigencyModal: false,
+                                    previewEncoderApplicantIndigencyUrl: '',
                                     previewIndigencyImage(event) {
                                         const input = event.target;
                                         if (input.files && input.files[0]) {
                                             const reader = new FileReader();
                                             reader.onload = (e) => {
-                                                this.indigencyPreviewUrl = e.target.result;
+                                                this.previewEncoderApplicantIndigencyUrl = e.target.result;
                                                 document.getElementById('indigency_preview').style.display = 'block';
                                             };
                                             reader.readAsDataURL(input.files[0]);
@@ -1203,8 +1203,8 @@
                                 <p id="indigency_filename" class="text-gray-700 text-xs mt-2"></p>
 
                                 <div class="flex justify-center items-center mt-4">
-                                    <img :src="indigencyPreviewUrl" id="indigency_preview" class="animate-blurred-fade-in max-h-48 rounded-md shadow-lg cursor-pointer" 
-                                        style="display: none;" alt="Indigency Certificate Preview" @click="showIndigencyModal = true">
+                                    <img :src="previewEncoderApplicantIndigencyUrl" id="indigency_preview" class="animate-blurred-fade-in max-h-48 rounded-md shadow-lg cursor-pointer" 
+                                        style="display: none;" alt="Indigency Certificate Preview" @click="showEncoderApplicantIndigencyModal = true">
                                 </div>
 
                                 @if(old('indigency'))
@@ -1221,18 +1221,18 @@
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
 
-                                @include('components.modal.senior_citizen.indigency_zoom')
+                                @include('components.modal.encoder.encoder_applicant_indigency_zoom')
                             </div>
 
                             <div x-data="{
-                                    showBirthCertificateModal: false,
-                                    birthCertificatePreviewUrl: '',
+                                    showEncoderApplicantBirthCertificateModal: false,
+                                    previewEncoderApplicantBirthCertificateUrl: '',
                                     previewBirthCertificateImage(event) {
                                         const input = event.target;
                                         if (input.files && input.files[0]) {
                                             const reader = new FileReader();
                                             reader.onload = (e) => {
-                                                this.birthCertificatePreviewUrl = e.target.result;
+                                                this.previewEncoderApplicantBirthCertificateUrl = e.target.result;
                                                 document.getElementById('birth_certificate_preview').style.display = 'block';
                                             };
                                             reader.readAsDataURL(input.files[0]);
@@ -1255,8 +1255,8 @@
                                 <p id="birth_certificate_filename" class="text-gray-700 text-xs mt-2"></p>
 
                                 <div class="flex justify-center items-center mt-4">
-                                    <img :src="birthCertificatePreviewUrl" id="birth_certificate_preview" class="animate-blurred-fade-in max-h-48 rounded-md shadow-lg cursor-pointer" 
-                                        style="display: none;" alt="Birth Certificate Preview" @click="showBirthCertificateModal = true">
+                                    <img :src="previewEncoderApplicantBirthCertificateUrl" id="birth_certificate_preview" class="animate-blurred-fade-in max-h-48 rounded-md shadow-lg cursor-pointer" 
+                                        style="display: none;" alt="Birth Certificate Preview" @click="showEncoderApplicantBirthCertificateModal = true">
                                 </div>
 
                                 @if(old('birth_certificate'))
@@ -1273,7 +1273,7 @@
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
 
-                                @include('components.modal.senior_citizen.birthcertificate_zoom')
+                                @include('components.modal.encoder.encoder_applicant_birth_certificate_zoom')
                             </div>
                         </div>
 
@@ -1309,85 +1309,6 @@
                                 @error('email')
                                     <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                 @enderror
-                            </div>
-
-                            <div>
-                                <label class="text-gray-800 text-sm mb-2 block 
-                                    @error('password') text-red-700 
-                                    @elseif(old('password')) text-green-700
-                                    @else text-gray-800 @enderror">
-                                    Password
-                                </label>
-                                <div class="relative">
-                                    <div class="flex">
-                                        <input name="password" type="password" 
-                                            class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-l-md rounded-r-md transition-all 
-                                            @error('password') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
-                                            @elseif(old('password')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
-                                            @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                            placeholder="Enter password" id="passwordField" oninput="updatePasswordCriteria(this.value)"/>
-
-                                        <button class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-12 hover:bg-gray-600 @error('password') h-[27%]  @else h-[33%] @enderror" 
-                                            type="button" onclick="togglePassword('passwordField', 'togglePasswordIcon1')">
-                                            <img src="../images/hide.png" alt="Show Password" class="eye-icon w-7 h-7 hover:animate-jiggle" id="togglePasswordIcon1">
-                                        </button>
-                                    </div>
-
-                                    <div class="ml-2 mt-4 text-gray-800 text-sm">
-                                        <ul>
-                                            <li id="minLength"><i class="fas fa-times text-red-500"></i> Minimum 8 characters</li>
-                                            <li id="uppercase"><i class="fas fa-times text-red-500"></i> At least one uppercase letter</li>
-                                            <li id="lowercase"><i class="fas fa-times text-red-500"></i> At least one lowercase letter</li>
-                                            <li id="symbol"><i class="fas fa-times text-red-500"></i> At least one symbol (@$!%*?&)</li>
-                                        </ul>
-                                    </div>
-
-                                    @if(old('password'))
-                                        <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                            </svg>
-                                        </span>
-                                        <span class="text-green-500 text-xs mt-2 pl-2">Looks good!</span>
-                                    @endif
-                                    @error('password')
-                                        <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="text-gray-800 text-sm mb-2 block 
-                                    @error('password_confirmation') text-red-700
-                                    @elseif(old('password_confirmation')) text-green-700
-                                    @else text-gray-800 @enderror">
-                                    Confirm Password
-                                </label>
-                                <div class="relative">
-                                    <div class="flex">
-                                        <input name="password_confirmation" type="password" 
-                                            class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-md transition-all 
-                                            @error('password_confirmation') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
-                                            @elseif(old('password_confirmation')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
-                                            @else bg-gray-100 border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                            placeholder="Confirm password" id="passwordConfirmationField" />
-
-                                        <button class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12 h-full" type="button" id="button-addon2" onclick="togglePassword('passwordConfirmationField', 'togglePasswordIcon2')">
-                                            <img src="../images/hide.png" alt="Show Password" class="eye-icon w-7 h-7 hover:animate-jiggle" id="togglePasswordIcon2">
-                                        </button>
-                                    </div>
-                                    @if(old('password_confirmation'))
-                                        <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                            </svg>
-                                        </span>
-                                        <span class="text-green-500 text-xs mt-2 pl-2">Looks good!</span>
-                                    @endif
-                                    @error('password_confirmation')
-                                        <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
                             </div>
                         </div>
 
@@ -1644,7 +1565,7 @@
             </td>
             <td class="border border-gray-300 px-4 py-2 hidden flex items-center justify-center" id="removeCell-${rowCount}">
                 <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
-                    <img src="images/trashbin.png" alt="Delete" class="h-5 w-5" />
+                    <img src="../../images/trashbin.png" alt="Delete" class="h-5 w-5" />
                 </button>
             </td>
         </tr>

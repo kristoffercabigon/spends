@@ -28,6 +28,7 @@ use App\Mail\SeniorReferenceNumber;
 use App\Mail\SeniorRegisteredByStaff;
 use App\Http\Requests\UpdateEditBeneficiary;
 use App\Mail\SeniorChangedEmail;
+use App\Mail\SeniorPassword;
 
 class EncoderController extends Controller
 {
@@ -80,7 +81,6 @@ class EncoderController extends Controller
         )
         ->firstOrFail();
 
-        // Categories and role filtering
         $categories = ['view', 'create', 'update', 'delete'];
         $roles = collect(explode(',', $encoder->roles))
             ->groupBy(function ($role) use ($categories) {
@@ -92,7 +92,6 @@ class EncoderController extends Controller
                 return 'other';
             });
 
-        // Assign category colors for buttons
         $categoryColors = [
             'view' => 'green-500',
             'create' => 'blue-500',
@@ -572,7 +571,12 @@ class EncoderController extends Controller
 
         $seniorData['contact_no'] = '+63' . $seniorData['contact_no'];
 
-        $seniorData['password'] = Hash::make($seniorData['password']);
+        $unhashedPassword = $seniorData['last_name'];
+        $randomChars = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'), 0, 5);
+        $randomNumbers = rand(10, 99);
+        $generatedPassword = $unhashedPassword . $randomChars . '@' . $randomNumbers;
+
+        $seniorData['password'] = Hash::make($generatedPassword);
 
         $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
         $hashedVerificationCode = Hash::make($verificationCode);
@@ -585,6 +589,7 @@ class EncoderController extends Controller
         $seniors = Seniors::create($seniorData);
 
         Mail::to($seniorData['email'])->send(new SeniorRegisteredByStaff($verificationCode, $expirationTime));
+        Mail::to($seniorData['email'])->send(new SeniorPassword($generatedPassword));
         Mail::to($seniorData['email'])->send(new SeniorReferenceNumber($ncsc_rrn));
 
         $lastSourceId = DB::table('source_list')->latest('id')->value('id');
@@ -1041,65 +1046,6 @@ class EncoderController extends Controller
             'encoder-error-message-header' => 'Login Failed',
             'encoder-error-message-body' => 'Verify your email first.'
         ]);
-    }
-
-    // HUWAG IDELETE, MAGAGMIT PA MAMAYA, KAILANGAN BAGUHIN YUNG CONTENT NG DESTINATION
-
-    public function encoder_store(StoreEncoderRequest $request)
-    {
-        //dd($request->all());
-
-        $validated = $request->validated();
-
-        $encoderData = $validated;
-        unset($encoderData['g-recaptcha-response']);
-
-        do {
-            $encoder_id = rand(1000, 9999);
-        } while (DB::table('encoder')->where('encoder_id', $encoder_id)->exists());
-
-        $encoderData['encoder_id'] = $encoder_id;
-
-        if ($request->hasFile('encoder_profile_picture')) {
-            $request->validate([
-                'encoder_profile_picture' => 'mimes:jpeg,png,bmp,tiff|max:4096',
-            ]);
-
-            $profilePictureFilename = $encoder_id;
-            $profilePictureExtension = $request->file('encoder_profile_picture')->getClientOriginalExtension();
-            $profilePictureFilenameToStore = $profilePictureFilename . '.' . $profilePictureExtension;
-
-            $request->file('encoder_profile_picture')->storeAs('images/encoder/encoder_profile_picture', $profilePictureFilenameToStore);
-            $encoderData['encoder_profile_picture'] = $profilePictureFilenameToStore;
-
-            $thumbnailFilename = $profilePictureFilename . '.' . $profilePictureExtension;
-            $thumbnailPath = 'storage/images/encoder/encoder_thumbnail_profile/' . $thumbnailFilename;
-
-            $request->file('encoder_profile_picture')->storeAs('images/encoder/encoder_thumbnail_profile', $thumbnailFilename);
-
-            $this->createThumbnail(public_path('storage/images/encoder/encoder_profile_picture/' . $profilePictureFilenameToStore), public_path($thumbnailPath), 150, 150);
-        }
-
-        $encoderData['encoder_password'] = Hash::make($encoderData['encoder_password']);
-
-        $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
-        $hashedVerificationCode = Hash::make($verificationCode);
-
-        $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
-
-        $encoderData['encoder_verification_code'] = $hashedVerificationCode;
-        $encoderData['encoder_verification_expires_at'] = $expirationTime;
-
-        $encoder = Encoder::create($encoderData);
-
-        Mail::to($encoderData['encoder_email'])->send(new EncoderVerificationEmail($verificationCode, $expirationTime));
-
-        // return redirect()->route('encoder-verify-email')->with([
-        //     'encoder_email' => $encoder->encoder_email,
-        //     'code' => $encoder->verification_code,
-        //     'showEncoderVerificationModal' => true,
-        //     'encoder-message' => 'Registration successful. Please verify your email.'
-        // ]);
     }
 
     public function verifyEncoderEmailCodeLogin(Request $request)

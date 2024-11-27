@@ -3,8 +3,9 @@
 @php $array = array('title' => 'SPENDS') @endphp
 <x-admin_dashboard_nav :data="$array"/>
 
-<section x-data="{ showAdminAddEncoderModal: false,
+<section x-data="{ showAdminAddEncoderModal: localStorage.getItem            ('showAdminAddEncoderModal') === 'true',
     showAdminEncoderProfilePicModal: false,
+    showAdminEncoderCameraModal: false,
     previewEncoderUrl: '',
     previewEncoderImage(event) {
         const input = event.target;
@@ -18,6 +19,8 @@
         }
     }
 }"
+@open-admin-encoder-camera-modal.window="showAdminEncoderCameraModal = true; localStorage.setItem('showAdminEncoderCameraModal', 'true')"
+@close-admin-encoder-camera-modal.window="showAdminEncoderCameraModal = false; localStorage.setItem('showAdminEncoderCameraModal', 'false')" 
 class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
     <ul class="circles">
         <li></li>
@@ -132,11 +135,10 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
 
                             <div class="flex relative justify-start md:justify-end">
                                 <button 
-                                @click="showAdminAddEncoderModal = true" 
+                                @click.prevent="showAdminAddEncoderModal = true; localStorage.setItem('showAdminAddEncoderModal', 'true')"
                                 class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-md px-5 py-2 text-center inline-flex items-center">
                                     Add Encoder
                                 </button>
-                                @include('components.modal.admin.admin_add_encoder')
                             </div>
 
                         </div>
@@ -301,8 +303,14 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
         </div>
     </div>
 </div>
+<div x-show="showAdminAddEncoderModal" @click.away="showAdminAddEncoderModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_add_encoder')
+</div>
 <div x-show="showAdminEncoderProfilePicModal" @click.away="showAdminEncoderProfilePicModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
     @include('components.modal.admin.admin_encoder_profilepic_zoom')
+</div>
+<div x-show="showAdminEncoderCameraModal" @click.away="showAdminEncoderCameraModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_encoder_camera')
 </div>
 </section>
 
@@ -359,12 +367,10 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
     });
 
     document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-        // Restore previously selected roles
         if (encoderRoles.includes(checkbox.value)) {
             checkbox.checked = true;
         }
 
-        // Add event listener for change
         checkbox.addEventListener('change', function () {
             const updatedRoles = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
                 .map(checkbox => checkbox.value);

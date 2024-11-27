@@ -56,7 +56,7 @@
                           @submit.prevent="
                           isEncoderLoadingSignUp = true;
                           $nextTick(() => $el.submit());" 
-                          class="space-y-4 md:space-y-6" method="POST" enctype="multipart/form-data" action="/encoder/store">
+                          class="space-y-4 md:space-y-6" method="POST" enctype="multipart/form-data" action="{{ route('admin-submit-add-encoder') }}">
                         @csrf
 
                         <div id="content1" class="space-y-4 md:space-y-6 overflow-x-hidden overflow-y-auto max-h-80 px-2">
@@ -154,6 +154,11 @@
                                         inputmode="numeric" pattern="[0-9]*" maxlength="10" 
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                                 </div>
+                                @error('encoder_contact_no')
+                                <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @elseif(old('encoder_contact_no'))
+                                    <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
+                                @enderror
                             </div>
 
                             <div>
@@ -167,38 +172,6 @@
                                     <p class="text-green-500 text-xs mt-2 p-1">Looks good!</p>
                                 @enderror
                             </div>
-
-                            <div class="relative">
-                                <label for="encoder_password" class="block mb-2 text-sm font-medium text-gray-900">Password</label>
-                                <input type="password" name="encoder_password" id="encoder_password" placeholder="••••••••" 
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" oninput="updateEncoderPasswordCriteria(this.value)">
-                                <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 right-[-2px] top-[-4px] hover:bg-gray-600 @error('encoder_password') mt-[10%] h-[48%] right-[-2px] top-[-3px] @else mt-[10%] h-[66%] right-[-2px] top-[-3px] @enderror hover:bg-gray-600" 
-                                        type="button" onclick="toggleEncoderPassword('encoder_password', 'toggleEncoderPasswordIcon')">
-                                    <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5" id="toggleEncoderPasswordIcon">
-                                </button>
-
-                                @error('encoder_password')
-                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div class="ml-2 text-gray-800 text-sm">
-                                <ul>
-                                    <li id="minLength"><i class="fas fa-times text-red-500"></i> Minimum 8 characters</li>
-                                    <li id="uppercase"><i class="fas fa-times text-red-500"></i> At least one uppercase letter</li>
-                                    <li id="lowercase"><i class="fas fa-times text-red-500"></i> At least one lowercase letter</li>
-                                    <li id="symbol"><i class="fas fa-times text-red-500"></i> At least one symbol (@$!%*?&)</li>
-                                </ul>
-                            </div>
-
-                            <div class="relative">
-                                <label for="encoder_password_confirmation" class="block mb-2 text-sm font-medium text-gray-900">Confirm Password</label>
-                                <input type="password" name="encoder_password_confirmation" id="encoder_password_confirmation" placeholder="••••••••"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                                <button class="absolute inset-y-0 flex items-center justify-center bg-gray-500 text-gray-700 border border-gray-300 rounded-r-md w-10 right-[-2px] top-[-4px] hover:bg-gray-600 @if ('encoder_password_confirmation') mt-[9.5%] h-[66%] right-[-2px] top-[-3px] @endif " 
-                                        type="button" onclick="toggleEncoderPassword('encoder_password_confirmation', 'toggleConfirmationIcon')">
-                                    <img src="../images/hide.png" alt="Show Password" class="eye-icon w-5 h-5" id="toggleConfirmationIcon">
-                                </button>
-                            </div>
                         </div>
 
                         <div id="content2" class="space-y-4 px-2 md:space-y-6 overflow-x-hidden overflow-y-auto max-h-80 px-2">
@@ -210,7 +183,7 @@
                                     class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ old('encoder_profile_picture') }}" 
                                     @change="previewEncoderImage">
 
-                                <button @click="$dispatch('open-encoder-camera-modal')" 
+                                <button @click="$dispatch('open-admin-encoder-camera-modal')" 
                                     class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12 @error('encoder_profile_picture') h-[41%] mt-[8.5%] @else mt-[8.5%] @enderror" 
                                     type="button">
                                     <img src="../images/camera.png" alt="Toggle Profile Picture" class="camera-icon w-7 h-7" id="toggleCameraIcon">
@@ -281,39 +254,6 @@
 <script src= "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 
 <script>
-    function toggleEncoderPassword(passwordFieldId, iconId) {
-        const passwordField = document.getElementById(passwordFieldId);
-        const icon = document.getElementById(iconId);
-
-        if (passwordField.type === 'password') {
-            passwordField.type = 'text';
-            icon.src = '../images/show.png';
-        } else {
-            passwordField.type = 'password';
-            icon.src = '../images/hide.png';
-        }
-    }
-
-    function updateEncoderPasswordCriteria(encoder_password) {
-        document.getElementById("minLength").innerHTML = 
-            encoder_password.length >= 8 ? '<i class="fas fa-check text-green-500"></i> Minimum 8 characters' : 
-            '<i class="fas fa-times text-red-500"></i> Minimum 8 characters';
-        
-        document.getElementById("uppercase").innerHTML = 
-            /[A-Z]/.test(encoder_password) ? '<i class="fas fa-check text-green-500"></i> At least one uppercase letter' : 
-            '<i class="fas fa-times text-red-500"></i> At least one uppercase letter';
-        
-        document.getElementById("lowercase").innerHTML = 
-            /[a-z]/.test(encoder_password) ? '<i class="fas fa-check text-green-500"></i> At least one lowercase letter' : 
-            '<i class="fas fa-times text-red-500"></i> At least one lowercase letter';
-        
-        document.getElementById("symbol").innerHTML = 
-            /[@$!%*?&]/.test(encoder_password) ? '<i class="fas fa-check text-green-500"></i> At least one symbol (@$!%*?&)' : 
-            '<i class="fas fa-times text-red-500"></i> At least one symbol (@$!%*?&)';
-    }
-</script>
-
-<script>
     let currentStep = localStorage.getItem('currentStep') ? parseInt(localStorage.getItem('currentStep')) : 1; 
 
     function updateButtonVisibility() {
@@ -341,17 +281,17 @@
         progressRight.style.backgroundColor = '#A1A1AA';
 
         if (currentStep === 1) {
-            step1.style.backgroundColor = '#FF4802';
+            step1.style.backgroundColor = '#1AA514';
             step1text.style.color = '#fff';  
             progressLeft.style.width = '50%'; 
-            progressLeft.style.backgroundColor = '#FF4802';
+            progressLeft.style.backgroundColor = '#1AA514';
         } else if (currentStep === 2) {
-            step1.style.backgroundColor = '#FF4802';
-            step2.style.backgroundColor = '#FF4802';
+            step1.style.backgroundColor = '#1AA514';
+            step2.style.backgroundColor = '#1AA514';
             step2text.style.color = '#fff'; 
             progressLeft.style.width = '50%';
-            progressLeft.style.backgroundColor = '#FF4802';
-            progressRight.style.backgroundColor = '#FF4802';
+            progressLeft.style.backgroundColor = '#1AA514';
+            progressRight.style.backgroundColor = '#1AA514';
         }
     }
 

@@ -94,7 +94,7 @@
                                 </div>
                             </div>
 
-                            <div class="flex relative justify-start md:justify-end">
+                            <div class="flex relative justify-start mb-4 md:justify-end">
                                 <button id="dropdownCheckboxButton" data-dropdown-toggle="dropdownDefaultCheckbox" class="text-white bg-[#1AA514] hover:bg-[#148e10] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-md px-5 py-2 text-center inline-flex items-center" type="button">
                                     Account Status
                                     <svg class="w-2.5 h-2.5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">

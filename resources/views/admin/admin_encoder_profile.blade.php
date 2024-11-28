@@ -1,9 +1,10 @@
-@include('partials.encoder.encoder_header')
+@include('partials.admin.admin_header')
 
 @php $array = array('title' => 'SPENDS') @endphp
-<x-encoder_dashboard_nav :data="$array"/>
+<x-admin_dashboard_nav :data="$array"/>
 
 <section
+    x-data="{ showEncoderRolesModal: localStorage.getItem            ('showEncoderRolesModal') === 'true'}"
     class="bg-cover bg-center bg-no-repeat min-h-screen" 
     style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
 
@@ -64,7 +65,9 @@
                                                 @foreach ($categories as $category)
                                                     @if (!empty($roles[$category]))
                                                         <div class="relative group">
-                                                            <span class="cursor-pointer bg-{{ $categoryColors[$category] }} py-1 px-2 rounded text-white text-sm">
+                                                            <!-- Category and Roles Click -->
+                                                            <span class="cursor-pointer bg-{{ $categoryColors[$category] }} py-1 px-2 rounded text-white text-sm"
+                                                                @click="showEncoderRolesModal = true; localStorage.setItem('showEncoderRolesModal', 'true')">
                                                                 {{ ucfirst($category) }}
                                                             </span>
                                                             <div class="hidden group-hover:block absolute z-10 bg-white border border-gray-200 shadow-lg rounded-md p-2 w-max">
@@ -177,7 +180,19 @@
         </div>
     </div>
 </div>
+<div x-show="showEncoderRolesModal" @click.away="showEncoderRolesModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_encoder_roles')
+</div>
 </section>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('encoderRolesData', () => ({
+            encoderRoles: @json($encoderRoles),  
+            encoderRolesList: @json($encoderRolesList)  
+        }));
+    });
+</script>
 
 </body>
 </html>

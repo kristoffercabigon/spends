@@ -582,14 +582,22 @@ class AdminController extends Controller
 
         $categories = ['view', 'create', 'update', 'delete'];
         $roles = collect(explode(',', $encoder->roles))
-            ->groupBy(function ($role) use ($categories) {
-                foreach ($categories as $category) {
-                    if (str_contains(strtolower($role), $category)) {
-                        return $category;
-                    }
+        ->groupBy(function ($role) use ($categories) {
+            foreach ($categories as $category) {
+                if (str_contains(strtolower($role), $category)) {
+                    return $category;
                 }
-                return 'other';
-            });
+            }
+            return 'other';
+        });
+
+        $encoderRoles = $roles->flatten()->toArray();
+
+        $encoderRolesList = DB::table('encoder_roles_list')
+        ->select('id', 'encoder_role', 'encoder_role_category')
+        ->distinct()
+            ->get()
+            ->groupBy('encoder_role_category');
 
         $categoryColors = [
             'view' => 'green-500',
@@ -604,6 +612,71 @@ class AdminController extends Controller
             'categories' => $categories,
             'roles' => $roles,
             'categoryColors' => $categoryColors,
+            'encoderRoles' => $encoderRoles,
+            'encoderRolesList' => $encoderRolesList
+        ]);
+    }
+
+    public function updateAdminEncoderRoles(Request $request, $id)
+    {
+        $request->validate([
+            'roles' => 'array',
+            'roles.*' => 'array',
+            'roles.*.*' => 'string',
+        ]);
+
+        $encoder = Encoder::findOrFail($id);
+
+        $currentRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $encoder->id)
+            ->pluck('encoder_roles_id')
+            ->toArray();
+
+        $newRoles = [];
+        if ($request->has('roles')) {
+            foreach ($request->roles as $category => $roles) {
+                foreach ($roles as $role) {
+                    $roleId = DB::table('encoder_roles_list')->where('encoder_role', $role)->value('id');
+                    if ($roleId) {
+                        $newRoles[] = $roleId;
+                    }
+                }
+            }
+        }
+
+        if (empty($newRoles)) {
+            return redirect()->back()->with([
+                'admin-error-message-header' => 'Update Unsuccessful',
+                'admin-error-message-body' => 'Please select at least one role to update the encoder\'s roles.',
+                'clearAdminEncoderRolesModal' => true,
+            ]);
+        }
+
+        $rolesChanged = !empty(array_diff($currentRoles, $newRoles)) || !empty(array_diff($newRoles, $currentRoles));
+
+        if (!$rolesChanged) {
+            return redirect()->back()->with([
+                'admin-error-message-header' => 'Update Unsuccessful',
+                'admin-error-message-body' => 'No changes were detected in the encoder roles.',
+                'clearAdminEncoderRolesModal' => true,
+            ]);
+        }
+
+        DB::table('encoder_roles')
+        ->where('encoder_user_id', $encoder->id)
+            ->delete();
+
+        foreach ($newRoles as $roleId) {
+            DB::table('encoder_roles')->insert([
+                'encoder_user_id' => $encoder->id,
+                'encoder_roles_id' => $roleId,
+            ]);
+        }
+
+        return redirect()->back()->with([
+            'admin-message-header' => 'Success',
+            'admin-message-body' => 'Encoder roles have been updated successfully.',
+            'clearAdminEncoderRolesModal' => true,
         ]);
     }
 

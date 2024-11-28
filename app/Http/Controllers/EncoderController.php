@@ -118,6 +118,19 @@ class EncoderController extends Controller
 
     public function showEncoderApplicationRequests()
     {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+        ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(3)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
         $seniors = DB::table('seniors')
         ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
         ->leftJoin('senior_application_status_list', 'seniors.application_status_id', '=', 'senior_application_status_list.id')
@@ -202,6 +215,19 @@ class EncoderController extends Controller
 
     public function showEncoderSeniorProfile($id)
     {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+        ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(2)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
         $seniors = Seniors::findOrFail($id);
 
         $sex_list = DB::table('sex_list')->get();
@@ -280,6 +306,20 @@ class EncoderController extends Controller
 
     public function updateEncoderSeniorApplicationStatus(Request $request, $id)
     {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+            ->where('encoder_user_id', $currentEncoder->id)
+            ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(10)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
+
         $validated = $request->validate([
             'status' => 'required|exists:senior_application_status_list,id',
         ]);
@@ -324,6 +364,19 @@ class EncoderController extends Controller
 
     public function updateEncoderSeniorAccountStatus(Request $request, $id)
     {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+            ->where('encoder_user_id', $currentEncoder->id)
+            ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(9)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
         $validated = $request->validate([
             'account_status' => 'required|exists:senior_account_status_list,id',
         ]);
@@ -356,6 +409,19 @@ class EncoderController extends Controller
 
     public function showEncoderBeneficiariesList()
     {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+            ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(1)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
         $seniors = DB::table('seniors')
         ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
         ->leftJoin('senior_account_status_list', 'seniors.account_status_id', '=', 'senior_account_status_list.id')
@@ -380,6 +446,7 @@ class EncoderController extends Controller
             'barangayList' => $barangayList,
         ]);
     }
+
 
     public function filterSeniorsBeneficiaries(Request $request)
     {
@@ -438,6 +505,19 @@ class EncoderController extends Controller
 
     public function showEncoderAddBeneficiary()
     {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+            ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(5)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
         $income_sources = DB::table('where_income_source_list')->get();
         $incomes = DB::table('how_much_income_list')->get();
         $pensions = DB::table('how_much_pension_list')->get();
@@ -465,6 +545,19 @@ class EncoderController extends Controller
     public function submitEncoderAddBeneficiary(StoreAddBeneficiary $request)
     {
         //dd($request->all());
+
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+        ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(5)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
 
         $validated = $request->validated();
 
@@ -682,6 +775,19 @@ class EncoderController extends Controller
 
     public function showEncoderEditSeniorProfile($id)
     {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+            ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(8)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
         $seniors = Seniors::findOrFail($id);
 
         $income_sources = DB::table('where_income_source_list')->get();
@@ -744,6 +850,19 @@ class EncoderController extends Controller
 
     public function updateEncoderEditBeneficiary(UpdateEditBeneficiary $request, $senior)
     {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+            ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(8)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
         $validated = $request->validated();
 
         $senior = Seniors::findOrFail($senior);

@@ -61,8 +61,8 @@ Route::controller(EncoderController::class)->group(function () {
         Route::put('/encoder/change-password', 'changeEncoderPassword')->name('encoder-change-password');
         Route::put('/encoder/edit-profile', 'editEncoderProfile')->name('encoder-edit-profile');
         Route::put('/encoder/edit-profile-picture', 'editEncoderProfilePicture')->name('encoder-edit-profile-picture');
-        Route::put('/encoder/view-applicant/{id}/update-application-status', 'updateEncoderSeniorApplicationStatus')->name('encoder-update-application-status');
-        Route::put('/encoder/view-applicant/{id}/update-account-status', 'updateEncoderSeniorAccountStatus')->name('encoder-update-account-status');
+        Route::put('/encoder/view-senior-profile/{id}/update-application-status', 'updateEncoderSeniorApplicationStatus')->name('encoder-update-application-status');
+        Route::put('/encoder/view-senior-profile/{id}/update-account-status', 'updateEncoderSeniorAccountStatus')->name('encoder-update-account-status');
 
         Route::post('/encoder/verify-change-password-email', 'verifyEncoderChangePasswordCode')->name('encoder-verify-change-password-email');
         Route::post('/encoder/verify-password', 'verifyEncoderPasswordForEditProfile')->name('encoder-verify-password');
@@ -88,6 +88,7 @@ Route::controller(AdminController::class)->group(function () {
         Route::post('/admin/filter-application-requests', 'filterSeniorsApplicationRequests');
         Route::get('/admin/view-senior-profile/{senior}', 'showAdminSeniorProfile');
         Route::get('/admin/view-encoder-profile/{encoder}', 'showAdminEncoderProfile');
+        Route::put('/admin/view-encoder-profile/{id}/update-encoder-role', 'updateAdminEncoderRoles')->name('admin-update-encoder-role');
         Route::get('/admin/beneficiaries', 'showAdminBeneficiariesList');
         Route::post('/admin/filter-beneficiaries', 'filterSeniorsBeneficiaries');
         Route::get('/admin/encoders', 'showAdminEncodersList');
@@ -101,8 +102,8 @@ Route::controller(AdminController::class)->group(function () {
         Route::put('/admin/change-password', 'changeAdminPassword')->name('admin-change-password');
         Route::put('/admin/edit-profile', 'editAdminProfile')->name('admin-edit-profile');
         Route::put('/admin/edit-profile-picture', 'editAdminProfilePicture')->name('admin-edit-profile-picture');
-        Route::put('/admin/view-applicant/{id}/update-application-status', 'updateAdminSeniorApplicationStatus')->name('admin-update-application-status');
-        Route::put('/admin/view-applicant/{id}/update-account-status', 'updateAdminSeniorAccountStatus')->name('admin-update-account-status');
+        Route::put('/admin/view-senior-profile/{id}/update-application-status', 'updateAdminSeniorApplicationStatus')->name('admin-update-application-status');
+        Route::put('/admin/view-senior-profile/{id}/update-account-status', 'updateAdminSeniorAccountStatus')->name('admin-update-account-status');
 
         Route::post('/admin/verify-change-password-email', 'verifyAdminChangePasswordCode')->name('admin-verify-change-password-email');
         Route::post('/admin/verify-password', 'verifyAdminPasswordForEditProfile')->name('admin-verify-password');

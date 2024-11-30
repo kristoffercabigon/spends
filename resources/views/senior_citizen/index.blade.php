@@ -4,7 +4,7 @@
 
 <section class="bg-cover w-full bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background_seniors.jfif') }}'); background-attachment: fixed;">
     <div class="bg-white bg-opacity-50 min-h-screen flex items-center justify-center">
-        <div class="grid max-w-screen-xl px-4 py-8 lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12 font-poppins">
+        <div class="grid max-w-screen-xl px-4 py-8 md:mx-[48px] lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12 font-poppins">
 
             <div class="mr-auto place-self-center lg:col-span-7">
                 <h1 class="max-w-2xl animate-fade-in-bounce-right font-extrabold tracking-tight leading-none text-customOrange text-[90px] lg:text-[120px]">SPENDS</h1>

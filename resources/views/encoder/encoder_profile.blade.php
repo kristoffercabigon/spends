@@ -104,11 +104,11 @@
                                     <ul class="bg-gray-100 text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
                                         <li class="flex items-center py-3">
                                             <span>Encoder Roles</span>
-                                            <div class="flex flex-wrap items-center justify-center my-2 mx-2 gap-2">
+                                            <div class="flex flex-wrap items-center justify-end my-2 mx-2 gap-2">
                                                 @foreach ($categories as $category)
                                                     @if (!empty($roles[$category]))
                                                         <div class="relative group">
-                                                            <span class="cursor-pointer bg-{{ $categoryColors[$category] }} py-1 px-2 rounded text-white text-sm">
+                                                            <span class=" bg-{{ $categoryColors[$category] }} py-1 px-2 rounded text-white text-sm">
                                                                 {{ ucfirst($category) }}
                                                             </span>
                                                             <div class="hidden group-hover:block absolute z-10 bg-white border border-gray-200 shadow-lg rounded-md p-2 w-max">
@@ -182,7 +182,7 @@
                                                 <div class="px-4 py-2">{{ $encoder->encoder_address }}</div>
                                             </div>
                                             <div class="grid grid-cols-2">
-                                                <div class="px-4 py-2 font-semibold">Address</div>
+                                                <div class="px-4 py-2 font-semibold">Barangay</div>
                                                 <div class="px-4 py-2">{{ $encoder->barangay_no }}</div>
                                             </div>
                                         </div>

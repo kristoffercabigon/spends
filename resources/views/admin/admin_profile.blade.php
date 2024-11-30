@@ -91,7 +91,14 @@
                                     <ul class="bg-gray-100 text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
                                         <li class="flex items-center py-3">
                                             <span>Admin Roles</span>
-                                            <span class="ml-auto"><span class="bg-green-500 py-1 px-2 rounded text-white text-sm">Edit</span></span>
+                                            <div class="flex flex-wrap items-center justify-end my-2 mx-2 gap-2">
+
+                                                    <span class="bg-green-500 py-1 px-2 rounded text-white text-sm">View</span>
+                                                    <span class="bg-blue-500 py-1 px-2 rounded text-white text-sm">Create</span>
+                                                    <span class="bg-orange-500 py-1 px-2 rounded text-white text-sm">Update</span>
+                                                    <span class="bg-red-500 py-1 px-2 rounded text-white text-sm">Delete</span>
+
+                                            </div>
                                         </li>
                                         <li class="flex items-center py-3">
                                             <span>Date Registered</span>

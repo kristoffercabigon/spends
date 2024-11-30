@@ -89,6 +89,7 @@ Route::controller(AdminController::class)->group(function () {
         Route::get('/admin/view-senior-profile/{senior}', 'showAdminSeniorProfile');
         Route::get('/admin/view-encoder-profile/{encoder}', 'showAdminEncoderProfile');
         Route::put('/admin/view-encoder-profile/{id}/update-encoder-role', 'updateAdminEncoderRoles')->name('admin-update-encoder-role');
+        Route::put('/admin/view-encoder-profile/{id}/update-encoder-profile', 'updateAdminEncoderProfile')->name('admin-submit-edit-encoder');
         Route::get('/admin/beneficiaries', 'showAdminBeneficiariesList');
         Route::post('/admin/filter-beneficiaries', 'filterSeniorsBeneficiaries');
         Route::get('/admin/encoders', 'showAdminEncodersList');

@@ -25,8 +25,20 @@
 
         <div class="hidden md:flex flex-1 justify-center">
             <ul class="flex justify-center space-x-8">
-                <li><a href="/admin" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/admin/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">About Us</a></li>
+                <li>
+                    <a href="/admin" 
+                    class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 text-16px hover:text-orange-300 
+                    {{ request()->is('admin') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    Home
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/about-us" 
+                    class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 text-16px hover:text-orange-300 
+                    {{ request()->is('admin/about-us') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    About Us
+                    </a>
+                </li>
                 @guest('admin')
                 <li class="inline-block">
                     <a @click.prevent="showAdminLoginModal = true; localStorage.setItem('showAdminLoginModal', 'true')"
@@ -43,8 +55,8 @@
                     $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$admin->admin_first_name."-".$admin->admin_last_name;
                 @endphp
                 <div class="flex items-center cursor-pointer relative" @click="AdmindropdownOpen = !AdmindropdownOpen">
-                    <img id="avatarButton" class="animate-zoom-in w-10 h-10 rounded-full ring-2 ring-white" src="{{ $admin->admin_profile_picture ? asset('storage/images/admin/admin_profile_picture/'.$admin->admin_profile_picture) : $default_profile }}" alt="Profile Picture">
-                    <div class="ml-4 animate-fade-in-right">{{ $admin->admin_first_name }} {{ $admin->admin_last_name }}</div>
+                    <div class="mr-4 animate-fade-in-right">{{ $admin->admin_first_name }} {{ $admin->admin_last_name }}</div>
+                    <img id="avatarButton" class="animate-zoom-in w-10 h-10 rounded-full ring-2 ring-white md:mr-[48px]" src="{{ $admin->admin_profile_picture ? asset('storage/images/admin/admin_profile_picture/'.$admin->admin_profile_picture) : $default_profile }}" alt="Profile Picture">
                     <div 
                         x-show="AdmindropdownOpen"
                         x-transition:enter="transition-transform transition-opacity ease-out duration-300"
@@ -124,8 +136,20 @@
                         </div>
                     </div>
                 @endauth
-                <li><a href="/admin" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/admin/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
+                <li>
+                    <a href="/admin" 
+                    class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 pr-4 pl-3 text-16px hover:text-orange-300 
+                    {{ request()->is('admin') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    Home
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/about-us" 
+                    class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 pr-4 pl-3 text-16px hover:text-orange-300 
+                    {{ request()->is('admin/about-us') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    About Us
+                    </a>
+                </li>
                 @guest('admin')
                     <li class="inline-block">
                     <a @click.prevent="showAdminLoginModal = true; localStorage.setItem('showAdminLoginModal', 'true')"

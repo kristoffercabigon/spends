@@ -4,7 +4,30 @@
 <x-admin_dashboard_nav :data="$array"/>
 
 <section
-    x-data="{ showEncoderRolesModal: localStorage.getItem            ('showEncoderRolesModal') === 'true'}"
+    x-data="{ showEncoderRolesModal: localStorage.getItem            ('showEncoderRolesModal') === 'true',
+        showAdminEditEncoderModal: localStorage.getItem            ('showAdminEditEncoderModal') === 'true',
+        showAdminEncoderProfilePicModal: false,
+        showAdminEncoderPreviewProfilePicModal: false,
+        @php
+            $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$encoder->encoder_first_name."-".$encoder->encoder_last_name;
+        @endphp
+        adminencoderpreviewUrl1: '{{ $encoder->encoder_profile_picture ? asset("storage/images/encoder/encoder_profile_picture/".$encoder->encoder_profile_picture) : $default_profile }}',
+        showAdminEncoderCameraModal: false,
+        previewEncoderUrl: '',
+        previewEncoderImage(event) {
+            const input = event.target;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.previewEncoderUrl = e.target.result;
+                    document.getElementById('encoder_profile_picture_preview').style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    }"
+    @open-admin-encoder-camera-modal.window="showAdminEncoderCameraModal = true; localStorage.setItem('showAdminEncoderCameraModal', 'true')"
+    @close-admin-encoder-camera-modal.window="showAdminEncoderCameraModal = false; localStorage.setItem('showAdminEncoderCameraModal', 'false')" 
     class="bg-cover bg-center bg-no-repeat min-h-screen" 
     style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
 
@@ -58,10 +81,22 @@
                                     <h1 class="text-gray-900 font-bold text-xl mt-2 leading-8 my-1">{{ $encoder->encoder_first_name }} {{ $encoder->encoder_last_name }}</h1>
                                     <h3 class="text-gray-600 font-lg text-semibold leading-6">Encoder ID: <span class="font-semibold">{{ $encoder->encoder_id }}</span></h3>
 
+                                    <div class="flex items-center justify-center">
+                                    <button 
+                                        type="button" 
+                                        class="hover:scale-105 transition duration-150 ease-in-out py-3 px-4 md:w-auto text-sm cursor-pointer tracking-wider font-light rounded-md text-white bg-[#1AA514] hover:bg-[#148410] focus:outline-none mt-4" 
+                                        @click.prevent="showAdminEditEncoderModal = true; localStorage.setItem('showAdminEditEncoderModal', 'true')"
+                                    >
+                                       <span class="text-green-500">
+                                            <img src="../../images/edit-user.png" alt="Key Icon" class="h-5 inline">
+                                        </span> Edit Profile
+                                    </button>
+                                    </div>
+
                                     <ul class="bg-gray-100 text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
                                         <li class="flex items-center py-3">
                                             <span>Encoder Roles</span>
-                                            <div class="flex flex-wrap items-center justify-center my-2 mx-2 gap-2">
+                                            <div class="flex flex-wrap items-center justify-end my-2 mx-2 gap-2">
                                                 @foreach ($categories as $category)
                                                     @if (!empty($roles[$category]))
                                                         <div class="relative group">
@@ -141,7 +176,7 @@
                                                 <div class="px-4 py-2">{{ $encoder->encoder_address }}</div>
                                             </div>
                                             <div class="grid grid-cols-2">
-                                                <div class="px-4 py-2 font-semibold">Address</div>
+                                                <div class="px-4 py-2 font-semibold">Barangay</div>
                                                 <div class="px-4 py-2">{{ $encoder->barangay_no }}</div>
                                             </div>
                                         </div>
@@ -182,6 +217,18 @@
 </div>
 <div x-show="showEncoderRolesModal" @click.away="showEncoderRolesModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
     @include('components.modal.admin.admin_encoder_roles')
+</div>
+<div x-show="showAdminEditEncoderModal" @click.away="showAdminEditEncoderModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_edit_encoder')
+</div>
+<div x-show="showAdminEncoderProfilePicModal" @click.away="showAdminEncoderProfilePicModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_encoder_profilepic_zoom')
+</div>
+<div x-show="showAdminEncoderPreviewProfilePicModal" @click.away="showAdminEncoderPreviewProfilePicModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_encoder_preview_profilepic_zoom')
+</div>
+<div x-show="showAdminEncoderCameraModal" @click.away="showAdminEncoderCameraModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_encoder_camera')
 </div>
 </section>
 

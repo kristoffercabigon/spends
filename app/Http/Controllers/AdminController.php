@@ -24,11 +24,13 @@ use Intervention\Image\Drivers\Gd\Driver;
 use App\Mail\SeniorReferenceNumber;
 use App\Mail\SeniorRegisteredByStaff;
 use App\Mail\SeniorChangedEmail;
+use App\Mail\AdminChangedEmail;
 use App\Http\Requests\StoreAddBeneficiary;
 use App\Http\Requests\UpdateEditBeneficiary;
 use App\Mail\SeniorPassword;
 use App\Mail\EncoderVerificationEmail;
 use App\Mail\EncoderPassword;
+use App\Mail\EncoderChangedEmail;
 use App\Http\Requests\StoreEncoderRequest;
 
 class AdminController extends Controller
@@ -543,6 +545,8 @@ class AdminController extends Controller
 
     public function showAdminEncoderProfile($encoder_id)
     {
+        $barangay_list = DB::table('barangay_list')->get();
+
         $encoder = Encoder::leftJoin('barangay_list', 'encoder.encoder_barangay_id', '=', 'barangay_list.id')
         ->leftJoin('encoder_roles', 'encoder_roles.encoder_user_id', '=', 'encoder.id')
         ->leftJoin('encoder_roles_list', 'encoder_roles.encoder_roles_id', '=', 'encoder_roles_list.id')
@@ -613,7 +617,8 @@ class AdminController extends Controller
             'roles' => $roles,
             'categoryColors' => $categoryColors,
             'encoderRoles' => $encoderRoles,
-            'encoderRolesList' => $encoderRolesList
+            'encoderRolesList' => $encoderRolesList,
+            'barangay_list' => $barangay_list
         ]);
     }
 
@@ -677,6 +682,100 @@ class AdminController extends Controller
             'admin-message-header' => 'Success',
             'admin-message-body' => 'Encoder roles have been updated successfully.',
             'clearAdminEncoderRolesModal' => true,
+        ]);
+    }
+
+    public function updateAdminEncoderProfile(Request $request, $id)
+    {
+        $request->validate([
+            'encoder_first_name' => 'required|string|max:255',
+            'encoder_middle_name' => 'nullable|string|max:255',
+            'encoder_last_name' => 'required|string|max:255',
+            'encoder_suffix' => 'nullable|string|max:255',
+            'encoder_address' => 'required|min:20|max:100',
+            'encoder_barangay_id' => 'required',
+            'encoder_contact_no' => 'required',
+            'encoder_email' => [
+                'required',
+                'email',
+                Rule::unique('encoder', 'encoder_email')->ignore($id)
+            ],
+            'g-recaptcha-response' => [
+                'required',
+                function ($attribute, $value, $fail) use ($request) {
+                    $secret = env('RECAPTCHA_SECRET_KEY');
+                    $response = $request->input('g-recaptcha-response');
+                    $remoteip = $request->ip();
+
+                    $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+                    $captcha_success = json_decode($verify);
+
+                    if (!$captcha_success->success) {
+                        $fail('ReCaptcha verification failed, please try again.');
+                    }
+                }
+            ],
+            'encoder_profile_picture' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048'
+        ]);
+
+        $encoder = Encoder::find($id);
+
+        $originalEmail = $encoder->encoder_email;
+        $newEmail = $request['encoder_email'];
+
+        if ($newEmail !== $originalEmail) {
+            $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+            $hashedVerificationCode = Hash::make($verificationCode);
+            $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
+
+            $encoder->encoder_verification_code = $hashedVerificationCode;
+            $encoder->encoder_verification_expires_at = $expirationTime;
+            $encoder->encoder_verified_at = null;
+
+            Mail::to($newEmail)->send(new EncoderChangedEmail($verificationCode, $expirationTime));
+        }
+
+        $request['encoder_contact_no'] = '+63' . $request['encoder_contact_no'];
+
+        $encoder->encoder_first_name = $request['encoder_first_name'];
+        $encoder->encoder_middle_name = $request['encoder_middle_name'];
+        $encoder->encoder_last_name = $request['encoder_last_name'];
+        $encoder->encoder_suffix = $request['encoder_suffix'];
+        $encoder->encoder_address = $request['encoder_address'];
+        $encoder->encoder_barangay_id = $request['encoder_barangay_id'];
+        $encoder->encoder_contact_no = $request['encoder_contact_no'];
+        $encoder->encoder_email = $request['encoder_email'];
+
+        $encoder_ID = $encoder->encoder_id;
+
+        if ($request->hasFile('encoder_profile_picture')) {
+            $request->validate([
+                'encoder_profile_picture' => 'mimes:jpeg,png,bmp,tiff|max:4096',
+            ]);
+
+            $profilePictureFilename = $encoder_ID . '.' . $request->file('encoder_profile_picture')->getClientOriginalExtension();
+
+            if ($encoder->encoder_profile_picture) {
+                @unlink(public_path('storage/images/encoder/encoder_profile_picture/' . $encoder->encoder_profile_picture));
+                @unlink(public_path('storage/images/encoder/encoder_thumbnail_profile/' . $encoder->encoder_profile_picture));
+            }
+
+            $request->file('encoder_profile_picture')->storeAs('images/encoder/encoder_profile_picture', $profilePictureFilename);
+            $encoder->encoder_profile_picture = $profilePictureFilename;
+
+            $thumbnailPath = 'storage/images/encoder/encoder_thumbnail_profile/' . $profilePictureFilename;
+            $this->createThumbnail(public_path('storage/images/encoder/encoder_profile_picture/' . $profilePictureFilename), public_path($thumbnailPath), 150, 150);
+
+        }
+
+        $encoder->save();
+
+        return redirect('/admin/view-encoder-profile/' . $encoder->id)->with([
+            'clearAdminEditEncoderModal' => true,
+            'admin-message-header' => 'Success',
+            'admin-message-body' => $newEmail !== $originalEmail
+                ? 'Profile updated successfully. Verification Email sent to the user.'
+                : 'Profile updated successfully.',
         ]);
     }
 
@@ -1177,21 +1276,17 @@ class AdminController extends Controller
 
         $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
 
-        $seniorData['verification_code'] = $hashedVerificationCode;
-        $seniorData['verification_expires_at'] = $expirationTime;
-        $seniorData['verified_at'] = null; 
-
         $originalEmail = $senior->email; 
         $newEmail = $seniorData['email'];
 
         if ($newEmail !== $originalEmail) {
 
+            $seniorData['verification_code'] = $hashedVerificationCode;
+            $seniorData['verification_expires_at'] = $expirationTime;
+            $seniorData['verified_at'] = null; 
+
             Mail::to($newEmail)->send(new SeniorChangedEmail($verificationCode, $expirationTime));
         }
-
-        $senior->fill($seniorData);
-        $senior->save();
-
 
         $senior->fill($seniorData); 
         $senior->save();
@@ -1736,6 +1831,21 @@ class AdminController extends Controller
             $updatedData = session('updated_profile_data');
 
             if ($updatedData) {
+                $originalEmail = $admin->admin_email;
+                $newEmail = $updatedData['admin_email'];
+
+                if ($newEmail !== $originalEmail) {
+                    $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+                    $hashedVerificationCode = Hash::make($verificationCode);
+                    $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
+
+                    $admin->admin_verification_code = $hashedVerificationCode;
+                    $admin->admin_verification_expires_at = $expirationTime;
+                    $admin->admin_verified_at = null;
+
+                    Mail::to($newEmail)->send(new AdminChangedEmail($verificationCode, $expirationTime));
+                }
+                
                 $admin->admin_first_name = $updatedData['admin_first_name'];
                 $admin->admin_middle_name = $updatedData['admin_middle_name'];
                 $admin->admin_last_name = $updatedData['admin_last_name'];

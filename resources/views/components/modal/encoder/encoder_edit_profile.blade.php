@@ -74,6 +74,55 @@
                             </div>
 
                             <div>
+                                <label for="encoder_address" class="block mb-2 text-sm font-medium text-gray-900">Address</label>
+                                <input type="text" name="encoder_address" id="encoder_address" placeholder="Address"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ $encoder->encoder_address ?? '' }}">
+
+                                @error('encoder_address')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="encoder_barangay_id" class="block mb-2 text-sm font-medium text-gray-900">Barangay</label>
+                                <select name="encoder_barangay_id" id="encoder_barangay_id"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                                    <option value="" disabled selected>Select Barangay</option>
+                                    @foreach ($barangay_list as $barangay)
+                                        <option value="{{ $barangay->id }}" {{ $encoder->encoder_barangay_id == $barangay->id ? 'selected' : '' }}>
+                                            {{ $barangay->barangay_no }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                @error('encoder_barangay_id')
+                                    <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label class="text-sm mb-2 block">
+                                    Contact Number
+                                </label>
+
+                                <div class="flex">
+                                    <span class="inline-flex items-center px-3 bg-gray-200 text-gray-700 border border-gray-300 rounded-l-md">
+                                        +63
+                                    </span>
+                                    
+                                    <input name="encoder_contact_no" type="text" 
+                                    value="{{ isset($encoder->encoder_contact_no) ? ltrim($encoder->encoder_contact_no, '+63') : '' }}" 
+                                    class="w-full text-sm px-4 py-3 rounded-r-md transition-all pr-10" 
+                                    placeholder="(10 digits)" 
+                                    inputmode="numeric" pattern="[0-9]*" maxlength="10" 
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                                </div>
+                                @error('encoder_contact_no')
+                                <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
                                 <label for="encoder_email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
                                 <input type="text" name="encoder_email" id="encoder_email" placeholder="email@example.com"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ $encoder->encoder_email }}">

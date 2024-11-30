@@ -28,22 +28,53 @@
 
         <div class="hidden lg:flex flex-1 justify-center">
             <ul class="flex justify-center space-x-8">
-                <li><a href="/" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/announcement" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Announcement</a></li>
-                <li><a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">About Us</a></li>
-                <li><a href="/contact-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Contact Us</a></li>
+                <li>
+                    <a href="/" 
+                    class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 
+                    {{ request()->is('/') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    Home
+                    </a>
+                </li>
+                <li>
+                    <a href="/announcement" 
+                    class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 
+                    {{ request()->is('announcement') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    Announcement
+                    </a>
+                </li>
                 @guest('senior')
-                <li><a @click.prevent="showRequestTrackerModal = true; localStorage.setItem('showRequestTrackerModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 cursor-pointer">Request Tracker</a></li>
+                <li>
+                    <a @click.prevent="showRequestTrackerModal = true; localStorage.setItem('showRequestTrackerModal', 'true')" 
+                    class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 cursor-pointer">
+                    Tracker
+                    </a>
+                </li>
+                @endguest
+                <li>
+                    <a href="/about-us" 
+                    class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 
+                    {{ request()->is('about-us') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    About Us
+                    </a>
+                </li>
+                <li>
+                    <a href="/contact-us" 
+                    class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 
+                    {{ request()->is('contact-us') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    Contact Us
+                    </a>
+                </li>
+                @guest('senior')
                 <li class="inline-block">
                     <a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')"
                     class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-orange-300 transition duration-150 ease-in-out block text-16px cursor-pointer">
-                        Sign In
-                 </a>
+                    Sign In
+                    </a>
                 </li>
                 <li class="inline-block">
                     <a href="/register" 
                     class="bg-blue-500 text-white font-medium px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 hover:text-white transition duration-150 ease-in-out block text-16px">
-                        Sign Up
+                    Sign Up
                     </a>
                 </li>
                 @endguest
@@ -56,10 +87,10 @@
                     $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$senior->first_name."-".$senior->last_name;
                 @endphp
                 <div class="flex items-center cursor-pointer relative" @click="dropdownOpen = !dropdownOpen">
-                    <img id="avatarButton" class="w-10 h-10 animate-zoom-in rounded-full ring-2 ring-white" src="{{ $senior->profile_picture ? asset("storage/images/senior_citizen/thumbnail_profile/".$senior->profile_picture) : $default_profile }}" alt="Profile Picture">
                     <div class="ml-4">
-                        <div class="animate-fade-in-right mr-4 lg:mr-[48px]">{{ $senior->first_name }} {{ $senior->last_name }}</div>
+                        <div class="animate-fade-in-right mr-4">{{ $senior->first_name }} {{ $senior->last_name }}</div>
                     </div>
+                    <img id="avatarButton" class="w-10 h-10 animate-zoom-in rounded-full ring-2 ring-white md:mr-[48px]" src="{{ $senior->profile_picture ? asset("storage/images/senior_citizen/thumbnail_profile/".$senior->profile_picture) : $default_profile }}" alt="Profile Picture">
                     <div 
                         x-show="dropdownOpen"
                         x-transition:enter="transition-transform transition-opacity ease-out duration-300"
@@ -139,22 +170,53 @@
                         </div>
                     </div>
                 @endauth
-                <li><a href="/" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/announcement" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Announcement</a></li>
-                <li><a href="/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
-                <li><a href="/contact-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Contact Us</a></li>
+                <li>
+                    <a href="/" 
+                    class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 pr-4 pl-3 text-16px hover:text-orange-300 
+                    {{ request()->is('/') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    Home
+                    </a>
+                </li>
+                <li>
+                    <a href="/announcement" 
+                    class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 pr-4 pl-3 text-16px hover:text-orange-300 
+                    {{ request()->is('announcement') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    Announcement
+                    </a>
+                </li>
                 @guest('senior')
-                <li><a @click.prevent="showRequestTrackerModal = true; localStorage.setItem('showRequestTrackerModal', 'true')" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">Request Tracker</a></li>
+                <li>
+                    <a @click.prevent="showRequestTrackerModal = true; localStorage.setItem('showRequestTrackerModal', 'true')" 
+                    class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">
+                    Tracker
+                    </a>
+                </li>
+                @endguest
+                <li>
+                    <a href="/about-us" 
+                    class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 pr-4 pl-3 text-16px hover:text-orange-300 
+                    {{ request()->is('about-us') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    About Us
+                    </a>
+                </li>
+                <li>
+                    <a href="/contact-us" 
+                    class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 pr-4 pl-3 text-16px hover:text-orange-300 
+                    {{ request()->is('contact-us') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    Contact Us
+                    </a>
+                </li>
+                @guest('senior')
                 <li class="inline-block">
-                    <a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')"
-                    class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-orange-300 transition duration-150 ease-in-out block text-16px cursor-pointer">
-                        Sign In
-                 </a>
-                </li> <br>
+                    <a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" 
+                    class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-orange-300 transition duration-150 ease-in-out inline-block text-16px cursor-pointer">
+                    Sign In
+                    </a>
+                </li>
                 <li class="inline-block">
                     <a href="/register" 
-                    class="bg-blue-500 text-white font-medium px-4 py-2 mb-4 rounded-lg shadow-md hover:bg-blue-600 hover:text-white transition duration-150 ease-in-out block text-16px">
-                        Sign Up
+                    class="bg-blue-500 text-white font-medium px-4 py-2 mb-4 rounded-lg shadow-md hover:bg-blue-600 hover:text-white transition duration-150 ease-in-out inline-block text-16px">
+                    Sign Up
                     </a>
                 </li>
                 @endguest

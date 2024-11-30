@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Mail;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+
+class EncoderChangedEmail extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public $verificationCode;
+    public $expirationTime;
+
+    /**
+     * Create a new message instance.
+     *
+     * @param string $verificationCode
+     * @param \Carbon\Carbon $expirationTime 
+     */
+    public function __construct($verificationCode, $expirationTime)
+    {
+        $this->verificationCode = $verificationCode;
+        $this->expirationTime = $expirationTime;
+    }
+
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        $logoPath = public_path('images/mail_cover.png');
+
+        return $this->subject('Email Verification')
+            ->view('emails.encoder.changedemail')
+            ->with([
+                'verificationCode' => $this->verificationCode,
+                'expirationTime' => $this->expirationTime,
+                'logoPath' => $logoPath,
+            ]);
+    }
+}

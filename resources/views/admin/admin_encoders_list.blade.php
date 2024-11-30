@@ -207,9 +207,6 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                                             <a href="/admin/view-encoder-profile/{{ $encoder->id }}" class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer">
                                                 <img src="../images/view-senior.png" alt="View Encoder" class="w-4 h-4">
                                             </a>
-                                            <a href="/admin/edit-encoder-profile/{{ $encoder->id }}" class="bg-orange-500 ml-1 animate-pop hover:bg-orange-600 rounded-md p-2 cursor-pointer">
-                                                <img src="../images/pencil.png" alt="Edit Encoder" class="w-4 h-4">
-                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -494,15 +491,12 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
                         <a href="/admin/view-encoder-profile/${encoder.id}" class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer">
                             <img src="../images/view-senior.png" alt="View Encoder" class="w-4 h-4">
                         </a>
-                        <a href="/admin/edit-senior-profile/${encoder.id}" class="bg-orange-500 ml-1 animate-pop hover:bg-orange-600 rounded-md p-2 cursor-pointer">
-                            <img src="../images/pencil.png" alt="View Encoder" class="w-4 h-4">
-                        </a>
+                        
                     </td>
                 </tr>`;
             tbody.innerHTML += row;
         });
     }
-
 
     function renderPagination(data) {
         paginationContainer.innerHTML = '';
@@ -563,9 +557,7 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
 
     updateTable(currentPage);
 });
-
 </script>
-
 
 </body>
 </html>

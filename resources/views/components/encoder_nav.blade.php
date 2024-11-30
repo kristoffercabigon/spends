@@ -25,8 +25,20 @@
 
         <div class="hidden lg:flex flex-1 justify-center">
             <ul class="flex justify-center space-x-8">
-                <li><a href="/encoder" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/encoder/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300">About Us</a></li>
+                <li>
+                    <a href="/encoder" 
+                    class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 text-16px hover:text-orange-300 
+                    {{ request()->is('encoder') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    Home
+                    </a>
+                </li>
+                <li>
+                    <a href="/encoder/about-us" 
+                    class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 text-16px hover:text-orange-300 
+                    {{ request()->is('encoder/about-us') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    About Us
+                    </a>
+                </li>
                 @guest('encoder')
                 <li class="inline-block">
                     <a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')"
@@ -43,10 +55,10 @@
                     $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$encoder->encoder_first_name."-".$encoder->encoder_last_name;
                 @endphp
                 <div class="flex items-center cursor-pointer relative" @click="EncoderdropdownOpen = !EncoderdropdownOpen">
-                    <img id="avatarButton" class="animate-zoom-in w-10 h-10 rounded-full ring-2 ring-white" src="{{ $encoder->encoder_profile_picture ? asset('storage/images/encoder/encoder_thumbnail_profile/'.$encoder->encoder_profile_picture) : $default_profile }}" alt="Profile Picture">
                     <div class="ml-4">
-                        <div class="mr-6 lg:mr-[48px] animate-fade-in-right">{{ $encoder->encoder_first_name }} {{ $encoder->encoder_last_name }}</div>
+                        <div class="animate-fade-in-right mr-4">{{ $encoder->encoder_first_name }} {{ $encoder->encoder_last_name }}</div>
                     </div>
+                    <img id="avatarButton" class="animate-zoom-in w-10 h-10 rounded-full ring-2 ring-white md:mr-[48px]" src="{{ $encoder->encoder_profile_picture ? asset('storage/images/encoder/encoder_thumbnail_profile/'.$encoder->encoder_profile_picture) : $default_profile }}" alt="Profile Picture">
                     <div 
                         x-show="EncoderdropdownOpen"
                         x-transition:enter="transition-transform transition-opacity ease-out duration-300"
@@ -129,8 +141,20 @@
                         </div>
                     </div>
                 @endauth
-                <li><a href="/encoder" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">Home</a></li>
-                <li><a href="/encoder/about-us" class="hover:scale-105 transition duration-150 ease-in-out block py-2 pr-4 pl-3 text-16px hover:text-orange-300">About Us</a></li>
+                <li>
+                    <a href="/encoder" 
+                    class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 pr-4 pl-3 text-16px hover:text-orange-300 
+                    {{ request()->is('encoder') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    Home
+                    </a>
+                </li>
+                <li>
+                    <a href="/encoder/about-us" 
+                    class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 pr-4 pl-3 text-16px hover:text-orange-300 
+                    {{ request()->is('encoder/about-us') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    About Us
+                    </a>
+                </li>
                 @guest('encoder')
                 <li class="inline-block">
                     <a @click.prevent="showEncoderLoginModal = true; localStorage.setItem('showEncoderLoginModal', 'true')"

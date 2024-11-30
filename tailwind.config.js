@@ -185,7 +185,7 @@ export default {
                         animationTimingFunction: 'ease-out',
                     },
                     '100%': {
-                        transform: 'rotateY(720deg)', // Stops upright
+                        transform: 'rotateY(720deg)', 
                     },
                 },
             },

@@ -28,6 +28,7 @@ use App\Mail\SeniorReferenceNumber;
 use App\Mail\SeniorRegisteredByStaff;
 use App\Http\Requests\UpdateEditBeneficiary;
 use App\Mail\SeniorChangedEmail;
+use App\Mail\EncoderChangedEmail;
 use App\Mail\SeniorPassword;
 
 class EncoderController extends Controller
@@ -44,6 +45,8 @@ class EncoderController extends Controller
 
     public function showEncoderProfile($encoder_id)
     {
+        $barangay_list = DB::table('barangay_list')->get();
+
         $encoder = Encoder::leftJoin('barangay_list', 'encoder.encoder_barangay_id', '=', 'barangay_list.id')
         ->leftJoin('encoder_roles', 'encoder_roles.encoder_user_id', '=', 'encoder.id')
         ->leftJoin('encoder_roles_list', 'encoder_roles.encoder_roles_id', '=', 'encoder_roles_list.id')
@@ -105,6 +108,7 @@ class EncoderController extends Controller
             'categories' => $categories,
             'roles' => $roles,
             'categoryColors' => $categoryColors,
+            'barangay_list' => $barangay_list
         ]);
     }
 
@@ -922,21 +926,17 @@ class EncoderController extends Controller
 
         $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
 
-        $seniorData['verification_code'] = $hashedVerificationCode;
-        $seniorData['verification_expires_at'] = $expirationTime;
-        $seniorData['verified_at'] = null;
-
         $originalEmail = $senior->email;
         $newEmail = $seniorData['email'];
 
         if ($newEmail !== $originalEmail) {
 
+            $seniorData['verification_code'] = $hashedVerificationCode;
+            $seniorData['verification_expires_at'] = $expirationTime;
+            $seniorData['verified_at'] = null;
+
             Mail::to($newEmail)->send(new SeniorChangedEmail($verificationCode, $expirationTime));
         }
-
-        $senior->fill($seniorData);
-        $senior->save();
-
 
         $senior->fill($seniorData);
         $senior->save();
@@ -1563,6 +1563,9 @@ class EncoderController extends Controller
             'encoder_middle_name' => 'nullable|string|max:255',
             'encoder_last_name' => 'required|string|max:255',
             'encoder_suffix' => 'nullable|string|max:255',
+            'encoder_address' => 'required|min:20|max:100',
+            'encoder_barangay_id' => 'required',
+            'encoder_contact_no' => 'required',
             'encoder_email' => 'required|email|unique:encoder,encoder_email,' . auth()->guard('encoder')->id(),
             "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
                 $secret = env('RECAPTCHA_SECRET_KEY');
@@ -1587,6 +1590,9 @@ class EncoderController extends Controller
         $encoder->encoder_middle_name = $request->encoder_middle_name;
         $encoder->encoder_last_name = $request->encoder_last_name;
         $encoder->encoder_suffix = $request->encoder_suffix;
+        $encoder->encoder_address = $request->encoder_address;
+        $encoder->encoder_barangay_id = $request->encoder_barangay_id;
+        $encoder->encoder_contact_no = $request->encoder_contact_no;
         $encoder->encoder_email = $request->encoder_email;
 
         $changesMade = false;
@@ -1595,6 +1601,9 @@ class EncoderController extends Controller
             $encoder->encoder_middle_name !== $originalValues['encoder_middle_name'] ||
             $encoder->encoder_last_name !== $originalValues['encoder_last_name'] ||
             $encoder->encoder_suffix !== $originalValues['encoder_suffix'] ||
+            $encoder->encoder_address !== $originalValues['encoder_address'] ||
+            $encoder->encoder_barangay_id !== $originalValues['encoder_barangay_id'] ||
+            $encoder->encoder_contact_no !== $originalValues['encoder_contact_no'] ||
             $encoder->encoder_email !== $originalValues['encoder_email']
         ) {
             $changesMade = true;
@@ -1613,6 +1622,9 @@ class EncoderController extends Controller
             'encoder_middle_name' => $request->encoder_middle_name,
             'encoder_last_name' => $request->encoder_last_name,
             'encoder_suffix' => $request->encoder_suffix,
+            'encoder_address' => $request->encoder_address,
+            'encoder_barangay_id' => $request->encoder_barangay_id,
+            'encoder_contact_no' => $request->encoder_contact_no,
             'encoder_email' => $request->encoder_email,
         ];
         session(['updated_profile_data' => $updatedData]);
@@ -1630,16 +1642,33 @@ class EncoderController extends Controller
             'encoder_current_password' => 'required|string',
         ]);
 
-        $encoder = $request->user(); 
+        $encoder = $request->user();
         if ($encoder && Hash::check($request->encoder_current_password, $encoder->encoder_password)) {
-
             $updatedData = session('updated_profile_data');
 
             if ($updatedData) {
+                $originalEmail = $encoder->encoder_email;
+                $newEmail = $updatedData['encoder_email'];
+
+                if ($newEmail !== $originalEmail) {
+                    $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+                    $hashedVerificationCode = Hash::make($verificationCode);
+                    $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
+
+                    $encoder->encoder_verification_code = $hashedVerificationCode;
+                    $encoder->encoder_verification_expires_at = $expirationTime;
+                    $encoder->encoder_verified_at = null;
+
+                    Mail::to($newEmail)->send(new EncoderChangedEmail($verificationCode, $expirationTime));
+                }
+
                 $encoder->encoder_first_name = $updatedData['encoder_first_name'];
                 $encoder->encoder_middle_name = $updatedData['encoder_middle_name'];
                 $encoder->encoder_last_name = $updatedData['encoder_last_name'];
                 $encoder->encoder_suffix = $updatedData['encoder_suffix'];
+                $encoder->encoder_address = $updatedData['encoder_address'];
+                $encoder->encoder_barangay_id = $updatedData['encoder_barangay_id'];
+                $encoder->encoder_contact_no = $updatedData['encoder_contact_no'];
                 $encoder->encoder_email = $updatedData['encoder_email'];
 
                 $encoder->save();
@@ -1650,12 +1679,13 @@ class EncoderController extends Controller
                     'clearEncoderEditProfileModal' => true,
                     'clearEncoderVerifyCurrentPasswordModal' => true,
                     'encoder-message-header' => 'Success',
-                    'encoder-message-body' => 'Profile updated successfully.'
+                    'encoder-message-body' => $newEmail !== $originalEmail
+                        ? 'Profile updated successfully. Please verify your new email address.'
+                        : 'Profile updated successfully.',
                 ]);
             }
         } else {
             return redirect()->back()->withErrors(['encoder_current_password' => 'Password is incorrect.']);
         }
     }
-
 }

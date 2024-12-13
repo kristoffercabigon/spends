@@ -25,6 +25,10 @@
                     <h1 class="text-xl font-bold mt-[15px] leading-tight tracking-tight text-gray-900 md:text-2xl">
                         Request Tracker
                     </h1>
+                    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+                    <div class="flex justify-center items-center">
+                        <dotlottie-player src="https://lottie.host/5d7a6a09-89df-48b3-b185-491b5155e947/HiL3PqxF8U.lottie" background="transparent" speed="1" style="width: 150px; height: 150px" loop autoplay></dotlottie-player>
+                    </div>
                     <p class="text-sm text-gray-500">
                         Please enter the reference number provided in the email to track your application request.
                     </p>

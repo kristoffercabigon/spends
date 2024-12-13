@@ -23,6 +23,7 @@ class AdminSeeder extends Seeder
             'admin_last_name' => 'Cabigon',
             'admin_suffix' => null,  
             'admin_email' => 'kristoffercabigon@gmail.com',
+            'admin_profile_picture' => 'sample18.jpg',
             'admin_password' => bcrypt('Abaayos!'),
             'admin_verified_at' => $faker->dateTimeThisDecade()->format('Y-m-d H:i:s'),
             'admin_date_registered' => $faker->dateTimeThisDecade()->format('Y-m-d H:i:s'),

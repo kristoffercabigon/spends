@@ -78,16 +78,37 @@
                         </div>
                         <ul class="py-2 text-sm text-gray-700" aria-labelledby="avatarButton">
                             <li>
-                                <a href="/encoder/dashboard" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
+                                <a href="/encoder/dashboard" class="block px-4 py-2 hover:bg-gray-100 flex items-center">
+                                <img 
+                                        src="{{ asset('images/dashboard-dropdown.png') }}" 
+                                        alt="Dashboard Icon" 
+                                        class="w-5 h-5"
+                                        aria-hidden="true"/>
+                                    <span class="ml-2">Dashboard</span>
+                                </a>
                             </li>
                             <li>
-                                <a href="/encoder/profile/{{$encoder->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
+                                <a href="/encoder/profile/{{$encoder->id}}" class="block px-4 py-2 hover:bg-gray-100 flex items-center">
+                                    <img 
+                                        src="{{ asset('images/user-dropdown.png') }}" 
+                                        alt="Dashboard Icon" 
+                                        class="w-5 h-5"
+                                        aria-hidden="true"/>
+                                    <span class="ml-2">Profile</span>
+                                </a>
                             </li>
                         </ul>
                         <div class="py-1">
                             <form action="/encoder/logout" method="POST">
                                 @csrf
-                                <button type="submit" class="block px-4 py-2 text-left text-sm text-gray-700 w-full hover:bg-gray-100">Sign out</button>
+                                <button type="submit" class="block px-4 py-2 text-left text-sm text-gray-700 w-full hover:bg-gray-100 flex items-center">
+                                <img 
+                                src="{{ asset('images/logout-dropdown.png') }}" 
+                                alt="Dashboard Icon" 
+                                class="w-5 h-5"
+                                aria-hidden="true"/>
+                                <span class="ml-2">Sign out</span>
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -129,14 +150,39 @@
                             <div class="font-medium truncate">{{ $encoder->encoder_email }}</div>
                             <div class="font-medium truncate">Encoder ID: {{ $encoder->encoder_id }}</div>
                         </div>
-                        <ul class="py-2 text-sm text-gray-700">
-                            <li><a href="/encoder/dashboard" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a></li>
-                            <li><a href="/encoder/profile/{{$encoder->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a></li>
+                        <ul class="py-2 text-sm text-gray-700" aria-labelledby="avatarButton">
+                            <li>
+                                <a href="/encoder/dashboard" class="block px-4 py-2 hover:bg-gray-100 flex items-center">
+                                <img 
+                                        src="{{ asset('images/dashboard-dropdown.png') }}" 
+                                        alt="Dashboard Icon" 
+                                        class="w-5 h-5"
+                                        aria-hidden="true"/>
+                                    <span class="ml-2">Dashboard</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/encoder/profile/{{$encoder->id}}" class="block px-4 py-2 hover:bg-gray-100 flex items-center">
+                                    <img 
+                                        src="{{ asset('images/user-dropdown.png') }}" 
+                                        alt="Dashboard Icon" 
+                                        class="w-5 h-5"
+                                        aria-hidden="true"/>
+                                    <span class="ml-2">Profile</span>
+                                </a>
+                            </li>
                         </ul>
                         <div class="py-1">
                             <form action="/encoder/logout" method="POST">
                                 @csrf
-                                <button type="submit" class="block px-4 py-2 text-left text-sm text-gray-700 w-full hover:bg-gray-100">Sign out</button>
+                                <button type="submit" class="block px-4 py-2 text-left text-sm text-gray-700 w-full hover:bg-gray-100 flex items-center">
+                                <img 
+                                src="{{ asset('images/logout-dropdown.png') }}" 
+                                alt="Dashboard Icon" 
+                                class="w-5 h-5"
+                                aria-hidden="true"/>
+                                <span class="ml-2">Sign out</span>
+                                </button>
                             </form>
                         </div>
                     </div>

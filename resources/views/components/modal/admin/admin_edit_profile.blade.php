@@ -29,7 +29,7 @@
                           @submit.prevent="
                           isAdminLoadingSignUp = true;
                           $nextTick(() => $el.submit());" 
-                          class="space-y-4 md:space-y-6" method="POST" enctype="multipart/form-data" action="/admin/edit-profile">
+                          class="space-y-4 md:space-y-6" method="POST" enctype="multipart/form-data" action="/admin/profile/edit-profile">
                         @method('PUT')
                         @csrf
 

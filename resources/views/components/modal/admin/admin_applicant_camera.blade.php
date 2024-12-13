@@ -19,16 +19,16 @@
                 <div class="col">
                     <div class="relative w-full h-auto">
                         <div id="my_admin_applicant_camera" class="w-full h-auto" style="max-width: 100%; max-height: 100%;"></div>
-                        <img src="../../images/silhoutte.png" alt="Person Silhouette" class="absolute inset-0 w-full h-full opacity-50 pointer-events-none z-10 silhouette-image">
+                        <img src="../../../images/silhoutte.png" alt="Person Silhouette" class="absolute inset-0 w-full h-full opacity-50 pointer-events-none z-10 silhouette-image">
                     </div>
                     <br />
                     <div class="flex justify-center">
                         <button type="button" class="flex items-center justify-center mb-6 w-16 h-16 bg-gray-500 rounded-full hover:bg-gray-300 transition" onClick="take_snapshot()">
-                            <img src="../../images/camera.png" alt="Take Snapshot" class="w-8 h-8" />
+                            <img src="../../../images/camera.png" alt="Take Snapshot" class="w-8 h-8" />
                         </button>
 
                         <button type="button" class="flex items-center justify-center mb-6 ml-4 w-16 h-16 bg-gray-500 rounded-full hover:bg-gray-300 transition" @click="switchAdminApplicantCamera()">
-                            <img src="../../images/switch-camera.png" alt="Turn Camera" class="w-8 h-8" />
+                            <img src="../../../images/switch-camera.png" alt="Turn Camera" class="w-8 h-8" />
                         </button>
                     </div>
                     <input type="hidden" name="image" class="image-tag">
@@ -39,13 +39,13 @@
                         <span id="error-message" class="text-red-500 hidden">Take a picture first</span>
                         <div>
                             <div class="flex items-center">
-                                <img src="../../images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-4"> 
+                                <img src="../../../images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-4"> 
                                 <p class="mt-2 text-left text-gray-900">
                                     Note: Make sure the face is in silhouette and the personal photo is taken on a clean PLAIN WHITE BACKGOUND. Wear proper clothes (Polo shirt, T-shirt, Blouse).
                                 </p>
                             </div>
                             <div class="flex items-center">
-                                <img src="../../images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-4"> 
+                                <img src="../../../images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-4"> 
                                 <p class="mt-2 text-left italic text-gray-900">
                                     Paalala: Siguraduhing pasok ang mukha sa silhouette at nasa malinis na PLAIN WHITE BACKGOUND ang pagkakuha ng personal na litrato. Magsuot ng maayos na damit (Polo shirt, T-shirt, Blouse).
                                 </p>

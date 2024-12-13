@@ -1,7 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 /* INDENT FOR DATA PRIVACY */
 
@@ -212,4 +214,74 @@ div.area {
         opacity: 0;
         border-radius: 50%;
     }
+}
+
+:root {
+  --light: #edf2f9;
+  --dark: #152e4d;
+  --darker: #12263f;
+  /*  */
+  --color-primary: var(--color-orange);
+  --color-primary-50: var(--color-orange-50);
+  --color-primary-100: var(--color-orange-100);
+  --color-primary-light: var(--color-orange-light);
+  --color-primary-lighter: var(--color-orange-lighter);
+  --color-primary-dark: var(--color-orange-dark);
+  --color-primary-darker: var(--color-orange-darker);
+  /*  */
+  --color-green: #1aa514;
+  --color-green-50: #75c972;
+  --color-green-100: #5ec05a;
+  --color-green-light: #47b742;
+  --color-green-lighter: #30ae2b;
+  --color-green-dark: #179412;
+  --color-green-darker: #148410;
+  /*  */
+  --color-orange: #ff4802;
+  --color-orange-50: #fff4e6;
+  --color-orange-100: #ffd6bf;
+  --color-orange-light: #ff7d3a;
+  --color-orange-lighter: #ff995e;
+  --color-orange-dark: #e63e02;
+  --color-orange-darker: #bf3202;
+  /* */
+  --color-blue: #2563eb;
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-light: #3b82f6;
+  --color-blue-lighter: #60a5fa;
+  --color-blue-dark: #1d4ed8;
+  --color-blue-darker: #1e40af;
+  /*  */
+  --color-cyan: #0891b2;
+  --color-cyan-50: #ecfeff;
+  --color-cyan-100: #cffafe;
+  --color-cyan-light: #06b6d4;
+  --color-cyan-lighter: #22d3ee;
+  --color-cyan-dark: #0e7490;
+  --color-cyan-darker: #155e75;
+  /*  */
+  --color-teal: #0d9488;
+  --color-teal-50: #f0fdfa;
+  --color-teal-100: #ccfbf1;
+  --color-teal-light: #14b8a6;
+  --color-teal-lighter: #2dd4bf;
+  --color-teal-dark: #0f766e;
+  --color-teal-darker: #115e59;
+  /*  */
+  --color-fuchsia: #c026d3;
+  --color-fuchsia-50: #fdf4ff;
+  --color-fuchsia-100: #fae8ff;
+  --color-fuchsia-light: #d946ef;
+  --color-fuchsia-lighter: #e879f9;
+  --color-fuchsia-dark: #a21caf;
+  --color-fuchsia-darker: #86198f;
+  /*  */
+  --color-violet: #7c3aed;
+  --color-violet-50: #f5f3ff;
+  --color-violet-100: #ede9fe;
+  --color-violet-light: #8b5cf6;
+  --color-violet-lighter: #a78bfa;
+  --color-violet-dark: #6d28d9;
+  --color-violet-darker: #5b21b6;
 }

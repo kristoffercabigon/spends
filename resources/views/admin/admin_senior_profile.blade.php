@@ -47,14 +47,12 @@
         <li></li>
     </ul>
     
-    <div class="absolute inset-0 rounded-md bg-white mx-4 my-4 lg:ml-[95px] z-10"></div>
-    
-    <div class="relative flex items-center justify-center font-poppins lg:pl-[80px] z-20">
+    <div class="relative flex items-center justify-center font-poppins lg:mt-[80px] lg:pl-[255px]">
         <div class="w-full mx-auto font-[poppins]">
             <div class="bg-white mt-4 ml-4 mr-4 mb-4 rounded-md">              
                 <div class="px-6 py-4 lg:px-12">
                     <div class="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-                        <p class="text-center md:text-left">
+                        <p class="text-center">
                             Profile
                         </p>
                     </div>
@@ -64,8 +62,8 @@
                             @php
                                 $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$senior->first_name."-".$senior->last_name;
                             @endphp
-                            showAdminRegisteredProfilePicModal: false,
-                            previewUrl: '{{ $senior->profile_picture ? asset("storage/images/senior_citizen/profile_picture/".$senior->profile_picture) : $default_profile }}'
+                            showAdminApplicantRegisteredProfilePicModal: false,
+                            previewUrlAdminApplicantRegisteredProfilePic: '{{ $senior->profile_picture ? asset("storage/images/senior_citizen/profile_picture/".$senior->profile_picture) : $default_profile }}'
                         }">
                         <div class="md:flex no-wrap ">
                             <div class="w-full md:w-3/12 md:mx-2">
@@ -75,7 +73,7 @@
                                     ($account_status && $account_status->senior_account_status == 'Disqualified' ? 'border-yellow-500' : 
                                     ($account_status && $account_status->senior_account_status == 'Deactivated' ? 'border-red-500' : 'border-gray-500'))) }}">
                                     <div class="flex items-center hover:animate-scale cursor-pointer justify-center image overflow-hidden"
-                                        @click="showAdminRegisteredProfilePicModal = true">
+                                        @click="showAdminApplicantRegisteredProfilePicModal = true">
                                         @php
                                             $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$senior->first_name."-".$senior->last_name;
                                         @endphp
@@ -174,9 +172,9 @@
                                             </li>
                                         @endif
                                         @if ($senior->account_status_id)
-                                        <li class="flex items-center py-3">
+                                        <li class="flex items-center justify-end py-3">
                                             <span>Approved By:</span>
-                                            <span class="ml-auto">
+                                            <span class="ml-auto flex justify-end">
                                                 @if ($senior->application_assistant_name)
                                                     ({{$application_assistant->user_type}})
                                                     {{ $senior->application_assistant_name}}
@@ -187,9 +185,9 @@
                                         </li>
                                         @endif
                                         @if ($senior->registration_assistant_id)
-                                        <li class="flex items-center py-3">
+                                        <li class="flex items-center justify-end py-3">
                                             <span>Registered By:</span>
-                                            <span class="ml-auto">
+                                            <span class="ml-auto flex justify-end">
                                                 @if ($senior->registration_assistant_id)
                                                     ({{$registration_assistant->user_type}})
                                                     {{ $senior->registration_assistant_name}}
@@ -362,7 +360,7 @@
                                 <div class="bg-[#ffece5] pb-3 shadow-md rounded-md">
                                     <div class="flex bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 font-semibold text-gray-900 leading-8">
                                         <span class="text-green-500">
-                                            <img src="../../images/family.png" alt="Family Icon" class="h-5 inline">
+                                            <img src="../../../images/family.png" alt="Family Icon" class="h-5 inline">
                                         </span>
                                         <span class="tracking-wide text-white font-semibold">Family Composition</span>
                                     </div>
@@ -413,7 +411,7 @@
                                 <div class="bg-[#ffece5] pb-3 shadow-md rounded-md">
                                     <div class="flex bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 font-semibold text-gray-900 leading-8">
                                         <span class="text-green-500">
-                                            <img src="../../images/economy.png" alt="Family Icon" class="h-5 inline">
+                                            <img src="../../../images/economy.png" alt="Family Icon" class="h-5 inline">
                                         </span>
                                         <span class="tracking-wide text-white font-semibold">Economic Status</span>
                                     </div>
@@ -485,7 +483,7 @@
                                 <div class="bg-[#ffece5] pb-3 shadow-md rounded-md">
                                     <div class="flex bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 font-semibold text-gray-900 leading-8">
                                         <span class="text-green-500">
-                                            <img src="../../images/health-condition.png" alt="Family Icon" class="h-5 inline">
+                                            <img src="../../../images/health-condition.png" alt="Family Icon" class="h-5 inline">
                                         </span>
                                         <span class="tracking-wide text-white font-semibold">Health Condition</span>
                                     </div>
@@ -525,7 +523,7 @@
                                 <div class="bg-[#ffece5] pb-3 shadow-md rounded-md">
                                     <div class="flex bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 font-semibold text-gray-900 leading-8">
                                         <span class="text-green-500">
-                                            <img src="../../images/identification.png" alt="Family Icon" class="h-5 inline">
+                                            <img src="../../../images/identification.png" alt="Family Icon" class="h-5 inline">
                                         </span>
                                         <span class="tracking-wide text-white font-semibold">Identification</span>
                                     </div>
@@ -587,7 +585,7 @@
                                 <div class="bg-[#ffece5] pb-3 mb-6 shadow-md rounded-md">
                                     <div class="flex bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 font-semibold text-gray-900 leading-8">
                                         <span class="text-green-500">
-                                            <img src="../../images/key.png" alt="Key Icon" class="h-5 inline">
+                                            <img src="../../../images/key.png" alt="Key Icon" class="h-5 inline">
                                         </span>                             
                                     <span class="tracking-wide text-white font-semibold">Account Information</span>
                                     </div>
@@ -610,7 +608,7 @@
                                 </div>
                             </div>
                         </div>
-                        @include('components.modal.admin.admin_registered_profilepic_zoom')
+                        @include('components.modal.admin.admin_applicant_registered_profilepic_zoom')
                         @include('components.modal.admin.admin_applicant_birth_certificate_zoom')
                         @include('components.modal.admin.admin_applicant_indigency_zoom')
                         @include('components.modal.admin.admin_applicant_valid_id_zoom')

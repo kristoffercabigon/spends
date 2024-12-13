@@ -3,7 +3,7 @@
          x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
          x-transition:leave="transition-opacity ease-linear duration-300"
          x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 font-poppins"  
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10 font-poppins"  
          @click.away="showAdminRegisteredProfilePicModal = false"
          x-data="{ 
              zoom: 1, 

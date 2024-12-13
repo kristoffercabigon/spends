@@ -29,6 +29,8 @@ class IncomeSourceDataSeeder extends Seeder
         $seniors = Seniors::where('permanent_source', 1)->get();
 
         foreach ($seniors as $senior) {
+            echo "(Income Source) Senior ID: {$senior->id}" . PHP_EOL;
+
             $incomeSourceIds = range(1, $maxIncomeSourceId);
 
             $incomeSourceCount = rand(1, 3);

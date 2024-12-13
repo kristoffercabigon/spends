@@ -10,6 +10,20 @@
 </script>
 @endif
 
+<script>
+window.addEventListener('beforeunload', function () {
+    localStorage.removeItem('showRequestStatusModal');
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    if (localStorage.getItem('showRequestStatusModal') === 'true') {
+        document.querySelector('[x-show="showRequestStatusModal"]').style.display = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 font-poppins';
+    } else {
+        document.querySelector('[x-show="showRequestStatusModal"]').style.display = 'none';
+    }
+});
+</script>
+
 <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 font-poppins"
      x-show="showRequestStatusModal"
      x-transition:enter="transition-opacity ease-linear duration-300"
@@ -40,7 +54,26 @@
                             $currentStatusId = session('seniorApplicationStatus');
                             $statusText = collect($statusList)->firstWhere('id', $currentStatusId)?->senior_application_status ?? 'Unknown Status';
                         @endphp
-                        <p class="text-6xl font-bold text-gray-800 text-center">
+
+                        @if ($currentStatusId == 1)
+                            <div id="Under_Evaluation" class="flex justify-center items-center">
+                                <dotlottie-player src="https://lottie.host/a7e8b4e3-2088-48de-8929-d9f1553e8a6c/Og9VYjFhcy.lottie" background="transparent" speed="1" style="width: 150px; height: 150px" loop autoplay></dotlottie-player>
+                            </div>
+                        @elseif ($currentStatusId == 2)
+                            <div id="On_Hold" class="flex justify-center items-center">
+                                <dotlottie-player src="https://lottie.host/2241432c-fc73-4043-b581-7b703558e7b0/WAQAkhMk98.lottie" background="transparent" speed="1" style="width: 150px; height: 150px" loop autoplay></dotlottie-player>
+                            </div>
+                        @elseif ($currentStatusId == 3)
+                            <div id="Approved" class="flex justify-center items-center">
+                                <dotlottie-player src="https://lottie.host/2d69ead6-8369-43cb-a206-1126561b3839/TulSTip19Y.lottie" background="transparent" speed=".5" style="width: 150px; height: 150px" loop autoplay></dotlottie-player>
+                            </div>
+                        @elseif ($currentStatusId == 4)
+                            <div id="Rejected" class="flex justify-center items-center">
+                                <dotlottie-player src="https://lottie.host/d01ed634-8d66-47ed-82b0-3aa3d7608e7f/yJWlIN3ynB.lottie" background="transparent" speed=".5" style="width: 150px; height: 150px" loop autoplay></dotlottie-player>
+                            </div>
+                        @endif
+
+                        <p class="text-4xl font-bold text-gray-800 text-center">
                             {{ $statusText }}
                         </p>
                     </div>

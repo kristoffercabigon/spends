@@ -17,15 +17,13 @@
         <li></li>
     </ul>
     
-    <div class="absolute inset-0 rounded-md bg-white mx-4 my-4 lg:ml-[95px] z-10"></div>
-    
-    <div class="relative flex items-center justify-center font-poppins lg:pl-[80px] z-20">
+    <div class="relative flex items-center justify-center font-poppins lg:mt-[80px] lg:pl-[255px]">
         <div class="w-full mx-auto font-[poppins]">
             <div class="bg-white mt-4 ml-4 mr-4 mb-4 rounded-md">              
                 <div class="px-6 py-4 lg:px-12">
                     <div class="w-full">
                         <div class="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-                            <p class="text-center md:text-left">
+                            <p class="text-center">
                                 Beneficiaries List
                             </p>
                         </div>
@@ -48,26 +46,26 @@
                             </div>
 
                             <div id="date-range-picker" class="flex justify-start mb-4 items-center">
-                                <div class="relative">
+                                <div class="relative sm:w-full">
                                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                         <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                                         </svg>
                                     </div>
-                                    <input id="datepicker-range-start" name="start" type="text" class="bg-gray-50 border border-[#1AA514] text-gray-900 text-sm rounded-md focus:ring-[#1AA514] focus:border-[#1AA514] block w-full ps-10 p-2.5 pr-10" placeholder="Select date start">
-                                    <button type="button" id="clear-start" class="absolute inset-y-0 right-0 flex items-center pr-3 text-white bg-[#1AA514] hover:bg-green-600 rounded-tl-none rounded-br-md rounded-tr-md p-1 pl-3">
+                                    <input id="datepicker-range-start" name="start" type="text" class="bg-gray-50 border border-[#1AA514] text-gray-900 text-sm rounded-md focus:ring-[#1AA514] focus:border-[#1AA514] block w-full p-2.5 pr-10 ps-10" placeholder="Select date start">
+                                    <button type="button" id="clear-start" class="absolute inset-y-0 right-0 flex items-center pr-3 text-white bg-[#1AA514] hover:bg-[#148410] rounded-tl-none rounded-br-md rounded-tr-md p-1 pl-3">
                                         Clear
                                     </button>
                                 </div>
                                 <span class="mx-4 text-gray-500">to</span>
-                                <div class="relative">
+                                <div class="relative sm:w-full">
                                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                         <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 1 0 0-2Z" />
                                         </svg>
                                     </div>
-                                    <input id="datepicker-range-end" name="end" type="text" class="bg-gray-50 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full ps-10 p-2.5 pr-10" placeholder="Select date end">
-                                    <button type="button" id="clear-end" class="absolute inset-y-0 right-0 flex items-center pr-3 text-white bg-[#1AA514] hover:bg-green-600 rounded-tl-none rounded-br-md rounded-tr-md rounded-bl-none p-1 pl-3">
+                                    <input id="datepicker-range-end" name="end" type="text" class="bg-gray-50 border border-[#1AA514] text-gray-900 text-sm rounded-md focus:ring-[#1AA514] focus:border-[#1AA514] block w-full p-2.5 pr-10 ps-10" placeholder="Select date end">
+                                    <button type="button" id="clear-end" class="absolute inset-y-0 right-0 flex items-center pr-3 text-white bg-[#1AA514] hover:bg-[#148410] rounded-tl-none rounded-br-md rounded-tr-md rounded-bl-none p-1 pl-3">
                                         Clear
                                     </button>
                                 </div>
@@ -117,7 +115,7 @@
                             </div>
 
                             <div class="flex relative justify-start md:justify-end">
-                                <a href="/encoder/add-beneficiary" 
+                                <a href="/encoder/beneficiaries/add-beneficiary" 
                                     class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-md px-5 py-2 text-center inline-flex items-center">
                                     Add Beneficiary
                                 </a>
@@ -126,8 +124,8 @@
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto lg:overflow-visible">
-                        <table class="min-w-full table-auto drop-shadow-lg relative bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 leading-8" data-aos="zoom-in">
+                    <div class="overflow-x-auto drop-shadow-lg">
+                        <table class="min-w-full table-auto relative bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 leading-8" data-aos="zoom-in">
                             <thead>
                                 <tr class="bg-[#FF4802] text-white">
                                     <th class="px-4 py-2 font-semibold rounded-t-md text-left">#</th>
@@ -372,7 +370,7 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         const beneficiarySelectedStatuses = JSON.parse(localStorage.getItem('beneficiarySelectedStatuses')) || [];
         const beneficiaryOrder = orderDropdown.value;
 
-        fetch('/encoder/filter-beneficiaries?page=' + page, {
+        fetch('/encoder/beneficiaries/filter-beneficiaries?page=' + page, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -423,10 +421,10 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
                 <td class="px-4 py-2">${senior.barangay_no}</td>
                 <td class="px-4 py-2">${formattedDate}</td>
                 <td class="px-3 py-2 flex justify-center items-center">
-                    <a href="/encoder/view-senior-profile/${senior.id}" class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer">
+                    <a href="/encoder/beneficiaries/view-senior-profile/${senior.id}" class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer">
                         <img src="../images/view-senior.png" alt="View Senior" class="w-4 h-4">
                     </a>
-                    <a href="/encoder/edit-senior-profile/${senior.id}" class="bg-orange-500 ml-1 animate-pop hover:bg-orange-600 rounded-md p-2 cursor-pointer">
+                    <a href="/encoder/beneficiaries/edit-senior-profile/${senior.id}" class="bg-orange-500 ml-1 animate-pop hover:bg-orange-600 rounded-md p-2 cursor-pointer">
                         <img src="../images/pencil.png" alt="View Senior" class="w-4 h-4">
                     </a>
                 </td>

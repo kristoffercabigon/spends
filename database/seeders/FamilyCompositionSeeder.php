@@ -11,24 +11,24 @@ class FamilyCompositionSeeder extends Seeder
     public function run(): void
     {
         $relationships = [
-            1 => [1, 30],    
-            2 => [1, 30],    
-            3 => [30, 100],  
-            4 => [30, 100],  
-            5 => [30, 100],  
-            6 => [30, 80],   
-            7 => [30, 80],   
-            8 => [1, 40],    
-            9 => [1, 40],    
-            10 => [10, 80],  
-            11 => [60, 100], 
-            12 => [40, 90],  
-            13 => [40, 90],  
-            14 => [30, 80],  
-            15 => [30, 80],  
-            16 => [1, 30],   
-            17 => [30, 100], 
-            18 => [1, 80],   
+            1 => [1, 30],
+            2 => [1, 30],
+            3 => [30, 100],
+            4 => [30, 100],
+            5 => [30, 100],
+            6 => [30, 80],
+            7 => [30, 80],
+            8 => [1, 40],
+            9 => [1, 40],
+            10 => [10, 80],
+            11 => [60, 100],
+            12 => [40, 90],
+            13 => [40, 90],
+            14 => [30, 80],
+            15 => [30, 80],
+            16 => [1, 30],
+            17 => [30, 100],
+            18 => [1, 80],
         ];
 
         $occupationIncomeRanges = [
@@ -73,6 +73,8 @@ class FamilyCompositionSeeder extends Seeder
         $seniors = Seniors::all();
 
         foreach ($seniors as $senior) {
+            echo "(Family Composition) Processing Senior ID: {$senior->id}" . PHP_EOL;
+
             $familyMemberCount = (rand(1, 2) == 1) ? rand(5, 10) : rand(1, 4);
 
             for ($i = 0; $i < $familyMemberCount; $i++) {
@@ -80,10 +82,8 @@ class FamilyCompositionSeeder extends Seeder
                 $relativeLastName = $senior->last_name;
                 $relativeName = $relativeFirstName . ' ' . $relativeLastName;
 
-                // Get a random relationship index (1, 2, ..., 18)
                 $relationshipIndex = fake()->randomElement(array_keys($relationships));
 
-                // Get the age range for the selected relationship
                 $ageRange = $relationships[$relationshipIndex];
                 $relativeAge = rand($ageRange[0], $ageRange[1]);
 
@@ -108,7 +108,7 @@ class FamilyCompositionSeeder extends Seeder
                 FamilyComposition::create([
                     'senior_id' => $senior->id,
                     'relative_name' => $relativeName,
-                    'relative_relationship_id' => $relationshipIndex, 
+                    'relative_relationship_id' => $relationshipIndex,
                     'relative_age' => $relativeAge,
                     'relative_civil_status_id' => $civilStatus,
                     'relative_occupation' => $occupation,

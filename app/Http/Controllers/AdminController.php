@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admin;
 use App\Models\Seniors;
 use App\Models\Encoder;
+use App\Models\PensionDistribution;
 use App\Mail\AdminResendCodeEmail;
 use App\Mail\AdminForgotPassword;
 use App\Mail\AdminLoginAttempt;
@@ -47,9 +48,104 @@ class AdminController extends Controller
 
     public function showAdminDashboard()
     {
+        $barangay_list = DB::table('barangay_list')->pluck('barangay_no', 'id');
+
+        $application_status_list = DB::table('senior_application_status_list')->pluck('senior_application_status', 'id');
+
+        $account_status_list = DB::table('senior_account_status_list')->pluck('senior_account_status', 'id');
+
+        $accountStatusCounts = DB::table('seniors')
+        ->select('account_status_id', DB::raw('count(*) as total'))
+        ->groupBy('account_status_id')
+        ->pluck('total', 'account_status_id');
+
+        $accountStatusData = [];
+        foreach ($account_status_list as $id => $status) {
+            $accountStatusData[] = [
+                'status' => $status,
+                'total' => $accountStatusCounts[$id] ?? 0
+            ];
+        }
+
+        $seniorsPerApplicationStatus = DB::table('seniors')
+        ->where('application_status_id', 3)
+        ->select('barangay_id', DB::raw('count(*) as total'))
+        ->groupBy('barangay_id')
+        ->pluck('total', 'barangay_id');
+
+        $barangayData = [];
+        foreach ($barangay_list as $id => $name) {
+            $barangayData[] = [
+                'name' => $name,
+                'total' => $seniorsPerApplicationStatus[$id] ?? 0
+            ];
+        }
+
+        $seniors = DB::table('seniors')
+        ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
+        ->leftJoin('senior_account_status_list', 'seniors.account_status_id', '=', 'senior_account_status_list.id')
+        ->leftJoin('barangay_list', 'seniors.barangay_id', '=', 'barangay_list.id')
+        ->select(
+            'seniors.*',
+            'sex_list.sex as sex_name',
+            'senior_account_status_list.senior_account_status as senior_account_status',
+            'barangay_list.barangay_no as barangay_no'
+        )
+            ->whereNotNull('seniors.account_status_id')
+            ->orderBy('seniors.id', 'desc')
+            ->paginate(10);
+
+        $accountStatuses = DB::table('senior_account_status_list')->get();
+        $barangayList = DB::table('barangay_list')->get();
+
         return view('admin.admin_dashboard', [
-            'title' => 'Admin Dashboard'
+            'title' => 'Dashboard',
+            'application_status_list' => $application_status_list,
+            'accountStatusData' => $accountStatusData,
+            'barangay_list' => $barangayData,
+            'seniors' => $seniors,
+            'accountStatuses' => $accountStatuses,
+            'barangayList' => $barangayList,
+            'totalApplicationRequests' => \App\Models\Seniors::count(),
+            'totalApplicationsApproved' => \App\Models\Seniors::where('application_status_id', 3)->count(),
+            'totalBeneficiaries' => \App\Models\Seniors::where('application_status_id', 3)
+                ->where(function ($query) {
+                    $query->where('account_status_id', 1)
+                        ->orWhere('account_status_id', 2);
+                })
+                ->count(),
         ]);
+    }
+
+    public function filterSeniorsDashboardBeneficiaries(Request $request)
+    {
+        $searchQuery = $request->input('search_query', '');
+
+        $query = DB::table('seniors')
+        ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
+        ->leftJoin('senior_account_status_list', 'seniors.account_status_id', '=', 'senior_account_status_list.id')
+        ->leftJoin('barangay_list', 'seniors.barangay_id', '=', 'barangay_list.id')
+        ->select(
+            'seniors.*',
+            'sex_list.sex as sex_name',
+            'senior_account_status_list.senior_account_status as senior_account_status',
+            'barangay_list.barangay_no as barangay_no'
+        )
+            ->whereNotNull('seniors.account_status_id');
+
+        if (!empty($searchQuery)) {
+            $terms = array_filter(explode(' ', strtolower($searchQuery)));
+
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->whereRaw("LOWER(CONCAT_WS(' ', seniors.first_name, seniors.middle_name, seniors.last_name, seniors.suffix)) LIKE ?", ['%' . $term . '%']);
+                }
+            })->orWhere('seniors.osca_id', 'LIKE', '%' . $searchQuery . '%');
+        }
+
+        $seniors = $query->orderBy('seniors.id', 'desc')->paginate(10);
+
+        return response()->json($seniors);
     }
 
     public function showAdminApplicationRequests()
@@ -225,6 +321,7 @@ class AdminController extends Controller
         ]);
 
         $adminUser = auth()->guard('admin')->user();
+        $adminId = $adminUser->id;
         $adminUserTypeId = $adminUser->admin_user_type_id;
         $adminFirstName = $adminUser->admin_first_name;
         $adminLastName = $adminUser->admin_last_name;
@@ -242,6 +339,7 @@ class AdminController extends Controller
             $senior->account_status_id = null;
             $senior->application_assistant_id = null;
             $senior->application_assistant_name = null;
+            $senior->application_admin_id = null;
             $senior->date_approved = null;
         }
 
@@ -251,6 +349,8 @@ class AdminController extends Controller
             $senior->account_status_id = 1;
             $senior->date_approved = now();
             $senior->application_assistant_id = $adminUserTypeId;
+            $senior->application_admin_id = $adminId;
+            $senior->application_encoder_id = null;
             $senior->application_assistant_name = "{$adminFirstName} {$adminLastName}";
         }
 
@@ -437,6 +537,7 @@ class AdminController extends Controller
         ->select(
             'encoder.id',
             'encoder.encoder_id',
+            'encoder.encoder_profile_picture',
             'encoder.encoder_first_name',
             'encoder.encoder_middle_name',
             'encoder.encoder_last_name',
@@ -445,7 +546,7 @@ class AdminController extends Controller
             DB::raw('GROUP_CONCAT(DISTINCT encoder_roles_list.encoder_role_category ORDER BY encoder_roles_list.id) as role_categories'),
             DB::raw('GROUP_CONCAT(encoder_roles_list.encoder_role ORDER BY encoder_roles_list.id) as roles')
         )
-        ->groupBy('encoder.id', 'encoder.encoder_id', 'encoder.encoder_first_name','encoder.encoder_middle_name', 'encoder.encoder_last_name','encoder.encoder_suffix', 'encoder.encoder_date_registered')
+        ->groupBy('encoder.id', 'encoder.encoder_id', 'encoder.encoder_profile_picture', 'encoder.encoder_first_name','encoder.encoder_middle_name', 'encoder.encoder_last_name','encoder.encoder_suffix', 'encoder.encoder_date_registered')
         ->orderBy('encoder.id', $order);
 
         if (!empty($roleCategory)) {
@@ -770,7 +871,7 @@ class AdminController extends Controller
 
         $encoder->save();
 
-        return redirect('/admin/view-encoder-profile/' . $encoder->id)->with([
+        return redirect('/admin/encoders/view-encoder-profile/' . $encoder->id)->with([
             'clearAdminEditEncoderModal' => true,
             'admin-message-header' => 'Success',
             'admin-message-body' => $newEmail !== $originalEmail
@@ -951,14 +1052,19 @@ class AdminController extends Controller
         } while (DB::table('seniors')->where('osca_id', $osca_id)->exists());
 
         $adminUser = auth()->guard('admin')->user();
+        $adminId = $adminUser->id;
         $adminUserTypeId = $adminUser->admin_user_type_id;
         $adminFirstName = $adminUser->admin_first_name;
         $adminLastName = $adminUser->admin_last_name;
 
         $seniorData['registration_assistant_id'] = $adminUserTypeId;
+        $seniorData['registration_admin_id'] = $adminId;
+        $seniorData['registration_encoder_id'] = null;
         $seniorData['registration_assistant_name'] = "{$adminFirstName} {$adminLastName}";
 
         $seniorData['application_assistant_id'] = $adminUserTypeId;
+        $seniorData['application_application_id'] = $adminId;
+        $seniorData['application_encoder_id'] = null;
         $seniorData['application_assistant_name'] = "{$adminFirstName} {$adminLastName}";
 
         $user_type_id = 1;
@@ -1138,11 +1244,11 @@ class AdminController extends Controller
                 DB::table('family_composition')->insert([
                     'senior_id' => $seniors->id,
                     'relative_name' => $name,
-                    'relative_relationship_id' => $request->relative_relationship_id[$index] ?: null,
-                    'relative_age' => $request->relative_age[$index] ?: null,
-                    'relative_civil_status_id' => $request->relative_civil_status_id[$index] ?: null,
-                    'relative_occupation' => $request->relative_occupation[$index] ?: null,
-                    'relative_income' => $request->relative_income[$index] ?: null,
+                    'relative_relationship_id' => $request->relative_relationship_id[$index] ?? null,
+                    'relative_age' => $request->relative_age[$index] ?? null,
+                    'relative_civil_status_id' => $request->relative_civil_status_id[$index] ?? null,
+                    'relative_occupation' => $request->relative_occupation[$index] ?? null,
+                    'relative_income' => $request->relative_income[$index] ?? null,
                 ]);
             }
         }
@@ -1350,11 +1456,11 @@ class AdminController extends Controller
                 DB::table('family_composition')->insert([
                     'senior_id' => $senior->id,
                     'relative_name' => $name,
-                    'relative_relationship_id' => $request->relative_relationship_id[$index] ?: null,
-                    'relative_age' => $request->relative_age[$index] ?: null,
-                    'relative_civil_status_id' => $request->relative_civil_status_id[$index] ?: null,
-                    'relative_occupation' => $request->relative_occupation[$index] ?: null,
-                    'relative_income' => $request->relative_income[$index] ?: null,
+                    'relative_relationship_id' => $request->relative_relationship_id[$index] ?? null,
+                    'relative_age' => $request->relative_age[$index] ?? null,
+                    'relative_civil_status_id' => $request->relative_civil_status_id[$index] ?? null,
+                    'relative_occupation' => $request->relative_occupation[$index] ?? null,
+                    'relative_income' => $request->relative_income[$index] ?? null,
                 ]);
             }
         }
@@ -1363,6 +1469,256 @@ class AdminController extends Controller
             'admin-message-header' => 'Update Successful',
             'admin-message-body' => 'The beneficiary details have been successfully updated.',
         ]);
+    }
+
+    public function showAdminPensionDistributionList()
+    {
+        $barangayList = DB::table('barangay_list')->get();
+
+        $pension_distributions = DB::table('pension_distribution_list')
+        ->leftJoin('barangay_list', 'pension_distribution_list.barangay_id', '=', 'barangay_list.id')
+        ->leftJoin('user_type_list', 'pension_distribution_list.pension_user_type_id', '=', 'user_type_list.id')
+        ->leftJoin('encoder', 'pension_distribution_list.pension_encoder_id', '=', 'encoder.id')
+        ->leftJoin('admin', 'pension_distribution_list.pension_admin_id', '=', 'admin.id')
+        ->select(
+            'pension_distribution_list.*',
+            'barangay_list.barangay_locality as barangay_locality',
+            'barangay_list.barangay_no as barangay_no',
+            'encoder.encoder_first_name',
+            'encoder.encoder_last_name',
+            'encoder_profile_picture',
+            'admin.admin_first_name',
+            'admin.admin_last_name',
+            'admin_profile_picture',
+            'user_type_list.user_type'
+        )
+            ->orderBy('pension_distribution_list.id', 'asc')
+            ->paginate(10);
+
+        return view('admin.admin_pension_distribution_list', [
+            'title' => 'Pension Distribution List',
+            'barangayList' => $barangayList,
+            'pension_distributions' => $pension_distributions,
+        ]);
+    }
+
+
+    public function filterPensionDistributionList(Request $request)
+    {
+        $barangayId = $request->input('barangay_id');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $orderDirection = $request->input('order', 'asc');
+        $perPage = 10;
+
+        $query = DB::table('pension_distribution_list')
+        ->leftJoin('barangay_list', 'pension_distribution_list.barangay_id', '=', 'barangay_list.id')
+            ->leftJoin('user_type_list', 'pension_distribution_list.pension_user_type_id', '=', 'user_type_list.id')
+        ->leftJoin('encoder', 'pension_distribution_list.pension_encoder_id', '=', 'encoder.id')
+        ->leftJoin('admin', 'pension_distribution_list.pension_admin_id', '=', 'admin.id')
+        ->select(
+            'pension_distribution_list.*',
+            'barangay_list.barangay_locality as barangay_locality',
+            'barangay_list.barangay_no as barangay_no',
+            'encoder.encoder_first_name',
+            'encoder.encoder_last_name',
+            'encoder_profile_picture',
+            'admin.admin_first_name',
+            'admin.admin_last_name',
+            'admin_profile_picture',
+            'user_type_list.user_type'
+        );
+
+        if (!empty($barangayId)) {
+            $query->where('pension_distribution_list.barangay_id', $barangayId);
+        }
+
+        if ($startDate) {
+            $query->whereDate('pension_distribution_list.date_of_distribution', '>=', $startDate);
+        }
+
+        if ($endDate) {
+            $query->whereDate('pension_distribution_list.date_of_distribution', '<=', $endDate);
+        }
+
+        if ($startDate || $endDate) {
+            $query->orderBy('pension_distribution_list.date_of_distribution', $orderDirection);
+        } else {
+            $query->orderBy('pension_distribution_list.id', $orderDirection);
+        }
+
+        $pension_distributions = $query->paginate($perPage);
+
+        return response()->json($pension_distributions);
+    }
+
+    public function submitAdminAddPensionDistribution(Request $request)
+    {
+        $validatedData = $request->validate([
+            'barangay_id.*' => 'required|integer',
+            'venue.*' => 'required|string|max:255',
+            'date_of_distribution.*' => 'required|date_format:Y-m-d\TH:i',
+            'end_time.*' => 'required',
+        ], [
+            'barangay_id.*.required' => 'Please select a barangay.',
+            'barangay_id.*.integer' => 'The barangay selection must be a valid integer.',
+
+            'venue.*.required' => 'Venue is required. Please enter a venue name.',
+            'venue.*.string' => 'The venue name must be a valid string.',
+            'venue.*.max' => 'The venue name must not exceed 255 characters.',
+
+            'date_of_distribution.*.required' => 'Date and Time of Distribution is required.',
+            'date_of_distribution.*.date_format' => 'The date and time must be in the correct format (Y-m-d\TH:i).',
+            'end_time.*.required' => 'End time is required.',
+        ]);
+
+        $adminUser = auth()->guard('admin')->user();
+        $adminUserTypeId = $adminUser->admin_user_type_id;
+        $adminId = $adminUser->id;
+
+        $programs = [];
+        foreach ($validatedData['barangay_id'] as $key => $barangayId) {
+            $programs[] = [
+                'barangay_id' => $barangayId,
+                'venue' => $validatedData['venue'][$key],
+                'date_of_distribution' => $validatedData['date_of_distribution'][$key],
+                'end_time' => $validatedData['end_time'][$key],
+                'pension_user_type_id' => $adminUserTypeId,
+                'pension_admin_id' => $adminId,
+                'pension_encoder_id' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        DB::table('pension_distribution_list')->insert($programs);
+
+        return redirect()->back()->with([
+            'admin-message-header' => 'Success',
+            'admin-message-body' => 'Pension distribution added successfully.',
+            'clearAdminAddPensionDistributionModal' => true,
+        ]);
+    }
+
+    public function submitAdminEditPensionDistribution(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required|integer',
+            'edit_barangay_id' => 'required|integer',
+            'edit_venue' => 'required|string|max:255',
+            'edit_date_of_distribution' => 'required|date_format:Y-m-d\TH:i',
+            'edit_end_time' => 'required',
+        ], [
+            'id.required' => 'The ID is required.',
+            'id.integer' => 'The ID must be a valid integer.',
+            'edit_barangay_id.required' => 'Please select a barangay.',
+            'edit_barangay_id.integer' => 'The barangay selection must be a valid integer.',
+            'edit_venue.required' => 'Venue is required. Please enter a venue name.',
+            'edit_venue.string' => 'The venue name must be a valid string.',
+            'edit_venue.max' => 'The venue name must not exceed 255 characters.',
+            'edit_date_of_distribution.required' => 'Date and Time of Distribution is required.',
+            'edit_date_of_distribution.date_format' => 'The date and time must be in the correct format (Y-m-d\TH:i).',
+            'edit_end_time.required' => 'End Time is required.',
+        ]);
+
+        $adminUser = auth()->guard('admin')->user();
+        $adminUserTypeId = $adminUser->admin_user_type_id;
+        $adminId = $adminUser->id;
+
+        $pensionId = $validatedData['id'];
+
+        $program = [
+            'barangay_id' => $validatedData['edit_barangay_id'],
+            'venue' => $validatedData['edit_venue'],
+            'date_of_distribution' => $validatedData['edit_date_of_distribution'],
+            'end_time' => $validatedData['edit_end_time'],
+            'pension_user_type_id' => $adminUserTypeId,
+            'pension_admin_id' => $adminId,
+            'pension_encoder_id' => null,
+        ];
+
+        $affectedRows = DB::table('pension_distribution_list')
+        ->where('id', $pensionId)
+            ->update($program);
+
+        if ($affectedRows === 0) {
+            return redirect()->back()->with([
+                'admin-error-message-header' => 'Update Unsuccessful',
+                'admin-error-message-body' => 'No changes were made to the pension distribution program.',
+                'clearAdminEditPensionDistributionModal' => true,
+            ]);
+        }
+
+        DB::table('pension_distribution_list')
+        ->where('id', $pensionId)
+            ->update($program);
+
+        return redirect()->back()->with([
+            'admin-message-header' => 'Success',
+            'admin-message-body' => 'Pension distribution updated successfully.',
+            'clearAdminEditPensionDistributionModal' => true,
+        ]);
+    }
+
+    public function submitAdminDeletePensionDistribution(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:pension_distribution_list,id',
+        ]);
+
+        $pensionDistribution = PensionDistribution::find($request->id);
+
+        if ($pensionDistribution) {
+            $pensionDistribution->delete();
+
+            return redirect()->back()->with([
+                'admin-message-header' => 'Success',
+                'admin-message-body' => 'Pension distribution deleted successfully.',
+                'clearAdminDeletePensionDistributionModal' => true,
+            ]);
+        }
+
+        return redirect()->back()->with('error', 'Pension distribution not found.');
+    }
+
+    public function getPensionDataForEdit($id)
+    {
+        $pensionDistribution = PensionDistribution::find($id);
+
+        if ($pensionDistribution) {
+            $dateOfDistribution = Carbon::parse($pensionDistribution->date_of_distribution)
+                ->setTimezone('Asia/Manila');
+
+            return response()->json([
+                'id' => $pensionDistribution->id,
+                'barangay_id' => $pensionDistribution->barangay_id,
+                'venue' => $pensionDistribution->venue,
+                'date_of_distribution' => $dateOfDistribution->format('Y-m-d\TH:i'),
+                'end_time' => $pensionDistribution->end_time,
+            ]);
+        } else {
+            return response()->json(['error' => 'Pension distribution not found'], 404);
+        }
+    }
+
+    public function getPensionDataForDelete($id)
+    {
+        $pensionDistribution = PensionDistribution::find($id);
+
+        if ($pensionDistribution) {
+            $dateOfDistribution = Carbon::parse($pensionDistribution->date_of_distribution)
+                ->setTimezone('Asia/Manila');
+
+            return response()->json([
+                'id' => $pensionDistribution->id,
+                'barangay_id' => $pensionDistribution->barangay_id,
+                'venue' => $pensionDistribution->venue,
+                'date_of_distribution' => $dateOfDistribution->format('Y-m-d\TH:i'),
+                'end_time' => $pensionDistribution->end_time,
+            ]);
+        } else {
+            return response()->json(['error' => 'Pension distribution not found'], 404);
+        }
     }
 
     public function verifyAdminEmailCodeLogin(Request $request)

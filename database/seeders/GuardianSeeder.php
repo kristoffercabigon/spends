@@ -33,6 +33,8 @@ class GuardianSeeder extends Seeder
         $seniors = Seniors::all();
 
         foreach ($seniors as $senior) {
+            echo "(Guardian) Processing Senior ID: {$senior->id}" . PHP_EOL;
+
             $guardianFirstName = fake()->firstName;
             $guardianLastName = $senior->last_name;
             $guardianMiddleName = fake()->randomElement([fake()->firstName, null]);

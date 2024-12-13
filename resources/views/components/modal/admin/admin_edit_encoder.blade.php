@@ -170,10 +170,10 @@
                                     class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ old('encoder_profile_picture') }}" 
                                     @change="previewEncoderImage">
 
-                                <button @click="$dispatch('open-admin-encoder-camera-modal')" 
+                                <button @click="$dispatch('open-admin-encoder-edit-camera-modal')" 
                                     class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12 @error('encoder_profile_picture') h-[41%] mt-[8.5%] @else mt-[8.5%] @enderror" 
                                     type="button">
-                                    <img src="../../images/camera.png" alt="Toggle Profile Picture" class="camera-icon w-7 h-7" id="toggleCameraIcon">
+                                    <img src="../../../images/camera.png" alt="Toggle Profile Picture" class="camera-icon w-7 h-7" id="toggleCameraIcon">
                                 </button>
 
                                 @error('encoder_profile_picture')
@@ -192,7 +192,7 @@
                                         src="{{ asset('storage/images/encoder/encoder_profile_picture/' . $encoder->encoder_profile_picture) }}" 
                                         alt="Current Profile Picture" 
                                         class="max-h-48 rounded-md shadow-lg cursor-pointer"
-                                        @click="showAdminEncoderPreviewProfilePicModal = true"
+                                        @click="showAdminEncoderEditPreviewProfilePicModal = true"
                                     >
                                 </div>
                             @else
@@ -202,7 +202,7 @@
                                         src="{{ $default_profile }}" 
                                         alt="Default Profile Picture" 
                                         class="max-h-48 rounded-md shadow-lg cursor-pointer"
-                                        @click="showAdminEncoderPreviewProfilePicModal = true"
+                                        @click="showAdminEncoderEditPreviewProfilePicModal = true"
                                     >
                                 </div>
                             @endif
@@ -210,8 +210,8 @@
                             <p id="encoder_profile_picture_filename" class="text-gray-700 text-xs mt-2"></p>
 
                             <div class="flex justify-center items-center mt-4">
-                                <img :src="previewEncoderUrl" id="encoder_profile_picture_preview" class="max-h-48 rounded-md shadow-lg cursor-pointer" style="display: none;" alt="Profile Picture Preview"
-                                    @click="showAdminEncoderProfilePicModal = true">
+                                <img :src="previewEncoderEditUrl" id="encoder_profile_picture_preview" class="max-h-48 rounded-md shadow-lg cursor-pointer" style="display: none;" alt="Profile Picture Preview"
+                                    @click="showAdminEncoderEditProfilePicModal = true">
                             </div>
 
                             <div>

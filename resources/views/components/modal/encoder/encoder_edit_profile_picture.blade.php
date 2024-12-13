@@ -29,7 +29,7 @@
                           @submit.prevent="
                           isEncoderLoadingSignUp = true;
                           $nextTick(() => $el.submit());" 
-                          class="space-y-4 md:space-y-6" method="POST" enctype="multipart/form-data" action="/encoder/edit-profile-picture">
+                          class="space-y-4 md:space-y-6" method="POST" enctype="multipart/form-data" action="/encoder/profile/edit-profile-picture">
                         @method('PUT')
                         @csrf
 

@@ -37,7 +37,7 @@
 
             <button type="button" @click="showEncoderApplicantValidIDModal = false"
                 class="absolute top-4 right-4 z-40 focus:outline-none">
-                <img src="../../images/close.png" alt="Close" class="h-6 w-6">
+                <img src="../../../images/close.png" alt="Close" class="h-6 w-6">
             </button>
 
             <div class="flex justify-center p-6">

@@ -368,6 +368,29 @@ class EncoderSeeder extends Seeder
             'Gold Boulevard'
         ];
 
+        $maleProfilePictures = [
+            "sample1.jpg",
+            "sample2.jpg",
+            "sample3.jpg",
+            "sample4.jpg",
+            "sample5.jpg",
+            "sample6.jpg",
+            "sample7.jpg",
+        ];
+
+        $femaleProfilePictures = [
+            "sample8.jpg",
+            "sample9.jpg",
+            "sample10.jpg",
+            "sample11.jpg",
+            "sample12.jpg",
+            "sample13.jpg",
+            "sample14.jpg",
+            "sample15.jpg",
+            "sample16.jpg",
+            "sample17.jpg",
+        ];
+
         $numberOfRecords = 30;
         $usedEncoderIds = [];
 
@@ -391,13 +414,22 @@ class EncoderSeeder extends Seeder
                     'encoder_contact_no' => '+639278147238',
                     'encoder_suffix' => null, 
                     'encoder_email' => 'kristoffercabigon@gmail.com',
+                    'encoder_profile_picture' => 'sample18.jpg',
                     'encoder_password' => bcrypt('Abaayos!'),
                     'encoder_verified_at' => $faker->dateTimeThisDecade()->format('Y-m-d H:i:s'),
                     'encoder_date_registered' => $faker->dateTimeThisDecade()->format('Y-m-d H:i:s'),
                 ]);
             } else {
-                $isMale = rand(0, 1) == 0;
+                $isMale = rand(0, 1) == 0; 
                 $firstName = fake()->randomElement($isMale ? $MaleNames : $FemaleNames);
+
+                $hasProfilePicture = rand(0, 1) == 1;
+
+                $profile_picture = $hasProfilePicture
+                    ? ($isMale
+                        ? $maleProfilePictures[array_rand($maleProfilePictures)]
+                        : $femaleProfilePictures[array_rand($femaleProfilePictures)])
+                    : null;
 
                 $middleName = fake()->optional(0.5)->randomElement($LastNames);
                 $lastName = fake()->randomElement($LastNames);
@@ -421,6 +453,14 @@ class EncoderSeeder extends Seeder
 
                 $encoder_contact_no = fake()->regexify('\+639[0-9]{9}');
 
+                $baseTimestamp = strtotime('-5 years');
+                static $counter = 0;
+                $randomGap = rand(1, 50) * 86400;
+                $timestamp = $baseTimestamp + ($counter * $randomGap);
+                $date_registered = date('Y-m-d H:i:s', $timestamp); 
+
+                $counter++;
+
                 Encoder::create([
                     'encoder_id' => $encoderId,
                     'encoder_user_type_id' => 2,
@@ -432,9 +472,10 @@ class EncoderSeeder extends Seeder
                     'encoder_contact_no' => $encoder_contact_no,
                     'encoder_suffix' => $suffix,
                     'encoder_email' => $email,
+                    'encoder_profile_picture' => $profile_picture,
                     'encoder_password' => bcrypt('password'),
                     'encoder_verified_at' => fake()->dateTimeThisDecade()->format('Y-m-d H:i:s'),
-                    'encoder_date_registered' => fake()->dateTimeThisDecade()->format('Y-m-d H:i:s'),
+                    'encoder_date_registered' => $date_registered, 
                 ]);
 
             }

@@ -31,7 +31,7 @@
                     <form x-data="encoderRolesData" method="POST" action="{{ route('admin-update-encoder-role', $encoder->id) }}">
                         @csrf
                         @method('PUT')
-                        <div class="max-h-96 overflow-y-auto">
+                        <div class="max-h-96 px-2 overflow-y-auto">
                             @foreach ($encoderRolesList as $category => $rolesGroup)
                                 <div class="mb-4">
                                     <h3 class="font-semibold text-lg">{{ ucfirst($category) }}</h3>

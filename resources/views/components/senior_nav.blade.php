@@ -36,20 +36,18 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/announcement" 
+                    <a href="/announcements" 
                     class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 
-                    {{ request()->is('announcement') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    {{ request()->is('announcements') ? 'border-b-2 border-orange-300 text-white' : '' }}">
                     Announcement
                     </a>
                 </li>
-                @guest('senior')
                 <li>
                     <a @click.prevent="showRequestTrackerModal = true; localStorage.setItem('showRequestTrackerModal', 'true')" 
                     class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 cursor-pointer">
                     Tracker
                     </a>
                 </li>
-                @endguest
                 <li>
                     <a href="/about-us" 
                     class="hover:scale-105 transition duration-150 ease-in-out block py-2 text-16px hover:text-orange-300 
@@ -111,13 +109,27 @@
                         </div>
                         <ul class="py-2 text-sm text-gray-700" aria-labelledby="avatarButton">
                             <li>
-                                <a href="/profile/{{$senior->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
+                                <a href="/profile/{{$senior->id}}" class="block px-4 py-2 hover:bg-gray-100 flex items-center">
+                                    <img 
+                                        src="{{ asset('images/user-dropdown.png') }}" 
+                                        alt="Dashboard Icon" 
+                                        class="w-5 h-5"
+                                        aria-hidden="true"/>
+                                    <span class="ml-2">Profile</span>
+                                </a>
                             </li>
                         </ul>
                         <div class="py-1">
                             <form action="/logout" method="POST">
                                 @csrf
-                                <button type="submit" class="block px-4 py-2 text-left text-sm text-gray-700 w-full hover:bg-gray-100">Sign out</button>
+                                <button type="submit" class="block px-4 py-2 text-left text-sm text-gray-700 w-full hover:bg-gray-100 flex items-center">
+                                <img 
+                                src="{{ asset('images/logout-dropdown.png') }}" 
+                                alt="Dashboard Icon" 
+                                class="w-5 h-5"
+                                aria-hidden="true"/>
+                                <span class="ml-2">Sign out</span>
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -160,12 +172,28 @@
                             <div class="font-medium truncate">OSCA ID: {{ $senior->osca_id }}</div>
                         </div>
                         <ul class="py-2 text-sm text-gray-700">
-                            <li><a href="/profile/{{$senior->id}}" class="block px-4 py-2 hover:bg-gray-100">Profile</a></li>
+                            <li>
+                                <a href="/profile/{{$senior->id}}" class="block px-4 py-2 hover:bg-gray-100 flex items-center">
+                                    <img 
+                                        src="{{ asset('images/user-dropdown.png') }}" 
+                                        alt="Dashboard Icon" 
+                                        class="w-5 h-5"
+                                        aria-hidden="true"/>
+                                    <span class="ml-2">Profile</span>
+                                </a>
+                            </li>
                         </ul>
                         <div class="py-1">
                             <form action="/logout" method="POST">
                                 @csrf
-                                <button type="submit" class="block px-4 py-2 text-left text-sm text-gray-700 w-full hover:bg-gray-100">Sign out</button>
+                                <button type="submit" class="block px-4 py-2 text-left text-sm text-gray-700 w-full hover:bg-gray-100 flex items-center">
+                                <img 
+                                src="{{ asset('images/logout-dropdown.png') }}" 
+                                alt="Dashboard Icon" 
+                                class="w-5 h-5"
+                                aria-hidden="true"/>
+                                <span class="ml-2">Sign out</span>
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -178,20 +206,18 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/announcement" 
+                    <a href="/announcements" 
                     class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 pr-4 pl-3 text-16px hover:text-orange-300 
-                    {{ request()->is('announcement') ? 'border-b-2 border-orange-300 text-white' : '' }}">
+                    {{ request()->is('announcements') ? 'border-b-2 border-orange-300 text-white' : '' }}">
                     Announcement
                     </a>
                 </li>
-                @guest('senior')
                 <li>
                     <a @click.prevent="showRequestTrackerModal = true; localStorage.setItem('showRequestTrackerModal', 'true')" 
                     class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 pr-4 pl-3 text-16px hover:text-orange-300 cursor-pointer">
                     Tracker
                     </a>
                 </li>
-                @endguest
                 <li>
                     <a href="/about-us" 
                     class="hover:scale-105 transition duration-150 ease-in-out inline-block py-2 pr-4 pl-3 text-16px hover:text-orange-300 
@@ -207,18 +233,21 @@
                     </a>
                 </li>
                 @guest('senior')
-                <li class="inline-block">
-                    <a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" 
-                    class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-orange-300 transition duration-150 ease-in-out inline-block text-16px cursor-pointer">
-                    Sign In
-                    </a>
-                </li>
-                <li class="inline-block">
-                    <a href="/register" 
-                    class="bg-blue-500 text-white font-medium px-4 py-2 mb-4 rounded-lg shadow-md hover:bg-blue-600 hover:text-white transition duration-150 ease-in-out inline-block text-16px">
-                    Sign Up
-                    </a>
-                </li>
+                <ul class="space-y-2">
+                    <li class="inline-block">
+                        <a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" 
+                        class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-orange-300 transition duration-150 ease-in-out inline-block text-16px cursor-pointer">
+                            Sign In
+                        </a>
+                    </li>
+                    <br>
+                    <li class="inline-block">
+                        <a href="/register" 
+                        class="bg-blue-500 text-white font-medium px-4 py-2 mb-4 rounded-lg shadow-md hover:bg-blue-600 hover:text-white transition duration-150 ease-in-out inline-block text-16px">
+                            Sign Up
+                        </a>
+                    </li>
+                </ul>
                 @endguest
             </ul>
         </div>

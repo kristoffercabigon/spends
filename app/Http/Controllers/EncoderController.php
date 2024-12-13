@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Encoder;
 use App\Models\Seniors;
 use App\Models\Guest;
+use App\Models\PensionDistribution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -114,10 +115,96 @@ class EncoderController extends Controller
 
     public function showEncoderDashboard()
     {
-        return view('encoder.encoder_dashboard', [
+        $barangay_list = DB::table('barangay_list')->pluck('barangay_no', 'id');
 
-            'title' => 'Dashboard'
+        $application_status_list = DB::table('senior_application_status_list')->pluck('senior_application_status', 'id');
+
+        $applicationStatusCounts = DB::table('seniors')
+        ->select('application_status_id', DB::raw('count(*) as total'))
+        ->groupBy('application_status_id')
+        ->pluck('total', 'application_status_id');
+
+        $applicationStatusData = [];
+        foreach ($application_status_list as $id => $status) {
+            $applicationStatusData[] = [
+                'status' => $status,
+                'total' => $applicationStatusCounts[$id] ?? 0
+            ];
+        }
+
+        $seniorsPerApplicationStatus = DB::table('seniors')
+        ->where('application_status_id', 3)
+        ->select('barangay_id', DB::raw('count(*) as total'))
+        ->groupBy('barangay_id')
+        ->pluck('total', 'barangay_id');
+
+        $barangayData = [];
+        foreach ($barangay_list as $id => $name) {
+            $barangayData[] = [
+                'name' => $name,
+                'total' => $seniorsPerApplicationStatus[$id] ?? 0
+            ];
+        }
+
+        $seniors = DB::table('seniors')
+        ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
+        ->leftJoin('senior_account_status_list', 'seniors.account_status_id', '=', 'senior_account_status_list.id')
+        ->leftJoin('barangay_list', 'seniors.barangay_id', '=', 'barangay_list.id')
+        ->select(
+            'seniors.*',
+            'sex_list.sex as sex_name',
+            'senior_account_status_list.senior_account_status as senior_account_status',
+            'barangay_list.barangay_no as barangay_no'
+        )
+            ->whereNotNull('seniors.account_status_id')
+            ->orderBy('seniors.id', 'desc')
+            ->paginate(10);
+
+        $accountStatuses = DB::table('senior_account_status_list')->get();
+        $barangayList = DB::table('barangay_list')->get();
+
+        return view('encoder.encoder_dashboard', [
+            'title' => 'Dashboard',
+            'application_status_list' => $application_status_list,
+            'applicationStatusData' => $applicationStatusData,  
+            'barangay_list' => $barangayData,
+            'seniors' => $seniors,
+            'accountStatuses' => $accountStatuses,
+            'barangayList' => $barangayList,
+            'totalApplicationRequests' => \App\Models\Seniors::count(),
+            'totalApplicationsApproved' => \App\Models\Seniors::where('application_status_id', 3)->count(),
         ]);
+    }
+
+    public function filterSeniorsDashboardBeneficiaries(Request $request)
+    {
+        $searchQuery = $request->input('search_query', '');
+
+        $query = DB::table('seniors')
+            ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
+            ->leftJoin('senior_account_status_list', 'seniors.account_status_id', '=', 'senior_account_status_list.id')
+            ->leftJoin('barangay_list', 'seniors.barangay_id', '=', 'barangay_list.id')
+            ->select(
+                'seniors.*',
+                'sex_list.sex as sex_name',
+                'senior_account_status_list.senior_account_status as senior_account_status',
+                'barangay_list.barangay_no as barangay_no'
+            )
+            ->whereNotNull('seniors.account_status_id');
+
+        if (!empty($searchQuery)) {
+            $terms = array_filter(explode(' ', strtolower($searchQuery)));
+
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->whereRaw("LOWER(CONCAT_WS(' ', seniors.first_name, seniors.middle_name, seniors.last_name, seniors.suffix)) LIKE ?", ['%' . $term . '%']);
+                }
+            })->orWhere('seniors.osca_id', 'LIKE', '%' . $searchQuery . '%');
+        }
+
+        $seniors = $query->orderBy('seniors.id', 'desc')->paginate(10);
+
+        return response()->json($seniors);
     }
 
     public function showEncoderApplicationRequests()
@@ -323,12 +410,12 @@ class EncoderController extends Controller
             ]);
         }
 
-
         $validated = $request->validate([
             'status' => 'required|exists:senior_application_status_list,id',
         ]);
 
         $encoderUser = auth()->guard('encoder')->user();
+        $encoderId = $encoderUser->id;
         $encoderUserTypeId = $encoderUser->encoder_user_type_id;
         $encoderFirstName = $encoderUser->encoder_first_name;
         $encoderLastName = $encoderUser->encoder_last_name;
@@ -345,6 +432,7 @@ class EncoderController extends Controller
         if ($senior->application_status_id == 3 && $validated['status'] != 3) {
             $senior->account_status_id = null;
             $senior->application_assistant_id = null;
+            $senior->application_encoder_id = null;
             $senior->application_assistant_name = null;
             $senior->date_approved = null;
         }
@@ -354,6 +442,8 @@ class EncoderController extends Controller
         if ($validated['status'] == 3) {
             $senior->account_status_id = 1;
             $senior->application_assistant_id = $encoderUserTypeId;
+            $senior->application_encoder_id = $encoderId;
+            $senior->application_admin_id = null;
             $senior->application_assistant_name = "{$encoderFirstName} {$encoderLastName}";
             $senior->date_approved = now();  
         }
@@ -450,7 +540,6 @@ class EncoderController extends Controller
             'barangayList' => $barangayList,
         ]);
     }
-
 
     public function filterSeniorsBeneficiaries(Request $request)
     {
@@ -575,14 +664,19 @@ class EncoderController extends Controller
         } while (DB::table('seniors')->where('osca_id', $osca_id)->exists());
 
         $encoderUser = auth()->guard('encoder')->user();
+        $encoderId = $encoderUser->id;
         $encoderUserTypeId = $encoderUser->encoder_user_type_id;
         $encoderFirstName = $encoderUser->encoder_first_name;
         $encoderLastName = $encoderUser->encoder_last_name;
 
         $seniorData['registration_assistant_id'] = $encoderUserTypeId;
+        $seniorData['registration_encoder_id'] = $encoderId;
+        $seniorData['registration_admin_id'] = null;
         $seniorData['registration_assistant_name'] = "{$encoderFirstName} {$encoderLastName}";
 
         $seniorData['application_assistant_id'] = $encoderUserTypeId;
+        $seniorData['application_encoder_id'] = $encoderId;
+        $seniorData['application_admin_id'] = null;
         $seniorData['application_assistant_name'] = "{$encoderFirstName} {$encoderLastName}";
 
         $user_type_id = 1;
@@ -762,11 +856,11 @@ class EncoderController extends Controller
                 DB::table('family_composition')->insert([
                     'senior_id' => $seniors->id,
                     'relative_name' => $name,
-                    'relative_relationship_id' => $request->relative_relationship_id[$index] ?: null,
-                    'relative_age' => $request->relative_age[$index] ?: null,
-                    'relative_civil_status_id' => $request->relative_civil_status_id[$index] ?: null,
-                    'relative_occupation' => $request->relative_occupation[$index] ?: null,
-                    'relative_income' => $request->relative_income[$index] ?: null,
+                    'relative_relationship_id' => $request->relative_relationship_id[$index] ?? null,
+                    'relative_age' => $request->relative_age[$index] ?? null,
+                    'relative_civil_status_id' => $request->relative_civil_status_id[$index] ?? null,
+                    'relative_occupation' => $request->relative_occupation[$index] ?? null,
+                    'relative_income' => $request->relative_income[$index] ?? null,
                 ]);
             }
         }
@@ -1000,11 +1094,11 @@ class EncoderController extends Controller
                 DB::table('family_composition')->insert([
                     'senior_id' => $senior->id,
                     'relative_name' => $name,
-                    'relative_relationship_id' => $request->relative_relationship_id[$index] ?: null,
-                    'relative_age' => $request->relative_age[$index] ?: null,
-                    'relative_civil_status_id' => $request->relative_civil_status_id[$index] ?: null,
-                    'relative_occupation' => $request->relative_occupation[$index] ?: null,
-                    'relative_income' => $request->relative_income[$index] ?: null,
+                    'relative_relationship_id' => $request->relative_relationship_id[$index] ?? null,
+                    'relative_age' => $request->relative_age[$index] ?? null,
+                    'relative_civil_status_id' => $request->relative_civil_status_id[$index] ?? null,
+                    'relative_occupation' => $request->relative_occupation[$index] ?? null,
+                    'relative_income' => $request->relative_income[$index] ?? null,
                 ]);
             }
         }
@@ -1015,38 +1109,286 @@ class EncoderController extends Controller
         ]);
     }
 
-    public function send_message(Request $request)
+    public function showEncoderPensionDistributionList()
     {
-        $request->validate([
-            'name' => 'required|max:50',
-            'email' => 'required|email|max:40',
-            'subject' => 'required|max:100',
-            'message' => 'required',
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+            ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(4)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
+        $barangayList = DB::table('barangay_list')->get();
+
+        $pension_distributions = DB::table('pension_distribution_list')
+        ->leftJoin('barangay_list', 'pension_distribution_list.barangay_id', '=', 'barangay_list.id')
+        ->select(
+            'pension_distribution_list.*',
+            'barangay_list.barangay_locality as barangay_locality',
+            'barangay_list.barangay_no as barangay_no'
+        )
+            ->orderBy('pension_distribution_list.id', 'asc')
+            ->paginate(10);
+
+        return view('encoder.encoder_pension_distribution_list', [
+            'title' => 'Pension Distribution List',
+            'barangayList' => $barangayList,
+            'pension_distributions' => $pension_distributions,
+        ]);
+    }
+
+    public function filterPensionDistributionList(Request $request)
+    {
+        $barangayId = $request->input('barangay_id');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $orderDirection = $request->input('order', 'asc');
+        $perPage = 10;
+
+        $query = DB::table('pension_distribution_list')
+        ->leftJoin('barangay_list', 'pension_distribution_list.barangay_id', '=', 'barangay_list.id')
+        ->select(
+            'pension_distribution_list.*',
+            'barangay_list.barangay_locality as barangay_locality',
+            'barangay_list.barangay_no as barangay_no'
+        );
+
+        if (!empty($barangayId)) {
+            $query->where('pension_distribution_list.barangay_id', $barangayId);
+        }
+
+        if ($startDate) {
+            $query->whereDate('pension_distribution_list.date_of_distribution', '>=', $startDate);
+        }
+
+        if ($endDate) {
+            $query->whereDate('pension_distribution_list.date_of_distribution', '<=', $endDate);
+        }
+
+        if ($startDate || $endDate) {
+            $query->orderBy('pension_distribution_list.date_of_distribution', $orderDirection);
+        } else {
+            $query->orderBy('pension_distribution_list.id', $orderDirection);
+        }
+
+        $pension_distributions = $query->paginate($perPage);
+
+        return response()->json($pension_distributions);
+    }
+
+    public function submitEncoderAddPensionDistribution(Request $request)
+    {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+        ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(6)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
+        $validatedData = $request->validate([
+            'barangay_id.*' => 'required|integer',
+            'venue.*' => 'required|string|max:255',
+            'date_of_distribution.*' => 'required|date_format:Y-m-d\TH:i',
+            'end_time.*' => 'required',
         ], [
-            'name.required' => 'Please enter your name.',
-            'name.max' => 'The name should not exceed 50 characters.',
+            'barangay_id.*.required' => 'Please select a barangay.',
+            'barangay_id.*.integer' => 'The barangay selection must be a valid integer.',
 
-            'email.required' => 'Please enter your email address.',
-            'email.email' => 'Please enter a valid email address.',
-            'email.max' => 'The email should not exceed 40 characters.',
+            'venue.*.required' => 'Venue is required. Please enter a venue name.',
+            'venue.*.string' => 'The venue name must be a valid string.',
+            'venue.*.max' => 'The venue name must not exceed 255 characters.',
 
-            'subject.required' => 'Please enter a subject for your message.',
-            'subject.max' => 'The subject should not exceed 100 characters.',
-
-            'message.required' => 'Please enter your message.',
+            'date_of_distribution.*.required' => 'Date and Time of Distribution is required.',
+            'date_of_distribution.*.date_format' => 'The date and time must be in the correct format (Y-m-d\TH:i).',
+            'end_time.*.required' => 'End time is required.',
         ]);
 
-        Guest::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'subject' => $request->input('subject'),
-            'message' => $request->input('message'),
-        ]);
+
+        $encoderUser = auth()->guard('encoder')->user();
+        $encoderUserTypeId = $encoderUser->encoder_user_type_id;
+        $encoderId = $encoderUser->id;
+
+        $programs = [];
+        foreach ($validatedData['barangay_id'] as $key => $barangayId) {
+            $programs[] = [
+                'barangay_id' => $barangayId,
+                'venue' => $validatedData['venue'][$key],
+                'date_of_distribution' => $validatedData['date_of_distribution'][$key],
+                'end_time' => $validatedData['end_time'][$key],
+                'pension_user_type_id' => $encoderUserTypeId,
+                'pension_encoder_id' => $encoderId,
+                'pension_admin_id' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        DB::table('pension_distribution_list')->insert($programs);
 
         return redirect()->back()->with([
-            'message-header' => 'Success',
-            'message-body' => 'Your message has been sent successfully!'
+            'encoder-message-header' => 'Success',
+            'encoder-message-body' => 'Pension distribution added successfully.',
+            'clearEncoderAddPensionDistributionModal' => true,
         ]);
+    }
+
+    public function submitEncoderEditPensionDistribution(Request $request)
+    {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+        ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(11)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
+        $validatedData = $request->validate([
+            'id' => 'required|integer',
+            'edit_barangay_id' => 'required|integer',
+            'edit_venue' => 'required|string|max:255',
+            'edit_date_of_distribution' => 'required|date_format:Y-m-d\TH:i',
+            'edit_end_time' => 'required',
+        ], [
+            'id.required' => 'The ID is required.',
+            'id.integer' => 'The ID must be a valid integer.',
+            'edit_barangay_id.required' => 'Please select a barangay.',
+            'edit_barangay_id.integer' => 'The barangay selection must be a valid integer.',
+            'edit_venue.required' => 'Venue is required. Please enter a venue name.',
+            'edit_venue.string' => 'The venue name must be a valid string.',
+            'edit_venue.max' => 'The venue name must not exceed 255 characters.',
+            'edit_date_of_distribution.required' => 'Date and Time of Distribution is required.',
+            'edit_date_of_distribution.date_format' => 'The date and time must be in the correct format (Y-m-d\TH:i).',
+            'edit_end_time.required' => 'End Time is required.',
+        ]);
+
+        $encoderUser = auth()->guard('encoder')->user();
+        $encoderUserTypeId = $encoderUser->encoder_user_type_id;
+        $encoderId = $encoderUser->id;
+
+        $pensionId = $validatedData['id'];
+
+        $program = [
+            'barangay_id' => $validatedData['edit_barangay_id'],
+            'venue' => $validatedData['edit_venue'],
+            'date_of_distribution' => $validatedData['edit_date_of_distribution'],
+            'end_time' => $validatedData['edit_end_time'],
+            'pension_user_type_id' => $encoderUserTypeId,
+            'pension_encoder_id' => $encoderId,
+            'pension_admin_id' => null,
+        ];
+
+        $affectedRows = DB::table('pension_distribution_list')
+        ->where('id', $pensionId)
+        ->update($program);
+
+        if ($affectedRows === 0) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Update Unsuccessful',
+                'encoder-error-message-body' => 'No changes were made to the pension distribution program.',
+                'clearEncoderEditPensionDistributionModal' => true,
+            ]);
+        }
+
+        DB::table('pension_distribution_list')
+        ->where('id', $pensionId)
+            ->update($program);
+
+        return redirect()->back()->with([
+            'encoder-message-header' => 'Success',
+            'encoder-message-body' => 'Pension distribution updated successfully.',
+            'clearEncoderEditPensionDistributionModal' => true,
+        ]);
+    }
+
+    public function submitEncoderDeletePensionDistribution(Request $request)
+    {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+        ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(14)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
+        $request->validate([
+            'id' => 'required|exists:pension_distribution_list,id',
+        ]);
+
+        $pensionDistribution = PensionDistribution::find($request->id);
+
+        if ($pensionDistribution) {
+            $pensionDistribution->delete();
+
+            return redirect()->back()->with([
+                'encoder-message-header' => 'Success',
+                'encoder-message-body' => 'Pension distribution deleted successfully.',
+                'clearEncoderDeletePensionDistributionModal' => true,
+            ]);
+        }
+
+        return redirect()->back()->with('error', 'Pension distribution not found.');
+    }
+
+    public function getPensionDataForEdit($id)
+    {
+        $pensionDistribution = PensionDistribution::find($id);
+
+        if ($pensionDistribution) {
+            $dateOfDistribution = Carbon::parse($pensionDistribution->date_of_distribution)
+                ->setTimezone('Asia/Manila');
+
+            return response()->json([
+                'id' => $pensionDistribution->id,
+                'barangay_id' => $pensionDistribution->barangay_id,
+                'venue' => $pensionDistribution->venue,
+                'date_of_distribution' => $dateOfDistribution->format('Y-m-d\TH:i'),
+                'end_time' => $pensionDistribution->end_time, 
+            ]);
+        } else {
+            return response()->json(['error' => 'Pension distribution not found'], 404);
+        }
+    }
+
+    public function getPensionDataForDelete($id)
+    {
+        $pensionDistribution = PensionDistribution::find($id);
+
+        if ($pensionDistribution) {
+            $dateOfDistribution = Carbon::parse($pensionDistribution->date_of_distribution)
+                ->setTimezone('Asia/Manila');
+
+            return response()->json([
+                'id' => $pensionDistribution->id,
+                'barangay_id' => $pensionDistribution->barangay_id,
+                'venue' => $pensionDistribution->venue,
+                'date_of_distribution' => $dateOfDistribution->format('Y-m-d\TH:i'),
+                'end_time' => $pensionDistribution->end_time, 
+            ]);
+        } else {
+            return response()->json(['error' => 'Pension distribution not found'], 404);
+        }
     }
 
     public function encoder_login(Request $request)

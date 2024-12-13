@@ -16,9 +16,8 @@
         <li></li>
         <li></li>
     </ul>
-    
-    <div class="absolute inset-0 rounded-md bg-white mx-4 my-4 lg:ml-[95px] z-10"></div>
-    <div class="relative flex items-center justify-center font-poppins lg:pl-[80px] z-20">
+
+    <div class="relative flex items-center justify-center font-poppins lg:mt-[80px] lg:pl-[255px]">
         <div class="w-full mx-auto font-[poppins]">
             <div class="bg-white mb-4 mt-4 ml-4 mr-4 rounded-md">              
                 <div class="px-6 py-4 lg:px-12">
@@ -26,7 +25,7 @@
                     @csrf
 
                         <div class="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-                            <p class="text-center md:text-left">
+                            <p class="text-center">
                                 Add Beneficiary
                             </p>
                         </div>
@@ -644,7 +643,7 @@
                                                 </td>
                                                 <td class="border border-gray-300 px-4 py-2 hidden flex items-center justify-center" id="removeCell-0">
                                                     <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
-                                                        <img src="../../images/trashbin.png" alt="Delete" class="h-5 w-5" />
+                                                        <img src="../../../images/trashbin.png" alt="Delete" class="h-5 w-5" />
                                                     </button>
                                                 </td>
                                             </tr>
@@ -1137,13 +1136,13 @@
                                         @error('profile_picture') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
                                         @elseif(old('profile_picture')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
                                         @else bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500 @enderror" 
-                                        placeholder="Upload photo of Pensioner" id="profilePictureField" 
+                                        placeholder="Upload photo of Pensioner" id="AdminApplicantProfilePictureField" 
                                         @change="previewImage">
 
                                     <button @click="$dispatch('open-admin-applicant-camera-modal')" 
                                             class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12" 
                                             type="button">
-                                        <img src="../../images/camera.png" alt="Toggle Profile Picture" class="hover:animate-jiggle camera-icon w-7 h-7" id="toggleCameraIcon">
+                                        <img src="../../../images/camera.png" alt="Toggle Profile Picture" class="hover:animate-jiggle camera-icon w-7 h-7" id="toggleCameraIcon">
                                     </button>
                                 </div>
 
@@ -1565,7 +1564,7 @@
             </td>
             <td class="border border-gray-300 px-4 py-2 hidden flex items-center justify-center" id="removeCell-${rowCount}">
                 <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
-                    <img src="../../images/trashbin.png" alt="Delete" class="h-5 w-5" />
+                    <img src="../../../images/trashbin.png" alt="Delete" class="h-5 w-5" />
                 </button>
             </td>
         </tr>
@@ -1657,7 +1656,7 @@
         }
     });
 
-    document.getElementById('profilePictureField').addEventListener('change', function() {
+    document.getElementById('AdminApplicantProfilePictureField').addEventListener('change', function() {
     var file = this.files[0];
 
     document.getElementById('profile_picture_filename').textContent = file ? 'Image attached' : '';

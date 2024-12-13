@@ -23,6 +23,7 @@ use Database\Seeders\EncoderRolesDatasSeeder;
 use Database\Seeders\SeniorApplicationStatusSeeder;
 use Database\Seeders\SeniorAccountStatusSeeder;
 use Database\Seeders\UserTypeSeeder;
+use Database\Seeders\PensionDistributionSeeder;
 use Database\Seeders\FamilyCompositionSeeder;
 use Database\Seeders\GuardianSeeder;
 use Database\Seeders\AdminSeeder;
@@ -48,9 +49,24 @@ class DatabaseSeeder extends Seeder
         $this->call(EncoderSeeder::class);
         $this->call(EncoderRolesDatasSeeder::class);
         $this->call(AdminSeeder::class);
+        $this->call(PensionDistributionSeeder::class);
         $this->call(SeniorApplicationStatusSeeder::class);
         $this->call(SeniorAccountStatusSeeder::class);
-        Seniors::factory(100)->create();
+
+        $uniqueOscaIds = collect();
+
+        while ($uniqueOscaIds->count() < 50) {
+            $oscaId = fake()->numberBetween(10000, 99999);
+            $uniqueOscaIds->add($oscaId);
+        }
+
+        $uniqueOscaIds = $uniqueOscaIds->unique();
+
+        foreach ($uniqueOscaIds as $oscaId) {
+            $senior = Seniors::factory()->create(['osca_id' => $oscaId]);
+            echo "(Senior) Senior ID: {$senior->id}" . PHP_EOL;
+        }
+
         $this->call(GuardianSeeder::class);
         $this->call(FamilyCompositionSeeder::class);
         $this->call(IncomeSourceDataSeeder::class);

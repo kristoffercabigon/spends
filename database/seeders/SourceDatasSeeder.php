@@ -27,6 +27,8 @@ class SourceDatasSeeder extends Seeder
         $maxSourceId = DB::table('source_list')->max('id');
 
         foreach ($seniors as $senior) {
+            echo "(Source) Senior ID: {$senior->id}" . PHP_EOL;
+
             $SourceIds = range(1, $maxSourceId);
 
             $SourceCount = rand(1, 3);

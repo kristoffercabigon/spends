@@ -1,6 +1,9 @@
 import './bootstrap';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import Swiper from "swiper";
+import "swiper/swiper-bundle.css";
+
 
 document.addEventListener("DOMContentLoaded", function () {
     flatpickr("#datepicker", {
@@ -293,38 +296,44 @@ document.addEventListener("DOMContentLoaded", function () {
         loadSignature();
     })();
 
-    const firstNameInput = document.getElementById("first_name");
-    const middleNameInput = document.getElementById("middle_name");
-    const lastNameInput = document.getElementById("last_name");
-    const suffixInput = document.getElementById("suffix");
-    const fullNamePlaceholder = document.getElementById(
-        "full-name-placeholder"
-    );
-    const fullNamePlaceholder2 = document.getElementById(
-        "full-name-placeholder-2"
-    );
-
-    function updateFullName() {
-        const firstName = firstNameInput.value.trim() || "";
-        const middleName = middleNameInput.value.trim() || "";
-        const lastName = lastNameInput.value.trim() || "";
-        const suffix = suffixInput.value.trim() || "";
-        const nameParts = [];
-
-        if (firstName) nameParts.push(firstName);
-        if (middleName) nameParts.push(middleName);
-        if (lastName) nameParts.push(lastName);
-        if (suffix) nameParts.push(suffix);
-
-        const fullName = nameParts.join(" ");
-        fullNamePlaceholder.textContent = fullName;
-        fullNamePlaceholder2.textContent = fullName;
-    }
-
-    firstNameInput.addEventListener("input", updateFullName);
-    middleNameInput.addEventListener("input", updateFullName);
-    lastNameInput.addEventListener("input", updateFullName);
-    suffixInput.addEventListener("input", updateFullName);
-
-    document.addEventListener("DOMContentLoaded", updateFullName);
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (window.location.pathname === "/register") {
+        const firstNameInput = document.getElementById("first_name");
+        const middleNameInput = document.getElementById("middle_name");
+        const lastNameInput = document.getElementById("last_name");
+        const suffixInput = document.getElementById("suffix");
+        const fullNamePlaceholder = document.getElementById(
+            "full-name-placeholder"
+        );
+        const fullNamePlaceholder2 = document.getElementById(
+            "full-name-placeholder-2"
+        );
+
+        function updateFullName() {
+            const firstName = firstNameInput.value.trim() || "";
+            const middleName = middleNameInput.value.trim() || "";
+            const lastName = lastNameInput.value.trim() || "";
+            const suffix = suffixInput.value.trim() || "";
+            const nameParts = [];
+
+            if (firstName) nameParts.push(firstName);
+            if (middleName) nameParts.push(middleName);
+            if (lastName) nameParts.push(lastName);
+            if (suffix) nameParts.push(suffix);
+
+            const fullName = nameParts.join(" ");
+            fullNamePlaceholder.textContent = fullName;
+            fullNamePlaceholder2.textContent = fullName;
+        }
+
+        firstNameInput.addEventListener("input", updateFullName);
+        middleNameInput.addEventListener("input", updateFullName);
+        lastNameInput.addEventListener("input", updateFullName);
+        suffixInput.addEventListener("input", updateFullName);
+
+        updateFullName(); 
+    }
+});
+

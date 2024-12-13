@@ -47,14 +47,12 @@
         <li></li>
     </ul>
     
-    <div class="absolute inset-0 rounded-md bg-white mx-4 my-4 lg:ml-[95px] z-10"></div>
-    
-    <div class="relative flex items-center justify-center font-poppins lg:pl-[80px] z-20">
+    <div class="relative flex items-center justify-center font-poppins lg:mt-[80px] lg:pl-[255px]">
         <div class="w-full mx-auto font-[poppins]">
             <div class="bg-white mt-4 ml-4 mr-4 mb-4 rounded-md">              
                 <div class="px-6 py-4 lg:px-12">
                     <div class="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-                        <p class="text-center md:text-left">
+                        <p class="text-center">
                             Profile
                         </p>
                     </div>
@@ -111,7 +109,7 @@
                                                             <span class=" bg-{{ $categoryColors[$category] }} py-1 px-2 rounded text-white text-sm">
                                                                 {{ ucfirst($category) }}
                                                             </span>
-                                                            <div class="hidden group-hover:block absolute z-10 bg-white border border-gray-200 shadow-lg rounded-md p-2 w-max">
+                                                            <div class="hidden group-hover:block absolute z-10 bg-white border border-gray-200 shadow-lg rounded-md p-2 w-max right-0 md:left-0">
                                                                 <ul class="text-sm text-gray-700">
                                                                     @foreach ($roles[$category] as $role)
                                                                         <li class="list-disc ml-4">{{ $role }}</li>

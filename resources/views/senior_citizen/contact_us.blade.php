@@ -161,14 +161,25 @@
                                     @enderror
 
                                     <button type="submit"
-                                        class="text-white bg-[#1AA514] hover:bg-[#148410] hover:scale-105 transition duration-150 ease-in-out tracking-wide rounded-lg text-sm px-4 py-3 flex items-center justify-center w-full !mt-6">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="#fff" class="mr-2"
-                                            viewBox="0 0 548.244 548.244">
-                                            <path fill-rule="evenodd"
-                                                d="M392.19 156.054 211.268 281.667 22.032 218.58C8.823 214.168-.076 201.775 0 187.852c.077-13.923 9.078-26.24 22.338-30.498L506.15 1.549c11.5-3.697 24.123-.663 32.666 7.88 8.542 8.543 11.577 21.165 7.879 32.666L390.89 525.906c-4.258 13.26-16.575 22.261-30.498 22.338-13.923.076-26.316-8.823-30.728-22.032l-63.393-190.153z"
-                                                clip-rule="evenodd" data-original="#000000" />
-                                        </svg>
-                                        Send Message
+                                            class="text-white bg-blue-500 hover:bg-blue-600 hover:scale-105 transition duration-150 ease-in-out tracking-wide rounded-lg text-sm px-4 py-3 flex items-center justify-center w-full !mt-6"
+                                            x-data="{ isLoading: false }"
+                                            @click="isLoading = true">
+                                        <span x-show="!isLoading" class="flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="#fff" class="mr-2"
+                                                viewBox="0 0 548.244 548.244">
+                                                <path fill-rule="evenodd"
+                                                    d="M392.19 156.054 211.268 281.667 22.032 218.58C8.823 214.168-.076 201.775 0 187.852c.077-13.923 9.078-26.24 22.338-30.498L506.15 1.549c11.5-3.697 24.123-.663 32.666 7.88 8.542 8.543 11.577 21.165 7.879 32.666L390.89 525.906c-4.258 13.26-16.575 22.261-30.498 22.338-13.923.076-26.316-8.823-30.728-22.032l-63.393-190.153z"
+                                                    clip-rule="evenodd" data-original="#000000" />
+                                            </svg>
+                                            Send Message
+                                        </span>
+                                        <span x-show="isLoading" style="display: none;" class="flex items-center justify-center">
+                                            <svg aria-hidden="true" class="inline w-4 h-4 mr-2 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"/>
+                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7469 65.8883 12.7092 70.4622 15.7437C75.5203 18.4426 80.2036 21.9059 84.1351 25.7002C87.3016 28.7888 89.6809 32.2967 91.1892 35.9797C91.5898 37.2733 93.1688 38.0743 93.9676 39.0409Z" fill="currentColor"/>
+                                            </svg>
+                                            Sending...
+                                        </span>
                                     </button>
                                 </form>
                             </div>

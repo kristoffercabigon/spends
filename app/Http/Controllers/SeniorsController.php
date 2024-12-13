@@ -36,23 +36,61 @@ class SeniorsController extends Controller
         return view('senior_citizen.index', $data)->with('title', 'Home ');
     }
 
-    public function announcement()
+    public function announcements()
     {
-        if (!session()->has('senior') && !session()->has('sticky-body-message')) {
-            session()->flash('sticky-body-message', 'Take the first step towards applying for the OSCA pension program today');
-            session()->flash('sticky-button-message', 'Apply Now');
+        $currentMonth = now()->format('Y-m');
+        $barangayList = DB::table('barangay_list')->get();
+
+        $availableMonths = DB::table('pension_distribution_list')
+        ->selectRaw('DISTINCT DATE_FORMAT(date_of_distribution, "%Y-%m") as month')
+        ->orderByDesc('month')  
+        ->get();
+
+        $pension_distributions = DB::table('pension_distribution_list')
+        ->leftJoin('barangay_list', 'pension_distribution_list.barangay_id', '=', 'barangay_list.id')
+        ->select(
+            'pension_distribution_list.*',
+            'barangay_list.barangay_locality as barangay_locality',
+            'barangay_list.barangay_no as barangay_no'
+        )
+            ->where('pension_distribution_list.date_of_distribution', 'LIKE', "$currentMonth%")
+            ->orderBy('pension_distribution_list.date_of_distribution', 'asc')
+            ->paginate(10);
+
+        return view('senior_citizen.announcements', [
+            'title' => 'Announcement',
+            'barangayList' => $barangayList,
+            'pension_distributions' => $pension_distributions,
+            'availableMonths' => $availableMonths, 
+        ]);
+    }
+
+    public function filterAnnouncements(Request $request)
+    {
+        $monthId = $request->input('month_id');
+        $perPage = 10;
+
+        $query = DB::table('pension_distribution_list')
+        ->leftJoin('barangay_list', 'pension_distribution_list.barangay_id', '=', 'barangay_list.id')
+        ->select(
+            'pension_distribution_list.*',
+            'barangay_list.barangay_locality as barangay_locality',
+            'barangay_list.barangay_no as barangay_no'
+        );
+
+        if (!empty($monthId)) {
+            $query->where('pension_distribution_list.date_of_distribution', 'LIKE', "$monthId%");
         }
 
-        return view('senior_citizen.announcement')->with('title', 'Announcement ');
+        $query->orderBy('pension_distribution_list.date_of_distribution', 'asc');
+
+        $pension_distributions = $query->paginate($perPage);
+
+        return response()->json($pension_distributions);
     }
 
     public function contact_us()
     {
-        if (!session()->has('senior') && !session()->has('sticky-body-message')) {
-            session()->flash('sticky-body-message', 'Take the first step towards applying for the OSCA pension program today');
-            session()->flash('sticky-button-message', 'Apply Now');
-        }
-
         return view('senior_citizen.contact_us')->with('title', 'Contact Us ');
     }
 
@@ -92,11 +130,6 @@ class SeniorsController extends Controller
 
     public function about_us()
     {
-        if (!session()->has('senior') && !session()->has('sticky-body-message')) {
-            session()->flash('sticky-body-message', 'Take the first step towards applying for the OSCA pension program today');
-            session()->flash('sticky-button-message', 'Apply Now');
-        }
-        
         return view('senior_citizen.about_us')->with('title', 'About Us ');
     }
 
@@ -343,11 +376,11 @@ class SeniorsController extends Controller
                 DB::table('family_composition')->insert([
                     'senior_id' => $seniors->id,
                     'relative_name' => $name,
-                    'relative_relationship_id' => $request->relative_relationship_id[$index] ?: null,
-                    'relative_age' => $request->relative_age[$index] ?: null,
-                    'relative_civil_status_id' => $request->relative_civil_status_id[$index] ?: null,
-                    'relative_occupation' => $request->relative_occupation[$index] ?: null,
-                    'relative_income' => $request->relative_income[$index] ?: null,
+                    'relative_relationship_id' => $request->relative_relationship_id[$index] ?? null,
+                    'relative_age' => $request->relative_age[$index] ?? null,
+                    'relative_civil_status_id' => $request->relative_civil_status_id[$index] ?? null,
+                    'relative_occupation' => $request->relative_occupation[$index] ?? null,
+                    'relative_income' => $request->relative_income[$index] ?? null,
                 ]);
             }
         }

@@ -641,7 +641,7 @@
                                             Relationship
                                         </label>
                                         <select name="guardian_relationship_id" class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md transition-all">
-                                            <option value="" disabled selected>Select relationship</option>
+                                            <option value="" selected>Select relationship</option>
                                             @foreach($relationship_list as $relationship1) 
                                                 <option value="{{ $relationship1->id }}" {{ old('guardian_relationship_id') == $relationship1->id ? 'selected' : '' }}>
                                                     {{ $relationship1->relationship }}
@@ -770,7 +770,7 @@
                                                         </td>
                                                         <td class="border border-gray-300 px-4 py-2 hidden flex items-center justify-center" id="removeCell-0">
                                                             <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
-                                                                <img src="images/trashbin.png" alt="Delete" class="h-5 w-5" />
+                                                                <img src="../images/trashbin.png" alt="Delete" class="h-5 w-5" />
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -1426,7 +1426,7 @@
                                 </div>
 
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-                                    <div>
+                                    <div class="relative">
                                         <label class="text-gray-800 text-sm mb-2 block 
                                             @error('email') text-red-700
                                             @elseif(old('email')) text-green-700
@@ -1441,11 +1441,6 @@
                                             placeholder="Enter email" value="{{ old('email') }}" />
 
                                         @if(old('email'))
-                                            <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                </svg>
-                                            </span>
                                             <span class="text-green-500 text-xs mt-2 pl-2">Looks good!</span>
                                         @endif
                                         @error('email')
@@ -1856,7 +1851,7 @@
             </td>
             <td class="border border-gray-300 px-4 py-2 hidden flex items-center justify-center" id="removeCell-${rowCount}">
                 <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
-                    <img src="images/trashbin.png" alt="Delete" class="h-5 w-5" />
+                    <img src="../images/trashbin.png" alt="Delete" class="h-5 w-5" />
                 </button>
             </td>
         </tr>
@@ -2032,7 +2027,6 @@
         const progressLeft = document.getElementById('progressLeft');
         const progressRight = document.getElementById('progressRight');
 
-
         step1.style.backgroundColor = '#A1A1AA'; 
         step2.style.backgroundColor = '#A1A1AA'; 
         step1text.style.color = '#fff';
@@ -2055,8 +2049,19 @@
         }
     }
 
+    function addFlipAnimation(elementId) {
+        const element = document.getElementById(elementId);
+        element.classList.add('animate-flip-horizontal');
+        setTimeout(() => {
+            element.classList.remove('animate-flip-horizontal');
+        }, 600); 
+    }
+
     document.getElementById('nextButton').addEventListener('click', function() {
         if (currentStep === 1) {
+            addFlipAnimation('content1');
+            addFlipAnimation('content2');
+
             document.getElementById('content1').style.display = 'none';
             document.getElementById('content2').style.display = 'block';
             currentStep++;
@@ -2068,6 +2073,9 @@
 
     document.getElementById('backButton').addEventListener('click', function() {
         if (currentStep === 2) {
+            addFlipAnimation('content1');
+            addFlipAnimation('content2');
+
             document.getElementById('content2').style.display = 'none';
             document.getElementById('content1').style.display = 'block';
             currentStep--;

@@ -16,8 +16,8 @@ class StoreSeniorRequest extends FormRequest
     public function rules()
     {
         return [
-            "first_name" => ['required', 'min:4', 'max:60'],
-            "last_name" => ['required', 'min:4', 'max:30'],
+            "first_name" => ['required', 'max:64'],
+            "last_name" => ['required', 'max:32'],
             "middle_name" => ['nullable'],
             "suffix" => ['nullable'],
             "birthdate" => ['required', function ($attribute, $value, $fail) {
@@ -31,7 +31,7 @@ class StoreSeniorRequest extends FormRequest
             "sex_id" => ['required'],
             "civil_status_id" => ['required'],
             "contact_no" => ['required'],
-            "address" => ['required', 'min:20', 'max:100', 'regex:/\bCaloocan\b/i'],
+            "address" => ['required', 'min:10', 'max:100', 'regex:/\bCaloocan\b/i'],
             "barangay_id" => ['required'],
             "email" => ['required', 'email', Rule::unique('seniors', 'email')],
             "password" => [
@@ -87,11 +87,9 @@ class StoreSeniorRequest extends FormRequest
     {
         return [
             'first_name.required' => 'First name is required.',
-            'first_name.min' => 'First name must be at least 4 characters.',
-            'first_name.max' => 'First name cannot exceed 60 characters.',
+            'first_name.max' => 'First name cannot exceed 64 characters.',
             'last_name.required' => 'Last name is required.',
-            'last_name.min' => 'Last name must be at least 4 characters.',
-            'last_name.max' => 'Last name cannot exceed 30 characters.',
+            'last_name.max' => 'Last name cannot exceed 32 characters.',
             'birthdate.required' => 'Birthdate is required to calculate your age.',
             'age.required' => 'specify your birthdate to show your age.',
             'birthplace.required' => 'Birthplace is required.',

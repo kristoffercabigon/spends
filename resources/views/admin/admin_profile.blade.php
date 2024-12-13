@@ -34,14 +34,12 @@
     class="bg-cover bg-center bg-no-repeat min-h-screen" 
     style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
     
-    <div class="absolute inset-0 rounded-md bg-white mx-4 my-4 lg:ml-[95px] z-10"></div>
-    
-    <div class="relative flex items-center justify-center font-poppins lg:pl-[80px] z-20">
+    <div class="relative flex items-center justify-center font-poppins lg:mt-[80px] lg:pl-[255px]">
         <div class="w-full mx-auto font-[poppins]">
-            <div class="bg-white mt-4 ml-4 mr-4 rounded-md">              
+            <div class="bg-white mt-4 mb-4 ml-4 mr-4 rounded-md">              
                 <div class="px-6 py-4 lg:px-12">
                     <div class="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-                        <p class="text-center md:text-left">
+                        <p class="text-center">
                             Profile
                         </p>
                     </div>
@@ -93,16 +91,12 @@
                                             <span>Admin Roles</span>
                                             <div class="flex flex-wrap items-center justify-end my-2 mx-2 gap-2">
 
-                                                    <span class="bg-green-500 py-1 px-2 rounded text-white text-sm">View</span>
-                                                    <span class="bg-blue-500 py-1 px-2 rounded text-white text-sm">Create</span>
-                                                    <span class="bg-orange-500 py-1 px-2 rounded text-white text-sm">Update</span>
-                                                    <span class="bg-red-500 py-1 px-2 rounded text-white text-sm">Delete</span>
+                                                <span class="bg-green-500 py-1 px-2 rounded text-white text-sm">View</span>
+                                                <span class="bg-blue-500 py-1 px-2 rounded text-white text-sm">Create</span>
+                                                <span class="bg-orange-500 py-1 px-2 rounded text-white text-sm">Update</span>
+                                                <span class="bg-red-500 py-1 px-2 rounded text-white text-sm">Delete</span>
 
                                             </div>
-                                        </li>
-                                        <li class="flex items-center py-3">
-                                            <span>Date Registered</span>
-                                            <span class="ml-auto">Nov 07, 2024</span>
                                         </li>
                                     </ul>
                                 </div>

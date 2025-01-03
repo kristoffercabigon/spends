@@ -230,107 +230,221 @@
                 </p>
             </div>
 
-            <div class="flex mb-16 justify-center flex-wrap md:flex-wrap lg:flex-nowrap lg:flex-row lg:justify-between gap-8">
-            
-                <div class="w-full flex justify-between flex-col lg:w-2/5">
-                    <div class="block lg:text-left text-center">
-                    <h2 class="text-4xl font-bold text-gray-900 leading-[3.25rem] mb-5">Our latest <span class=" text-green-600">Events</span></h2>
-                    <p class="text-gray-500 mb-10  max-lg:max-w-xl max-lg:mx-auto">Welcome to our blog section, where knowledge meets inspiration. Explore insightful articles, expert tips, and the latest trends in our field.</p>
-                    <a href="javascript:;" class="cursor-pointer border border-gray-300 shadow-sm rounded-full py-3.5 px-7 w-52 lg:mx-0 mx-auto flex justify-center text-gray-900 font-semibold transition-all duration-300 hover:bg-gray-100">View All</a>
-                  </div>
-                     <!-- Slider controls -->
-                     <div class="flex items-center lg:justify-start justify-center lg:mt-0 mt-8 gap-8 mb-4">
-                      <button id="slider-button-left" class="swiper-button-prev group flex justify-center items-center border border-solid border-indigo-600 w-11 h-11 transition-all duration-500 rounded-full hover:bg-indigo-600" data-carousel-prev>
-                          <svg class="h-6 w-6 text-indigo-600 group-hover:text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M20.9999 12L4.99992 12M9.99992 6L4.70703 11.2929C4.3737 11.6262 4.20703 11.7929 4.20703 12C4.20703 12.2071 4.3737 12.3738 4.70703 12.7071L9.99992 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                              </svg>
-                              
-                      </button>
-                      <button id="slider-button-right" class="swiper-button-next group flex justify-center items-center border border-solid border-indigo-600 w-11 h-11 transition-all duration-500 rounded-full hover:bg-indigo-600" data-carousel-next>
-                          <svg class="h-6 w-6 text-indigo-600 group-hover:text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M3 12L19 12M14 18L19.2929 12.7071C19.6262 12.3738 19.7929 12.2071 19.7929 12C19.7929 11.7929 19.6262 11.6262 19.2929 11.2929L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                              </svg>
-                              
-                      </button>
-                  </div>
-                </div>
+            <div id="default-carousel" class="relative w-full shadow-lg mb-16" data-carousel="slide">
+    <div class="relative h-96 overflow-hidden rounded-lg md:h-[500px] group">
+        @foreach ($featured_events as $index => $event)
+            <div class="absolute inset-0 transition-transform transform {{ $loop->first ? 'translate-x-0' : 'translate-x-full' }} duration-700 ease-in-out" data-carousel-item>
+                <div class="relative w-full h-full group">
+                    <img src="{{ asset('storage/images/events/' . $event->image) }}" 
+                         alt="{{ $event->title }}" 
+                         class="block w-full h-full object-cover rounded-lg">
+                    
+                    <div class="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+                        <div class="absolute bottom-6 left-12 right-12 p-5 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <h3 class="font-bold mb-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl">{{ $event->title }}</h3>
 
-                <div class="w-full lg:w-3/5">
-                    <!--Slider wrapper-->
-                    <div class="swiper mySwiper">
-                        <div class="swiper-wrapper">
-                            <div class="swiper-slide w-full max-lg:max-w-xl lg:w-1/2 group">
-                                <div class="flex items-center mb-9">
-                                    <img src="https://pagedone.io/asset/uploads/1696244059.png" alt="blogs tailwind section" class="rounded-2xl w-full object-cover">
-                                </div>
-                                <h3 class="text-xl text-gray-900 font-medium leading-8 mb-4 group-hover:text-indigo-600">Clever ways to invest in product to organize your portfolio</h3>
-                                <p class="text-gray-500 leading-6 transition-all duration-500 mb-8">
-                                    Discover smart investment strategies to streamline and organize your portfolio. Explore innovative approaches to optimize your...
-                                </p>
-                                <a href="javascript:;" class="cursor-pointer flex items-center gap-2 text-lg text-indigo-700 font-semibold">
-                                    Read more<svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M1.25 6L13.25 6M9.5 10.5L13.4697 6.53033C13.7197 6.28033 13.8447 6.15533 13.8447 6C13.8447 5.84467 13.7197 5.71967 13.4697 5.46967L9.5 1.5" stroke="#4338CA" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                      </a>
+                            <!-- Profile Picture, Author Name, Date, and Time -->
+                            <div class="flex items-center mb-2">
+                                @php
+                                    // Check if the event is created by an encoder or an admin and set the profile picture
+                                    if ($event->event_user_type_id == 2) {
+                                        $profilePicture = $event->encoder_profile_picture
+                                            ? asset('storage/images/encoder/encoder_thumbnail_profile/' . $event->encoder_profile_picture)
+                                            : "https://api.dicebear.com/9.x/initials/svg?seed={$event->encoder_first_name}-{$event->encoder_last_name}";
+                                        $authorName = $event->encoder_first_name . ' ' . $event->encoder_last_name;
+                                    } elseif ($event->event_user_type_id == 3) {
+                                        $profilePicture = $event->admin_profile_picture
+                                            ? asset('storage/images/admin/admin_thumbnail_profile/' . $event->admin_profile_picture)
+                                            : "https://api.dicebear.com/9.x/initials/svg?seed={$event->admin_first_name}-{$event->admin_last_name}";
+                                        $authorName = $event->admin_first_name . ' ' . $event->admin_last_name;
+                                    } else {
+                                        $profilePicture = "https://api.dicebear.com/9.x/initials/svg?seed=Unknown";
+                                        $authorName = "Unknown";
+                                    }
+                                @endphp
+
+                                <img class="w-10 h-10 rounded-full ring-2 ring-white mr-2" src="{{ $profilePicture }}" alt="Profile Picture">
+                                <span>{{ $authorName }}</span>
                             </div>
-                            <div class="swiper-slide w-full max-lg:max-w-xl lg:w-1/2 group">
-                                <div class="flex items-center mb-9">
-                                    <img src="https://pagedone.io/asset/uploads/1696244074.png" alt="blogs tailwind section" class="rounded-2xl w-full object-cover">
-                                </div>
-                                <h3 class="text-xl text-gray-900 font-medium leading-8 mb-4 group-hover:text-indigo-600">How to grow your profit through systematic investment with us</h3>
-                                <p class="text-gray-500 leading-6 transition-all duration-500 mb-8">
-                                    Unlock the power of systematic investment with us and watch your profits soar. Our expert team will guide you on the path to financial..
-                                </p>
-                                <a href="javascript:;" class="cursor-pointer flex items-center gap-2 text-lg text-indigo-700 font-semibold">
-                                    Read more<svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M1.25 6L13.25 6M9.5 10.5L13.4697 6.53033C13.7197 6.28033 13.8447 6.15533 13.8447 6C13.8447 5.84467 13.7197 5.71967 13.4697 5.46967L9.5 1.5" stroke="#4338CA" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                      </a>
+
+                            <!-- Event Date -->
+                            <div class="px-4 py-2 text-sm sm:text-base md:text-lg lg:text-xl">
+                                {{ \Carbon\Carbon::parse($event->event_date)->format('F j, Y') }}
                             </div>
-                            <div class="swiper-slide w-full max-lg:max-w-xl lg:w-1/2 group">
-                                <div class="flex items-center mb-9">
-                                    <img src="https://pagedone.io/asset/uploads/1696244059.png" alt="blogs tailwind section" class="rounded-2xl w-full object-cover">
-                                </div>
-                                <h3 class="text-xl text-gray-900 font-medium leading-8 mb-4 group-hover:text-indigo-600">Clever ways to invest in product to organize your portfolio</h3>
-                                <p class="text-gray-500 leading-6 transition-all duration-500 mb-8">
-                                    Discover smart investment strategies to streamline and organize your portfolio. Explore innovative approaches to optimize your...
-                                </p>
-                                <a href="javascript:;" class="cursor-pointer flex items-center gap-2 text-lg text-indigo-700 font-semibold">
-                                    Read more<svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M1.25 6L13.25 6M9.5 10.5L13.4697 6.53033C13.7197 6.28033 13.8447 6.15533 13.8447 6C13.8447 5.84467 13.7197 5.71967 13.4697 5.46967L9.5 1.5" stroke="#4338CA" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                      </a>
+
+                            <!-- Event Time -->
+                            <div class="px-4 py-2 text-sm sm:text-base md:text-lg lg:text-xl">
+                                {{ \Carbon\Carbon::parse($event->event_date)->format('g:i A') }}
                             </div>
-                            <div class="swiper-slide w-full max-lg:max-w-xl lg:w-1/2 group">
-                                <div class="flex items-center mb-9">
-                                    <img src="https://pagedone.io/asset/uploads/1696244074.png" alt="blogs tailwind section" class="rounded-2xl w-full object-cover">
-                                </div>
-                                <h3 class="text-xl text-gray-900 font-medium leading-8 mb-4 group-hover:text-indigo-600">How to grow your profit through systematic investment with us</h3>
-                                <p class="text-gray-500 leading-6 transition-all duration-500 mb-8">
-                                    Unlock the power of systematic investment with us and watch your profits soar. Our expert team will guide you on the path to financial..
-                                </p>
-                                <a href="javascript:;" class="cursor-pointer flex items-center gap-2 text-lg text-indigo-700 font-semibold">
-                                    Read more<svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M1.25 6L13.25 6M9.5 10.5L13.4697 6.53033C13.7197 6.28033 13.8447 6.15533 13.8447 6C13.8447 5.84467 13.7197 5.71967 13.4697 5.46967L9.5 1.5" stroke="#4338CA" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                      </a>
-                            </div>
+
+                            <!-- Description -->
+                            <p class="text-sm sm:text-base md:text-lg lg:text-xl" style="max-width: 100%;">
+                                {{ \Illuminate\Support\Str::words($event->description, 75, '...') }}
+                            </p>
                         </div>
                     </div>
                 </div>
+            </div>
+        @endforeach
+    </div>
+
+    <!-- Carousel indicators -->
+    <div class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
+        @foreach ($featured_events as $index => $event)
+            <button type="button" 
+                    class="w-3 h-3 rounded-full {{ $loop->first ? 'bg-blue-600' : 'bg-gray-400' }}" 
+                    aria-current="{{ $loop->first ? 'true' : 'false' }}" 
+                    aria-label="Slide {{ $index + 1 }}" 
+                    data-carousel-slide-to="{{ $index }}">
+            </button>
+        @endforeach
+    </div>
+
+    <!-- Carousel navigation buttons -->
+    <button type="button" 
+            class="absolute top-0 left-0 z-5 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" 
+            data-carousel-prev>
+        <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+            <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+            </svg>
+            <span class="sr-only">Previous</span>
+        </span>
+    </button>
+    <button type="button" 
+            class="absolute top-0 right-0 z-5 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" 
+            data-carousel-next>
+        <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+            <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+            </svg>
+            <span class="sr-only">Next</span>
+        </span>
+    </button>
+</div>
+
+
+
+            <div class="flex mb-16 justify-center flex-wrap md:flex-wrap lg:flex-nowrap lg:flex-row lg:justify-between gap-8">
+
+                <div class="w-full">
+                    <div class="swiper mySwiper">
+                        <div class="swiper-wrapper">
+                            @foreach ($events as $event)
+                                <div class="swiper-slide w-full max-lg:max-w-xl lg:w-1/2 group">
+                                    <div class="flex items-center mb-9">
+                                        @if($event->image)
+                                            <img src="{{ asset('storage/images/events/'.$event->image) }}" 
+                                                alt="{{ $event->title }}" 
+                                                class="rounded-2xl w-full object-cover" 
+                                                style="max-height: 250px; object-fit: cover; object-position: center;">
+                                        @else
+                                            <img src="{{ asset('path/to/default/image.jpg') }}" 
+                                                alt="Default Image" 
+                                                class="rounded-2xl w-full object-cover" 
+                                                style="max-height: 250px; object-fit: cover; object-position: center;">
+                                        @endif
+                                    </div>
+                                    <h3 id="title" class="text-xl text-gray-900 font-medium leading-8 mb-4 group-hover:text-indigo-600">
+                                        {{ $event->title }}
+                                    </h3>
+                                    <p id="description" class="text-gray-500 leading-6 transition-all duration-500 mb-8">
+                                        {{ Str::limit($event->description, 100, '...') }}
+                                    </p>
+                                    <a href="javascript:;" class="cursor-pointer flex items-center gap-2 text-lg text-indigo-700 font-semibold">
+                                        Read more
+                                        <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M1.25 6L13.25 6M9.5 10.5L13.4697 6.53033C13.7197 6.28033 13.8447 6.15533 13.8447 6C13.8447 5.84467 13.7197 5.71967 13.4697 5.46967L9.5 1.5" 
+                                                stroke="#4338CA" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-center mt-10 gap-8 mb-4">
+                        <button id="slider-button-left" class="swiper-button-prev group flex justify-center items-center border border-solid border-[#1AA514] w-11 h-11 transition-all duration-500 rounded-full hover:bg-[#1AA514]" data-carousel-prev>
+                            <svg class="h-6 w-6 text-[#1AA514] group-hover:text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20.9999 12L4.99992 12M9.99992 6L4.70703 11.2929C4.3737 11.6262 4.20703 11.7929 4.20703 12C4.20703 12.2071 4.3737 12.3738 4.70703 12.7071L9.99992 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button id="slider-button-right" class="swiper-button-next group flex justify-center items-center border border-solid border-[#1AA514] w-11 h-11 transition-all duration-500 rounded-full hover:bg-[#1AA514]" data-carousel-next>
+                            <svg class="h-6 w-6 text-[#1AA514] group-hover:text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 12L19 12M14 18L19.2929 12.7071C19.6262 12.3738 19.7929 12.2071 19.7929 12C19.7929 11.7929 19.6262 11.6262 19.2929 11.2929L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
             </div>
 
         </div>
     </div>
 </section>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const carousel = document.querySelector('#default-carousel');
+        const items = carousel.querySelectorAll('[data-carousel-item]');
+        const indicators = carousel.querySelectorAll('[data-carousel-slide-to]');
+        let currentIndex = 0;
+
+        items.forEach(item => {
+            item.style.transition = 'transform 0.5s ease';
+        });
+
+        function updateCarousel(index) {
+            items.forEach((item, i) => {
+                if (i === index) {
+                    item.style.transform = 'translateX(0)';
+                } else if (i < index) {
+                    item.style.transform = 'translateX(-100%)';
+                } else {
+                    item.style.transform = 'translateX(100%)';
+                }
+            });
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('bg-blue-600', i === index);
+                indicator.classList.toggle('bg-gray-400', i !== index);
+            });
+        }
+
+        carousel.querySelector('[data-carousel-prev]').addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + items.length) % items.length;
+            updateCarousel(currentIndex);
+        });
+        carousel.querySelector('[data-carousel-next]').addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % items.length;
+            updateCarousel(currentIndex);
+        });
+
+        indicators.forEach((indicator, i) => {
+            indicator.addEventListener('click', () => {
+                currentIndex = i;
+                updateCarousel(currentIndex);
+            });
+        });
+
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % items.length;
+            updateCarousel(currentIndex);
+        }, 5000);
+
+        updateCarousel(currentIndex);
+    });
+</script>
 
 <script>
     var swiper = new Swiper(".mySwiper", {
-        slidesPerView: 2,
+        slidesPerView: 4, 
         spaceBetween: 28,
         centeredSlides: false,
         loop: true,
+        autoplay: {
+            delay: 5000, 
+            disableOnInteraction: false, 
+        },
         pagination: {
             el: ".swiper-pagination",
             clickable: true,
@@ -351,17 +465,18 @@
                 centeredSlides: false,
             },
             768: {
-                slidesPerView: 2,
+                slidesPerView: 3, 
                 spaceBetween: 28,
                 centeredSlides: false,
             },
             1024: {
-                slidesPerView: 2,
+                slidesPerView: 4,
                 spaceBetween: 32,
             },
         },
     });
 </script>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {

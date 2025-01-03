@@ -3,6 +3,7 @@ import forms from "@tailwindcss/forms";
 import animations from "@midudev/tailwind-animations";
 
 /** @type {import('tailwindcss').Config} */
+
 export default {
     content: [
         "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php",
@@ -201,6 +202,11 @@ export default {
                     },
                 },
             },
+        },
+    },
+    variants: {
+        extend: {
+            backgroundColor: ['active'],
         },
     },
     plugins: [forms, animations],

@@ -92,6 +92,15 @@
                         </div>
                     </div>
 
+                    <div class="mt-8 bg-[#F7F9FB] shadow-lg rounded-md overflow-x-auto" style="width: 100%; max-width: 100%; height: auto;">
+                        <div class="flex items-center justify-between p-4 border-b">
+                            <h4 class="text-md font-semibold leading-none tracking-wider text-gray-700 uppercase">Budget over the years</h4>
+                        </div>
+                        <div class="relative p-4" style="width: 100%; height: 500px;">
+                            <canvas id="lineRegression" class="w-full h-full"></canvas>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 mt-8 space-y-8 lg:gap-8 lg:space-y-0 lg:grid-cols-3">
                         <div class="col-span-2 bg-[#F7F9FB] shadow-lg rounded-md" style="overflow-x: auto; width: 100%;" x-data="{ isOn: false }">
                             <div class="flex items-center justify-between p-4 border-b" style="min-width: 1500px;">
@@ -258,112 +267,115 @@
 </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.bundle.min.js"></script>
-<script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const getColor = () => {
-            if (window.localStorage.getItem('color')) {
-            return window.localStorage.getItem('color')
-            }
-            return 'green'
-        }
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const getColor = () => {
+                if (window.localStorage.getItem('color')) {
+                    return window.localStorage.getItem('color');
+                }
+                return 'green';
+            };
 
-        const setColors = (color) => {
-            const root = document.documentElement
-            root.style.setProperty('--color-primary', `var(--color-${color})`)
-            root.style.setProperty('--color-primary-50', `var(--color-${color}-50)`)
-            root.style.setProperty('--color-primary-100', `var(--color-${color}-100)`)
-            root.style.setProperty('--color-primary-light', `var(--color-${color}-light)`)
-            root.style.setProperty('--color-primary-lighter', `var(--color-${color}-lighter)`)
-            root.style.setProperty('--color-primary-dark', `var(--color-${color}-dark)`)
-            root.style.setProperty('--color-primary-darker', `var(--color-${color}-darker)`)
-            this.selectedColor = color
-            window.localStorage.setItem('color', color)
-        }
+            const setColors = (color) => {
+                const root = document.documentElement;
+                root.style.setProperty('--color-primary', `var(--color-${color})`);
+                root.style.setProperty('--color-primary-50', `var(--color-${color}-50)`);
+                root.style.setProperty('--color-primary-100', `var(--color-${color}-100)`);
+                root.style.setProperty('--color-primary-light', `var(--color-${color}-light)`);
+                root.style.setProperty('--color-primary-lighter', `var(--color-${color}-lighter)`);
+                root.style.setProperty('--color-primary-dark', `var(--color-${color}-dark)`);
+                root.style.setProperty('--color-primary-darker', `var(--color-${color}-darker)`);
+                this.selectedColor = color;
+                window.localStorage.setItem('color', color);
+            };
 
-        const updateBarChart = (on) => {
-            const data = {
-            data: randomData(),
-            backgroundColor: 'rgb(207, 250, 254)',
-            }
-            if (on) {
-            barChart.data.datasets.push(data)
-            barChart.update()
-            } else {
-            barChart.data.datasets.splice(1)
-            barChart.update()
-            }
-        }
+            const updateBarChart = (on) => {
+                const data = {
+                    data: randomData(),
+                    backgroundColor: 'rgb(207, 250, 254)',
+                };
+                if (on) {
+                    barChart.data.datasets.push(data);
+                    barChart.update();
+                } else {
+                    barChart.data.datasets.splice(1);
+                    barChart.update();
+                }
+            };
 
-        const updateDoughnutChart = (on) => {
-            const data = random()
-            const color = 'rgb(207, 250, 254)'
-            if (on) {
-            doughnutChart.data.labels.unshift('Seb')
-            doughnutChart.data.datasets[0].data.unshift(data)
-            doughnutChart.data.datasets[0].backgroundColor.unshift(color)
-            doughnutChart.update()
-            } else {
-            doughnutChart.data.labels.splice(0, 1)
-            doughnutChart.data.datasets[0].data.splice(0, 1)
-            doughnutChart.data.datasets[0].backgroundColor.splice(0, 1)
-            doughnutChart.update()
-            }
-        }
+            const updateDoughnutChart = (on) => {
+                const data = random();
+                const color = 'rgb(207, 250, 254)';
+                if (on) {
+                    doughnutChart.data.labels.unshift('Seb');
+                    doughnutChart.data.datasets[0].data.unshift(data);
+                    doughnutChart.data.datasets[0].backgroundColor.unshift(color);
+                    doughnutChart.update();
+                } else {
+                    doughnutChart.data.labels.splice(0, 1);
+                    doughnutChart.data.datasets[0].data.splice(0, 1);
+                    doughnutChart.data.datasets[0].backgroundColor.splice(0, 1);
+                    doughnutChart.update();
+                }
+            };
 
-        const loading = true
-        const color = getColor()
-        const selectedColor = 'green'
+            const loading = true;
+            const color = getColor();
+            const selectedColor = 'green';
 
-        Alpine.data('dashboard', () => ({
-            loading,
-            color,
-            selectedColor,
-            setColors,
-            updateBarChart,
-            updateDoughnutChart,
-        }))
-    })
+            Alpine.data('dashboard', () => ({
+                loading,
+                color,
+                selectedColor,
+                setColors,
+                updateBarChart,
+                updateDoughnutChart,
+            }));
+        });
     </script>
 
     <script>
-    const cssColors = (color) => {
-        return getComputedStyle(document.documentElement).getPropertyValue(color);
-    };
+        const cssColors = (color) => {
+            return getComputedStyle(document.documentElement).getPropertyValue(color);
+        };
 
-    const getColor = () => {
-        return window.localStorage.getItem("color") ?? "green";
-    };
+        const getColor = () => {
+            return window.localStorage.getItem("color") ?? "green";
+        };
 
-    const colors = {
-        primary: cssColors(`--color-${getColor()}`),
-        primaryLight: cssColors(`--color-${getColor()}-light`),
-        primaryLighter: cssColors(`--color-${getColor()}-lighter`),
-        primaryDark: cssColors(`--color-${getColor()}-dark`),
-        primaryDarker: cssColors(`--color-${getColor()}-darker`),
-    };
+        const colors = {
+            primary: cssColors(`--color-${getColor()}`),
+            primaryLight: cssColors(`--color-${getColor()}-light`),
+            primaryLighter: cssColors(`--color-${getColor()}-lighter`),
+            primaryDark: cssColors(`--color-${getColor()}-dark`),
+            primaryDarker: cssColors(`--color-${getColor()}-darker`),
+        };
 
-    const barangays = @json(array_column($barangay_list, 'name')).map(name => name.replace(/^Barangay\s+/i, ""));
-    const barangayCounts = @json(array_column($barangay_list, 'total'));
+        const barangays = @json(array_column($barangay_list, 'name')).map(name => name.replace(/^Barangay\s+/i, ""));
+        const barangayCounts = @json(array_column($barangay_list, 'total'));
 
-    const barChart = new Chart(document.getElementById("barChart"), {
-        type: "bar",
-        data: {
-            labels: barangays,
-            datasets: [
-                {
-                    data: barangayCounts,
-                    backgroundColor: colors.primary,
-                    hoverBackgroundColor: colors.primaryDark,
-                    borderRadius: 20, 
-                },
-            ],
-        },
-        options: {
-            scales: {
-                yAxes: [
+        const barChart = new Chart(document.getElementById("barChart"), {
+            type: "bar",
+            data: {
+                labels: barangays,
+                datasets: [
                     {
-                        gridLines: false,
+                        label: 'Beneficiaries',
+                        data: barangayCounts,
+                        backgroundColor: colors.primary,
+                        hoverBackgroundColor: colors.primaryDark,
+                        borderRadius: 5, 
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    y: {
+                        grid: {
+                            display: false,
+                        },
                         ticks: {
                             beginAtZero: true,
                             stepSize: 50,
@@ -372,11 +384,18 @@
                             fontFamily: "Open Sans, sans-serif",
                             padding: 10,
                         },
+                        title: {
+                            display: true,
+                            text: 'Beneficiaries',
+                            font: {
+                                size: 14,
+                            },
+                        },
                     },
-                ],
-                xAxes: [
-                    {
-                        gridLines: false,
+                    x: {
+                        grid: {
+                            display: false,
+                        },
                         ticks: {
                             fontSize: 12,
                             fontColor: "#4B5563", 
@@ -384,65 +403,145 @@
                             padding: 5,
                         },
                         categoryPercentage: 0.5,
-                        maxBarThickness: 25,
+                        barPercentage: 0.8, 
+                        maxBarThickness: 15, 
+                        title: {
+                            display: true,
+                            text: 'Barangay',
+                            font: {
+                                size: 14,
+                            },
+                        },
+                    },
+                },
+                maintainAspectRatio: false,
+                legend: {
+                    display: false,
+                },
+            },
+        });
+
+        const accountStatusData = @json($accountStatusData);
+
+        const labels = accountStatusData.map(item => item.status); 
+        const data = accountStatusData.map(item => item.total); 
+
+        const doughnutChart = new Chart(document.getElementById("doughnutChart"), {
+            type: "doughnut",
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        data: data,  
+                        backgroundColor: [
+                            'rgb(34, 197, 94)',
+                            'rgb(249, 115, 22)',
+                            'rgb(234, 179, 8)',
+                            'rgb(239, 68, 68)',
+                        ],
+                        hoverBackgroundColor: [
+                            'rgb(22, 163, 74)',
+                            'rgb(234, 88, 12)',
+                            'rgb(202, 138, 4)',
+                            'rgb(220, 38, 38)',
+                        ],
+                        borderWidth: 0,
+                        weight: 0.5,
                     },
                 ],
             },
-            maintainAspectRatio: false,
-            legend: {
-                display: false,
-            },
-        },
-    });
-
-    const accountStatusData = @json($accountStatusData);
-
-    const labels = accountStatusData.map(item => item.status); 
-    const data = accountStatusData.map(item => item.total); 
-
-    const doughnutChart = new Chart(document.getElementById("doughnutChart"), {
-        type: "doughnut",
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    data: data,  
-                    backgroundColor: [
-                        'rgb(34, 197, 94)',
-                        'rgb(249, 115, 22)',
-                        'rgb(234, 179, 8)',
-                        'rgb(239, 68, 68)',
-                    ],
-                    hoverBackgroundColor: [
-                        'rgb(22, 163, 74)',
-                        'rgb(234, 88, 12)',
-                        'rgb(202, 138, 4)',
-                        'rgb(220, 38, 38)',
-                    ],
-                    borderWidth: 0,
-                    weight: 0.5,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    position: "bottom",
+                    labels: {
+                        fontColor: "#4B5563", 
+                    },
                 },
-            ],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            legend: {
-                position: "bottom",
-                labels: {
-                    fontColor: "#4B5563", 
+                title: {
+                    display: false,
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true,
                 },
             },
-            title: {
-                display: false,
-            },
-            animation: {
-                animateScale: true,
-                animateRotate: true,
-            },
-        },
-    });
+        });
 
+        const chartData = @json($chartData);
+        const regressionLabels = chartData.map(data => data.year);
+        const predictions = chartData.map(data => data.prediction);
+        const cumulativeBeneficiaries = chartData.map(data => data.cumulative_beneficiaries);
+
+        const ctx = document.getElementById('lineRegression').getContext('2d');
+        const lineRegression = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: regressionLabels,
+                datasets: [{
+                    label: 'Budget',
+                    data: predictions,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: '#1aa514',
+                    borderWidth: 2,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#1aa514',
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItem) {
+                                return `Year: ${tooltipItem[0].label}`;
+                            },
+                            label: function(tooltipItem) {
+                                const yearIndex = tooltipItem.dataIndex;
+                                const prediction = tooltipItem.raw;
+                                const beneficiaries = cumulativeBeneficiaries[yearIndex];
+
+                                const formattedPrediction = prediction.toLocaleString();
+                                const formattedBeneficiaries = beneficiaries.toLocaleString();
+
+                                return [
+                                    `Budget: ${formattedPrediction}`,
+                                    `Beneficiaries: ${formattedBeneficiaries}`
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Year',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Budget',
+                            font: {
+                                size: 14
+                            }
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
     </script>
     
     <script>

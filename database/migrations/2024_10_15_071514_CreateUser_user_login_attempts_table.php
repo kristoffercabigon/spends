@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('admin_login_attempts', function (Blueprint $table) {
+        Schema::create('user_login_attempts', function (Blueprint $table) {
             $table->id();
-            $table->string('admin_email')->nullable();
+            $table->string('email')->nullable();
+            $table->foreignId('user_type_id')->nullable()->constrained('user_type_list');
             $table->string('status');
             $table->timestamp('created_at')->useCurrent();
         });
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('admin_login_attempts');
+        Schema::dropIfExists('user_login_attempts');
     }
 };

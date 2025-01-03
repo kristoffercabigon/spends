@@ -189,10 +189,14 @@
                 'flex items-center p-2 rounded-md transition-colors': true,
                 'hover:bg-primary-100 bg-primary-100 text-gray-700': isActive || open || 
                   '{{ request()->is('encoder/pension-distribution-list') }}' === '1' || 
-                  '{{ request()->is('encoder/events-list') }}' === '1',
+                  '{{ request()->is('encoder/events-list') }}' === '1' || 
+                  '{{ request()->is('encoder/events-list/add-event') }}' === '1' || 
+                  '{{ request()->is('encoder/events-list/edit-event/*') }}' === '1',
                 'text-gray-500': !isActive && !open && 
                   '{{ request()->is('encoder/pension-distribution-list') }}' !== '1' && 
-                  '{{ request()->is('encoder/events-list') }}' !== '1'
+                  '{{ request()->is('encoder/events-list') }}' !== '1' && 
+                  '{{ request()->is('encoder/events-list/add-event') }}' !== '1' && 
+                  '{{ request()->is('encoder/events-list/edit-event/*') }}' !== '1'
               }"
               role="button"
               aria-haspopup="true"
@@ -230,7 +234,12 @@
               <a
                 href="/encoder/events-list"
                 role="menuitem"
-                class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700 {{ request()->is('encoder/events-list') ? 'text-gray-700 bg-primary-100' : 'text-gray-500' }}"
+                class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700 
+                  {{ request()->is('encoder/events-list') || 
+                    request()->is('encoder/events-list/add-event') || 
+                    request()->is('encoder/events-list/edit-event/*') 
+                    ? 'text-gray-700 bg-primary-100' 
+                    : 'text-gray-500' }}"
               >
                 Events List
               </a>
@@ -466,10 +475,14 @@
                   'flex items-center p-2 rounded-md transition-colors': true,
                   'hover:bg-primary-100 bg-primary-100 text-gray-700': isActive || open || 
                     '{{ request()->is('encoder/pension-distribution-list') }}' === '1' || 
-                    '{{ request()->is('encoder/events-list') }}' === '1',
+                    '{{ request()->is('encoder/events-list') }}' === '1' || 
+                    '{{ request()->is('encoder/events-list/add-event') }}' === '1' || 
+                    '{{ request()->is('encoder/events-list/edit-event/*') }}' === '1',
                   'text-gray-500': !isActive && !open && 
                     '{{ request()->is('encoder/pension-distribution-list') }}' !== '1' && 
-                    '{{ request()->is('encoder/events-list') }}' !== '1'
+                    '{{ request()->is('encoder/events-list') }}' !== '1' && 
+                    '{{ request()->is('encoder/events-list/add-event') }}' !== '1' && 
+                    '{{ request()->is('encoder/events-list/edit-event/*') }}' !== '1'
                 }"
                 role="button"
                 aria-haspopup="true"
@@ -507,7 +520,12 @@
                 <a
                   href="/encoder/events-list"
                   role="menuitem"
-                  class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700 {{ request()->is('encoder/events-list') ? 'text-gray-700 bg-primary-100' : 'text-gray-500' }}"
+                  class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700 
+                    {{ request()->is('encoder/events-list') || 
+                      request()->is('encoder/events-list/add-event') || 
+                      request()->is('encoder/events-list/edit-event/*') 
+                      ? 'text-gray-700 bg-primary-100' 
+                      : 'text-gray-500' }}"
                 >
                   Events List
                 </a>

@@ -57,8 +57,59 @@ class SeniorsController extends Controller
             ->orderBy('pension_distribution_list.date_of_distribution', 'asc')
             ->paginate(10);
 
+        $featured_events = DB::table('events_list')
+        ->leftJoin('barangay_list', 'events_list.barangay_id', '=', 'barangay_list.id')
+        ->leftJoin('user_type_list', 'events_list.event_user_type_id', '=', 'user_type_list.id')
+        ->leftJoin('encoder', 'events_list.event_encoder_id', '=', 'encoder.id')
+        ->leftJoin('admin', 'events_list.event_admin_id', '=', 'admin.id')
+        ->leftJoin('events_images', 'events_list.id', '=', 'events_images.event_id')
+        ->select(
+            'events_list.*',
+            'barangay_list.barangay_locality as barangay_locality',
+            'barangay_list.barangay_no as barangay_no',
+            'encoder.encoder_first_name',
+            'encoder.encoder_last_name',
+            'encoder_profile_picture',
+            'admin.admin_first_name',
+            'admin.admin_last_name',
+            'admin_profile_picture',
+            'user_type_list.user_type',
+            'events_images.image',
+            'events_images.is_highlighted'
+        )
+        ->where('events_list.is_featured', '=', 1)
+        ->where('events_images.is_highlighted', '=', 1)
+        ->orderBy('events_list.id', 'asc')
+        ->paginate(10);
+
+        $events = DB::table('events_list')
+        ->leftJoin('barangay_list', 'events_list.barangay_id', '=', 'barangay_list.id')
+        ->leftJoin('user_type_list', 'events_list.event_user_type_id', '=', 'user_type_list.id')
+        ->leftJoin('encoder', 'events_list.event_encoder_id', '=', 'encoder.id')
+        ->leftJoin('admin', 'events_list.event_admin_id', '=', 'admin.id')
+        ->leftJoin('events_images', 'events_list.id', '=', 'events_images.event_id')
+        ->select(
+            'events_list.*',
+            'barangay_list.barangay_locality as barangay_locality',
+            'barangay_list.barangay_no as barangay_no',
+            'encoder.encoder_first_name',
+            'encoder.encoder_last_name',
+            'encoder_profile_picture',
+            'admin.admin_first_name',
+            'admin.admin_last_name',
+            'admin_profile_picture',
+            'user_type_list.user_type',
+            'events_images.image',
+            'events_images.is_highlighted'
+        )
+            ->where('events_images.is_highlighted', '=', 1)
+            ->orderBy('events_list.id', 'asc')
+            ->paginate(10);
+
         return view('senior_citizen.announcements', [
             'title' => 'Announcement',
+            'featured_events' => $featured_events,
+            'events' => $events,
             'barangayList' => $barangayList,
             'pension_distributions' => $pension_distributions,
             'availableMonths' => $availableMonths, 
@@ -454,7 +505,6 @@ class SeniorsController extends Controller
         return response()->json(['error' => 'Invalid verification code.'], 400);
     }
 
-
     public function resendVerificationCode(Request $request)
     {
         $email = $request->input('email');
@@ -519,6 +569,60 @@ class SeniorsController extends Controller
         ]);
     }
 
+    public function showSignatureUpdateModal()
+    {
+        if (!session()->has('email')) {
+            return redirect('/')->with([
+                'error-message-header' => 'Failed',
+                'error-message-body' => 'Restricted Access.',
+            ]);
+        }
+
+        return redirect()->to(url()->previous() . '?email=' . urlencode(session('email')))->with([
+            'showSignatureModal' => true,
+            'clearLoginModal' => true,
+            'email' => session('email'),
+            'error-message-header' => 'Login Failed',
+            'error-message-body' => 'Write your signature first.'
+        ]);
+    }
+
+    public function submitSignatureUpdateModal(Request $request)
+    {
+        if (!$request->has('signature_data1') || empty($request->signature_data1)) {
+            return back()->with([
+                'error-message-header' => 'Failed',
+                'error-message-body' => 'Please provide your signature.',
+            ]);
+        }
+
+        $email = $request->input('email', session('email'));
+        $signatureData = $request->input('signature_data1');
+
+        $signatureData = str_replace('data:image/png;base64,', '', $signatureData);
+        $signatureData = str_replace(' ', '+', $signatureData);
+        $signatureData = base64_decode($signatureData);
+
+        $senior = Seniors::where('email', $email)->first();
+
+        if ($senior) {
+            $osca_id = $senior->osca_id;
+            $signatureFilename = $osca_id . '.png';
+            $path = storage_path('app/public/images/senior_citizen/signatures/');
+            file_put_contents($path . $signatureFilename, $signatureData);
+
+            $senior->signature_data = $signatureFilename;
+            $senior->save();
+        }
+
+        return back()->with([
+            'message-header' => 'Success',
+            'message-body' => 'Signature has been updated successfully.',
+            'clearSignatureModal' => true,
+            'showLoginModal' => true,
+        ]);
+    }
+
     public function login(Request $request)
     {
         $loginMessages = [
@@ -530,7 +634,7 @@ class SeniorsController extends Controller
         $validated = $request->validate([
             'email' => ['required', 'email'],
             'password' => 'required',
-            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+            'g-recaptcha-response' => ['required', function ($attribute, $value, $fail) use ($request) {
                 $secret = env('RECAPTCHA_SECRET_KEY');
                 $response = $request->input('g-recaptcha-response');
                 $remoteip = $request->ip();
@@ -547,10 +651,15 @@ class SeniorsController extends Controller
         $email = $validated['email'];
         $throttleTime = Carbon::now()->format('Y-m-d H:i:s');
 
+        $senior_login = Seniors::where('email', $email)->first();
+
+        $seniorUserTypeId = $senior_login ? $senior_login->user_type_id : null;
+
         if (RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
-            DB::table('senior_login_attempts')->insert([
+            DB::table('user_login_attempts')->insert([
                 'email' => $email,
                 'status' => 'Throttled',
+                'user_type_id' => $seniorUserTypeId,
                 'created_at' => now(),
             ]);
 
@@ -562,11 +671,11 @@ class SeniorsController extends Controller
             ]);
         }
 
-        $senior_login = Seniors::where('email', $email)->first();
         if (!$senior_login) {
-            DB::table('senior_login_attempts')->insert([
+            DB::table('user_login_attempts')->insert([
                 'email' => $email,
                 'status' => 'Failed',
+                'user_type_id' => $seniorUserTypeId,
                 'created_at' => now(),
             ]);
 
@@ -583,6 +692,16 @@ class SeniorsController extends Controller
             ]);
         }
 
+        if (is_null($senior_login->signature_data)) {
+            return redirect()->route('update-signature')->with([
+                'email' => $senior_login->email,
+                'showSignatureModal' => true,
+                'clearLoginModal' => true,
+                'error-message-header' => 'Signature Required',
+                'error-message-body' => 'Please provide your e-signature to continue.',
+            ]);
+        }
+
         // if ($senior_login->application_status_id !== 3) {
         //     return back()->with([
         //         'error-message-header' => 'Login Failed',
@@ -591,9 +710,10 @@ class SeniorsController extends Controller
         // }
 
         if (!Hash::check($validated['password'], $senior_login->password)) {
-            DB::table('senior_login_attempts')->insert([
+            DB::table('user_login_attempts')->insert([
                 'email' => $email,
                 'status' => 'Failed',
+                'user_type_id' => $seniorUserTypeId,
                 'created_at' => now(),
             ]);
 
@@ -608,9 +728,10 @@ class SeniorsController extends Controller
         $request->session()->regenerate();
         $request->session()->put('senior', $senior_login);
 
-        DB::table('senior_login_attempts')->insert([
+        DB::table('user_login_attempts')->insert([
             'email' => $email,
             'status' => 'Successful',
+            'user_type_id' => $seniorUserTypeId,
             'created_at' => now(),
         ]);
 
@@ -620,7 +741,6 @@ class SeniorsController extends Controller
             'clearLoginModal' => true,
         ]);
     }
-
 
     public function throttleKey(Request $request)
     {

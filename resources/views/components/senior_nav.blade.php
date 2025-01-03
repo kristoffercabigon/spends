@@ -9,6 +9,7 @@
     showRequestTrackerModal: localStorage.getItem('showRequestTrackerModal') === 'true',
     showRequestStatusModal: localStorage.getItem('showRequestStatusModal') === 'true',
     showForgotPasswordModal: localStorage.getItem('showForgotPasswordModal') === 'true',
+    showSignatureModal: localStorage.getItem('showSignatureModal') === 'true',
     showVerificationModal: {{ session('showVerificationModal') ? 'true' : 'false' }}
     }"
     class="bg-customGreen fixed h-[80px] w-full z-20 top-0 left-0 right-0 text-white shadow-2xl">
@@ -254,6 +255,7 @@
     </div>
 
     <x-modal.senior_citizen.senior_login />
+    <x-modal.senior_citizen.signature />
     <x-modal.senior_citizen.forgot_password />
     <x-modal.senior_citizen.request_tracker />
     <x-modal.senior_citizen.request_status />

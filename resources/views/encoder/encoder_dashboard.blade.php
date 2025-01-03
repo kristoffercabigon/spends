@@ -238,7 +238,7 @@
 </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
       document.addEventListener('DOMContentLoaded', () => {
         const getColor = () => {
@@ -332,41 +332,57 @@
             labels: barangays,
             datasets: [
                 {
+                    label: 'Beneficiaries',
                     data: barangayCounts,
                     backgroundColor: colors.primary,
                     hoverBackgroundColor: colors.primaryDark,
-                    borderRadius: 20, 
+                    borderRadius: 5, 
                 },
             ],
         },
         options: {
             scales: {
-                yAxes: [
-                    {
-                        gridLines: false,
-                        ticks: {
-                            beginAtZero: true,
-                            stepSize: 50,
-                            fontSize: 12,
-                            fontColor: "#4B5563", 
-                            fontFamily: "Open Sans, sans-serif",
-                            padding: 10,
+                y: {
+                    grid: {
+                        display: false,
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                        stepSize: 50,
+                        fontSize: 12,
+                        fontColor: "#4B5563", 
+                        fontFamily: "Open Sans, sans-serif",
+                        padding: 10,
+                    },
+                    title: {
+                        display: true,
+                        text: 'Beneficiaries',
+                        font: {
+                            size: 14,
                         },
                     },
-                ],
-                xAxes: [
-                    {
-                        gridLines: false,
-                        ticks: {
-                            fontSize: 12,
-                            fontColor: "#4B5563", 
-                            fontFamily: "Open Sans, sans-serif",
-                            padding: 5,
-                        },
-                        categoryPercentage: 0.5,
-                        maxBarThickness: 25,
+                },
+                x: {
+                    grid: {
+                        display: false,
                     },
-                ],
+                    ticks: {
+                        fontSize: 12,
+                        fontColor: "#4B5563", 
+                        fontFamily: "Open Sans, sans-serif",
+                        padding: 5,
+                    },
+                    categoryPercentage: 0.5,
+                    barPercentage: 0.8, 
+                    maxBarThickness: 15, 
+                    title: {
+                        display: true,
+                        text: 'Barangay',
+                        font: {
+                            size: 14,
+                        },
+                    },
+                },
             },
             maintainAspectRatio: false,
             legend: {

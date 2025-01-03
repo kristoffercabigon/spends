@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('senior_login_attempts', function (Blueprint $table) {
+        Schema::create('events_images', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->nullable();
-            $table->string('status');
-            $table->timestamp('created_at')->useCurrent();
+            $table->foreignId('event_id')->nullable()->constrained('events_list');
+            $table->string('image')->nullable();
+            $table->tinyInteger('is_highlighted')->default(0);
+            $table->timestamps();
         });
     }
 
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('senior_login_attempts');
+        Schema::dropIfExists('events_images');
     }
 };

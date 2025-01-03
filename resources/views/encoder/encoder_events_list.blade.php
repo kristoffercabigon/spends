@@ -1,11 +1,13 @@
-@include('partials.admin.admin_header')
+@include('partials.encoder.encoder_header')
 
 @php $array = array('title' => 'SPENDS') @endphp
-<x-admin_dashboard_nav :data="$array"/>
+<x-encoder_dashboard_nav :data="$array"/>
 
-<section x-data="{ showAdminAddPensionDistributionModal: localStorage.getItem            ('showAdminAddPensionDistributionModal') === 'true',
-showAdminEditPensionDistributionModal: localStorage.getItem            ('showAdminEditPensionDistributionModal') === 'true',
-showAdminDeletePensionDistributionModal: localStorage.getItem            ('showAdminDeletePensionDistributionModal') === 'true',
+<section x-data="{ showEncoderAddPensionDistributionModal: localStorage.getItem            ('showEncoderAddPensionDistributionModal') === 'true',
+showEncoderEditPensionDistributionModal: localStorage.getItem            ('showEncoderEditPensionDistributionModal') === 'true',
+showEncoderDeletePensionDistributionModal: localStorage.getItem            ('showEncoderDeletePensionDistributionModal') === 'true',
+showEncoderViewEventModal: localStorage.getItem('showEncoderViewEventModal') === 'true',
+showEncoderDeleteEventModal: localStorage.getItem('showEncoderDeleteEventModal') === 'true',
 }"
 class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
     <ul class="circles">
@@ -28,7 +30,7 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                     <div class="w-full">
                         <div class="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                             <p class="text-center">
-                                Pension Distribution List
+                                Events List
                             </p>
                         </div>
                     </div>
@@ -63,13 +65,20 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                                     </button>
                                 </div>
                             </div>
-                            <div class="flex justify-start relative">
+                            <div class="flex justify-start mb-4 relative">
                                 <div class="relative w-[50%] lg:w-[30%]">
                                     <select id="order-dropdown" class="bg-gray-50 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full  p-2.5">
                                         <option value="asc" selected>Ascending</option>
                                         <option value="desc">Descending</option>
                                     </select>
                                 </div>
+                            </div>
+                            <div class="relative sm:w-full">
+                                <label class="inline-flex items-center cursor-pointer">
+                                <span class="text-sm font-medium text-gray-900">Featured Only</span>
+                                <input type="checkbox" id="featured" value="" class="sr-only peer">
+                                <div class="relative ml-2 w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1AA514]"></div>
+                                </label>
                             </div>
                         </div>
 
@@ -86,11 +95,10 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                             </div>
 
                             <div class="flex relative justify-start md:justify-end">
-                                <button 
-                                @click.prevent="showAdminAddPensionDistributionModal = true; localStorage.setItem('showAdminAddPensionDistributionModal', 'true')"
+                                <a href="{{ route('encoder-add-event') }}"
                                 class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-md px-5 py-2 text-center inline-flex items-center">
-                                    Add Program
-                                </button>
+                                    Add Event
+                                </a>
                             </div>
 
                         </div>
@@ -100,50 +108,49 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                         <table class="min-w-full table-auto relative bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 leading-8" data-aos="zoom-in">
                             <thead>
                                 <tr class="bg-[#FF4802] text-white">
-                                    
                                     <th class="px-4 py-2 font-semibold rounded-t-md text-left">#</th>
-                                    <th class="px-4 py-2 font-semibold text-left">Barangay No.</th>
-                                    <th class="px-4 py-2 font-semibold text-left">Locality</th>
-                                    <th class="px-4 py-2 font-semibold text-left">Venue</th>
-                                    <th class="px-4 py-2 font-semibold text-left">Date of Distribution</th>
-                                    <th class="px-4 py-2 font-semibold text-left">Time</th>
-                                    <th class="px-4 py-2 font-semibold text-left">Added By</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Title</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Description</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Added by</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Barangay</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Date</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Featured</th>
                                     <th class="px-4 py-2 font-semibold rounded-t-md text-left">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($pension_distributions as $key => $pension_distribution)
+                                @foreach ($events as $key => $event)
                                 @php
-                                    $defaultProfile = "https://api.dicebear.com/9.x/initials/svg?seed={$pension_distribution->encoder_first_name}-{$pension_distribution->encoder_last_name}";
-                                    $profilePicture = $pension_distribution->encoder_profile_picture 
-                                    ? asset('storage/images/encoder/encoder_thumbnail_profile/' . $pension_distribution->encoder_profile_picture)
+                                    $defaultProfile = "https://api.dicebear.com/9.x/initials/svg?seed={$event->encoder_first_name}-{$event->encoder_last_name}";
+                                    $profilePicture = $event->encoder_profile_picture 
+                                    ? asset('storage/images/encoder/encoder_thumbnail_profile/' . $event->encoder_profile_picture)
                                     : $defaultProfile;
                                 @endphp
                                 <tr class="{{ $key % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]' }}">
-                                    <td class="px-4 py-2">{{ $pension_distribution->id }}</td>
-                                    <td class="px-4 py-2">{{ $pension_distribution->barangay_no }}</td>
-                                    <td class="px-4 py-2">{{ $pension_distribution->barangay_locality }}</td>
-                                    <td class="px-4 py-2">{{ $pension_distribution->venue }}</td>
-                                    <td class="px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($pension_distribution->date_of_distribution)->format('F j, Y') }}
+                                    <td class="px-4 py-2">{{ $event->id }}</td>
+                                    <td class="px-4 py-2 truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                        {{ $event->title }}
                                     </td>
-                                    <td class="px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($pension_distribution->date_of_distribution)->format('g:i A') }} - {{ \Carbon\Carbon::parse($pension_distribution->end_time)->format('g:i A') }}
+                                    <td class="px-4 py-2 truncate" style="max-width: 300px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                        {{ $event->description }}
                                     </td>
                                     <td class="px-4 py-2 gap-2">
                                         <div class="flex flex-row items-center gap-2">
                                         <img class="w-10 h-10 rounded-full ring-2 ring-white mr-2" src="{{ $profilePicture }}" alt="Profile Picture">
-                                        @if ($pension_distribution->pension_user_type_id == 2)
-                                            {{ $pension_distribution->encoder_first_name }} {{ $pension_distribution->encoder_last_name }} ({{ $pension_distribution->user_type }})
-                                        @elseif ($pension_distribution->pension_user_type_id == 3)
-                                            {{ $pension_distribution->admin_first_name }} {{ $pension_distribution->admin_last_name }} ({{ $pension_distribution->user_type }})
+                                        @if ($event->event_user_type_id == 2)
+                                            {{ $event->encoder_first_name }} {{ $event->encoder_last_name }}
+                                        @elseif ($event->event_user_type_id == 3)
+                                            {{ $event->admin_first_name }} {{ $event->admin_last_name }}
                                         @else
                                             Unknown
                                         @endif
                                         </div>
                                     </td>
-                                    <td class="px-4 py-2">
-                                        {{-- Actions --}}
+                                    <td class="px-4 py-2">{{ $event->barangay_no}}</td>
+                                    <td class="px-4 py-2">{{ \Carbon\Carbon::parse($event->event_date)->format('F j, Y') }}</td>
+                                    <td class="px-4 py-2">{{ $event->is_featured ? 'Yes' : 'No' }}</td>
+                                    <td class="px-4 py-2 flex justify-start items-center whitespace-nowrap w-[150px] shrink-0">
+                                        <!-- Add actions here (e.g., View, Edit, Delete) -->
                                     </td>
                                 </tr>
                                 @endforeach
@@ -154,9 +161,9 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                     <div class="mt-4 flex items-center justify-between">
                         <nav aria-label="Page navigation example" class="w-full">
                             <ul class="flex flex-wrap justify-center">
-                                @if (!$pension_distributions->onFirstPage())
+                                @if (!$events->onFirstPage())
                                 <li>
-                                    <a href="{{ $pension_distributions->url(1) }}" class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-[#30ae2b] rounded-s-lg hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $events->url(1) }}" class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-[#30ae2b] rounded-s-lg hover:bg-gray-100 hover:text-gray-700">
                                         &laquo;&laquo;
                                     </a>
                                 </li>
@@ -168,9 +175,9 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                                 </li>
                                 @endif
 
-                                @if ($pension_distributions->previousPageUrl())
+                                @if ($events->previousPageUrl())
                                 <li>
-                                    <a href="{{ $pension_distributions->previousPageUrl() }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $events->previousPageUrl() }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
                                         &laquo;
                                     </a>
                                 </li>
@@ -183,27 +190,27 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                                 @endif
 
                                 @php
-                                    $start = max(1, $pension_distributions->currentPage() - 2);
-                                    $end = min($pension_distributions->lastPage(), $pension_distributions->currentPage() + 2);
+                                    $start = max(1, $events->currentPage() - 2);
+                                    $end = min($events->lastPage(), $events->currentPage() + 2);
                                 @endphp
 
                                 @for ($i = $start; $i <= $end; $i++)
                                 <li>
-                                    @if ($i == $pension_distributions->currentPage())
-                                    <a href="{{ $pension_distributions->url($i) }}" class="flex items-center justify-center px-4 h-10 text-white bg-[#1AA514] border border-[#30ae2b] hover:bg-green-600">
+                                    @if ($i == $events->currentPage())
+                                    <a href="{{ $events->url($i) }}" class="flex items-center justify-center px-4 h-10 text-white bg-[#1AA514] border border-[#30ae2b] hover:bg-green-600">
                                         {{ $i }}
                                     </a>
                                     @else
-                                    <a href="{{ $pension_distributions->url($i) }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $events->url($i) }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
                                         {{ $i }}
                                     </a>
                                     @endif
                                 </li>
                                 @endfor
 
-                                @if ($pension_distributions->nextPageUrl())
+                                @if ($events->nextPageUrl())
                                 <li>
-                                    <a href="{{ $pension_distributions->nextPageUrl() }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $events->nextPageUrl() }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
                                         &raquo;
                                     </a>
                                 </li>
@@ -215,9 +222,9 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                                 </li>
                                 @endif
 
-                                @if ($pension_distributions->hasMorePages())
+                                @if ($events->hasMorePages())
                                 <li>
-                                    <a href="{{ $pension_distributions->url($pension_distributions->lastPage()) }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] rounded-e-lg hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $events->url($events->lastPage()) }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] rounded-e-lg hover:bg-gray-100 hover:text-gray-700">
                                         &raquo;&raquo;
                                     </a>
                                 </li>
@@ -237,23 +244,30 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
         </div>
     </div>
 </div>
-<div x-show="showAdminAddPensionDistributionModal" @click.away="showAdminAddPensionDistributionModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-    @include('components.modal.admin.admin_add_pension_distribution')
+<div x-show="showEncoderAddPensionDistributionModal" @click.away="showEncoderAddPensionDistributionModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.encoder.encoder_add_pension_distribution')
 </div>
-<div x-show="showAdminEditPensionDistributionModal" @click.away="showadminEditPensionDistributionModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-    @include('components.modal.admin.admin_edit_pension_distribution')
+<div x-show="showEncoderEditPensionDistributionModal" @click.away="showEncoderEditPensionDistributionModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.encoder.encoder_edit_pension_distribution')
 </div>
-<div x-show="showAdminDeletePensionDistributionModal" @click.away="showAdminDeletePensionDistributionModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-    @include('components.modal.admin.admin_delete_pension_distribution')
+<div x-show="showEncoderDeletePensionDistributionModal" @click.away="showEncoderDeletePensionDistributionModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.encoder.encoder_delete_pension_distribution')
+</div>
+<div x-show="showEncoderViewEventModal" @click.away="showEncoderViewEventModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.encoder.encoder_view_event')
+</div>
+<div x-show="showEncoderDeleteEventModal" @click.away="showEncoderDeleteEventModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.encoder.encoder_delete_event')
 </div>
 </section>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    const currentPage = {{ $pension_distributions->currentPage() }};
+    const currentPage = {{ $events->currentPage() }};
     const barangayDropdown = document.getElementById("barangay-dropdown");
     const startInput = document.getElementById("datepicker-range-start");
     const endInput = document.getElementById("datepicker-range-end");
+    const featuredCheckbox = document.getElementById("featured");
     const paginationContainer = document.querySelector("nav[aria-label='Page navigation example'] ul");
 
     const savedBarangayId = localStorage.getItem('barangayId');
@@ -261,11 +275,16 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
     const savedEndDate = localStorage.getItem('endDate');
     const orderDropdown = document.getElementById("order-dropdown");
     const savedOrder = localStorage.getItem('order') || 'asc';
-
+    const savedIsFeatured = localStorage.getItem('isFeatured');
+    
     orderDropdown.value = savedOrder;
 
     if (savedBarangayId) {
         barangayDropdown.value = savedBarangayId;
+    }
+
+    if (savedIsFeatured) {
+        featuredCheckbox.checked = savedIsFeatured === '1';
     }
 
     const startPicker = flatpickr(startInput, {
@@ -320,13 +339,20 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
         updateTable(1);
     });
 
+    featuredCheckbox.addEventListener("change", function () {
+        const isFeatured = this.checked ? 1 : 0;
+        localStorage.setItem('isFeatured', isFeatured);
+        updateTable(1);
+    });
+
     function updateTable(page) {
         const barangayId = barangayDropdown.value === 'all' ? null : barangayDropdown.value;
         const startDate = startInput.value;
         const endDate = endInput.value;
         const order = orderDropdown.value;
+        const isFeatured = featuredCheckbox.checked ? 1 : 0;
 
-        fetch('/admin/pension-distribution-list/filter-pension-distribution-list?page=' + page, {
+        fetch('/encoder/events-list/filter-events-list?page=' + page, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -337,85 +363,80 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                 start_date: startDate,
                 end_date: endDate,
                 order: order,
+                is_featured: isFeatured, 
             }),
         })
-            .then(response => response.json())
-            .then(data => {
-                renderTable(data.data);
-                renderPagination(data);
-            })
-            .catch(error => console.error('Error:', error));
+        .then(response => response.json())
+        .then(data => {
+            renderTable(data.data);
+            renderPagination(data);
+        })
+        .catch(error => console.error('Error:', error));
     }
 
     function renderTable(data) {
         const tbody = document.querySelector('tbody');
-        tbody.innerHTML = '';
+        tbody.innerHTML = ''; 
 
-        data.forEach((pension_distribution, index) => {
-            const defaultProfile = `https://api.dicebear.com/9.x/initials/svg?seed=${pension_distribution.encoder_first_name || 'Unknown'}-${pension_distribution.encoder_last_name || 'Unknown'}`;
+        data.forEach((event, index) => {
+            const defaultProfile = `https://api.dicebear.com/9.x/initials/svg?seed=${event.encoder_first_name || 'Unknown'}-${event.encoder_last_name || 'Unknown'}`;
 
-            const profilePicture = pension_distribution.encoder_profile_picture
-                ? `/storage/images/encoder/encoder_thumbnail_profile/${pension_distribution.encoder_profile_picture}`
-                : pension_distribution.admin_profile_picture
-                ? `/storage/images/admin/admin_thumbnail_profile/${pension_distribution.admin_profile_picture}`
+            const profilePicture = event.encoder_profile_picture
+                ? `/storage/images/encoder/encoder_thumbnail_profile/${event.encoder_profile_picture}`
+                : event.admin_profile_picture
+                ? `/storage/images/admin/admin_thumbnail_profile/${event.admin_profile_picture}`
                 : defaultProfile;
 
-            const addedBy = pension_distribution.pension_user_type_id == 2
-                ? `${pension_distribution.encoder_first_name || ''} ${pension_distribution.encoder_last_name || ''} (Encoder)`.trim()
-                : pension_distribution.pension_user_type_id == 3
-                ? `${pension_distribution.admin_first_name || ''} ${pension_distribution.admin_last_name || ''} (Admin)`.trim()
+            const addedBy = event.event_user_type_id == 2
+                ? `${event.encoder_first_name || ''} ${event.encoder_last_name || ''} (Encoder)`.trim()
+                : event.event_user_type_id == 3
+                ? `${event.admin_first_name || ''} ${event.admin_last_name || ''} (Admin)`.trim()
                 : 'Unknown';
 
-            const formattedDate = new Date(pension_distribution.date_of_distribution).toLocaleDateString('en-US', {
+            const formattedDate = new Date(event.event_date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
             });
 
-            const formattedTime = new Date(pension_distribution.date_of_distribution).toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true,
-            });
-
-            const formattedEndTime = new Date(`1970-01-01T${pension_distribution.end_time}`).toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: true,
-                });
-
             const row = `
                 <tr class="${index % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]'}">
-                    <td class="px-4 py-2">${pension_distribution.id}</td>
-                    <td class="px-4 py-2">${pension_distribution.barangay_no}</td>
-                    <td class="px-4 py-2">${pension_distribution.barangay_locality || 'Unknown'}</td>
-                    <td class="px-4 py-2">${pension_distribution.venue || 'Unknown'}</td>
-                    <td class="px-4 py-2">${formattedDate}</td>
-                    <td class="px-4 py-2">${formattedTime} - ${formattedEndTime}</td>
+                    <td class="px-4 py-2">${event.id}</td>
+                    <td class="px-4 py-2 truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${event.title}</td>
+                    <td class="px-4 py-2 truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${event.description || 'Unknown'}</td>
                     <td class="px-4 py-2 gap-2">
                         <div class="flex flex-row items-center gap-2">
                         <img class="w-10 h-10 rounded-full ring-2 ring-white" src="${profilePicture}" alt="Profile Picture">
                         <span>${addedBy}</span>
                         </div>
                     </td>
-                    <td class="px-4 py-2 flex justify-start items-center">
+                    <td class="px-4 py-2">${event.barangay_no}</td>
+                    <td class="px-4 py-2">${formattedDate}</td>
+                    <td class="px-4 py-2">${event.is_featured === 1 ? 'Yes' : 'No'}</td>
+                    <td class="px-4 py-2 flex justify-start items-center whitespace-nowrap w-[150px] shrink-0">
                         <a 
                             href="javascript:void(0)" 
-                            class="bg-orange-500 animate-pop hover:bg-orange-600 rounded-md p-2 cursor-pointer" 
-                            @click="showAdminEditPensionDistributionModal = true; 
-                            localStorage.setItem('showAdminEditPensionDistributionModal', 'true');
-                            loadPensionDataForEdit(${pension_distribution.id})"
+                            class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer" 
+                            @click="showEncoderViewEventModal = true; 
+                            localStorage.setItem('showEncoderViewEventModal', 'true');
+                            loadEventDataForView(${event.id})"
                         >
-                            <img src="../images/pencil.png" alt="Edit Pension Program" class="w-4 h-4">
+                            <img src="../images/view-senior.png" alt="View Event" class="w-4 h-4">
+                        </a>
+                        <a 
+                            href="/encoder/events-list/edit-event/${event.id}"
+                            class="bg-orange-500 ml-1 animate-pop hover:bg-orange-600 rounded-md p-2 cursor-pointer" 
+                        >
+                            <img src="../images/pencil.png" alt="Edit Event" class="w-4 h-4">
                         </a>
                         <a 
                             href="javascript:void(0)" 
                             class="bg-red-500 ml-1 animate-pop hover:bg-red-600 rounded-md p-2 cursor-pointer" 
-                            @click="showAdminDeletePensionDistributionModal = true; 
-                            localStorage.setItem('showAdminDeletePensionDistributionModal', 'true');
-                            loadPensionDataForDelete(${pension_distribution.id})"
+                            @click="showEncoderDeleteEventModal = true; 
+                            localStorage.setItem('showEncoderDeleteEventModal', 'true');
+                            loadEventDataForDelete(${event.id})"
                         >
-                            <img src="../images/trashbin-white.png" alt="Delete Pension Program" class="w-4 h-4">
+                            <img src="../images/trashbin-white.png" alt="Delete Event" class="w-4 h-4">
                         </a>
                     </td>
                 </tr>`;

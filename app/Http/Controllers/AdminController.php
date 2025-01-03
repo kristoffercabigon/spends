@@ -25,6 +25,7 @@ use Intervention\Image\Drivers\Gd\Driver;
 use App\Mail\SeniorReferenceNumber;
 use App\Mail\SeniorRegisteredByStaff;
 use App\Mail\SeniorChangedEmail;
+use App\Mail\SeniorSendApprovedEmail;
 use App\Mail\AdminChangedEmail;
 use App\Http\Requests\StoreAddBeneficiary;
 use App\Http\Requests\UpdateEditBeneficiary;
@@ -33,6 +34,8 @@ use App\Mail\EncoderVerificationEmail;
 use App\Mail\EncoderPassword;
 use App\Mail\EncoderChangedEmail;
 use App\Http\Requests\StoreEncoderRequest;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Http;
 
 class AdminController extends Controller
 {
@@ -98,6 +101,46 @@ class AdminController extends Controller
         $accountStatuses = DB::table('senior_account_status_list')->get();
         $barangayList = DB::table('barangay_list')->get();
 
+        $data = DB::table('seniors')
+        ->select(DB::raw('YEAR(date_applied) as year'), DB::raw('COUNT(*) as beneficiaries'))
+        ->where('application_status_id', 3)
+        ->groupBy(DB::raw('YEAR(date_applied)'))
+        ->orderBy(DB::raw('YEAR(date_applied)'))
+        ->get();
+
+        $years = [];
+        $beneficiaries = [];
+        $cumulativeBeneficiaries = 0;
+        $inflation = 3.0; 
+
+        foreach ($data as $row) {
+            $years[] = $row->year;
+            $cumulativeBeneficiaries += $row->beneficiaries;
+            $beneficiaries[] = $cumulativeBeneficiaries;
+            $total_Beneficiaries[] = $row->beneficiaries;
+        }
+
+        $features = [];
+        foreach ($years as $i => $year) {
+            $inflation = $inflationData[$year] ?? 3.0;
+
+            $features[] = [
+                $year,
+                $beneficiaries[$i],
+                $inflation  
+            ];
+        }
+
+        $response = Http::post('http://127.0.0.1:5000/admin/dashboard', [
+            'features' => $features
+        ]);
+
+        if ($response->successful()) {
+            $chartData = $response->json();
+        } else {
+            $chartData = [];
+        }
+
         return view('admin.admin_dashboard', [
             'title' => 'Dashboard',
             'application_status_list' => $application_status_list,
@@ -106,13 +149,15 @@ class AdminController extends Controller
             'seniors' => $seniors,
             'accountStatuses' => $accountStatuses,
             'barangayList' => $barangayList,
-            'totalApplicationRequests' => \App\Models\Seniors::count(),
+            'chartData' => $chartData ?? [],
+            'total_Beneficiaries' => $total_Beneficiaries,
+            'totalApplicationRequests' => \App\Models\Seniors::where('application_status_id', '!=', 3)->count(),
             'totalApplicationsApproved' => \App\Models\Seniors::where('application_status_id', 3)->count(),
             'totalBeneficiaries' => \App\Models\Seniors::where('application_status_id', 3)
-                ->where(function ($query) {
-                    $query->where('account_status_id', 1)
-                        ->orWhere('account_status_id', 2);
-                })
+            ->where(function ($query) {
+                $query->where('account_status_id', 1)
+                ->orWhere('account_status_id', 2);
+            })
                 ->count(),
         ]);
     }
@@ -360,6 +405,30 @@ class AdminController extends Controller
             'admin-message-header' => 'Success',
             'admin-message-body' => 'Application status updated successfully.',
         ]);
+    }
+
+    public function AdminSendApprovedEmail(Request $request, $id)
+    {
+        $senior = Seniors::findOrFail($id);
+
+        $email = $senior->email;
+        $firstName = $senior->first_name;
+        $lastName = $senior->last_name;
+        $oscaId = $senior->osca_id;
+
+        try {
+            Mail::to($email)->send(new SeniorSendApprovedEmail($email, $firstName, $lastName, $oscaId));
+
+            return redirect()->back()->with([
+                'admin-message-header' => 'Success',
+                'admin-message-body' => 'Email has been sent successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'admin-error-message-header' => 'Failed',
+                'admin-error-message-body' => 'Failed to send the email. Please try again later.',
+            ]);
+        }
     }
 
     public function updateAdminSeniorAccountStatus(Request $request, $id)
@@ -908,10 +977,15 @@ class AdminController extends Controller
         $admin_email = $validated['admin_email'];
         $admin_throttleTime = Carbon::now()->format('Y-m-d H:i:s');
 
+        $admin_login = Admin::where('admin_email', $admin_email)->first();
+
+        $adminUserTypeId = $admin_login ? $admin_login->admin_user_type_id : null;
+
         if (RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
-            DB::table('admin_login_attempts')->insert([
-                'admin_email' => $admin_email,
+            DB::table('user_login_attempts')->insert([
+                'email' => $admin_email,
                 'status' => 'Throttled',
+                'user_type_id' => $adminUserTypeId,
                 'created_at' => now(),
             ]);
 
@@ -926,9 +1000,10 @@ class AdminController extends Controller
         $admin_login = Admin::where('admin_email', $admin_email)->first();
 
         if (!$admin_login) {
-            DB::table('admin_login_attempts')->insert([
-                'admin_email' => $admin_email,
+            DB::table('user_login_attempts')->insert([
+                'email' => $admin_email,
                 'status' => 'Failed',
+                'user_type_id' => $adminUserTypeId,
                 'created_at' => now(),
             ]);
 
@@ -946,9 +1021,10 @@ class AdminController extends Controller
         }
 
         if (!Hash::check($validated['admin_password'], $admin_login->admin_password)) {
-            DB::table('admin_login_attempts')->insert([
-                'admin_email' => $admin_email,
+            DB::table('user_login_attempts')->insert([
+                'email' => $admin_email,
                 'status' => 'Failed',
+                'user_type_id' => $adminUserTypeId,
                 'created_at' => now(),
             ]);
 
@@ -961,9 +1037,10 @@ class AdminController extends Controller
         $request->session()->regenerate();
         $request->session()->put('admin', $admin_login);
 
-        DB::table('admin_login_attempts')->insert([
-            'admin_email' => $admin_email,
+        DB::table('user_login_attempts')->insert([
+            'email' => $admin_email,
             'status' => 'Successful',
+            'user_type_id' => $adminUserTypeId,
             'created_at' => now(),
         ]);
 
@@ -1063,7 +1140,7 @@ class AdminController extends Controller
         $seniorData['registration_assistant_name'] = "{$adminFirstName} {$adminLastName}";
 
         $seniorData['application_assistant_id'] = $adminUserTypeId;
-        $seniorData['application_application_id'] = $adminId;
+        $seniorData['application_admin_id'] = $adminId;
         $seniorData['application_encoder_id'] = null;
         $seniorData['application_assistant_name'] = "{$adminFirstName} {$adminLastName}";
 
@@ -1502,7 +1579,6 @@ class AdminController extends Controller
         ]);
     }
 
-
     public function filterPensionDistributionList(Request $request)
     {
         $barangayId = $request->input('barangay_id');
@@ -1719,6 +1795,56 @@ class AdminController extends Controller
         } else {
             return response()->json(['error' => 'Pension distribution not found'], 404);
         }
+    }
+
+    public function showAdminLoginAttempts()
+    {
+        $user_login_attempts = DB::table('user_login_attempts')
+        ->leftJoin('user_type_list', 'user_login_attempts.user_type_id', '=', 'user_type_list.id')
+        ->select(
+            'user_login_attempts.*',
+            'user_type_list.user_type',
+        )
+            ->orderBy('user_login_attempts.id', 'asc')
+            ->paginate(10);
+
+        return view('admin.admin_sign_in_history', [
+            'title' => 'User Login Attempts',
+            'user_login_attempts' => $user_login_attempts,
+        ]);
+    }
+
+    public function filterAdminLoginAttempts(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $orderDirection = $request->input('order', 'asc');
+        $perPage = 10;
+
+        $query = DB::table('user_login_attempts')
+        ->leftJoin('user_type_list', 'user_login_attempts.user_type_id', '=', 'user_type_list.id')
+        ->select(
+            'user_login_attempts.*',
+            'user_type_list.user_type',
+        );
+
+        if ($startDate) {
+            $query->whereDate('user_login_attempts.created_at', '>=', $startDate);
+        }
+
+        if ($endDate) {
+            $query->whereDate('user_login_attempts.created_at', '<=', $endDate);
+        }
+
+        if ($startDate || $endDate) {
+            $query->orderBy('user_login_attempts.created_at', $orderDirection);
+        } else {
+            $query->orderBy('user_login_attempts.id', $orderDirection);
+        }
+
+        $user_login_attempts = $query->paginate($perPage);
+
+        return response()->json($user_login_attempts);
     }
 
     public function verifyAdminEmailCodeLogin(Request $request)

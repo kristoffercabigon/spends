@@ -27,6 +27,8 @@ use Database\Seeders\PensionDistributionSeeder;
 use Database\Seeders\FamilyCompositionSeeder;
 use Database\Seeders\GuardianSeeder;
 use Database\Seeders\AdminSeeder;
+use Database\Seeders\EventsSeeder;
+use Database\Seeders\EventsImagesSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -50,12 +52,14 @@ class DatabaseSeeder extends Seeder
         $this->call(EncoderRolesDatasSeeder::class);
         $this->call(AdminSeeder::class);
         $this->call(PensionDistributionSeeder::class);
+        $this->call(EventsSeeder::class);
+        $this->call(EventsImagesSeeder::class);
         $this->call(SeniorApplicationStatusSeeder::class);
         $this->call(SeniorAccountStatusSeeder::class);
 
         $uniqueOscaIds = collect();
 
-        while ($uniqueOscaIds->count() < 50) {
+        while ($uniqueOscaIds->count() < 500) {
             $oscaId = fake()->numberBetween(10000, 99999);
             $uniqueOscaIds->add($oscaId);
         }

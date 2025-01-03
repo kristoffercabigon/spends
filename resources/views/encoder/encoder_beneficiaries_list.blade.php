@@ -394,44 +394,44 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
     }
 
     function renderTable(data) {
-    const tbody = document.querySelector('tbody');
-    tbody.innerHTML = '';
-    data.forEach((senior, index) => {
-        const defaultProfile = `https://api.dicebear.com/9.x/initials/svg?seed=${senior.first_name}-${senior.last_name}`;
-        const profilePicture = senior.profile_picture
-            ? `/storage/images/senior_citizen/thumbnail_profile/${senior.profile_picture}`
-            : defaultProfile;
-        const fullName = `${senior.first_name} ${senior.middle_name || ''} ${senior.last_name}${senior.suffix ? `, ${senior.suffix}` : ''}`;
-        const formattedDate = new Date(senior.date_applied).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
+        const tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
+        data.forEach((senior, index) => {
+            const defaultProfile = `https://api.dicebear.com/9.x/initials/svg?seed=${senior.first_name}-${senior.last_name}`;
+            const profilePicture = senior.profile_picture
+                ? `/storage/images/senior_citizen/thumbnail_profile/${senior.profile_picture}`
+                : defaultProfile;
+            const fullName = `${senior.first_name} ${senior.middle_name || ''} ${senior.last_name}${senior.suffix ? `, ${senior.suffix}` : ''}`;
+            const formattedDate = new Date(senior.date_applied).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            });
+            const row = `
+                <tr class="${index % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]'}">
+                    <td class="px-4 py-2">${senior.id}</td>
+                    <td class="px-4 py-2">${senior.osca_id}</td>
+                    <td class="px-4 py-2 flex items-center">
+                        <img class="w-10 h-10 rounded-full ring-2 ring-white mr-2" src="${profilePicture}" alt="Profile Picture">
+                        ${fullName}
+                    </td>
+                    <td class="px-4 py-2">${senior.age}</td>
+                    <td class="px-4 py-2">${senior.sex_name || 'Unknown'}</td>
+                    <td class="px-4 py-2">${senior.senior_account_status || 'Not yet approved.'}</td>
+                    <td class="px-4 py-2">${senior.barangay_no}</td>
+                    <td class="px-4 py-2">${formattedDate}</td>
+                    <td class="px-3 py-2 flex justify-center items-center">
+                        <a href="/encoder/beneficiaries/view-senior-profile/${senior.id}" class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer">
+                            <img src="../images/view-senior.png" alt="View Senior" class="w-4 h-4">
+                        </a>
+                        <a href="/encoder/beneficiaries/edit-senior-profile/${senior.id}" class="bg-orange-500 ml-1 animate-pop hover:bg-orange-600 rounded-md p-2 cursor-pointer">
+                            <img src="../images/pencil.png" alt="View Senior" class="w-4 h-4">
+                        </a>
+                    </td>
+                </tr>`;
+            tbody.innerHTML += row;
         });
-        const row = `
-            <tr class="${index % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]'}">
-                <td class="px-4 py-2">${senior.id}</td>
-                <td class="px-4 py-2">${senior.osca_id}</td>
-                <td class="px-4 py-2 flex items-center">
-                    <img class="w-10 h-10 rounded-full ring-2 ring-white mr-2" src="${profilePicture}" alt="Profile Picture">
-                    ${fullName}
-                </td>
-                <td class="px-4 py-2">${senior.age}</td>
-                <td class="px-4 py-2">${senior.sex_name || 'Unknown'}</td>
-                <td class="px-4 py-2">${senior.senior_account_status || 'Not yet approved.'}</td>
-                <td class="px-4 py-2">${senior.barangay_no}</td>
-                <td class="px-4 py-2">${formattedDate}</td>
-                <td class="px-3 py-2 flex justify-center items-center">
-                    <a href="/encoder/beneficiaries/view-senior-profile/${senior.id}" class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer">
-                        <img src="../images/view-senior.png" alt="View Senior" class="w-4 h-4">
-                    </a>
-                    <a href="/encoder/beneficiaries/edit-senior-profile/${senior.id}" class="bg-orange-500 ml-1 animate-pop hover:bg-orange-600 rounded-md p-2 cursor-pointer">
-                        <img src="../images/pencil.png" alt="View Senior" class="w-4 h-4">
-                    </a>
-                </td>
-            </tr>`;
-        tbody.innerHTML += row;
-    });
-}
+    }
 
     function renderPagination(data) {
         paginationContainer.innerHTML = '';

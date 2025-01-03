@@ -19,6 +19,7 @@
         "@midudev/tailwind-animations": "^0.1.0",
         "@preline/stepper": "^2.5.1",
         "aos": "^2.3.4",
+        "chart.js": "^4.4.7",
         "swiper": "^11.1.15"
     }
 }

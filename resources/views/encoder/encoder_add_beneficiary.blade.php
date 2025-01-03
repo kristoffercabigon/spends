@@ -1298,11 +1298,6 @@
                                     placeholder="Enter email" value="{{ old('email') }}" />
 
                                 @if(old('email'))
-                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
                                     <span class="text-green-500 text-xs mt-2 pl-2">Looks good!</span>
                                 @endif
                                 @error('email')

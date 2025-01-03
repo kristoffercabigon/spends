@@ -531,7 +531,6 @@ class SeniorsFactory extends Factory
             'Iligan City'
         ];
 
-
         $barangays = [
             'Barangay 165',
             'Barangay 166',
@@ -1730,23 +1729,22 @@ class SeniorsFactory extends Factory
             "sample19.jpg"
         ];
 
-        $baseTimestamp = strtotime('-2 years');
+        $baseTimestamp = strtotime('-5 years');
         $nowTimestamp = time();
-        $totalUsers = 50;
+        $totalUsers = 500;
         $usersLeft = $totalUsers;
 
         $usersPerDay = [];
 
         while ($usersLeft > 0) {
-            $randomGap = rand(1, 3) * 86400;
-            $dateTimestamp = min($baseTimestamp, $nowTimestamp);
+
+            $dateTimestamp = rand($baseTimestamp, $nowTimestamp);
             $date = date('Y-m-d', $dateTimestamp);
 
             $NumberOfUsers = rand(1, min(5, $usersLeft));
             $usersPerDay[$date] = ($usersPerDay[$date] ?? 0) + $NumberOfUsers;
 
             $usersLeft -= $NumberOfUsers;
-            $baseTimestamp += $randomGap;
         }
 
         foreach ($usersPerDay as $date => $NumberOfUsers) {
@@ -1763,7 +1761,6 @@ class SeniorsFactory extends Factory
                 }
                 $date_approved = date('Y-m-d H:i:s', $timestamp_approved);
 
-                echo "Date Applied: $date_applied, Date Approved: $date_approved" . PHP_EOL;
             }
         }
 

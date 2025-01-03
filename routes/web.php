@@ -15,6 +15,8 @@ Route::controller(SeniorsController::class)->group(function () {
     Route::get('/register', 'create');
     Route::get('/verify-email', 'showVerificationFormRegister')->name('verify-email');
     Route::get('/verify-email-login', 'showVerificationFormLogin')->name('verify-email-login');
+    Route::get('/update-signature', 'showSignatureUpdateModal')->name('update-signature');
+    Route::put('/submit-signature', 'submitSignatureUpdateModal')->name('submit-signature');
     Route::get('/reset-password', 'showResetPasswordForm')->name('reset-password');
     Route::get('/login', function () {return redirect('/');});
     Route::put('/forgot-password', 'sendEmailForReset')->name('forgot-password');
@@ -59,6 +61,7 @@ Route::controller(EncoderController::class)->group(function () {
         Route::get('/encoder/application-requests/view-senior-profile/{senior}', 'showEncoderSeniorProfile');
 
         Route::put('/encoder/view-senior-profile/{id}/update-application-status', 'updateEncoderSeniorApplicationStatus')->name('encoder-update-application-status');
+        Route::post('/encoder/view-senior-profile/{id}/send-approved-email', 'EncoderSendApprovedEmail')->name('EncoderSendApprovedEmail');
         Route::put('/encoder/view-senior-profile/{id}/update-account-status', 'updateEncoderSeniorAccountStatus')->name('encoder-update-account-status');
 
         Route::get('/encoder/beneficiaries', 'showEncoderBeneficiariesList');
@@ -76,6 +79,17 @@ Route::controller(EncoderController::class)->group(function () {
         Route::put('/encoder/pension-distribution-list/submit-edit-pension', 'submitEncoderEditPensionDistribution')->name('encoder-submit-edit-pension-distribution');
         Route::get('/encoder/pension-distribution-list/getPensionDistributionDataForDelete/{id}', 'getPensionDataForDelete');
         Route::post('/encoder/pension-distribution-list/submit-delete-pension', 'submitEncoderDeletePensionDistribution')->name('encoder-submit-delete-pension-distribution');
+
+        Route::get('/encoder/events-list', 'showEncoderEventsList');
+        Route::post('/encoder/events-list/filter-events-list', 'filterEventsList');
+        Route::get('/encoder/events-list/getEventDataForView/{id}', 'getEventDataForView');
+        Route::get('/encoder/events-list/getEventDataForDelete/{id}', 'getEventDataForDelete');
+        Route::post('/encoder/events-list/submit-delete-event', 'submitEncoderDeleteEvent')->name('encoder-submit-delete-event');
+        Route::get('/encoder/events-list/add-event', 'showEncoderAddEvent')->name('encoder-add-event');
+        Route::post('/encoder/events-list/submit-add-event', 'submitEncoderAddEvent')->name('encoder-submit-add-event');
+        Route::get('/encoder/events-list/edit-event/{id}', 'showEncoderEditEvent')->name('encoder-edit-event');
+        Route::post('/encoder/events-list/submit-edit-event/{id}', 'submitEncoderEditEvent')->name('encoder-submit-edit-event');
+
         Route::post('/encoder/logout', 'encoder_logout');
         Route::put('/encoder/profile/change-password', 'changeEncoderPassword')->name('encoder-change-password');
         Route::put('/encoder/profile/edit-profile', 'editEncoderProfile')->name('encoder-edit-profile');
@@ -101,6 +115,7 @@ Route::controller(AdminController::class)->group(function () {
 
     Route::middleware('auth:admin')->group(function () {
         Route::get('/admin/profile/{admin}', 'showAdminProfile');
+
         Route::get('/admin/dashboard', 'showAdminDashboard');
         Route::post('/admin/dashboard/filter-dashboard-beneficiaries', 'filterSeniorsDashboardBeneficiaries');
 
@@ -109,6 +124,7 @@ Route::controller(AdminController::class)->group(function () {
         Route::get('/admin/application-requests/view-senior-profile/{senior}', 'showAdminSeniorProfile');
 
         Route::put('/admin/view-senior-profile/{id}/update-application-status', 'updateAdminSeniorApplicationStatus')->name('admin-update-application-status');
+        Route::post('/admin/view-senior-profile/{id}/send-approved-email', 'AdminSendApprovedEmail')->name('AdminSendApprovedEmail');
         Route::put('/admin/view-senior-profile/{id}/update-account-status', 'updateAdminSeniorAccountStatus')->name('admin-update-account-status');
         
         Route::get('/admin/encoders', 'showAdminEncodersList');
@@ -134,6 +150,9 @@ Route::controller(AdminController::class)->group(function () {
         Route::put('/admin/pension-distribution-list/submit-edit-pension', 'submitAdminEditPensionDistribution')->name('admin-submit-edit-pension-distribution');
         Route::get('/admin/pension-distribution-list/getPensionDistributionDataForDelete/{id}', 'getPensionDataForDelete');
         Route::post('/admin/pension-distribution-list/submit-delete-pension', 'submitAdminDeletePensionDistribution')->name('admin-submit-delete-pension-distribution');
+
+        Route::get('/admin/sign-in-history', 'showAdminLoginAttempts');
+        Route::post('/admin/sign-in-history/filter-sign-in-history', 'filterAdminLoginAttempts');
 
         Route::post('/admin/logout', 'admin_logout');
         Route::put('/admin/profile/change-password', 'changeAdminPassword')->name('admin-change-password');

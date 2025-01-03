@@ -6,6 +6,8 @@ use App\Models\Encoder;
 use App\Models\Seniors;
 use App\Models\Guest;
 use App\Models\PensionDistribution;
+use App\Models\Events;
+use App\Models\EventsImages;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -31,6 +33,7 @@ use App\Http\Requests\UpdateEditBeneficiary;
 use App\Mail\SeniorChangedEmail;
 use App\Mail\EncoderChangedEmail;
 use App\Mail\SeniorPassword;
+use App\Mail\SeniorSendApprovedEmail;
 
 class EncoderController extends Controller
 {
@@ -171,7 +174,7 @@ class EncoderController extends Controller
             'seniors' => $seniors,
             'accountStatuses' => $accountStatuses,
             'barangayList' => $barangayList,
-            'totalApplicationRequests' => \App\Models\Seniors::count(),
+            'totalApplicationRequests' => \App\Models\Seniors::where('application_status_id', '!=', 3)->count(),
             'totalApplicationsApproved' => \App\Models\Seniors::where('application_status_id', 3)->count(),
         ]);
     }
@@ -445,7 +448,7 @@ class EncoderController extends Controller
             $senior->application_encoder_id = $encoderId;
             $senior->application_admin_id = null;
             $senior->application_assistant_name = "{$encoderFirstName} {$encoderLastName}";
-            $senior->date_approved = now();  
+            $senior->date_approved = now();
         }
 
         $senior->save();
@@ -454,6 +457,43 @@ class EncoderController extends Controller
             'encoder-message-header' => 'Success',
             'encoder-message-body' => 'Application status updated successfully.',
         ]);
+    }
+
+    public function EncoderSendApprovedEmail(Request $request, $id)
+    {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+            ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(10)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
+        $senior = Seniors::findOrFail($id);
+
+        $email = $senior->email;
+        $firstName = $senior->first_name;
+        $lastName = $senior->last_name;
+        $oscaId = $senior->osca_id;
+
+        try {
+            Mail::to($email)->send(new SeniorSendApprovedEmail($email, $firstName, $lastName, $oscaId));
+
+            return redirect()->back()->with([
+                'encoder-message-header' => 'Success',
+                'encoder-message-body' => 'Email has been sent successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Failed',
+                'encoder-error-message-body' => 'Failed to send the email. Please try again later.',
+            ]);
+        }
     }
 
     public function updateEncoderSeniorAccountStatus(Request $request, $id)
@@ -1391,6 +1431,332 @@ class EncoderController extends Controller
         }
     }
 
+    public function showEncoderEventsList()
+    {
+        $barangayList = DB::table('barangay_list')->get();
+
+        $events = DB::table('events_list')
+        ->leftJoin('barangay_list', 'events_list.barangay_id', '=', 'barangay_list.id')
+        ->leftJoin('user_type_list', 'events_list.event_user_type_id', '=', 'user_type_list.id')
+        ->leftJoin('encoder', 'events_list.event_encoder_id', '=', 'encoder.id')
+        ->leftJoin('admin', 'events_list.event_admin_id', '=', 'admin.id')
+        ->select(
+            'events_list.*',
+            'barangay_list.barangay_locality as barangay_locality',
+            'barangay_list.barangay_no as barangay_no',
+            'encoder.encoder_first_name',
+            'encoder.encoder_last_name',
+            'encoder_profile_picture',
+            'admin.admin_first_name',
+            'admin.admin_last_name',
+            'admin_profile_picture',
+            'user_type_list.user_type'
+        )
+            ->orderBy('events_list.id', 'asc')
+            ->paginate(10);
+
+        return view('encoder.encoder_events_list', [
+            'title' => 'Events List',
+            'barangayList' => $barangayList,
+            'events' => $events,
+        ]);
+    }
+
+    public function filterEventsList(Request $request)
+    {
+        $barangayId = $request->input('barangay_id');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $orderDirection = $request->input('order', 'asc');
+        $isFeatured = $request->input('is_featured'); 
+        $perPage = 10;
+
+        $query = DB::table('events_list')
+        ->leftJoin('barangay_list', 'events_list.barangay_id', '=', 'barangay_list.id')
+        ->leftJoin('user_type_list', 'events_list.event_user_type_id', '=', 'user_type_list.id')
+        ->leftJoin('encoder', 'events_list.event_encoder_id', '=', 'encoder.id')
+        ->leftJoin('admin', 'events_list.event_admin_id', '=', 'admin.id')
+        ->select(
+            'events_list.*',
+            'barangay_list.barangay_locality as barangay_locality',
+            'barangay_list.barangay_no as barangay_no',
+            'encoder.encoder_first_name',
+            'encoder.encoder_last_name',
+            'encoder_profile_picture',
+            'admin.admin_first_name',
+            'admin.admin_last_name',
+            'admin_profile_picture',
+            'user_type_list.user_type'
+        );
+
+        if (!empty($barangayId)) {
+            $query->where('events_list.barangay_id', $barangayId);
+        }
+
+        if ($startDate) {
+            $query->whereDate('events_list.event_date', '>=', $startDate);
+        }
+
+        if ($endDate) {
+            $query->whereDate('events_list.event_date', '<=', $endDate);
+        }
+
+        if (isset($isFeatured)) {
+            $query->where('events_list.is_featured', $isFeatured);
+        }
+
+        if ($startDate || $endDate) {
+            $query->orderBy('events_list.event_date', $orderDirection);
+        } else {
+            $query->orderBy('events_list.id', $orderDirection);
+        }
+
+        $events = $query->paginate($perPage);
+
+        return response()->json($events);
+    }
+
+    public function getEventDataForView($id)
+    {
+        $events = Events::find($id);
+
+        if ($events) {
+            return response()->json([
+                'id' => $events->id,
+                'barangay_id' => $events->barangay_id,
+                'title' => $events->title,
+                'description' => $events->description,
+                'event_date' => $events->event_date
+            ]);
+        } else {
+            return response()->json(['error' => 'Event not found'], 404);
+        }
+    }
+
+    public function getEventDataForDelete($id)
+    {
+        $events = Events::find($id);
+
+        if ($events) {
+            $dateOfEvent = Carbon::parse($events->event_date)
+                ->setTimezone('Asia/Manila');
+
+            return response()->json([
+                'id' => $events->id,
+                'title' => $events->title,
+                'event_date' => $dateOfEvent->format('Y-m-d\TH:i'),
+            ]);
+        } else {
+            return response()->json(['error' => 'Event not found'], 404);
+        }
+    }
+
+    public function submitEncoderDeleteEvent(Request $request)
+    {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+            ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(15)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
+        $request->validate([
+            'id' => 'required|exists:events_list,id',
+        ]);
+
+        $eventId = $request->id;
+        $event = Events::find($eventId);
+
+        if ($event) {
+            try {
+                DB::beginTransaction();
+
+                $eventImages = EventsImages::where('event_id', $eventId)->get();
+
+                foreach ($eventImages as $image) {
+                    $imagePath = public_path('storage/images/events/' . $image->image);
+                    if (file_exists($imagePath)) {
+                        @unlink($imagePath);
+                    }
+                }
+
+                EventsImages::where('event_id', $eventId)->delete();
+
+                $event->delete();
+
+                DB::commit();
+
+                return redirect()->back()->with([
+                    'encoder-message-header' => 'Success',
+                    'encoder-message-body' => 'Event and associated images deleted successfully.',
+                    'clearEncoderDeleteEventModal' => true,
+                ]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+
+                return redirect()->back()->with([
+                    'encoder-error-message-header' => 'Deletion Failed',
+                    'encoder-error-message-body' => 'An error occurred while deleting the event. Please try again.',
+                ]);
+            }
+        }
+
+        return redirect()->back()->with([
+            'encoder-error-message-header' => 'Event Not Found',
+            'encoder-error-message-body' => 'The requested event does not exist.',
+        ]);
+    }
+
+    public function showEncoderAddEvent()
+    {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+            ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(7)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
+        $barangayList = DB::table('barangay_list')->get();
+
+        return view('encoder.encoder_add_event', [
+            'title' => 'Add Event',
+            'barangayList' => $barangayList,
+        ]);
+    }
+
+    public function submitEncoderAddEvent(Request $request)
+    {
+        //dd($request->all());
+
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+        ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(7)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
+        $validatedData = $request->validate([
+            'title' => 'required|min:20',
+            'description' => 'required|min:100',
+            'barangay_id' => 'required',
+            'is_featured' => 'required',
+            'video' => 'nullable|file|mimes:mp4,avi,mov,mkv,wmv,webm,flv|max:102400',
+            'images' => 'required|array',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
+        ], [
+            'title.required' => 'Please enter title.',
+            'title.min' => 'Please make title longer.',
+            'description.required' => 'Please enter description.',
+            'description.min' => 'Please make description longer.',
+            'barangay_id.required' => 'Please select a barangay.',
+            'is_featured.required' => 'Please specify if the event will be featured or not.',
+            'video.max' => 'The maximum size for video is 100 MB.',
+            'video.mimes' => 'The video must be a file of type: mp4, avi, mov, mkv, wmv, webm, flv.',
+            'images.required' => 'Please upload images.',
+            'images.*.image' => 'Each file must be an image.',
+            'images.*.mimes' => 'Allowed image types are jpeg, png, jpg, gif, svg.',
+        ]);
+
+        $encoderUser = auth()->guard('encoder')->user();
+        $encoderUserTypeId = $encoderUser->encoder_user_type_id;
+        $encoderId = $encoderUser->id;
+
+        $videoFilenameToStore = null;
+        if ($request->hasFile('video')) {
+            $videoFile = $request->file('video');
+            $videoFilenameToStore = $videoFile->getClientOriginalName();
+            $videoFile->storeAs('videos/events', $videoFilenameToStore);
+        }
+
+        $event = new Events([
+            'title' => $validatedData['title'],
+            'description' => $validatedData['description'],
+            'barangay_id' => $validatedData['barangay_id'],
+            'event_date' => now(),
+            'is_featured' => $validatedData['is_featured'],
+            'video' => $videoFilenameToStore,
+            'event_user_type_id' => $encoderUserTypeId,
+            'event_encoder_id' => $encoderId,
+            'event_admin_id' => null,
+        ]);
+        $event->save();
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imageFilename = $image->getClientOriginalName();
+                $image->storeAs('images/events', $imageFilename);
+
+                $isHighlighted = 0;  
+                if ($request->highlighted_image && $request->highlighted_image === $imageFilename) {
+                    $isHighlighted = 1;  
+                }
+
+                $eventImage = new EventsImages([
+                    'event_id' => $event->id,
+                    'image' => $imageFilename,
+                    'is_highlighted' => $isHighlighted,
+                ]);
+                $eventImage->save();
+            }
+        }
+
+        return redirect()->route('encoder-add-event')->with([
+            'encoder-message-header' => 'Success',
+            'encoder-message-body' => 'Event created successfully.',
+        ]);
+    }
+
+    public function showEncoderEditEvent($id)
+    {
+        $currentEncoder = auth()->guard('encoder')->user();
+
+        $encoderRoles = DB::table('encoder_roles')
+        ->where('encoder_user_id', $currentEncoder->id)
+            ->pluck('encoder_roles_id');
+
+        if (!$encoderRoles->contains(12)) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Restricted Access',
+                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
+            ]);
+        }
+
+        $events = Events::findOrFail($id);
+
+        $barangayList = DB::table('barangay_list')->get();
+
+        $event_images = DB::table('events_images')
+        ->leftJoin('events_list', 'events_images.event_id', '=', 'events_list.id')
+        ->where('events_list.id', $id)
+        ->select('events_images.image', 'events_images.is_highlighted', 'events_images.event_id')
+        ->get();
+
+        return view('encoder.encoder_edit_event', [
+            'title' => 'Edit Event',
+            'event' => $events,
+            'event_images' => $event_images,
+            'barangayList' => $barangayList,
+        ]);
+    }
+
     public function encoder_login(Request $request)
     {
         $EncoderLoginMessages = [
@@ -1419,10 +1785,15 @@ class EncoderController extends Controller
         $encoder_email = $validated['encoder_email'];
         $encoder_throttleTime = Carbon::now()->format('Y-m-d H:i:s');
 
+        $encoder_login = Encoder::where('encoder_email', $encoder_email)->first();
+
+        $encoderUserTypeId = $encoder_login ? $encoder_login->encoder_user_type_id : null;
+
         if (RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
-            DB::table('encoder_login_attempts')->insert([
-                'encoder_email' => $encoder_email,
+            DB::table('user_login_attempts')->insert([
+                'email' => $encoder_email,
                 'status' => 'Throttled',
+                'user_type_id' => $encoderUserTypeId,
                 'created_at' => now(),
             ]);
 
@@ -1436,9 +1807,10 @@ class EncoderController extends Controller
 
         $encoder_login = Encoder::where('encoder_email', $encoder_email)->first();
         if (!$encoder_login) {
-            DB::table('encoder_login_attempts')->insert([
-                'encoder_email' => $encoder_email,
+            DB::table('user_login_attempts')->insert([
+                'email' => $encoder_email,
                 'status' => 'Failed',
+                'user_type_id' => $encoderUserTypeId,
                 'created_at' => now(),
             ]);
 
@@ -1456,9 +1828,10 @@ class EncoderController extends Controller
         }
 
         if (!Hash::check($validated['encoder_password'], $encoder_login->encoder_password)) {
-            DB::table('encoder_login_attempts')->insert([
-                'encoder_email' => $encoder_email,
+            DB::table('user_login_attempts')->insert([
+                'email' => $encoder_email,
                 'status' => 'Failed',
+                'user_type_id' => $encoderUserTypeId,
                 'created_at' => now(),
             ]);
 
@@ -1473,9 +1846,10 @@ class EncoderController extends Controller
         $request->session()->regenerate();
         $request->session()->put('encoder', $encoder_login);
 
-        DB::table('encoder_login_attempts')->insert([
-            'encoder_email' => $encoder_email,
+        DB::table('user_login_attempts')->insert([
+            'email' => $encoder_email,
             'status' => 'Successful',
+            'user_type_id' => $encoderUserTypeId,
             'created_at' => now(),
         ]);
 

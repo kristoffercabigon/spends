@@ -34,6 +34,9 @@ use App\Mail\EncoderVerificationEmail;
 use App\Mail\EncoderPassword;
 use App\Mail\EncoderChangedEmail;
 use App\Http\Requests\StoreEncoderRequest;
+use App\Models\Barangay;
+use App\Models\AccountStatus;
+use App\Models\ApplicationStatus;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Http;
 
@@ -550,8 +553,7 @@ class AdminController extends Controller
         $barangay_list = DB::table('barangay_list')->get();
 
         $encoders = DB::table('encoder')
-        ->leftJoin('encoder_roles', 'encoder_roles.encoder_user_id', '=', 'encoder.id')
-        ->leftJoin('encoder_roles_list', 'encoder_roles.encoder_roles_id', '=', 'encoder_roles_list.id')
+        ->leftJoin('barangay_list', 'barangay_list.id', '=', 'encoder.encoder_barangay_id')
         ->select(
             'encoder.id',
             'encoder.encoder_id',
@@ -560,9 +562,11 @@ class AdminController extends Controller
             'encoder.encoder_last_name',
             'encoder.encoder_suffix',
             'encoder.encoder_profile_picture',
+            'encoder.encoder_address',
+            'barangay_list.barangay_no',
+            'encoder.encoder_contact_no',
+            'encoder.encoder_email',
             'encoder.encoder_date_registered',
-            DB::raw('GROUP_CONCAT(DISTINCT encoder_roles_list.encoder_role_category ORDER BY encoder_roles_list.id) as role_categories'),
-            DB::raw('GROUP_CONCAT(DISTINCT encoder_roles_list.encoder_role ORDER BY encoder_roles_list.id) as roles')
         )
             ->groupBy(
                 'encoder.id',
@@ -572,20 +576,17 @@ class AdminController extends Controller
                 'encoder.encoder_last_name',
                 'encoder.encoder_suffix',
                 'encoder.encoder_profile_picture',
+                'encoder.encoder_address',
+                'barangay_list.barangay_no',
+                'encoder.encoder_contact_no',
+                'encoder.encoder_email',
                 'encoder.encoder_date_registered'
             )
             ->orderBy('encoder.id', 'asc')
             ->paginate(10);
 
-        $encoderRolesDropdown = DB::table('encoder_roles_list')
-        ->select('id', 'encoder_role', 'encoder_role_category')
-        ->distinct()
-            ->get()
-            ->groupBy('encoder_role_category');
-
         return view('admin.admin_encoders_list', [
             'title' => 'Encoders List',
-            'encoderRoles_dropdown' => $encoderRolesDropdown,
             'encoders' => $encoders,
             'barangay_list' => $barangay_list
         ]);
@@ -593,7 +594,7 @@ class AdminController extends Controller
 
     public function filterEncoders(Request $request)
     {
-        $roleCategory = $request->input('encoder_roles_ids', []);
+        $barangayId = $request->input('barangay_id');
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $searchQuery = $request->input('search_query', '');
@@ -601,8 +602,7 @@ class AdminController extends Controller
         $perPage = 10;
 
         $query = DB::table('encoder')
-        ->leftJoin('encoder_roles', 'encoder_roles.encoder_user_id', '=', 'encoder.id')
-        ->leftJoin('encoder_roles_list', 'encoder_roles.encoder_roles_id', '=', 'encoder_roles_list.id')
+        ->leftJoin('barangay_list', 'barangay_list.id', '=', 'encoder.encoder_barangay_id')
         ->select(
             'encoder.id',
             'encoder.encoder_id',
@@ -611,15 +611,17 @@ class AdminController extends Controller
             'encoder.encoder_middle_name',
             'encoder.encoder_last_name',
             'encoder.encoder_suffix',
+            'encoder.encoder_address',
+            'barangay_list.barangay_no',
+            'encoder.encoder_contact_no',
+            'encoder.encoder_email',
             'encoder.encoder_date_registered',
-            DB::raw('GROUP_CONCAT(DISTINCT encoder_roles_list.encoder_role_category ORDER BY encoder_roles_list.id) as role_categories'),
-            DB::raw('GROUP_CONCAT(encoder_roles_list.encoder_role ORDER BY encoder_roles_list.id) as roles')
         )
-        ->groupBy('encoder.id', 'encoder.encoder_id', 'encoder.encoder_profile_picture', 'encoder.encoder_first_name','encoder.encoder_middle_name', 'encoder.encoder_last_name','encoder.encoder_suffix', 'encoder.encoder_date_registered')
+        ->groupBy('encoder.id', 'encoder.encoder_id', 'encoder.encoder_profile_picture', 'encoder.encoder_first_name','encoder.encoder_middle_name', 'encoder.encoder_last_name','encoder.encoder_suffix','encoder.encoder_address','barangay_list.barangay_no','encoder.encoder_contact_no','encoder.encoder_email', 'encoder.encoder_date_registered')
         ->orderBy('encoder.id', $order);
 
-        if (!empty($roleCategory)) {
-            $query->whereIn('encoder_roles_list.id', $roleCategory);
+        if (!empty($barangayId)) {
+            $query->where('encoder.encoder_barangay_id', $barangayId);
         }
 
         if ($startDate) {
@@ -718,8 +720,6 @@ class AdminController extends Controller
         $barangay_list = DB::table('barangay_list')->get();
 
         $encoder = Encoder::leftJoin('barangay_list', 'encoder.encoder_barangay_id', '=', 'barangay_list.id')
-        ->leftJoin('encoder_roles', 'encoder_roles.encoder_user_id', '=', 'encoder.id')
-        ->leftJoin('encoder_roles_list', 'encoder_roles.encoder_roles_id', '=', 'encoder_roles_list.id')
         ->select(
             'encoder.id',
             'encoder.encoder_id',
@@ -734,7 +734,6 @@ class AdminController extends Controller
             'encoder.encoder_profile_picture',
             'encoder.encoder_barangay_id',
             'barangay_list.barangay_no',
-            DB::raw('GROUP_CONCAT(encoder_roles_list.encoder_role) as roles')
         )
             ->where('encoder.id', $encoder_id)
             ->groupBy(
@@ -754,104 +753,10 @@ class AdminController extends Controller
             )
             ->firstOrFail();
 
-        $categories = ['view', 'create', 'update', 'delete'];
-        $roles = collect(explode(',', $encoder->roles))
-        ->groupBy(function ($role) use ($categories) {
-            foreach ($categories as $category) {
-                if (str_contains(strtolower($role), $category)) {
-                    return $category;
-                }
-            }
-            return 'other';
-        });
-
-        $encoderRoles = $roles->flatten()->toArray();
-
-        $encoderRolesList = DB::table('encoder_roles_list')
-        ->select('id', 'encoder_role', 'encoder_role_category')
-        ->distinct()
-            ->get()
-            ->groupBy('encoder_role_category');
-
-        $categoryColors = [
-            'view' => 'green-500',
-            'create' => 'blue-500',
-            'update' => 'orange-500',
-            'delete' => 'red-500',
-        ];
-
         return view('admin.admin_encoder_profile', [
             'encoder' => $encoder,
             'title' => 'Profile: '. $encoder->encoder_first_name . ' ' . $encoder->encoder_last_name,
-            'categories' => $categories,
-            'roles' => $roles,
-            'categoryColors' => $categoryColors,
-            'encoderRoles' => $encoderRoles,
-            'encoderRolesList' => $encoderRolesList,
             'barangay_list' => $barangay_list
-        ]);
-    }
-
-    public function updateAdminEncoderRoles(Request $request, $id)
-    {
-        $request->validate([
-            'roles' => 'array',
-            'roles.*' => 'array',
-            'roles.*.*' => 'string',
-        ]);
-
-        $encoder = Encoder::findOrFail($id);
-
-        $currentRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $encoder->id)
-            ->pluck('encoder_roles_id')
-            ->toArray();
-
-        $newRoles = [];
-        if ($request->has('roles')) {
-            foreach ($request->roles as $category => $roles) {
-                foreach ($roles as $role) {
-                    $roleId = DB::table('encoder_roles_list')->where('encoder_role', $role)->value('id');
-                    if ($roleId) {
-                        $newRoles[] = $roleId;
-                    }
-                }
-            }
-        }
-
-        if (empty($newRoles)) {
-            return redirect()->back()->with([
-                'admin-error-message-header' => 'Update Unsuccessful',
-                'admin-error-message-body' => 'Please select at least one role to update the encoder\'s roles.',
-                'clearAdminEncoderRolesModal' => true,
-            ]);
-        }
-
-        $rolesChanged = !empty(array_diff($currentRoles, $newRoles)) || !empty(array_diff($newRoles, $currentRoles));
-
-        if (!$rolesChanged) {
-            return redirect()->back()->with([
-                'admin-error-message-header' => 'Update Unsuccessful',
-                'admin-error-message-body' => 'No changes were detected in the encoder roles.',
-                'clearAdminEncoderRolesModal' => true,
-            ]);
-        }
-
-        DB::table('encoder_roles')
-        ->where('encoder_user_id', $encoder->id)
-            ->delete();
-
-        foreach ($newRoles as $roleId) {
-            DB::table('encoder_roles')->insert([
-                'encoder_user_id' => $encoder->id,
-                'encoder_roles_id' => $roleId,
-            ]);
-        }
-
-        return redirect()->back()->with([
-            'admin-message-header' => 'Success',
-            'admin-message-body' => 'Encoder roles have been updated successfully.',
-            'clearAdminEncoderRolesModal' => true,
         ]);
     }
 
@@ -1115,7 +1020,7 @@ class AdminController extends Controller
 
     public function submitAdminAddBeneficiary(StoreAddBeneficiary $request)
     {
-        //dd($request->all());
+        // dd($request->all());
 
         $validated = $request->validated();
 
@@ -1153,7 +1058,6 @@ class AdminController extends Controller
         $seniorData['osca_id'] = $osca_id;
 
         $ncsc_rrn = $seniorData['date_applied']->format('Ymd') . '-' . $osca_id;
-
         $seniorData['ncsc_rrn'] = $ncsc_rrn;
 
         $seniorData['user_type_id'] = $user_type_id;
@@ -1166,152 +1070,89 @@ class AdminController extends Controller
         }
 
         if ($request->hasFile('valid_id')) {
-            $validIdFilename = $osca_id;
-            $validIdExtension = $request->file('valid_id')->getClientOriginalExtension();
-            $validIdFilenameToStore = $validIdFilename . '.' . $validIdExtension;
-
+            $validIdFilenameToStore = $osca_id . '.' . $request->file('valid_id')->getClientOriginalExtension();
             $request->file('valid_id')->storeAs('images/senior_citizen/valid_id', $validIdFilenameToStore);
             $seniorData['valid_id'] = $validIdFilenameToStore;
         }
 
         if ($request->hasFile('profile_picture')) {
-            $request->validate([
-                'profile_picture' => 'mimes:jpeg,png,bmp,tiff|max:4096',
-            ]);
-
-            $profilePictureFilename = $osca_id;
-            $profilePictureExtension = $request->file('profile_picture')->getClientOriginalExtension();
-            $profilePictureFilenameToStore = $profilePictureFilename . '.' . $profilePictureExtension;
+            $request->validate(['profile_picture' => 'mimes:jpeg,png,bmp,tiff|max:4096']);
+            $profilePictureFilenameToStore = $osca_id . '.' . $request->file('profile_picture')->getClientOriginalExtension();
 
             $request->file('profile_picture')->storeAs('images/senior_citizen/profile_picture', $profilePictureFilenameToStore);
             $seniorData['profile_picture'] = $profilePictureFilenameToStore;
 
-            $thumbnailFilename = $profilePictureFilename . '.' . $profilePictureExtension;
-            $thumbnailPath = 'storage/images/senior_citizen/thumbnail_profile/' . $thumbnailFilename;
-
-            $request->file('profile_picture')->storeAs('images/senior_citizen/thumbnail_profile', $thumbnailFilename);
-
+            $thumbnailPath = 'storage/images/senior_citizen/thumbnail_profile/' . $profilePictureFilenameToStore;
+            $request->file('profile_picture')->storeAs('images/senior_citizen/thumbnail_profile', $profilePictureFilenameToStore);
             $this->createThumbnail(public_path('storage/images/senior_citizen/profile_picture/' . $profilePictureFilenameToStore), public_path($thumbnailPath), 150, 150);
         }
 
         if ($request->hasFile('indigency')) {
-            $indigencyFilename = $osca_id;
-            $indigencyExtension = $request->file('indigency')->getClientOriginalExtension();
-            $indigencyFilenameToStore = $indigencyFilename . '.' . $indigencyExtension;
+            $indigencyFilenameToStore = $osca_id . '.' . $request->file('indigency')->getClientOriginalExtension();
             $request->file('indigency')->storeAs('images/senior_citizen/indigency', $indigencyFilenameToStore);
             $seniorData['indigency'] = $indigencyFilenameToStore;
         }
 
         if ($request->hasFile('birth_certificate')) {
-            $birthCertificateFilename = $osca_id;
-            $birthCertificateExtension = $request->file('birth_certificate')->getClientOriginalExtension();
-            $birthCertificateFilenameToStore = $birthCertificateFilename . '.' . $birthCertificateExtension;
-
+            $birthCertificateFilenameToStore = $osca_id . '.' . $request->file('birth_certificate')->getClientOriginalExtension();
             $request->file('birth_certificate')->storeAs('images/senior_citizen/birth_certificate', $birthCertificateFilenameToStore);
             $seniorData['birth_certificate'] = $birthCertificateFilenameToStore;
         }
 
         if ($request->has('signature_data')) {
-            $signatureData = $request->input('signature_data');
-
-            $signatureData = str_replace('data:image/png;base64,', '', $signatureData);
-            $signatureData = str_replace(' ', '+', $signatureData);
-            $signatureData = base64_decode($signatureData);
-
+            $signatureData = base64_decode(str_replace(['data:image/png;base64,', ' '], ['', '+'], $request->input('signature_data')));
             $signatureFilename = $osca_id . '.png';
-            $path = storage_path('app/public/images/senior_citizen/signatures/');
-            file_put_contents($path . $signatureFilename, $signatureData);
-
+            file_put_contents(storage_path('app/public/images/senior_citizen/signatures/') . $signatureFilename, $signatureData);
             $seniorData['signature_data'] = $signatureFilename;
         }
 
         $seniorData['contact_no'] = '+63' . $seniorData['contact_no'];
 
-        $unhashedPassword = $seniorData['last_name'];
-        $randomChars = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'), 0, 5);
-        $randomNumbers = rand(10, 99);
-        $generatedPassword = $unhashedPassword . $randomChars . '@' . $randomNumbers;
-
+        $generatedPassword = $seniorData['last_name'] . substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'), 0, 5) . '@' . rand(10, 99);
         $seniorData['password'] = Hash::make($generatedPassword);
 
         $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
-        $hashedVerificationCode = Hash::make($verificationCode);
-
-        $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
-
-        $seniorData['verification_code'] = $hashedVerificationCode;
-        $seniorData['verification_expires_at'] = $expirationTime;
+        $seniorData['verification_code'] = Hash::make($verificationCode);
+        $seniorData['verification_expires_at'] = now()->addHour()->setTimezone('Asia/Manila');
 
         $seniors = Seniors::create($seniorData);
 
-        Mail::to($seniorData['email'])->send(new SeniorRegisteredByStaff($verificationCode, $expirationTime));
+        Mail::to($seniorData['email'])->send(new SeniorRegisteredByStaff($verificationCode, $seniorData['verification_expires_at']));
         Mail::to($seniorData['email'])->send(new SeniorPassword($generatedPassword));
         Mail::to($seniorData['email'])->send(new SeniorReferenceNumber($ncsc_rrn));
 
         $lastSourceId = DB::table('source_list')->latest('id')->value('id');
 
-        if (
-            $request->input('pensioner') == 1
-        ) {
-            $sourceInputs = $request->input('source') ?? [];
-
-            foreach ($sourceInputs as $source) {
-                $data = [];
-
-                if (!is_null($seniors->id)) {
-                    $data['senior_id'] = $seniors->id;
-                }
-
-                if (!is_null($source)) {
-                    $data['source_id'] = $source;
-                }
-
+        if ($request->input('pensioner') == 1) {
+            foreach ($request->input('source', []) as $source) {
+                $data = ['senior_id' => $seniors->id, 'source_id' => $source];
                 if ($source == $lastSourceId) {
                     $data['other_source_remark'] = $request->input('other_source_remark');
                 }
-
-                if (!empty($data)) {
-                    DB::table('source')->insert($data);
-                }
+                DB::table('source')->insert($data);
             }
         }
 
         $lastIncomeSourceId = DB::table('where_income_source_list')->latest('id')->value('id');
 
         if ($request->input('permanent_source') == 1) {
-            $incomeSourceInputs = $request->input('income_source') ?? [];
-
-            foreach ($incomeSourceInputs as $income_source) {
-                $data = [];
-
-                if (!is_null($seniors->id)) {
-                    $data['senior_id'] = $seniors->id;
-                }
-
-                if (!is_null($income_source)) {
-                    $data['income_source_id'] = $income_source;
-                }
-
-                if (
-                    $income_source == $lastIncomeSourceId
-                ) {
+            foreach ($request->input('income_source', []) as $income_source) {
+                $data = ['senior_id' => $seniors->id, 'income_source_id' => $income_source];
+                if ($income_source == $lastIncomeSourceId) {
                     $data['other_income_source_remark'] = $request->input('other_income_source_remark');
                 }
-
-                if (!empty($data)) {
-                    DB::table('income_source')->insert($data);
-                }
+                DB::table('income_source')->insert($data);
             }
         }
 
         if ($request->guardian_first_name || $request->guardian_last_name) {
             DB::table('senior_guardian')->insert([
                 'senior_id' => $seniors->id,
-                'guardian_first_name' => $request->guardian_first_name ?: null,
-                'guardian_middle_name' => $request->guardian_middle_name ?: null,
-                'guardian_last_name' => $request->guardian_last_name ?: null,
-                'guardian_suffix' => $request->guardian_suffix ?: null,
-                'guardian_relationship_id' => $request->guardian_relationship_id ?: null,
+                'guardian_first_name' => $request->guardian_first_name,
+                'guardian_middle_name' => $request->guardian_middle_name,
+                'guardian_last_name' => $request->guardian_last_name,
+                'guardian_suffix' => $request->guardian_suffix,
+                'guardian_relationship_id' => $request->guardian_relationship_id,
                 'guardian_contact_no' => $request->guardian_contact_no ? '+63' . ltrim($request->guardian_contact_no, '0') : null,
             ]);
         }
@@ -1329,6 +1170,20 @@ class AdminController extends Controller
                 ]);
             }
         }
+
+        $status = $seniors ? 'Successful' : 'Failed';
+        $changes = "Admin $adminFirstName $adminLastName added {$seniorData['first_name']} {$seniorData['middle_name']} {$seniorData['last_name']} with Osca ID {$osca_id} as Beneficiary";
+
+        DB::table('activity_log')->insert([
+            'activity' => 'Add Beneficiary',
+            'activity_type_id' => 1,
+            'changes' => $changes,
+            'status' => $status,
+            'activity_user_type_id' => 3,
+            'activity_encoder_id' => null,
+            'activity_admin_id' => $adminId,
+            'created_at' => now(),
+        ]);
 
         return back()->with([
             'admin-message-header' => 'Registration successful',
@@ -1638,42 +1493,75 @@ class AdminController extends Controller
         ], [
             'barangay_id.*.required' => 'Please select a barangay.',
             'barangay_id.*.integer' => 'The barangay selection must be a valid integer.',
-
             'venue.*.required' => 'Venue is required. Please enter a venue name.',
             'venue.*.string' => 'The venue name must be a valid string.',
             'venue.*.max' => 'The venue name must not exceed 255 characters.',
-
             'date_of_distribution.*.required' => 'Date and Time of Distribution is required.',
             'date_of_distribution.*.date_format' => 'The date and time must be in the correct format (Y-m-d\TH:i).',
             'end_time.*.required' => 'End time is required.',
         ]);
 
         $adminUser = auth()->guard('admin')->user();
-        $adminUserTypeId = $adminUser->admin_user_type_id;
         $adminId = $adminUser->id;
+        $adminFirstName = $adminUser->admin_first_name;
+        $adminLastName = $adminUser->admin_last_name;
 
         $programs = [];
-        foreach ($validatedData['barangay_id'] as $key => $barangayId) {
-            $programs[] = [
-                'barangay_id' => $barangayId,
-                'venue' => $validatedData['venue'][$key],
-                'date_of_distribution' => $validatedData['date_of_distribution'][$key],
-                'end_time' => $validatedData['end_time'][$key],
-                'pension_user_type_id' => $adminUserTypeId,
-                'pension_admin_id' => $adminId,
-                'pension_encoder_id' => null,
+
+        try {
+            foreach ($validatedData['barangay_id'] as $key => $barangayId) {
+                $barangay = Barangay::find($barangayId);
+                $barangayNo = $barangay ? $barangay->barangay_no : 'Unknown Barangay';
+                $distributionDate = Carbon::parse($validatedData['date_of_distribution'][$key])->translatedFormat('F j, Y h:i A');
+
+                $programs[] = [
+                    'barangay_id' => $barangayId,
+                    'venue' => $validatedData['venue'][$key],
+                    'date_of_distribution' => $validatedData['date_of_distribution'][$key],
+                    'end_time' => $validatedData['end_time'][$key],
+                    'pension_user_type_id' => $adminUser->admin_user_type_id,
+                    'pension_admin_id' => $adminId,
+                    'pension_encoder_id' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+
+                DB::table('activity_log')->insert([
+                    'activity' => 'Add Pension Distribution Program',
+                    'activity_type_id' => 1,
+                    'changes' => "Admin {$adminFirstName} {$adminLastName} added Pension Distribution Program for Barangay {$barangayNo} on {$distributionDate}",
+                    'status' => 'Successful',
+                    'activity_user_type_id' => 3,
+                    'activity_encoder_id' => null,
+                    'activity_admin_id' => $adminId,
+                    'created_at' => now(),
+                ]);
+            }
+
+            DB::table('pension_distribution_list')->insert($programs);
+
+            return redirect()->back()->with([
+                'admin-message-header' => 'Success',
+                'admin-message-body' => 'Pension distribution added successfully.',
+                'clearAdminAddPensionDistributionModal' => true,
+            ]);
+        } catch (\Exception $e) {
+            DB::table('activity_log')->insert([
+                'activity' => 'Add Pension Distribution Program',
+                'activity_type_id' => 1,
+                'changes' => "Admin {$adminFirstName} {$adminLastName} attempted to add Pension Distribution Programs.",
+                'status' => 'Failed',
+                'activity_user_type_id' => 3,
+                'activity_encoder_id' => null,
+                'activity_admin_id' => $adminId,
                 'created_at' => now(),
-                'updated_at' => now(),
-            ];
+            ]);
+
+            return redirect()->back()->withErrors([
+                'admin-message-header' => 'Error',
+                'admin-message-body' => 'Failed to add pension distribution. Please try again.',
+            ]);
         }
-
-        DB::table('pension_distribution_list')->insert($programs);
-
-        return redirect()->back()->with([
-            'admin-message-header' => 'Success',
-            'admin-message-body' => 'Pension distribution added successfully.',
-            'clearAdminAddPensionDistributionModal' => true,
-        ]);
     }
 
     public function submitAdminEditPensionDistribution(Request $request)
@@ -1745,13 +1633,51 @@ class AdminController extends Controller
         $pensionDistribution = PensionDistribution::find($request->id);
 
         if ($pensionDistribution) {
-            $pensionDistribution->delete();
+            $barangay = Barangay::find($pensionDistribution->barangay_id);
+            $barangayNo = $barangay ? $barangay->barangay_no : 'Unknown Barangay';
+            $distributionDate = Carbon::parse($pensionDistribution->date_of_distribution)->translatedFormat('F j, Y h:i A');
 
-            return redirect()->back()->with([
-                'admin-message-header' => 'Success',
-                'admin-message-body' => 'Pension distribution deleted successfully.',
-                'clearAdminDeletePensionDistributionModal' => true,
-            ]);
+            $adminUser = auth()->guard('admin')->user();
+            $adminId = $adminUser->id;
+            $adminFirstName = $adminUser->admin_first_name;
+            $adminLastName = $adminUser->admin_last_name;
+
+            try {
+                $pensionDistribution->delete();
+
+                DB::table('activity_log')->insert([
+                    'activity' => 'Delete Pension Distribution Program',
+                    'activity_type_id' => 3,
+                    'changes' => "Admin {$adminFirstName} {$adminLastName} deleted Pension Distribution Program for Barangay {$barangayNo} scheduled on {$distributionDate}",
+                    'status' => 'Successful',
+                    'activity_user_type_id' => 3,
+                    'activity_encoder_id' => null,
+                    'activity_admin_id' => $adminId,
+                    'created_at' => now(),
+                ]);
+
+                return redirect()->back()->with([
+                    'admin-message-header' => 'Success',
+                    'admin-message-body' => 'Pension distribution deleted successfully.',
+                    'clearAdminDeletePensionDistributionModal' => true,
+                ]);
+            } catch (\Exception $e) {
+                DB::table('activity_log')->insert([
+                    'activity' => 'Delete Pension Distribution Program',
+                    'activity_type_id' => 3,
+                    'changes' => "Admin {$adminFirstName} {$adminLastName} attempted to delete Pension Distribution Program for Barangay {$barangayNo} scheduled on {$distributionDate}",
+                    'status' => 'Failed',
+                    'activity_user_type_id' => 3,
+                    'activity_encoder_id' => null,
+                    'activity_admin_id' => $adminId,
+                    'created_at' => now(),
+                ]);
+
+                return redirect()->back()->withErrors([
+                    'admin-message-header' => 'Error',
+                    'admin-message-body' => 'Failed to delete pension distribution. Please try again.',
+                ]);
+            }
         }
 
         return redirect()->back()->with('error', 'Pension distribution not found.');
@@ -1808,17 +1734,23 @@ class AdminController extends Controller
             ->orderBy('user_login_attempts.id', 'asc')
             ->paginate(10);
 
+        $user_type_list = DB::table('user_type_list')->get();
+
         return view('admin.admin_sign_in_history', [
-            'title' => 'User Login Attempts',
+            'title' => 'Sign In History',
+            'user_type_lists' => $user_type_list,
             'user_login_attempts' => $user_login_attempts,
         ]);
     }
 
     public function filterAdminLoginAttempts(Request $request)
     {
+        $userTypeId = $request->input('user_type_id');
+        $statusIds = $request->input('status_ids', []);
+        $searchQuery = $request->input('search_query', '');
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-        $orderDirection = $request->input('order', 'asc');
+        $orderDirection = $request->input('order', 'desc');
         $perPage = 10;
 
         $query = DB::table('user_login_attempts')
@@ -1827,6 +1759,16 @@ class AdminController extends Controller
             'user_login_attempts.*',
             'user_type_list.user_type',
         );
+
+        if ($userTypeId === 'null') {
+            $query->whereNull('user_login_attempts.user_type_id');
+        } elseif (!empty($userTypeId) && $userTypeId !== 'all') {
+            $query->where('user_login_attempts.user_type_id', $userTypeId);
+        }
+
+        if (!empty($statusIds)) {
+            $query->whereIn('user_login_attempts.status', $statusIds);
+        }
 
         if ($startDate) {
             $query->whereDate('user_login_attempts.created_at', '>=', $startDate);
@@ -1842,10 +1784,125 @@ class AdminController extends Controller
             $query->orderBy('user_login_attempts.id', $orderDirection);
         }
 
+        if (!empty($searchQuery)) {
+            $terms = array_filter(explode(' ', strtolower($searchQuery)));
+
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->whereRaw("LOWER(user_login_attempts.email) LIKE ?", ['%' . $term . '%']);
+                }
+            });
+        }
+
         $user_login_attempts = $query->paginate($perPage);
 
         return response()->json($user_login_attempts);
     }
+
+    public function showAdminActivityLog()
+    {
+        $activity_logs = DB::table('activity_log')
+        ->leftJoin('activity_types', 'activity_log.activity_type_id', '=', 'activity_types.id')
+        ->leftJoin('user_type_list', 'activity_log.activity_user_type_id', '=', 'user_type_list.id')
+        ->leftJoin('encoder', 'activity_log.activity_encoder_id', '=', 'encoder.id')
+        ->leftJoin('admin', 'activity_log.activity_admin_id', '=', 'admin.id')
+        ->select(
+            'activity_log.*',
+            'activity_types.activity_type',
+            'user_type_list.user_type',
+            'encoder.encoder_first_name',
+            'encoder.encoder_last_name',
+            'encoder_profile_picture',
+            'admin.admin_first_name',
+            'admin.admin_last_name',
+            'admin_profile_picture',
+        )
+            ->orderBy('activity_log.id', 'asc')
+            ->paginate(10);
+
+        $activity_types = DB::table('activity_types')->get();
+
+        $user_type_list = DB::table('user_type_list')->get();
+
+        return view('admin.admin_activity_log', [
+            'title' => 'Activity Log',
+            'activity_types' => $activity_types,
+            'user_type_lists' => $user_type_list,
+            'activity_logs' => $activity_logs,
+        ]);
+    }
+
+    public function filterAdminActivityLog(Request $request)
+    {
+        $userTypeId = $request->input('user_type_id');
+        $activityIds = $request->input('activity_ids', []);
+        $statusIds = $request->input('status_ids', []);
+        $searchQuery = $request->input('search_query', '');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $orderDirection = $request->input('order', 'desc');
+        $perPage = 10;
+
+        $query = DB::table('activity_log')
+        ->leftJoin('activity_types', 'activity_log.activity_type_id', '=', 'activity_types.id')
+        ->leftJoin('user_type_list', 'activity_log.activity_user_type_id', '=', 'user_type_list.id')
+        ->leftJoin('encoder', 'activity_log.activity_encoder_id', '=', 'encoder.id')
+        ->leftJoin('admin', 'activity_log.activity_admin_id', '=', 'admin.id')
+        ->select(
+            'activity_log.*',
+            'activity_types.activity_type',
+            'user_type_list.user_type',
+            'encoder.encoder_first_name',
+            'encoder.encoder_last_name',
+            'encoder_profile_picture',
+            'admin.admin_first_name',
+            'admin.admin_last_name',
+            'admin_profile_picture'
+        );
+
+        if (!empty($userTypeId)) {
+            $query->where('activity_log.activity_user_type_id', $userTypeId);
+        }
+
+        if (!empty($activityIds)) {
+            $query->whereIn('activity_log.activity_type_id', $activityIds);
+        }
+
+        if (!empty($statusIds)) {
+            $query->whereIn('activity_log.status', $statusIds);
+        }
+
+        if ($startDate) {
+            $query->whereDate('activity_log.created_at', '>=', $startDate);
+        }
+
+        if ($endDate) {
+            $query->whereDate('activity_log.created_at', '<=', $endDate);
+        }
+
+        if ($startDate || $endDate) {
+            $query->orderBy('activity_log.created_at', $orderDirection);
+        } else {
+            $query->orderBy('activity_log.id', $orderDirection);
+        }
+
+        if (!empty($searchQuery)) {
+            $terms = array_filter(explode(' ', strtolower($searchQuery)));
+
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->whereRaw("LOWER(activity_log.activity) LIKE ?", ['%' . $term . '%'])
+                        ->orWhereRaw("LOWER(CONCAT(encoder.encoder_first_name, ' ', encoder.encoder_last_name)) LIKE ?", ['%' . $term . '%'])
+                        ->orWhereRaw("LOWER(CONCAT(admin.admin_first_name, ' ', admin.admin_last_name)) LIKE ?", ['%' . $term . '%']);
+                }
+            });
+        }
+
+        $activity_logs = $query->paginate($perPage);
+
+        return response()->json($activity_logs);
+    }
+
 
     public function verifyAdminEmailCodeLogin(Request $request)
     {

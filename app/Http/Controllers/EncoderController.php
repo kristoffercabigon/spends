@@ -34,6 +34,9 @@ use App\Mail\SeniorChangedEmail;
 use App\Mail\EncoderChangedEmail;
 use App\Mail\SeniorPassword;
 use App\Mail\SeniorSendApprovedEmail;
+use App\Models\Barangay;
+use App\Models\AccountStatus;
+use App\Models\ApplicationStatus;
 
 class EncoderController extends Controller
 {
@@ -212,19 +215,6 @@ class EncoderController extends Controller
 
     public function showEncoderApplicationRequests()
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-        ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(3)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
-
         $seniors = DB::table('seniors')
         ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
         ->leftJoin('senior_application_status_list', 'seniors.application_status_id', '=', 'senior_application_status_list.id')
@@ -309,19 +299,6 @@ class EncoderController extends Controller
 
     public function showEncoderSeniorProfile($id)
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-        ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(2)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
-
         $seniors = Seniors::findOrFail($id);
 
         $sex_list = DB::table('sex_list')->get();
@@ -400,18 +377,6 @@ class EncoderController extends Controller
 
     public function updateEncoderSeniorApplicationStatus(Request $request, $id)
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-            ->where('encoder_user_id', $currentEncoder->id)
-            ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(10)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
 
         $validated = $request->validate([
             'status' => 'required|exists:senior_application_status_list,id',
@@ -461,19 +426,6 @@ class EncoderController extends Controller
 
     public function EncoderSendApprovedEmail(Request $request, $id)
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-            ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(10)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
-
         $senior = Seniors::findOrFail($id);
 
         $email = $senior->email;
@@ -498,18 +450,6 @@ class EncoderController extends Controller
 
     public function updateEncoderSeniorAccountStatus(Request $request, $id)
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-            ->where('encoder_user_id', $currentEncoder->id)
-            ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(9)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
 
         $validated = $request->validate([
             'account_status' => 'required|exists:senior_account_status_list,id',
@@ -543,18 +483,6 @@ class EncoderController extends Controller
 
     public function showEncoderBeneficiariesList()
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-            ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(1)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
 
         $seniors = DB::table('seniors')
         ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
@@ -638,18 +566,6 @@ class EncoderController extends Controller
 
     public function showEncoderAddBeneficiary()
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-            ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(5)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
 
         $income_sources = DB::table('where_income_source_list')->get();
         $incomes = DB::table('how_much_income_list')->get();
@@ -678,19 +594,6 @@ class EncoderController extends Controller
     public function submitEncoderAddBeneficiary(StoreAddBeneficiary $request)
     {
         //dd($request->all());
-
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-        ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(5)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
 
         $validated = $request->validated();
 
@@ -905,6 +808,20 @@ class EncoderController extends Controller
             }
         }
 
+        $status = $seniors ? 'Successful' : 'Failed';
+        $changes = "Admin $encoderFirstName $encoderLastName added {$seniorData['first_name']} {$seniorData['middle_name']} {$seniorData['last_name']} with Osca ID {$osca_id} as Beneficiary";
+
+        DB::table('activity_log')->insert([
+            'activity' => 'Add Beneficiary',
+            'activity_type_id' => 1,
+            'changes' => $changes,
+            'status' => $status,
+            'activity_user_type_id' => 2,
+            'activity_encoder_id' => $encoderId,
+            'activity_admin_id' => null,
+            'created_at' => now(),
+        ]);
+
         return back()->with([
             'encoder-message-header' => 'Registration successful',
             'encoder-message-body' => 'An email verification has been sent to the user.'
@@ -913,18 +830,6 @@ class EncoderController extends Controller
 
     public function showEncoderEditSeniorProfile($id)
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-            ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(8)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
 
         $seniors = Seniors::findOrFail($id);
 
@@ -988,18 +893,6 @@ class EncoderController extends Controller
 
     public function updateEncoderEditBeneficiary(UpdateEditBeneficiary $request, $senior)
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-            ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(8)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
 
         $validated = $request->validated();
 
@@ -1151,18 +1044,6 @@ class EncoderController extends Controller
 
     public function showEncoderPensionDistributionList()
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-            ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(4)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
 
         $barangayList = DB::table('barangay_list')->get();
 
@@ -1224,19 +1105,6 @@ class EncoderController extends Controller
 
     public function submitEncoderAddPensionDistribution(Request $request)
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-        ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(6)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
-
         $validatedData = $request->validate([
             'barangay_id.*' => 'required|integer',
             'venue.*' => 'required|string|max:255',
@@ -1245,59 +1113,79 @@ class EncoderController extends Controller
         ], [
             'barangay_id.*.required' => 'Please select a barangay.',
             'barangay_id.*.integer' => 'The barangay selection must be a valid integer.',
-
             'venue.*.required' => 'Venue is required. Please enter a venue name.',
             'venue.*.string' => 'The venue name must be a valid string.',
             'venue.*.max' => 'The venue name must not exceed 255 characters.',
-
             'date_of_distribution.*.required' => 'Date and Time of Distribution is required.',
             'date_of_distribution.*.date_format' => 'The date and time must be in the correct format (Y-m-d\TH:i).',
             'end_time.*.required' => 'End time is required.',
         ]);
 
-
         $encoderUser = auth()->guard('encoder')->user();
-        $encoderUserTypeId = $encoderUser->encoder_user_type_id;
         $encoderId = $encoderUser->id;
+        $encoderFirstName = $encoderUser->encoder_first_name;
+        $encoderLastName = $encoderUser->encoder_last_name;
 
         $programs = [];
-        foreach ($validatedData['barangay_id'] as $key => $barangayId) {
-            $programs[] = [
-                'barangay_id' => $barangayId,
-                'venue' => $validatedData['venue'][$key],
-                'date_of_distribution' => $validatedData['date_of_distribution'][$key],
-                'end_time' => $validatedData['end_time'][$key],
-                'pension_user_type_id' => $encoderUserTypeId,
-                'pension_encoder_id' => $encoderId,
-                'pension_admin_id' => null,
+
+        try {
+            foreach ($validatedData['barangay_id'] as $key => $barangayId) {
+                $barangay = Barangay::find($barangayId);
+                $barangayNo = $barangay ? $barangay->barangay_no : 'Unknown Barangay';
+                $distributionDate = Carbon::parse($validatedData['date_of_distribution'][$key])->translatedFormat('F j, Y h:i A');
+
+                $programs[] = [
+                    'barangay_id' => $barangayId,
+                    'venue' => $validatedData['venue'][$key],
+                    'date_of_distribution' => $validatedData['date_of_distribution'][$key],
+                    'end_time' => $validatedData['end_time'][$key],
+                    'pension_user_type_id' => $encoderUser->encoder_user_type_id,
+                    'pension_encoder_id' => $encoderId,
+                    'pension_admin_id' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+
+                DB::table('activity_log')->insert([
+                    'activity' => 'Add Pension Distribution Program',
+                    'activity_type_id' => 1,
+                    'changes' => "Encoder {$encoderFirstName} {$encoderLastName} added Pension Distribution Program for Barangay {$barangayNo} on {$distributionDate}",
+                    'status' => 'Successful',
+                    'activity_user_type_id' => 2,
+                    'activity_encoder_id' => $encoderId,
+                    'activity_admin_id' => null,
+                    'created_at' => now(),
+                ]);
+            }
+
+            DB::table('pension_distribution_list')->insert($programs);
+
+            return redirect()->back()->with([
+                'encoder-message-header' => 'Success',
+                'encoder-message-body' => 'Pension distribution added successfully.',
+                'clearEncoderAddPensionDistributionModal' => true,
+            ]);
+        } catch (\Exception $e) {
+            DB::table('activity_log')->insert([
+                'activity' => 'Add Pension Distribution Program',
+                'activity_type_id' => 1,
+                'changes' => "Encoder {$encoderFirstName} {$encoderLastName} attempted to add Pension Distribution Programs.",
+                'status' => 'Failed',
+                'activity_user_type_id' => 2,
+                'activity_encoder_id' => $encoderId,
+                'activity_admin_id' => null,
                 'created_at' => now(),
-                'updated_at' => now(),
-            ];
+            ]);
+
+            return redirect()->back()->withErrors([
+                'encoder-message-header' => 'Error',
+                'encoder-message-body' => 'Failed to add pension distribution. Please try again.',
+            ]);
         }
-
-        DB::table('pension_distribution_list')->insert($programs);
-
-        return redirect()->back()->with([
-            'encoder-message-header' => 'Success',
-            'encoder-message-body' => 'Pension distribution added successfully.',
-            'clearEncoderAddPensionDistributionModal' => true,
-        ]);
     }
 
     public function submitEncoderEditPensionDistribution(Request $request)
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-        ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(11)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
 
         $validatedData = $request->validate([
             'id' => 'required|integer',
@@ -1359,19 +1247,6 @@ class EncoderController extends Controller
 
     public function submitEncoderDeletePensionDistribution(Request $request)
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-        ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(14)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
-
         $request->validate([
             'id' => 'required|exists:pension_distribution_list,id',
         ]);
@@ -1379,13 +1254,51 @@ class EncoderController extends Controller
         $pensionDistribution = PensionDistribution::find($request->id);
 
         if ($pensionDistribution) {
-            $pensionDistribution->delete();
+            $barangay = Barangay::find($pensionDistribution->barangay_id);
+            $barangayNo = $barangay ? $barangay->barangay_no : 'Unknown Barangay';
+            $distributionDate = Carbon::parse($pensionDistribution->date_of_distribution)->translatedFormat('F j, Y h:i A');
 
-            return redirect()->back()->with([
-                'encoder-message-header' => 'Success',
-                'encoder-message-body' => 'Pension distribution deleted successfully.',
-                'clearEncoderDeletePensionDistributionModal' => true,
-            ]);
+            $encoderUser = auth()->guard('encoder')->user();
+            $encoderId = $encoderUser->id;
+            $encoderFirstName = $encoderUser->encoder_first_name;
+            $encoderLastName = $encoderUser->encoder_last_name;
+
+            try {
+                $pensionDistribution->delete();
+
+                DB::table('activity_log')->insert([
+                    'activity' => 'Delete Pension Distribution Program',
+                    'activity_type_id' => 3,
+                    'changes' => "Encoder {$encoderFirstName} {$encoderLastName} deleted Pension Distribution Program for Barangay {$barangayNo} scheduled on {$distributionDate}",
+                    'status' => 'Successful',
+                    'activity_user_type_id' => 2,
+                    'activity_encoder_id' => $encoderId,
+                    'activity_admin_id' => null,
+                    'created_at' => now(),
+                ]);
+
+                return redirect()->back()->with([
+                    'encoder-message-header' => 'Success',
+                    'encoder-message-body' => 'Pension distribution deleted successfully.',
+                    'clearEncoderDeletePensionDistributionModal' => true,
+                ]);
+            } catch (\Exception $e) {
+                DB::table('activity_log')->insert([
+                    'activity' => 'Delete Pension Distribution Program',
+                    'activity_type_id' => 3,
+                    'changes' => "Encoder {$encoderFirstName} {$encoderLastName} attempted to delete Pension Distribution Program for Barangay {$barangayNo} scheduled on {$distributionDate}",
+                    'status' => 'Failed',
+                    'activity_user_type_id' => 2,
+                    'activity_encoder_id' => $encoderId,
+                    'activity_admin_id' => null,
+                    'created_at' => now(),
+                ]);
+
+                return redirect()->back()->withErrors([
+                    'encoder-message-header' => 'Error',
+                    'encoder-message-body' => 'Failed to delete pension distribution. Please try again.',
+                ]);
+            }
         }
 
         return redirect()->back()->with('error', 'Pension distribution not found.');
@@ -1553,19 +1466,6 @@ class EncoderController extends Controller
 
     public function submitEncoderDeleteEvent(Request $request)
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-            ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(15)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
-
         $request->validate([
             'id' => 'required|exists:events_list,id',
         ]);
@@ -1574,21 +1474,38 @@ class EncoderController extends Controller
         $event = Events::find($eventId);
 
         if ($event) {
+            $eventTitle = $event->title;
+            $eventDate = Carbon::parse($event->date_of_event)->translatedFormat('F j, Y h:i A');
+
+            $encoderUser = auth()->guard('encoder')->user();
+            $encoderId = $encoderUser->id;
+            $encoderFirstName = $encoderUser->encoder_first_name;
+            $encoderLastName = $encoderUser->encoder_last_name;
+
             try {
                 DB::beginTransaction();
 
                 $eventImages = EventsImages::where('event_id', $eventId)->get();
-
                 foreach ($eventImages as $image) {
                     $imagePath = public_path('storage/images/events/' . $image->image);
                     if (file_exists($imagePath)) {
                         @unlink($imagePath);
                     }
                 }
-
                 EventsImages::where('event_id', $eventId)->delete();
 
                 $event->delete();
+
+                DB::table('activity_log')->insert([
+                    'activity' => 'Delete Event',
+                    'activity_type_id' => 3,
+                    'changes' => "Encoder {$encoderFirstName} {$encoderLastName} deleted the event titled '{$eventTitle}' scheduled on {$eventDate}",
+                    'status' => 'Successful',
+                    'activity_user_type_id' => 2,
+                    'activity_encoder_id' => $encoderId,
+                    'activity_admin_id' => null,
+                    'created_at' => now(),
+                ]);
 
                 DB::commit();
 
@@ -1599,6 +1516,17 @@ class EncoderController extends Controller
                 ]);
             } catch (\Exception $e) {
                 DB::rollBack();
+
+                DB::table('activity_log')->insert([
+                    'activity' => 'Delete Event',
+                    'activity_type_id' => 3,
+                    'changes' => "Encoder {$encoderFirstName} {$encoderLastName} attempted to delete the event titled '{$eventTitle}' scheduled on {$eventDate}",
+                    'status' => 'Failed',
+                    'activity_user_type_id' => 2,
+                    'activity_encoder_id' => $encoderId,
+                    'activity_admin_id' => null,
+                    'created_at' => now(),
+                ]);
 
                 return redirect()->back()->with([
                     'encoder-error-message-header' => 'Deletion Failed',
@@ -1615,18 +1543,6 @@ class EncoderController extends Controller
 
     public function showEncoderAddEvent()
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-            ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(7)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
 
         $barangayList = DB::table('barangay_list')->get();
 
@@ -1638,21 +1554,6 @@ class EncoderController extends Controller
 
     public function submitEncoderAddEvent(Request $request)
     {
-        //dd($request->all());
-
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-        ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(7)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
-
         $validatedData = $request->validate([
             'title' => 'required|min:20',
             'description' => 'required|min:100',
@@ -1678,6 +1579,8 @@ class EncoderController extends Controller
         $encoderUser = auth()->guard('encoder')->user();
         $encoderUserTypeId = $encoderUser->encoder_user_type_id;
         $encoderId = $encoderUser->id;
+        $encoderFirstName = $encoderUser->encoder_first_name;
+        $encoderLastName = $encoderUser->encoder_last_name;
 
         $videoFilenameToStore = null;
         if ($request->hasFile('video')) {
@@ -1704,9 +1607,9 @@ class EncoderController extends Controller
                 $imageFilename = $image->getClientOriginalName();
                 $image->storeAs('images/events', $imageFilename);
 
-                $isHighlighted = 0;  
+                $isHighlighted = 0;
                 if ($request->highlighted_image && $request->highlighted_image === $imageFilename) {
-                    $isHighlighted = 1;  
+                    $isHighlighted = 1;
                 }
 
                 $eventImage = new EventsImages([
@@ -1718,6 +1621,20 @@ class EncoderController extends Controller
             }
         }
 
+        $barangay = Barangay::find($validatedData['barangay_id']);
+        $barangayNo = $barangay ? $barangay->barangay_no : 'Unknown Barangay';
+
+        DB::table('activity_log')->insert([
+            'activity' => 'Add Event',
+            'activity_type_id' => 1,
+            'changes' => "Encoder {$encoderFirstName} {$encoderLastName} added event titled '{$validatedData['title']}' for {$barangayNo} on {$event->event_date->toFormattedDateString()}",
+            'status' => 'Successful',
+            'activity_user_type_id' => 2,
+            'activity_encoder_id' => $encoderId,
+            'activity_admin_id' => null,
+            'created_at' => now(),
+        ]);
+
         return redirect()->route('encoder-add-event')->with([
             'encoder-message-header' => 'Success',
             'encoder-message-body' => 'Event created successfully.',
@@ -1726,19 +1643,6 @@ class EncoderController extends Controller
 
     public function showEncoderEditEvent($id)
     {
-        $currentEncoder = auth()->guard('encoder')->user();
-
-        $encoderRoles = DB::table('encoder_roles')
-        ->where('encoder_user_id', $currentEncoder->id)
-            ->pluck('encoder_roles_id');
-
-        if (!$encoderRoles->contains(12)) {
-            return redirect()->back()->with([
-                'encoder-error-message-header' => 'Restricted Access',
-                'encoder-error-message-body' => 'You are not authorized to perform the specific action.',
-            ]);
-        }
-
         $events = Events::findOrFail($id);
 
         $barangayList = DB::table('barangay_list')->get();

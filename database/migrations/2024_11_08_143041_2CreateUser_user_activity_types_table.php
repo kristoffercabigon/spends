@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('encoder_roles', function (Blueprint $table) {
+        Schema::create('activity_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('encoder_user_id')->constrained('encoder');
-            $table->foreignId('encoder_roles_id')->nullable()->constrained('encoder_roles_list');
-            $table->timestamps();
+            $table->string('activity_type')->nullable();
         });
     }
 
@@ -24,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('encoder_roles');
+        Schema::dropIfExists('activity_types');
     }
 };

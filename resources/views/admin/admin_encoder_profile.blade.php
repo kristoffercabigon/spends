@@ -4,7 +4,7 @@
 <x-admin_dashboard_nav :data="$array"/>
 
 <section
-    x-data="{ showEncoderRolesModal: localStorage.getItem            ('showEncoderRolesModal') === 'true',
+    x-data="{
         showAdminEditEncoderModal: localStorage.getItem            ('showAdminEditEncoderModal') === 'true',
         showAdminEncoderEditProfilePicModal: false,
         showAdminEncoderEditPreviewProfilePicModal: false,
@@ -95,25 +95,21 @@
                                         <li class="flex items-center py-3">
                                             <span>Encoder Roles</span>
                                             <div class="flex flex-wrap items-center justify-end my-2 mx-2 gap-2">
-                                                @foreach ($categories as $category)
-                                                    @if (!empty($roles[$category]))
-                                                        <div class="relative group">
-                                                            <span class="cursor-pointer bg-{{ $categoryColors[$category] }} py-1 px-2 rounded text-white text-sm"
-                                                                @click="showEncoderRolesModal = true; localStorage.setItem('showEncoderRolesModal', 'true')">
-                                                                {{ ucfirst($category) }}
-                                                            </span>
-                                                            <div class="hidden group-hover:block absolute z-10 bg-white border border-gray-200 shadow-lg rounded-md p-2 w-max right-0 md:left-0">
-                                                                <ul class="text-sm text-gray-700">
-                                                                    @foreach ($roles[$category] as $role)
-                                                                        <li class="list-disc ml-4">{{ $role }}</li>
-                                                                    @endforeach
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                @endforeach
+                                                <div class="bg-green-500 py-1 px-2 rounded text-white text-sm">
+                                                    View
+                                                </div>
+                                                <div class="bg-blue-500 py-1 px-2 rounded text-white text-sm">
+                                                    Create
+                                                </div>
+                                                <div class="bg-orange-500 py-1 px-2 rounded text-white text-sm">
+                                                    Update
+                                                </div>
+                                                <div class="bg-red-500 py-1 px-2 rounded text-white text-sm">
+                                                    Delete
+                                                </div>
                                             </div>
                                         </li>
+
                                         <li class="flex items-center py-3">
                                             <span>Date Registered</span>
                                             <span class="ml-auto">
@@ -212,9 +208,6 @@
         </div>
     </div>
 </div>
-<div x-show="showEncoderRolesModal" @click.away="showEncoderRolesModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-    @include('components.modal.admin.admin_encoder_roles')
-</div>
 <div x-show="showAdminEditEncoderModal" @click.away="showAdminEditEncoderModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
     @include('components.modal.admin.admin_edit_encoder')
 </div>
@@ -228,15 +221,6 @@
     @include('components.modal.admin.admin_encoder_edit_camera')
 </div>
 </section>
-
-<script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('encoderRolesData', () => ({
-            encoderRoles: @json($encoderRoles),  
-            encoderRolesList: @json($encoderRolesList)  
-        }));
-    });
-</script>
 
 </body>
 </html>

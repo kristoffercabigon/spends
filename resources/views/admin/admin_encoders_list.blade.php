@@ -88,10 +88,8 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                                     </button>
                                 </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <div class="flex relative mb-4 justify-start md:justify-end">
+                            <div class="flex relative mb-4 justify-start md:justify-start">
                                 <div class="relative w-[50%] lg:w-[30%]">
                                     <select id="order-dropdown" class="bg-gray-50 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full  p-2.5">
                                         <option value="asc" selected>Ascending</option>
@@ -99,35 +97,17 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                                     </select>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="flex relative mb-4 justify-start md:justify-end">
-                                <button id="dropdownCheckboxButton" data-dropdown-toggle="dropdownDefaultCheckbox" 
-                                    class="text-white bg-[#1AA514] hover:bg-[#148e10] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-md px-5 py-2 text-center inline-flex items-center" 
-                                    type="button">
-                                    Encoder Roles
-                                    <svg class="w-2.5 h-2.5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
-                                    </svg>
-                                </button>
-
-                                <div id="dropdownDefaultCheckbox" class="z-10 hidden animate-drop-in w-48 bg-white divide-y shadow-lg divide-gray-100 rounded-lg shadow absolute top-12 lg:right-0 max-h-60 overflow-y-auto">
-                                    <ul class="p-3 space-y-3 text-sm text-gray-700" aria-labelledby="dropdownCheckboxButton">
-                                        @foreach ($encoderRoles_dropdown as $roleCategory => $roles)
-                                            <li class="font-semibold">{{ $roleCategory }}</li>
-                                            @foreach ($roles as $role)
-                                                <li>
-                                                    <div class="flex items-center">
-                                                        <input id="checkbox-item-{{ $role->encoder_role_category }}-{{ $role->id }}" 
-                                                            type="checkbox" 
-                                                            value="{{ $role->id }}" 
-                                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
-                                                        <label for="checkbox-item-{{ $role->encoder_role_category }}-{{ $role->id }}" 
-                                                            class="ms-2 text-sm font-medium text-gray-900">{{ $role->encoder_role }}</label>
-                                                    </div>
-                                                </li>
-                                            @endforeach
+                        <div>
+                            <div class="flex relative justify-start md:justify-end">
+                                <div class="relative w-[50%]">
+                                    <select id="barangay-dropdown" class="bg-gray-50 mb-4 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full p-2.5">
+                                        <option value="all" selected>Show All Barangays</option>
+                                        @foreach ($barangay_list as $barangay)
+                                            <option value="{{ $barangay->id }}">{{ $barangay->barangay_no }}</option>
                                         @endforeach
-                                    </ul>
+                                    </select>
                                 </div>
                             </div>
 
@@ -149,7 +129,8 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                                     <th class="px-4 py-2 font-semibold rounded-t-md text-left">#</th>
                                     <th class="px-4 py-2 font-semibold text-left">Encoder ID</th>
                                     <th class="px-4 py-2 font-semibold text-left">Name</th>
-                                    <th class="px-4 py-2 font-semibold text-left">Encoder Roles</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Contact No.</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Email</th>
                                     <th class="px-4 py-2 font-semibold rounded-t-md text-left">Date Registered</th>
                                     <th class="px-4 py-2 font-semibold rounded-t-md text-left">Actions</th>
                                 </tr>
@@ -163,12 +144,7 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                                             : $defaultProfile;
                                         $fullName = "{$encoder->encoder_first_name} {$encoder->encoder_middle_name} {$encoder->encoder_last_name}" . ($encoder->encoder_suffix ? ", {$encoder->encoder_suffix}" : '');
                                         $formattedDate = \Carbon\Carbon::parse($encoder->encoder_date_registered)->format('F j, Y');
-                                        $categories = explode(',', $encoder->role_categories);
-                                        $roles = explode(',', $encoder->roles);
-
-                                        if (in_array('create', $categories) && !in_array('view', $categories)) {
-                                            $categories[] = 'view';
-                                        }
+                                        
                                     @endphp
                                     <tr class="{{ $key % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]' }}">
                                         <td class="px-4 py-2">{{ $encoder->id }}</td>
@@ -177,29 +153,8 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                                             <img class="w-10 h-10 rounded-full ring-2 ring-white mr-2" src="{{ $profilePicture }}" alt="Profile Picture">
                                             <span>{{ $fullName }}</span>
                                         </td>
-                                        <td class="px-4 py-2 gap-2">
-                                            <div class="flex flex-wrap gap-2">
-                                                @foreach ($categories as $category)
-                                                    @php
-                                                        $filteredRoles = array_filter($roles, fn($role) => stripos($role, $category) !== false);
-                                                    @endphp
-                                                    <div class="relative group">
-                                                        <span class="cursor-pointer font-semibold text-blue-600 hover:underline">{{ ucfirst($category) }}</span>
-                                                        <div class="hidden group-hover:block absolute z-10 bg-white border border-gray-200 shadow-lg rounded-md p-2 w-max">
-                                                            <ul class="text-sm text-gray-700">
-                                                                @if (count($filteredRoles) > 0)
-                                                                    @foreach ($filteredRoles as $role)
-                                                                        <li class="list-disc ml-4">{{ $role }}</li>
-                                                                    @endforeach
-                                                                @else
-                                                                    <li class="ml-4">No roles assigned</li>
-                                                                @endif
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        </td>
+                                        <td class="px-4 py-2">{{ $encoder->encoder_contact_no }}</td>
+                                        <td class="px-4 py-2">{{ $encoder->encoder_email }}</td>
                                         <td class="px-4 py-2">{{ $formattedDate }}</td>
                                         <td class="px-3 py-2 flex justify-center items-center">
                                             <a href="/admin/encoders/view-encoder-profile/{{ $encoder->id }}" class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer">
@@ -319,21 +274,26 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
 <script>
     document.addEventListener("DOMContentLoaded", function () {
     const currentPage = {{ $encoders->currentPage() }};
+    const barangayDropdown = document.getElementById("barangay-dropdown");
     const startInput = document.getElementById("datepicker-range-start");
     const endInput = document.getElementById("datepicker-range-end");
     const searchDropdown = document.getElementById("search-dropdown");
     const orderDropdown = document.getElementById("order-dropdown");
     const paginationContainer = document.querySelector("nav[aria-label='Page navigation example'] ul");
 
+    const savedBarangayId = localStorage.getItem('barangayId');
     const savedStartDate = localStorage.getItem('encoderStartDate');
     const savedEndDate = localStorage.getItem('encoderEndDate');
     const savedSearchQuery = localStorage.getItem('encoderSearchQuery') || '';
-    const encoderRoles = JSON.parse(localStorage.getItem('encoderRoles')) || [];
     const savedOrder = localStorage.getItem('encoderOrder') || 'asc';
 
     orderDropdown.value = savedOrder;
 
     searchDropdown.value = savedSearchQuery;
+
+    if (savedBarangayId) {
+        barangayDropdown.value = savedBarangayId;
+    }
 
     const startPicker = flatpickr(startInput, {
         altInput: true,
@@ -361,20 +321,6 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         }
     });
 
-    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-        if (encoderRoles.includes(checkbox.value)) {
-            checkbox.checked = true;
-        }
-
-        checkbox.addEventListener('change', function () {
-            const updatedRoles = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-                .map(checkbox => checkbox.value);
-            localStorage.setItem('encoderRoles', JSON.stringify(updatedRoles));
-            updateTable(1);
-        });
-    });
-
-
     document.getElementById("clear-start").addEventListener("click", function () {
         startInput.value = '';
         localStorage.removeItem('encoderStartDate');
@@ -386,6 +332,12 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         endInput.value = '';
         localStorage.removeItem('encoderEndDate');
         endPicker.clear();
+        updateTable(1);
+    });
+
+    barangayDropdown.addEventListener("change", function () {
+        const barangayId = this.value;
+        localStorage.setItem('barangayId', barangayId);
         updateTable(1);
     });
 
@@ -402,10 +354,10 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
     });
 
     function updateTable(page) {
+        const barangayId = barangayDropdown.value === 'all' ? null : barangayDropdown.value;
         const encoderStartDate = startInput.value;
         const encoderEndDate = endInput.value;
         const encoderSearchQuery = searchDropdown.value.toLowerCase();
-        const encoderRoles = JSON.parse(localStorage.getItem('encoderRoles')) || [];
         const encoderOrder = orderDropdown.value;
 
         fetch('/admin/encoders/filter-encoders?page=' + page, {
@@ -415,9 +367,9 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             },
             body: JSON.stringify({
+                barangay_id: barangayId,
                 start_date: encoderStartDate,
                 end_date: encoderEndDate,
-                encoder_roles_ids: encoderRoles,
                 search_query: encoderSearchQuery,
                 order: encoderOrder,
             }),
@@ -436,39 +388,18 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
 
         data.forEach((encoder, index) => {
             const defaultProfile = `https://api.dicebear.com/9.x/initials/svg?seed=${encoder.encoder_first_name}-${encoder.encoder_last_name}`;
+
             const profilePicture = encoder.encoder_profile_picture
                 ? `/storage/images/encoder/encoder_thumbnail_profile/${encoder.encoder_profile_picture}`
                 : defaultProfile;
+
             const fullName = `${encoder.encoder_first_name} ${encoder.encoder_middle_name || ''} ${encoder.encoder_last_name} ${encoder.encoder_suffix ? `, ${encoder.encoder_suffix}` : ''}`;
+
             const formattedDate = new Date(encoder.encoder_date_registered).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
             });
-
-            const categories = encoder.role_categories ? encoder.role_categories.split(',') : [];
-            let roles = encoder.roles ? encoder.roles.split(',') : [];
-
-            if (categories.includes('create') && !categories.includes('view')) {
-                categories.push('view');
-            }
-
-            const categoryList = categories
-                .map(category => {
-                    const filteredRoles = roles
-                        .filter(role => role.toLowerCase().includes(category.toLowerCase()))
-                        .map(role => `<li class="list-disc ml-4">${role}</li>`)
-                        .join('');
-
-                    return `
-                        <div class="relative group">
-                            <span class="cursor-pointer font-semibold text-blue-600 hover:underline">${category}</span>
-                            <div class="hidden group-hover:block absolute z-10 bg-white border border-gray-200 shadow-lg rounded-md p-2 w-max">
-                                <ul class="text-sm text-gray-700">${filteredRoles || '<li class="ml-4">No roles assigned</li>'}</ul>
-                            </div>
-                        </div>`;
-                })
-                .join('');
 
             const row = `
                 <tr class="${index % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]'}">
@@ -478,11 +409,8 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
                         <img class="w-10 h-10 rounded-full ring-2 ring-white mr-2" src="${profilePicture}" alt="Profile Picture">
                         ${fullName}
                     </td>
-                    <td class="px-4 py-2 gap-2">
-                        <div class="flex flex-wrap gap-2">
-                            ${categoryList}
-                        </div>
-                    </td>
+                    <td class="px-4 py-2">${encoder.encoder_contact_no}</td>
+                    <td class="px-4 py-2">${encoder.encoder_email}</td>
                     <td class="px-4 py-2">${formattedDate}</td>
                     <td class="px-3 py-2 flex justify-center items-center">
                         <a href="/admin/encoders/view-encoder-profile/${encoder.id}" class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer">

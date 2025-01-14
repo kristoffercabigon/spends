@@ -131,7 +131,6 @@ Route::controller(AdminController::class)->group(function () {
         Route::post('/admin/encoders/filter-encoders', 'filterEncoders');
         Route::get('/admin/encoders/view-encoder-profile/{encoder}', 'showAdminEncoderProfile');
         Route::post('/admin/encoders/submit-encoder', 'submitAdminAddEncoder')->name('admin-submit-add-encoder');
-        Route::put('/admin/encoders/view-encoder-profile/{id}/update-encoder-role', 'updateAdminEncoderRoles')->name('admin-update-encoder-role');
         Route::put('/admin/encoders/view-encoder-profile/{id}/update-encoder-profile', 'updateAdminEncoderProfile')->name('admin-submit-edit-encoder');
 
         Route::get('/admin/beneficiaries', 'showAdminBeneficiariesList');
@@ -153,6 +152,9 @@ Route::controller(AdminController::class)->group(function () {
 
         Route::get('/admin/sign-in-history', 'showAdminLoginAttempts');
         Route::post('/admin/sign-in-history/filter-sign-in-history', 'filterAdminLoginAttempts');
+
+        Route::get('/admin/activity-log', 'showAdminActivityLog');
+        Route::post('/admin/activity-log/filter-activity-log', 'filterAdminActivityLog');
 
         Route::post('/admin/logout', 'admin_logout');
         Route::put('/admin/profile/change-password', 'changeAdminPassword')->name('admin-change-password');

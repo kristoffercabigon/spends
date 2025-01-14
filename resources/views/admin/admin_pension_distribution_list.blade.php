@@ -113,39 +113,45 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                             </thead>
                             <tbody>
                                 @foreach ($pension_distributions as $key => $pension_distribution)
-                                @php
-                                    $defaultProfile = "https://api.dicebear.com/9.x/initials/svg?seed={$pension_distribution->encoder_first_name}-{$pension_distribution->encoder_last_name}";
-                                    $profilePicture = $pension_distribution->encoder_profile_picture 
-                                    ? asset('storage/images/encoder/encoder_thumbnail_profile/' . $pension_distribution->encoder_profile_picture)
-                                    : $defaultProfile;
-                                @endphp
-                                <tr class="{{ $key % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]' }}">
-                                    <td class="px-4 py-2">{{ $pension_distribution->id }}</td>
-                                    <td class="px-4 py-2">{{ $pension_distribution->barangay_no }}</td>
-                                    <td class="px-4 py-2">{{ $pension_distribution->barangay_locality }}</td>
-                                    <td class="px-4 py-2">{{ $pension_distribution->venue }}</td>
-                                    <td class="px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($pension_distribution->date_of_distribution)->format('F j, Y') }}
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($pension_distribution->date_of_distribution)->format('g:i A') }} - {{ \Carbon\Carbon::parse($pension_distribution->end_time)->format('g:i A') }}
-                                    </td>
-                                    <td class="px-4 py-2 gap-2">
-                                        <div class="flex flex-row items-center gap-2">
-                                        <img class="w-10 h-10 rounded-full ring-2 ring-white mr-2" src="{{ $profilePicture }}" alt="Profile Picture">
-                                        @if ($pension_distribution->pension_user_type_id == 2)
-                                            {{ $pension_distribution->encoder_first_name }} {{ $pension_distribution->encoder_last_name }} ({{ $pension_distribution->user_type }})
-                                        @elseif ($pension_distribution->pension_user_type_id == 3)
-                                            {{ $pension_distribution->admin_first_name }} {{ $pension_distribution->admin_last_name }} ({{ $pension_distribution->user_type }})
-                                        @else
-                                            Unknown
-                                        @endif
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        {{-- Actions --}}
-                                    </td>
-                                </tr>
+                                    @php
+                                        $defaultEncoderProfile = "https://api.dicebear.com/9.x/initials/svg?seed={$pension_distribution->encoder_first_name}-{$pension_distribution->encoder_last_name}";
+                                        $defaultAdminProfile = "https://api.dicebear.com/9.x/initials/svg?seed={$pension_distribution->admin_first_name}-{$pension_distribution->admin_last_name}";
+
+                                        $profilePicture = $pension_distribution->encoder_profile_picture 
+                                            ? asset('storage/images/encoder/encoder_thumbnail_profile/' . $pension_distribution->encoder_profile_picture)
+                                            : ($pension_distribution->pension_user_type_id == 3 && $pension_distribution->admin_profile_picture
+                                                ? asset('storage/images/admin/admin_thumbnail_profile/' . $pension_distribution->admin_profile_picture)
+                                                : ($pension_distribution->pension_user_type_id == 3 ? $defaultAdminProfile : $defaultEncoderProfile));
+                                    @endphp
+
+                                    <tr class="{{ $key % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]' }}">
+                                        <td class="px-4 py-2">{{ $pension_distribution->id }}</td>
+                                        <td class="px-4 py-2">{{ $pension_distribution->barangay_no }}</td>
+                                        <td class="px-4 py-2">{{ $pension_distribution->barangay_locality }}</td>
+                                        <td class="px-4 py-2">{{ $pension_distribution->venue }}</td>
+                                        <td class="px-4 py-2">
+                                            {{ \Carbon\Carbon::parse($pension_distribution->date_of_distribution)->format('F j, Y') }}
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            {{ \Carbon\Carbon::parse($pension_distribution->date_of_distribution)->format('g:i A') }} - 
+                                            {{ \Carbon\Carbon::parse($pension_distribution->end_time)->format('g:i A') }}
+                                        </td>
+                                        <td class="px-4 py-2 gap-2">
+                                            <div class="flex flex-row items-center gap-2">
+                                                <img class="w-10 h-10 rounded-full ring-2 ring-white mr-2" src="{{ $profilePicture }}" alt="Profile Picture">
+                                                @if ($pension_distribution->pension_user_type_id == 2)
+                                                    {{ $pension_distribution->encoder_first_name }} {{ $pension_distribution->encoder_last_name }} ({{ $pension_distribution->user_type }})
+                                                @elseif ($pension_distribution->pension_user_type_id == 3)
+                                                    {{ $pension_distribution->admin_first_name }} {{ $pension_distribution->admin_last_name }} ({{ $pension_distribution->user_type }})
+                                                @else
+                                                    Unknown
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            {{-- Actions --}}
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -352,19 +358,23 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
         tbody.innerHTML = '';
 
         data.forEach((pension_distribution, index) => {
-            const defaultProfile = `https://api.dicebear.com/9.x/initials/svg?seed=${pension_distribution.encoder_first_name || 'Unknown'}-${pension_distribution.encoder_last_name || 'Unknown'}`;
+        const defaultEncoderProfile = `https://api.dicebear.com/9.x/initials/svg?seed=${pension_distribution.encoder_first_name || 'Unknown'}-${pension_distribution.encoder_last_name || 'Unknown'}`;
 
-            const profilePicture = pension_distribution.encoder_profile_picture
-                ? `/storage/images/encoder/encoder_thumbnail_profile/${pension_distribution.encoder_profile_picture}`
-                : pension_distribution.admin_profile_picture
-                ? `/storage/images/admin/admin_thumbnail_profile/${pension_distribution.admin_profile_picture}`
-                : defaultProfile;
+        const defaultAdminProfile = `https://api.dicebear.com/9.x/initials/svg?seed=${pension_distribution.admin_first_name || 'Admin'}-${pension_distribution.admin_last_name || 'User'}`;
 
-            const addedBy = pension_distribution.pension_user_type_id == 2
-                ? `${pension_distribution.encoder_first_name || ''} ${pension_distribution.encoder_last_name || ''} (Encoder)`.trim()
-                : pension_distribution.pension_user_type_id == 3
-                ? `${pension_distribution.admin_first_name || ''} ${pension_distribution.admin_last_name || ''} (Admin)`.trim()
-                : 'Unknown';
+        const profilePicture = pension_distribution.encoder_profile_picture
+            ? `/storage/images/encoder/encoder_thumbnail_profile/${pension_distribution.encoder_profile_picture}`
+            : pension_distribution.pension_user_type_id == 3 && pension_distribution.admin_profile_picture
+            ? `/storage/images/admin/admin_thumbnail_profile/${pension_distribution.admin_profile_picture}`
+            : pension_distribution.pension_user_type_id == 3
+            ? defaultAdminProfile
+            : defaultEncoderProfile;
+
+        const addedBy = pension_distribution.pension_user_type_id == 2
+            ? `${pension_distribution.encoder_first_name || ''} ${pension_distribution.encoder_last_name || ''} (Encoder)`.trim()
+            : pension_distribution.pension_user_type_id == 3
+            ? `${pension_distribution.admin_first_name || ''} ${pension_distribution.admin_last_name || ''} (Admin)`.trim()
+            : 'Unknown';
 
             const formattedDate = new Date(pension_distribution.date_of_distribution).toLocaleDateString('en-US', {
                 year: 'numeric',

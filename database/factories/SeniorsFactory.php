@@ -1731,7 +1731,7 @@ class SeniorsFactory extends Factory
 
         $baseTimestamp = strtotime('-5 years');
         $nowTimestamp = time();
-        $totalUsers = 500;
+        $totalUsers = 50;
         $usersLeft = $totalUsers;
 
         $usersPerDay = [];

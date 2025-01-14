@@ -17,9 +17,7 @@ use Database\Seeders\PensionSeeder;
 use Database\Seeders\IncomeSeeder;
 use Database\Seeders\IncomeSourceSeeder;
 use Database\Seeders\IncomeSourceDataSeeder;
-use Database\Seeders\EncoderRolesSeeder;
 use Database\Seeders\EncoderSeeder;
-use Database\Seeders\EncoderRolesDatasSeeder;
 use Database\Seeders\SeniorApplicationStatusSeeder;
 use Database\Seeders\SeniorAccountStatusSeeder;
 use Database\Seeders\UserTypeSeeder;
@@ -29,6 +27,9 @@ use Database\Seeders\GuardianSeeder;
 use Database\Seeders\AdminSeeder;
 use Database\Seeders\EventsSeeder;
 use Database\Seeders\EventsImagesSeeder;
+use Database\Seeders\ActivityTypesSeeder;
+use Database\Seeders\ActivityLogSeeder;
+use Database\Seeders\SignInHistorySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -47,9 +48,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PensionSeeder::class);
         $this->call(IncomeSeeder::class);
         $this->call(IncomeSourceSeeder::class);
-        $this->call(EncoderRolesSeeder::class);
         $this->call(EncoderSeeder::class);
-        $this->call(EncoderRolesDatasSeeder::class);
         $this->call(AdminSeeder::class);
         $this->call(PensionDistributionSeeder::class);
         $this->call(EventsSeeder::class);
@@ -59,7 +58,7 @@ class DatabaseSeeder extends Seeder
 
         $uniqueOscaIds = collect();
 
-        while ($uniqueOscaIds->count() < 500) {
+        while ($uniqueOscaIds->count() < 50) {
             $oscaId = fake()->numberBetween(10000, 99999);
             $uniqueOscaIds->add($oscaId);
         }
@@ -75,6 +74,10 @@ class DatabaseSeeder extends Seeder
         $this->call(FamilyCompositionSeeder::class);
         $this->call(IncomeSourceDataSeeder::class);
         $this->call(SourceDatasSeeder::class);
+        $this->call(SignInHistorySeeder::class);
+        $this->call(ActivityTypesSeeder::class);
+        $this->call(ActivityLogSeeder::class);
+
 
         // You can also uncomment and modify the user factory as needed
         // User::factory()->create([

@@ -54,6 +54,7 @@ return new class extends Migration
             $table->string('token')->nullable();
             $table->string('remember_token')->nullable();
             $table->dateTime('expiration')->nullable();
+            $table->integer('is_archived')->nullable();
             $table->foreignId('application_assistant_id')->nullable()->constrained('user_type_list');
             $table->foreignId('application_admin_id')->nullable()->constrained('admin');
             $table->foreignId('application_encoder_id')->nullable()->constrained('encoder');

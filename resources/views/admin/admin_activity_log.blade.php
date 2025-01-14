@@ -24,7 +24,7 @@
                     <div class="w-full">
                         <div class="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                             <p class="text-center">
-                                Sign In History
+                                Activity Log
                             </p>
                         </div>
                     </div>
@@ -36,7 +36,7 @@
 
                             <div class="flex justify-start max-w-2xl mb-4">
                                 <div class="relative w-full">
-                                    <input type="search" id="search-dropdown" class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border-l-2 border-r-2 border-[#1AA514] focus:ring-[#1AA514] focus:border-[#1AA514]" placeholder="Search by Email" required />
+                                    <input type="search" id="search-dropdown" class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border-l-2 border-r-2 border-[#1AA514] focus:ring-[#1AA514] focus:border-[#1AA514]" placeholder="Search name in here.." required />
                                     <button type="button" class="absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white bg-[#1AA514] rounded-r-lg border border-[#1AA514] hover:bg-[#169f11] focus:ring-4 focus:outline-none focus:ring-[#1AA514] pointer-events-none cursor-not-allowed">
                                         <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
@@ -86,9 +86,10 @@
                                 <div class="relative w-[50%]">
                                     <select id="user-type-dropdown" class="bg-gray-50 mb-4 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full p-2.5">
                                         <option value="all" selected>Show All User Type</option>
-                                        <option value="null">Non-Registered User</option>
                                         @foreach ($user_type_lists as $user_type_list)
-                                            <option value="{{ $user_type_list->id }}">{{ $user_type_list->user_type }}</option>
+                                            @if ($user_type_list->id != 1)
+                                                <option value="{{ $user_type_list->id }}">{{ $user_type_list->user_type }}</option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -96,7 +97,7 @@
 
                             <div class="flex relative mb-4 justify-start md:justify-end">
                                 <button id="dropdownCheckboxButton" data-dropdown-toggle="dropdownDefaultCheckbox" class="text-white bg-[#1AA514] hover:bg-[#148e10] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-md px-5 py-2 text-center inline-flex items-center" type="button">
-                                    Login Status
+                                    Activity Type
                                     <svg class="w-2.5 h-2.5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
                                     </svg>
@@ -104,22 +105,38 @@
 
                                 <div id="dropdownDefaultCheckbox" class="z-10 hidden animate-drop-in w-48 bg-white divide-y shadow-lg divide-gray-100 rounded-lg shadow absolute top-12 lg:right-0">
                                     <ul class="p-3 space-y-3 text-sm text-gray-700" aria-labelledby="dropdownCheckboxButton">
+                                        @foreach ($activity_types as $activity_type)
                                         <li>
                                             <div class="flex items-center">
-                                                <input id="checkbox-item-successful" type="checkbox" value="successful" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                                                <input name="activity_type_checkbox" id="checkbox-item-{{ $activity_type->id }}" type="checkbox" value="{{ $activity_type->id }}" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                                                <label for="checkbox-item-{{ $activity_type->id }}" class="ms-2 text-sm font-medium text-gray-900">{{ $activity_type->activity_type }}</label>
+                                            </div>
+                                        </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="flex relative mb-4 justify-start md:justify-end">
+                                <button id="dropdownStatusButton" data-dropdown-toggle="dropdownStatus" class="text-white bg-[#1AA514] hover:bg-[#148e10] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-md px-5 py-2 text-center inline-flex items-center" type="button">
+                                    Status
+                                    <svg class="w-2.5 h-2.5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                                    </svg>
+                                </button>
+
+                                <div id="dropdownStatus" class="z-10 hidden animate-drop-in w-48 bg-white divide-y shadow-lg divide-gray-100 rounded-lg shadow absolute top-12 lg:right-0">
+                                    <ul class="p-3 space-y-3 text-sm text-gray-700" aria-labelledby="dropdownStatusButton">
+                                        <li>
+                                            <div class="flex items-center">
+                                                <input name="status_checkbox" id="checkbox-item-successful" type="checkbox" value="Successful" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
                                                 <label for="checkbox-item-successful" class="ms-2 text-sm font-medium text-gray-900">Successful</label>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="flex items-center">
-                                                <input id="checkbox-item-failed" type="checkbox" value="failed" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                                                <input name="status_checkbox" id="checkbox-item-failed" type="checkbox" value="Failed" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
                                                 <label for="checkbox-item-failed" class="ms-2 text-sm font-medium text-gray-900">Failed</label>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="flex items-center">
-                                                <input id="checkbox-item-throttled" type="checkbox" value="throttled" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
-                                                <label for="checkbox-item-throttled" class="ms-2 text-sm font-medium text-gray-900">Throttled</label>
                                             </div>
                                         </li>
                                     </ul>
@@ -135,27 +152,51 @@
                                 <tr class="bg-[#FF4802] text-white">
                                     
                                     <th class="px-4 py-2 font-semibold rounded-t-md text-left">#</th>
-                                    <th class="px-4 py-2 font-semibold text-left">Email</th>
-                                    <th class="px-4 py-2 font-semibold text-left">User Type</th>
-                                    <th class="px-4 py-2 font-semibold text-left">Login Status</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Activity</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Activity Type</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Status</th>
                                     <th class="px-4 py-2 font-semibold text-left">Date</th>
                                     <th class="px-4 py-2 font-semibold text-left">Time</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Modified By</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($user_login_attempts as $key => $user_login_attempt)
-                                <tr class="{{ $key % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]' }}">
-                                    <td class="px-4 py-2">{{ $user_login_attempt->id }}</td>
-                                    <td class="px-4 py-2">{{ $user_login_attempt->email }}</td>
-                                    <td class="px-4 py-2">{{ $user_login_attempt->user_type }}</td>
-                                    <td class="px-4 py-2">{{ $user_login_attempt->status }}</td>
-                                    <td class="px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($user_login_attempt->created_at)->setTimezone('Asia/Manila')->format('F j, Y g:i A') }}
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($user_login_attempt->created_at)->setTimezone('Asia/Manila')->format('g:i A') }}
-                                    </td>
-                                </tr>
+                                @foreach ($activity_logs as $key => $activity_log)
+                                    @php
+                                        $defaultEncoderProfile = "https://api.dicebear.com/9.x/initials/svg?seed={$activity_log->encoder_first_name}-{$activity_log->encoder_last_name}";
+                                        $defaultAdminProfile = "https://api.dicebear.com/9.x/initials/svg?seed={$activity_log->admin_first_name}-{$activity_log->admin_last_name}";
+                                        
+                                        $profilePicture = $activity_log->encoder_profile_picture 
+                                            ? asset('storage/images/encoder/encoder_thumbnail_profile/' . $activity_log->encoder_profile_picture)
+                                            : ($activity_log->activity_user_type_id == 3 && $activity_log->admin_profile_picture 
+                                                ? asset('storage/images/admin/admin_thumbnail_profile/' . $activity_log->admin_profile_picture)
+                                                : ($activity_log->activity_user_type_id == 3 ? $defaultAdminProfile : $defaultEncoderProfile));
+                                    @endphp
+                                    
+                                    <tr class="{{ $key % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]' }}">
+                                        <td class="px-4 py-2">{{ $activity_log->id }}</td>
+                                        <td class="px-4 py-2">{{ $activity_log->activity }}</td>
+                                        <td class="px-4 py-2">{{ $activity_log->activity_type }}</td>
+                                        <td class="px-4 py-2">{{ $activity_log->status }}</td>
+                                        <td class="px-4 py-2">
+                                            {{ \Carbon\Carbon::parse($activity_log->created_at)->setTimezone('Asia/Manila')->format('F j, Y') }}
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            {{ \Carbon\Carbon::parse($activity_log->created_at)->setTimezone('Asia/Manila')->format('g:i A') }}
+                                        </td>
+                                        <td class="px-4 py-2 gap-2">
+                                            <div class="flex flex-row items-center gap-2">
+                                                <img class="w-10 h-10 rounded-full ring-2 ring-white mr-2" src="{{ $profilePicture }}" alt="Profile Picture">
+                                                @if ($activity_log->activity_user_type_id == 2)
+                                                    {{ $activity_log->encoder_first_name }} {{ $activity_log->encoder_last_name }} ({{ $activity_log->user_type }})
+                                                @elseif ($activity_log->activity_user_type_id == 3)
+                                                    {{ $activity_log->admin_first_name }} {{ $activity_log->admin_last_name }} ({{ $activity_log->user_type }})
+                                                @else
+                                                    Unknown
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -164,9 +205,9 @@
                     <div class="mt-4 flex items-center justify-between">
                         <nav aria-label="Page navigation example" class="w-full">
                             <ul class="flex flex-wrap justify-center">
-                                @if (!$user_login_attempts->onFirstPage())
+                                @if (!$activity_logs->onFirstPage())
                                 <li>
-                                    <a href="{{ $user_login_attempts->url(1) }}" class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-[#30ae2b] rounded-s-lg hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $activity_logs->url(1) }}" class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-[#30ae2b] rounded-s-lg hover:bg-gray-100 hover:text-gray-700">
                                         &laquo;&laquo;
                                     </a>
                                 </li>
@@ -178,9 +219,9 @@
                                 </li>
                                 @endif
 
-                                @if ($user_login_attempts->previousPageUrl())
+                                @if ($activity_logs->previousPageUrl())
                                 <li>
-                                    <a href="{{ $user_login_attempts->previousPageUrl() }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $activity_logs->previousPageUrl() }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
                                         &laquo;
                                     </a>
                                 </li>
@@ -193,27 +234,27 @@
                                 @endif
 
                                 @php
-                                    $start = max(1, $user_login_attempts->currentPage() - 2);
-                                    $end = min($user_login_attempts->lastPage(), $user_login_attempts->currentPage() + 2);
+                                    $start = max(1, $activity_logs->currentPage() - 2);
+                                    $end = min($activity_logs->lastPage(), $activity_logs->currentPage() + 2);
                                 @endphp
 
                                 @for ($i = $start; $i <= $end; $i++)
                                 <li>
-                                    @if ($i == $user_login_attempts->currentPage())
-                                    <a href="{{ $user_login_attempts->url($i) }}" class="flex items-center justify-center px-4 h-10 text-white bg-[#1AA514] border border-[#30ae2b] hover:bg-green-600">
+                                    @if ($i == $activity_logs->currentPage())
+                                    <a href="{{ $activity_logs->url($i) }}" class="flex items-center justify-center px-4 h-10 text-white bg-[#1AA514] border border-[#30ae2b] hover:bg-green-600">
                                         {{ $i }}
                                     </a>
                                     @else
-                                    <a href="{{ $user_login_attempts->url($i) }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $activity_logs->url($i) }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
                                         {{ $i }}
                                     </a>
                                     @endif
                                 </li>
                                 @endfor
 
-                                @if ($user_login_attempts->nextPageUrl())
+                                @if ($activity_logs->nextPageUrl())
                                 <li>
-                                    <a href="{{ $user_login_attempts->nextPageUrl() }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $activity_logs->nextPageUrl() }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
                                         &raquo;
                                     </a>
                                 </li>
@@ -225,9 +266,9 @@
                                 </li>
                                 @endif
 
-                                @if ($user_login_attempts->hasMorePages())
+                                @if ($activity_logs->hasMorePages())
                                 <li>
-                                    <a href="{{ $user_login_attempts->url($user_login_attempts->lastPage()) }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] rounded-e-lg hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $activity_logs->url($activity_logs->lastPage()) }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] rounded-e-lg hover:bg-gray-100 hover:text-gray-700">
                                         &raquo;&raquo;
                                     </a>
                                 </li>
@@ -257,8 +298,15 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
 </script>
 
 <script>
+document.getElementById('dropdownStatusButton').addEventListener('click', function () {
+    var dropdown = document.getElementById('dropdownStatus');
+    dropdown.classList.toggle('hidden');
+});
+</script>
+
+<script>
     document.addEventListener("DOMContentLoaded", function () {
-    const currentPage = {{ $user_login_attempts->currentPage() }};
+    const currentPage = {{ $activity_logs->currentPage() }};
     const startInput = document.getElementById("datepicker-range-start");
     const endInput = document.getElementById("datepicker-range-end");
     const searchDropdown = document.getElementById("search-dropdown");
@@ -269,6 +317,7 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
     const savedEndDate = localStorage.getItem('endDate');
     const orderDropdown = document.getElementById("order-dropdown");
     const savedSearchQuery = localStorage.getItem('SearchQuery') || '';
+    const SelectedActivityType = JSON.parse(localStorage.getItem('SelectedActivityType')) || [];
     const SelectedStatuses = JSON.parse(localStorage.getItem('SelectedStatuses')) || [];
     const savedUserTypeId = localStorage.getItem('userTypeId');
     const savedOrder = localStorage.getItem('order') || 'asc';
@@ -307,12 +356,24 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         }
     });
 
-    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    document.querySelectorAll('input[name="activity_type_checkbox"]').forEach(checkbox => {
+        if (SelectedActivityType.includes(checkbox.value)) {
+            checkbox.checked = true;
+        }
+        checkbox.addEventListener('change', function () {
+            const updatedActivityType = Array.from(document.querySelectorAll('input[name="activity_type_checkbox"]:checked'))
+                .map(checkbox => checkbox.value);
+            localStorage.setItem('SelectedActivityType', JSON.stringify(updatedActivityType));
+            updateTable(1);
+        });
+    });
+
+    document.querySelectorAll('input[name="status_checkbox"]').forEach(checkbox => {
         if (SelectedStatuses.includes(checkbox.value)) {
             checkbox.checked = true;
         }
         checkbox.addEventListener('change', function () {
-            const updatedStatuses = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+            const updatedStatuses = Array.from(document.querySelectorAll('input[name="status_checkbox"]:checked'))
                 .map(checkbox => checkbox.value);
             localStorage.setItem('SelectedStatuses', JSON.stringify(updatedStatuses));
             updateTable(1);
@@ -356,10 +417,11 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         const SearchQuery = searchDropdown.value.toLowerCase();
         const startDate = startInput.value;
         const endDate = endInput.value;
+        const SelectedActivityType = JSON.parse(localStorage.getItem('SelectedActivityType')) || [];
         const SelectedStatuses = JSON.parse(localStorage.getItem('SelectedStatuses')) || [];
         const order = orderDropdown.value;
 
-        fetch('/admin/sign-in-history/filter-sign-in-history?page=' + page, {
+        fetch('/admin/activity-log/filter-activity-log?page=' + page, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -368,6 +430,7 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
             body: JSON.stringify({
                 user_type_id: userTypeId,
                 search_query: SearchQuery,
+                activity_ids: SelectedActivityType,
                 status_ids: SelectedStatuses,
                 start_date: startDate,
                 end_date: endDate,
@@ -382,12 +445,30 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
             .catch(error => console.error('Error:', error));
     }
 
-    function renderTable(userLoginAttempts) {
+    function renderTable(activityLogs) {
         const tbody = document.querySelector('tbody');
         tbody.innerHTML = '';
 
-        userLoginAttempts.forEach((attempt, index) => {
-            const utcDate = new Date(attempt.created_at + 'Z');
+        activityLogs.forEach((activity, index) => {
+            const defaultProfile = `https://api.dicebear.com/9.x/initials/svg?seed=${activity.encoder_first_name || 'Unknown'}-${activity.encoder_last_name || 'Unknown'}`;
+
+            const defaultAdminProfile = `https://api.dicebear.com/9.x/initials/svg?seed=${activity.admin_first_name || 'Admin'}-${activity.admin_last_name || 'User'}`;
+
+            const profilePicture = activity.encoder_profile_picture
+                ? `/storage/images/encoder/encoder_thumbnail_profile/${activity.encoder_profile_picture}`
+                : activity.admin_profile_picture
+                ? `/storage/images/admin/admin_thumbnail_profile/${activity.admin_profile_picture}`
+                : activity.activity_user_type_id == 3
+                ? defaultAdminProfile
+                : defaultProfile;
+
+            const addedBy = activity.activity_user_type_id == 2
+                ? `${activity.encoder_first_name || ''} ${activity.encoder_last_name || ''} (Encoder)`.trim()
+                : activity.activity_user_type_id == 3
+                ? `${activity.admin_first_name || ''} ${activity.admin_last_name || ''} (Admin)`.trim()
+                : 'Unknown';
+
+            const utcDate = new Date(activity.created_at + 'Z');
 
             const formattedDate = new Intl.DateTimeFormat('en-US', {
                 timeZone: 'Asia/Manila', 
@@ -405,13 +486,27 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
 
             const row = `
                 <tr class="${index % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]'}">
-                    <td class="px-4 py-2">${attempt.id}</td>
-                    <td class="px-4 py-2">${attempt.email}</td>
-                    <td class="px-4 py-2">${attempt.user_type ? attempt.user_type : 'Non-Registered User'}</td>
-                    <td class="px-4 py-2">${attempt.status}</td>
+                    <td class="px-4 py-2">${activity.id}</td>
+                    <td class="px-4 py-2">
+                        <div class="relative group">
+                            <span class="cursor-pointer font-semibold text-blue-600 hover:underline">${activity.activity}</span>
+                            <div class="hidden group-hover:block absolute z-10 bg-white border border-gray-200 shadow-lg rounded-md p-2 w-48 h-24 overflow-auto">
+                                <p class="text-sm text-gray-700">${activity.changes || 'No changes available'}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-2">${activity.activity_type}</td>
+                    <td class="px-4 py-2">${activity.status}</td>
                     <td class="px-4 py-2">${formattedDate}</td>
                     <td class="px-4 py-2">${formattedTime}</td>
+                    <td class="px-4 py-2 gap-2">
+                        <div class="flex flex-row items-center gap-2">
+                            <img class="w-10 h-10 rounded-full ring-2 ring-white" src="${profilePicture}" alt="Profile Picture">
+                            <span>${addedBy}</span>
+                        </div>
+                    </td>
                 </tr>`;
+
             tbody.innerHTML += row;
         });
     }

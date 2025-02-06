@@ -75,7 +75,12 @@ class FamilyCompositionSeeder extends Seeder
         foreach ($seniors as $senior) {
             echo "(Family Composition) Processing Senior ID: {$senior->id}" . PHP_EOL;
 
-            $familyMemberCount = (rand(1, 2) == 1) ? rand(5, 10) : rand(1, 4);
+            if (rand(1, 100) <= 5) {
+                echo "No family members assigned to Senior ID: {$senior->id}" . PHP_EOL;
+                continue; 
+            }
+
+            $familyMemberCount = rand(1, 5); 
 
             for ($i = 0; $i < $familyMemberCount; $i++) {
                 $relativeFirstName = fake()->firstName;
@@ -93,16 +98,34 @@ class FamilyCompositionSeeder extends Seeder
                     $relativeIncome = 0;
                 } elseif ($relativeAge >= 18 && $relativeAge < 30) {
                     $civilStatus = rand(1, 4);
-                    $occupation = (rand(1, 100) <= 25) ? null : fake()->randomElement(['Intern', 'Junior Developer', 'Salesperson', 'Artist', 'Freelancer', 'Part-time Job', 'Photographer', 'Social Media Manager', 'Graphic Designer', 'Content Creator', 'Virtual Assistant']);
-                    $relativeIncome = $occupation && isset($occupationIncomeRanges[$occupation]) ? rand($occupationIncomeRanges[$occupation][0], $occupationIncomeRanges[$occupation][1]) : null;
+                    $occupation = (rand(1, 100) <= 25) ? null : fake()->randomElement([
+                        'Intern',
+                        'Junior Developer',
+                        'Salesperson',
+                        'Artist',
+                        'Freelancer',
+                        'Part-time Job',
+                        'Photographer',
+                        'Social Media Manager',
+                        'Graphic Designer',
+                        'Content Creator',
+                        'Virtual Assistant'
+                    ]);
+                    $relativeIncome = $occupation && isset($occupationIncomeRanges[$occupation])
+                        ? rand($occupationIncomeRanges[$occupation][0], $occupationIncomeRanges[$occupation][1])
+                        : null;
                 } elseif ($relativeAge >= 30 && $relativeAge < 60) {
                     $civilStatus = rand(1, 4);
                     $occupation = (rand(1, 100) <= 50) ? null : fake()->randomElement(array_keys($occupationIncomeRanges));
-                    $relativeIncome = $occupation && isset($occupationIncomeRanges[$occupation]) ? rand($occupationIncomeRanges[$occupation][0], $occupationIncomeRanges[$occupation][1]) : null;
+                    $relativeIncome = $occupation && isset($occupationIncomeRanges[$occupation])
+                        ? rand($occupationIncomeRanges[$occupation][0], $occupationIncomeRanges[$occupation][1])
+                        : null;
                 } else {
                     $civilStatus = rand(2, 4);
                     $occupation = (rand(1, 100) <= 75) ? null : fake()->randomElement(['Retired', 'Consultant']);
-                    $relativeIncome = $occupation && isset($occupationIncomeRanges[$occupation]) ? rand($occupationIncomeRanges[$occupation][0], $occupationIncomeRanges[$occupation][1]) : null;
+                    $relativeIncome = $occupation && isset($occupationIncomeRanges[$occupation])
+                        ? rand($occupationIncomeRanges[$occupation][0], $occupationIncomeRanges[$occupation][1])
+                        : null;
                 }
 
                 FamilyComposition::create([

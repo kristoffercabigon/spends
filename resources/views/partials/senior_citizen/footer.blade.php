@@ -1,4 +1,5 @@
-<footer class="flex flex-col w-full relative items-center bg-[#FF4802] text-center shadow-lg text-surface">
+<footer x-data = "{showRequestTrackerModal: localStorage.getItem('showRequestTrackerModal') === 'true',
+    showRequestStatusModal: localStorage.getItem('showRequestStatusModal') === 'true',}"  class="flex flex-col w-full relative items-center bg-[#FF4802] text-center shadow-lg text-surface">
 
   <div class="bg-white w-full h-[2px] flex items-center relative shadow-[0_12px_16px_rgba(255,255,255,0.7)]">
     <img src="{{ asset('images/osca_image_transparent_with_border.png') }}" alt="OSCA Logo" class="w-[70px] mx-auto top-[-20px]">
@@ -8,12 +9,16 @@
     <div class="mb-6 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-10">
         <a href="/" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">Home</a>
         <a href="/announcements" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">Announcement</a>
+        <a @click.prevent="showRequestTrackerModal = true; localStorage.setItem('showRequestTrackerModal', 'true')" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">Tracker</a>
         <a href="/contact-us" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">Contact Us</a>
         <a href="/about-us" class="text-white hover:text-orange-300 hover:scale-105 transition duration-150 ease-in-out">About Us</a>
+
     </div>
     <div class="mb-2 flex justify-center space-x-2">
       <a
-        href="#!"
+        href="https://www.facebook.com/oscacaloocan"
+        target="_blank"
+        rel="noopener noreferrer"
         type="button"
         class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0"
         data-twe-ripple-init>
@@ -28,40 +33,12 @@
         </span>
       </a>
 
-      <a
-        href="#!"
-        type="button"
-        class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0"
-        data-twe-ripple-init>
-        <span class="mx-auto [&>svg]:h-5 [&>svg]:w-5">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="white"
-            viewBox="0 0 512 512">
-            <path
-              d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-          </svg>
-        </span>
-      </a>
-
-      <a
-        href="#!"
-        type="button"
-        class="rounded-full bg-transparent hover:animate-scale p-3 font-medium uppercase leading-normal text-surface transition duration-150 ease-in-out hover:bg-orange-400 focus:outline-none focus:ring-0"
-        data-twe-ripple-init>
-        <span class="mx-auto [&>svg]:h-5 [&>svg]:w-5">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="white"
-            viewBox="0 0 448 512">
-            <path
-              d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" />
-          </svg>
-        </span>
-      </a>
     </div>
   </div>
   <hr class="border-t-2 border-white mx-auto w-[80%] my-4">
+
+    <x-modal.senior_citizen.request_tracker />
+    <x-modal.senior_citizen.request_status />
 
   <div class=" mx-4 pb-4 pt-2 text-center text-white">
     © 2024 Socal Pension Network of DSWD for Senior Citizens. All rights reserved  

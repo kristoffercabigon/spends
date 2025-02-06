@@ -60,10 +60,23 @@ class AdminController extends Controller
 
         $account_status_list = DB::table('senior_account_status_list')->pluck('senior_account_status', 'id');
 
+        $applicationStatusCounts = DB::table('seniors')
+        ->select('application_status_id', DB::raw('count(*) as total'))
+        ->groupBy('application_status_id')
+        ->pluck('total', 'application_status_id');
+
         $accountStatusCounts = DB::table('seniors')
         ->select('account_status_id', DB::raw('count(*) as total'))
         ->groupBy('account_status_id')
         ->pluck('total', 'account_status_id');
+
+        $applicationStatusData = [];
+        foreach ($application_status_list as $id => $status) {
+            $applicationStatusData[] = [
+                'status' => $status,
+                'total' => $applicationStatusCounts[$id] ?? 0
+            ];
+        }
 
         $accountStatusData = [];
         foreach ($account_status_list as $id => $status) {
@@ -147,6 +160,7 @@ class AdminController extends Controller
         return view('admin.admin_dashboard', [
             'title' => 'Dashboard',
             'application_status_list' => $application_status_list,
+            'applicationStatusData' => $applicationStatusData,
             'accountStatusData' => $accountStatusData,
             'barangay_list' => $barangayData,
             'seniors' => $seniors,
@@ -163,6 +177,86 @@ class AdminController extends Controller
             })
                 ->count(),
         ]);
+    }
+
+    public function showAdminMessages()
+    {
+        $messages = DB::table('contact_us')
+        ->leftJoin('message_type_list', 'contact_us.message_type_id', '=', 'message_type_list.id')
+        ->select(
+            'contact_us.*',
+            'message_type_list.message_type',
+        )
+            ->orderBy('contact_us.id', 'asc')
+            ->paginate(10);
+
+        $message_types = DB::table('message_type_list')->get();
+
+        $adminUser = auth()->guard('admin')->user();
+        $adminFirstName = $adminUser->admin_first_name;
+        $adminLastName = $adminUser->admin_last_name;
+
+        $userRole = DB::table('user_type_list')
+        ->where('id', $adminUser->admin_user_type_id)
+        ->value('user_type');
+
+        return view('admin.admin_messages', [
+            'title' => 'Messages',
+            'message_types' => $message_types,
+            'messages' => $messages,
+            'adminFirstName' => $adminFirstName,
+            'adminLastName' => $adminLastName,
+            'userRole' => $userRole,
+        ]);
+    }
+
+    public function filterAdminMessages(Request $request)
+    {
+        $messageTypeId = $request->input('message_type_id');
+        $searchQuery = $request->input('search_query', '');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $orderDirection = $request->input('order', 'desc');
+        $perPage = 10;
+
+        $query = DB::table('contact_us')
+        ->leftJoin('message_type_list', 'contact_us.message_type_id', '=', 'message_type_list.id')
+        ->select(
+            'contact_us.*',
+            'message_type_list.message_type',
+        );
+
+        if (!empty($messageTypeId)) {
+            $query->where('contact_us.message_type_id', $messageTypeId);
+        }
+
+        if ($startDate) {
+            $query->whereDate('contact_us.created_at', '>=', $startDate);
+        }
+
+        if ($endDate) {
+            $query->whereDate('contact_us.created_at', '<=', $endDate);
+        }
+
+        if ($startDate || $endDate) {
+            $query->orderBy('contact_us.created_at', $orderDirection);
+        } else {
+            $query->orderBy('contact_us.id', $orderDirection);
+        }
+
+        if (!empty($searchQuery)) {
+            $terms = array_filter(explode(' ', strtolower($searchQuery)));
+
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->whereRaw("LOWER(contact_us.name) LIKE ?", ['%' . $term . '%']);
+                }
+            })->orWhere('contact_us.name', 'LIKE', '%' . $searchQuery . '%');
+        }
+
+        $messages = $query->paginate($perPage);
+
+        return response()->json($messages);
     }
 
     public function filterSeniorsDashboardBeneficiaries(Request $request)
@@ -214,11 +308,22 @@ class AdminController extends Controller
         $applicationStatuses = DB::table('senior_application_status_list')->get();
         $barangayList = DB::table('barangay_list')->get();
 
+        $adminUser = auth()->guard('admin')->user();
+        $adminFirstName = $adminUser->admin_first_name;
+        $adminLastName = $adminUser->admin_last_name;
+
+        $userRole = DB::table('user_type_list')
+        ->where('id', $adminUser->admin_user_type_id)
+        ->value('user_type');
+
         return view('admin.admin_application_requests', [
             'title' => 'Application Requests',
             'seniors' => $seniors,
             'applicationStatuses' => $applicationStatuses,
             'barangayList' => $barangayList,
+            'adminFirstName' => $adminFirstName,
+            'adminLastName' => $adminLastName,
+            'userRole' => $userRole,
         ]);
     }
 
@@ -294,6 +399,8 @@ class AdminController extends Controller
         $senior_account_status_list = DB::table('senior_account_status_list')->get();
         $senior_application_status_list = DB::table('senior_application_status_list')->get();
 
+        
+
         $family_composition = DB::table('family_composition')
         ->leftJoin('seniors', 'family_composition.senior_id', '=', 'seniors.id')
         ->leftJoin('civil_status_list', 'family_composition.relative_civil_status_id', '=', 'civil_status_list.id')
@@ -338,6 +445,14 @@ class AdminController extends Controller
 
         $lastLivingArrangementId = $living_arrangement_list->last()->id ?? null;
 
+        $adminUser = auth()->guard('admin')->user();
+        $adminFirstName = $adminUser->admin_first_name;
+        $adminLastName = $adminUser->admin_last_name;
+
+        $userRole = DB::table('user_type_list')
+        ->where('id', $adminUser->admin_user_type_id)
+        ->value('user_type');
+
         return view('admin.admin_senior_profile', [
             'senior' => $seniors,
             'title' => 'Profile: ' . $seniors->first_name . ' ' . $seniors->last_name,
@@ -359,6 +474,9 @@ class AdminController extends Controller
             'application_assistant' => $selectedApplicationAssistant,
             'registration_assistant' => $selectedRegistrationAssistant,
             'adminId' => $adminId,
+            'adminFirstName' => $adminFirstName,
+            'adminLastName' => $adminLastName,
+            'userRole' => $userRole,
         ]);
     }
 
@@ -485,11 +603,22 @@ class AdminController extends Controller
         $accountStatuses = DB::table('senior_account_status_list')->get();
         $barangayList = DB::table('barangay_list')->get();
 
+        $adminUser = auth()->guard('admin')->user();
+        $adminFirstName = $adminUser->admin_first_name;
+        $adminLastName = $adminUser->admin_last_name;
+
+        $userRole = DB::table('user_type_list')
+        ->where('id', $adminUser->admin_user_type_id)
+        ->value('user_type');
+
         return view('admin.admin_beneficiaries_list', [
             'title' => 'Beneficiaries List',
             'seniors' => $seniors,
             'accountStatuses' => $accountStatuses,
             'barangayList' => $barangayList,
+            'adminFirstName' => $adminFirstName,
+            'adminLastName' => $adminLastName,
+            'userRole' => $userRole,
         ]);
     }
 
@@ -552,6 +681,14 @@ class AdminController extends Controller
     {
         $barangay_list = DB::table('barangay_list')->get();
 
+        $adminUser = auth()->guard('admin')->user();
+        $adminFirstName = $adminUser->admin_first_name;
+        $adminLastName = $adminUser->admin_last_name;
+
+        $userRole = DB::table('user_type_list')
+        ->where('id', $adminUser->admin_user_type_id)
+        ->value('user_type');
+
         $encoders = DB::table('encoder')
         ->leftJoin('barangay_list', 'barangay_list.id', '=', 'encoder.encoder_barangay_id')
         ->select(
@@ -588,7 +725,10 @@ class AdminController extends Controller
         return view('admin.admin_encoders_list', [
             'title' => 'Encoders List',
             'encoders' => $encoders,
-            'barangay_list' => $barangay_list
+            'barangay_list' => $barangay_list,
+            'adminFirstName' => $adminFirstName,
+            'adminLastName' => $adminLastName,
+            'userRole' => $userRole,
         ]);
     }
 
@@ -719,6 +859,14 @@ class AdminController extends Controller
     {
         $barangay_list = DB::table('barangay_list')->get();
 
+        $adminUser = auth()->guard('admin')->user();
+        $adminFirstName = $adminUser->admin_first_name;
+        $adminLastName = $adminUser->admin_last_name;
+
+        $userRole = DB::table('user_type_list')
+        ->where('id', $adminUser->admin_user_type_id)
+        ->value('user_type');
+
         $encoder = Encoder::leftJoin('barangay_list', 'encoder.encoder_barangay_id', '=', 'barangay_list.id')
         ->select(
             'encoder.id',
@@ -756,7 +904,10 @@ class AdminController extends Controller
         return view('admin.admin_encoder_profile', [
             'encoder' => $encoder,
             'title' => 'Profile: '. $encoder->encoder_first_name . ' ' . $encoder->encoder_last_name,
-            'barangay_list' => $barangay_list
+            'barangay_list' => $barangay_list,
+            'adminFirstName' => $adminFirstName,
+            'adminLastName' => $adminLastName,
+            'userRole' => $userRole,
         ]);
     }
 
@@ -949,7 +1100,7 @@ class AdminController extends Controller
             'created_at' => now(),
         ]);
 
-        return redirect('/admin')->with([
+        return redirect('/admin/dashboard')->with([
             'admin-message-header' => 'Welcome back!',
             'admin-message-body' => 'Successfully logged in.',
             'clearAdminLoginModal' => true,
@@ -1407,6 +1558,14 @@ class AdminController extends Controller
     {
         $barangayList = DB::table('barangay_list')->get();
 
+        $adminUser = auth()->guard('admin')->user();
+        $adminFirstName = $adminUser->admin_first_name;
+        $adminLastName = $adminUser->admin_last_name;
+
+        $userRole = DB::table('user_type_list')
+        ->where('id', $adminUser->admin_user_type_id)
+        ->value('user_type');
+
         $pension_distributions = DB::table('pension_distribution_list')
         ->leftJoin('barangay_list', 'pension_distribution_list.barangay_id', '=', 'barangay_list.id')
         ->leftJoin('user_type_list', 'pension_distribution_list.pension_user_type_id', '=', 'user_type_list.id')
@@ -1431,6 +1590,9 @@ class AdminController extends Controller
             'title' => 'Pension Distribution List',
             'barangayList' => $barangayList,
             'pension_distributions' => $pension_distributions,
+            'adminFirstName' => $adminFirstName,
+            'adminLastName' => $adminLastName,
+            'userRole' => $userRole,
         ]);
     }
 
@@ -1735,11 +1897,21 @@ class AdminController extends Controller
             ->paginate(10);
 
         $user_type_list = DB::table('user_type_list')->get();
+        $adminUser = auth()->guard('admin')->user();
+        $adminFirstName = $adminUser->admin_first_name;
+        $adminLastName = $adminUser->admin_last_name;
+
+        $userRole = DB::table('user_type_list')
+        ->where('id', $adminUser->admin_user_type_id)
+        ->value('user_type');
 
         return view('admin.admin_sign_in_history', [
             'title' => 'Sign In History',
             'user_type_lists' => $user_type_list,
             'user_login_attempts' => $user_login_attempts,
+            'adminFirstName' => $adminFirstName,
+            'adminLastName' => $adminLastName,
+            'userRole' => $userRole,
         ]);
     }
 
@@ -1824,11 +1996,22 @@ class AdminController extends Controller
 
         $user_type_list = DB::table('user_type_list')->get();
 
+        $adminUser = auth()->guard('admin')->user();
+        $adminFirstName = $adminUser->admin_first_name;
+        $adminLastName = $adminUser->admin_last_name;
+
+        $userRole = DB::table('user_type_list')
+        ->where('id', $adminUser->admin_user_type_id)
+        ->value('user_type');
+
         return view('admin.admin_activity_log', [
             'title' => 'Activity Log',
             'activity_types' => $activity_types,
             'user_type_lists' => $user_type_list,
             'activity_logs' => $activity_logs,
+            'adminFirstName' => $adminFirstName,
+            'adminLastName' => $adminLastName,
+            'userRole' => $userRole,
         ]);
     }
 
@@ -1902,7 +2085,6 @@ class AdminController extends Controller
 
         return response()->json($activity_logs);
     }
-
 
     public function verifyAdminEmailCodeLogin(Request $request)
     {

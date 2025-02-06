@@ -238,7 +238,7 @@
                     <li class="inline-block">
                         <a @click.prevent="showLoginModal = true; localStorage.setItem('showLoginModal', 'true')" 
                         class="text-white font-medium px-3 py-2 rounded-lg border border-transparent hover:border-gray-600 hover:text-orange-300 transition duration-150 ease-in-out inline-block text-16px cursor-pointer">
-                            Sign In
+                            Log In
                         </a>
                     </li>
                     <br>

@@ -1,7 +1,7 @@
 @if(session()->has('admin-message-header') || session()->has('admin-message-body'))
 <div x-data="{ show: true }" 
      x-show="show" 
-     x-init="setTimeout(() => show = false, 7000)" 
+     x-init="setTimeout(() => show = false, 3000)" 
      class="bg-teal-100 fixed top-[70px] right-0 m-4 max-w-md mx-auto mt-4 z-[1000] border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md" 
      role="alert"
      x-transition:enter="transform transition ease-out duration-300"

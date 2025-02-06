@@ -46,7 +46,7 @@
                     </span>
                 </a>
 
-                <div class="hidden md:flex flex-1 justify-start">
+                {{-- <div class="hidden md:flex flex-1 justify-start">
                   <div class="relative w-[50%] ml-8">
                       <input type="search" id="search-dropdown-nav" class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border-l-2 border-r-2 border-[#1AA514] focus:ring-[#1AA514] focus:border-[#1AA514]" placeholder="Search" required />
                       <button type="button" class="absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white bg-white rounded-r-lg border border-[#1AA514] hover:bg-[#169f11] focus:ring-4 focus:outline-none focus:ring-[#1AA514] pointer-events-none cursor-not-allowed">
@@ -56,7 +56,7 @@
                           <span class="sr-only">Search</span>
                       </button>
                   </div>
-                </div>
+                </div> --}}
 
                 <div class="hidden md:block items-center">
                     @auth('encoder')

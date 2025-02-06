@@ -34,6 +34,7 @@ return new class extends Migration
             $table->string('profile_picture')->nullable();
             $table->string('indigency')->nullable();
             $table->string('birth_certificate')->nullable();
+            $table->string('signature')->nullable();
             $table->text('signature_data')->nullable();
             $table->foreignId('type_of_living_arrangement')->constrained('living_arrangement_list');
             $table->string('other_arrangement_remark')->nullable();

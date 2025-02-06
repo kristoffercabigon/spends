@@ -22,6 +22,8 @@
             </div>
         </div>
     </div>
+</div>
+
 </section>
 
 @include('partials.senior_citizen.footer')

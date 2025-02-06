@@ -96,6 +96,29 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                         </div>
                     </div>
 
+                    <button onclick="printTable()" 
+                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100">
+                        <img src="../images/print.png" title="Print" alt="Print" class="h-4 w-4">
+                    </button>
+
+                    <button onclick="exportToPDF()" 
+                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
+                        title="Export as PDF">
+                        <img src="../images/export-pdf.png" alt="Export PDF" class="h-4 w-4">
+                    </button>
+
+                    <button onclick="exportToExcel()" 
+                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
+                        title="Export as Excel">
+                        <img src="../images/export-excel.png" alt="Export Excel" class="h-4 w-4">
+                    </button>
+
+                    <button onclick="exportToImage()" 
+                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
+                        title="Export as Image">
+                        <img src="../images/export-image.png" alt="Export Image" class="h-4 w-4">
+                    </button>
+
                     <div class="overflow-x-auto drop-shadow-lg">
                         <table class="min-w-full table-auto relative bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 leading-8" data-aos="zoom-in">
                             <thead>
@@ -224,6 +247,9 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
 </div>
 </section>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
     const currentPage = {{ $pension_distributions->currentPage() }};
@@ -315,12 +341,12 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                 order: order,
             }),
         })
-            .then(response => response.json())
-            .then(data => {
-                renderTable(data.data);
-                renderPagination(data);
-            })
-            .catch(error => console.error('Error:', error));
+        .then(response => response.json())
+        .then(data => {
+            renderTable(data.data);
+            renderPagination(data);
+        })
+        .catch(error => console.error('Error:', error));
     }
 
     function renderTable(data) {
@@ -340,7 +366,7 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                 hour12: true,
             });
 
-           const formattedEndTime = new Date(`1970-01-01T${pension_distribution.end_time}`).toLocaleTimeString('en-US', {
+            const formattedEndTime = new Date(`1970-01-01T${pension_distribution.end_time}`).toLocaleTimeString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: true,
@@ -357,7 +383,8 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                     <td class="px-4 py-2 flex justify-start items-center">
                         <a 
                             href="javascript:void(0)" 
-                            class="bg-orange-500 animate-pop hover:bg-orange-600 rounded-md p-2 cursor-pointer" @click="showEncoderEditPensionDistributionModal = true; 
+                            class="bg-orange-500 animate-pop hover:bg-orange-600 rounded-md p-2 cursor-pointer" 
+                            @click="showEncoderEditPensionDistributionModal = true; 
                             localStorage.setItem('showEncoderEditPensionDistributionModal', 'true');
                             loadPensionDataForEdit(${pension_distribution.id})"
                         >
@@ -365,14 +392,14 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                         </a>
                         <a 
                             href="javascript:void(0)" 
-                            class="bg-red-500 ml-1 animate-pop hover:bg-red-600 rounded-md p-2 cursor-pointer" @click="showEncoderDeletePensionDistributionModal = true; 
+                            class="bg-red-500 ml-1 animate-pop hover:bg-red-600 rounded-md p-2 cursor-pointer" 
+                            @click="showEncoderDeletePensionDistributionModal = true; 
                             localStorage.setItem('showEncoderDeletePensionDistributionModal', 'true');
                             loadPensionDataForDelete(${pension_distribution.id})"
                         >
-                            <img src="../images/trashbin-white.png" alt="Edit Pension Program" class="w-4 h-4">
+                            <img src="../images/trashbin-white.png" alt="Delete Pension Program" class="w-4 h-4">
                         </a>
                     </td>
-                    
                 </tr>`;
             tbody.innerHTML += row;
         });
@@ -436,8 +463,57 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
     }
 
     updateTable(currentPage);
+    
 });
 
+</script>
+
+<script>
+    const encoderFirstName = "{{ $encoderFirstName }}";
+    const encoderLastName = "{{ $encoderLastName }}";
+    const userRole = "{{ $userRole }}";
+    const currentDate = new Date().toLocaleString(); 
+
+    function printTable() {
+        const tableContent = document.querySelector('table').outerHTML;
+        const newWindow = window.open('', '', 'height=800,width=600');
+        newWindow.document.write('<html><head><title>Print</title></head><body>');
+        newWindow.document.write(tableContent);
+        newWindow.document.write('<footer>');
+        newWindow.document.write(`<p>Exported by: ${encoderFirstName} ${encoderLastName} (${userRole})</p>`);
+        newWindow.document.write(`<p>Date Exported: ${currentDate}</p>`);
+        newWindow.document.write('</footer>');
+        newWindow.document.write('</body></html>');
+        newWindow.document.close();
+        newWindow.print();
+    }
+
+    function exportToPDF() {
+        const element = document.querySelector('table');
+        const opt = {
+            margin: 1,
+            filename: `beneficiary_${encoderFirstName}_${encoderLastName}_${userRole}_${currentDate}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 4 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+        };
+        html2pdf().from(element).set(opt).save();
+    }
+
+    function exportToExcel() {
+        const table = document.querySelector('table');
+        const wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet 1' });
+        XLSX.writeFile(wb, `pension_distribution_${encoderFirstName}_${encoderLastName}_${userRole}_${currentDate}.xlsx`);
+    }
+
+    function exportToImage() {
+        html2canvas(document.querySelector('table')).then(canvas => {
+            let link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `pension_distribution_${encoderFirstName}_${encoderLastName}_${userRole}_${currentDate}.png`;
+            link.click();
+        });
+    }
 </script>
 
 

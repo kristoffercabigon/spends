@@ -1,4 +1,3 @@
-
 @if (session('clearSignatureModal'))
 <script>
     localStorage.removeItem('savedEmail');
@@ -52,38 +51,121 @@
                 </svg>
             </button>
             
-                <div class="w-full bg-white rounded-lg shadow md:mt-0 xl:p-0">
+                <div class="w-full h-[80vh] overflow-y-scroll bg-white rounded-lg shadow md:mt-0 xl:p-0">
                     <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <div class="text-xl font-bold mt-8 leading-tight tracking-tight text-gray-900 md:text-xl">
                             <p class="text-left">E-Signature</p>
                         </div>
+
+                        <div class="text-sm mt-8 text-gray-800 font-semibold">
+                            <div class="flex items-center">
+                                <img src="images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-1"> 
+                                <p class="text-left">
+                                    Note: You can choose whether to upload a photo of your signature or write your signature on the canvas below. 
+                                    A signature is required, so you must complete one option.
+                                </p>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <img src="images/warning.png" alt="Warning Icon" class="w-4 h-4 mr-1"> 
+                                <p class="mt-2 text-left italic">
+                                    Paalala: Maaari kang pumili kung mag-a-upload ng larawan ng iyong pirma o isusulat ang iyong pirma sa canvas sa ibaba. 
+                                    Kinakailangan ang pirma, kaya dapat kumpletuhin ang isa sa mga options na nasa ibaba.
+                                </p>
+                            </div>
+                        </div>
+
+                        <form id="signature-form" method="POST" action="{{ route('submit-signature') }}">
+                        @csrf
+                        @method('PUT')
+
                         <p class="text-sm text-gray-500">
                             Please provide your signature for your account 
                             <strong id="email-display">{{ session('email') ?? '' }}</strong> to proceed logging in.
                         </p>
-                        <form id="signature-form" method="POST" action="{{ route('submit-signature') }}">
-                        @csrf
-                        @method('PUT')
-                        <div class="mt-4 text-center">
-                            <input type="hidden" name="email" id="savedEmail" value="{{ session('email') ?? '' }}">
-                            <canvas id="sig-canvas1" class="border border-gray-500 shadow-md rounded-md w-full h-32 sm:h-40 md:h-48 lg:h-56"></canvas>
-                            <input type="hidden" id="sig-dataUrl1" name="signature_data1">
-                            <img id="sig-image1" style="display:none;">
-                            <p id="signaturevalidation1" class="text-sm mt-2 text-red-500" style="display:none;">
-                                Please provide your signature.
-                            </p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                                <div x-data="{
+                                    showSignatureCameraModal1: false,
+                                    showSignatureModal1: false,
+                                    previewSignatureUrl1: '',
+                                    previewSignatureImage1(event) {
+                                        const input = event.target;
+                                        if (input.files && input.files[0]) {
+                                            const reader = new FileReader();
+                                            reader.onload = (e) => {
+                                                this.previewSignatureUrl1 = e.target.result;
+                                                document.getElementById('signature_preview1').style.display = 'block';
+                                            };
+                                            reader.readAsDataURL(input.files[0]);
+                                        }
+                                    }
+                                }" 
+                                @open-signature-camera-modal1.window="showSignatureCameraModal1 = true; localStorage.setItem('showSignatureCameraModal1', 'true')" 
+                                @close-signature-camera-modal1.window="showSignatureCameraModal1 = false; localStorage.setItem('showSignatureCameraModal1', 'false')">
+
+                                    <div class="flex items-center mb-2">
+                                        <img id="signature_asterisk1" src="images/asterisk.png" alt="Asterisk" class="w-3 h-3 mr-2" style="display: block">
+                                        <label id="signatureLabel1" class="text-sm text-gray-800">
+                                            Signature
+                                        </label>
+                                    </div>
+
+                                    <div class="relative">
+                                        <input name="signature1" type="file" 
+                                            class="bg-gray-100 focus:bg-transparent w-full text-sm text-gray-800 px-4 py-3 rounded-l-md rounded-r-md transition-all bg-gray-100 border border-gray-500 focus:ring-blue-500 focus:border-blue-500" 
+                                            placeholder="Upload photo of Signature" id="signatureField1" 
+                                            @change="previewSignatureImage1">
+
+                                        <button @click="$dispatch('open-signature-camera-modal1')" 
+                                                class="absolute inset-y-0 right-0 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-700 border border-gray-300 rounded-r-md w-12" 
+                                                type="button">
+                                            <img src="../images/camera.png" alt="Toggle Signature" class="hover:animate-jiggle camera-icon w-7 h-7" id="toggleSignatureCameraIcon1">
+                                        </button>
+                                    </div>
+
+                                    <p id="signature_filename1" class="text-gray-700 text-xs mt-2"></p>
+
+                                    <div class="flex justify-center items-center mt-4">
+                                        <img :src="previewSignatureUrl1" id="signature_preview1" class="animate-blurred-fade-in max-h-48 rounded-md shadow-lg cursor-pointer" style="display: none;" alt="Signature Preview"
+                                            @click="showSignatureModal1 = true">
+                                    </div>
+
+                                    <p id="signatureMessage1" class="text-xs mt-2 p-1 hidden"></p>
+
+                                    @include('components.modal.senior_citizen.signature_camera1')
+                                    @include('components.modal.senior_citizen.signature_zoom1')
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 text-center">
+                                <canvas id="sig-canvas1" class="border border-gray-500 shadow-md rounded-md w-full h-32 sm:h-40 md:h-48 lg:h-56"></canvas>
+                                <input type="hidden" id="sig-dataUrl1" name="signature_data1">
+                                <img id="sig-image1" style="display:none;">
+                                <p id="signaturevalidation1" class="text-sm mt-2 text-red-500" style="display:none;">Please provide your signature.</p>
+                                <div class="flex justify-center items-center mt-4">
+                                    <button type="button" id="sig-clearBtn1" class="py-3 px-6 md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none">Clear Signature</button>
+                                </div>
+                            </div>
+
+                            <div class="mt-2 flex flex-col items-center justify-center">
+                                <div id="submit-error" class="text-red-500 text-sm mt-2" style="{{ $errors->any() ? 'display: block;' : 'display: none;' }}">
+                                    @if($errors->any())
+                                        <div class="flex items-center text-red-500">
+                                            <p class="flex items-center">
+                                                Please fill out the required fields with
+                                                <img src="images/asterisk.png" alt="Asterisk" class="w-3 h-3 ml-2">
+                                            </p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                            
                             <div class="flex justify-center items-center mt-4">
-                                <button type="button" id="sig-clearBtn1" class="py-3 px-6 md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none">
-                                    Clear Signature
+                                <button type="submit" name="submit1" id="submit1" class="py-3 px-6 w-full md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none disabled:opacity-50">
+                                    Submit
                                 </button>
                             </div>
-                        </div>
-                        
-                        <div class="flex justify-center items-center mt-4">
-                            <button type="submit" name="submit1" id="submit1" class="py-3 px-6 w-full md:w-auto text-sm tracking-wider font-light rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none disabled:opacity-50">
-                                Submit
-                            </button>
-                        </div>
                         </form>
                     </div>
                 </div>
@@ -149,6 +231,24 @@ document.addEventListener("DOMContentLoaded", function () {
         window.addEventListener("resize", resizeCanvas);
         resizeCanvas();
 
+        function updateSignatureUI() {
+            var savedSignature = localStorage.getItem("signature1");
+            var signatureAsterisk =
+                document.getElementById("signature_asterisk1");
+
+            if (signatureAsterisk) {
+                if (savedSignature) {
+                    signatureAsterisk.style.display = "none";
+                    canvas.classList.remove("border-gray-500");
+                    canvas.classList.add("border-green-500");
+                } else {
+                    signatureAsterisk.style.display = "block";
+                    canvas.classList.remove("border-green-500");
+                    canvas.classList.add("border-gray-500");
+                }
+            }
+        }
+
         function loadSignature() {
             var savedSignature = localStorage.getItem("signature");
             if (savedSignature) {
@@ -158,6 +258,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     ctx.drawImage(img, 0, 0);
                 };
             }
+            updateSignatureUI();
         }
 
         function saveSignature() {
@@ -166,12 +267,8 @@ document.addEventListener("DOMContentLoaded", function () {
             var sigImage = document.getElementById("sig-image1");
             sigText.value = dataUrl;
             sigImage.setAttribute("src", dataUrl);
-            localStorage.setItem("signature", dataUrl);
-
-            var submitBtn = document.getElementById("submit1");
-            if (sigText.value) {
-                submitBtn.disabled = false;
-            }
+            localStorage.setItem("signature1", dataUrl);
+            updateSignatureUI();
         }
 
         function getMousePos(canvasDom, mouseEvent) {
@@ -205,28 +302,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        function isCanvasBlank(canvas) {
-            const blank = document.createElement("canvas");
-            blank.width = canvas.width;
-            blank.height = canvas.height;
-            return canvas.toDataURL() === blank.toDataURL();
-        }
-
-        function validateSignature() {
-            var validationMessage = document.getElementById(
-                "signaturevalidation1"
-            );
-            if (isCanvasBlank(canvas)) {
-                validationMessage.style.display = "block";
-                canvas.style.borderColor = "red";
-                return false;
-            } else {
-                validationMessage.style.display = "none";
-                canvas.style.borderColor = "green";
-                return true;
-            }
-        }
-
         canvas.addEventListener(
             "mousedown",
             function (e) {
@@ -241,7 +316,6 @@ document.addEventListener("DOMContentLoaded", function () {
             function (e) {
                 drawing = false;
                 saveSignature();
-                validateSignature();
             },
             false
         );
@@ -265,7 +339,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 drawing = true;
                 lastPos = getTouchPos(canvas, e);
             },
-            false
+            { passive: false }
         );
 
         canvas.addEventListener(
@@ -278,7 +352,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     lastPos = mousePos;
                 }
             },
-            false
+            { passive: false } 
         );
 
         canvas.addEventListener(
@@ -287,9 +361,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 e.preventDefault();
                 drawing = false;
                 saveSignature();
-                validateSignature();
             },
-            false
+            { passive: false } 
         );
 
         document.body.addEventListener(
@@ -299,7 +372,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     e.preventDefault();
                 }
             },
-            false
+            { passive: false } 
         );
 
         document.body.addEventListener(
@@ -309,7 +382,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     e.preventDefault();
                 }
             },
-            false
+            { passive: false } 
         );
 
         document.body.addEventListener(
@@ -319,13 +392,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     e.preventDefault();
                 }
             },
-            false
+            { passive: false } 
         );
 
         function clearCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            validateSignature();
-            localStorage.removeItem("signature");
+            localStorage.removeItem("signature1");
+            updateSignatureUI();
         }
 
         var clearBtn = document.getElementById("sig-clearBtn1");
@@ -341,19 +414,99 @@ document.addEventListener("DOMContentLoaded", function () {
                 var sigImage = document.getElementById("sig-image1");
                 sigText.value = "";
                 sigImage.setAttribute("src", "");
-                submitBtn.disabled = false;
             },
             false
         );
 
-        form.addEventListener("submit1", function (e) {
-            saveSignature();
-            if (!validateSignature()) {
-                e.preventDefault();
-            }
-        });
-
         loadSignature();
     })();
+
+    const signatureLabel = document.getElementById("signatureLabel1");
+    const signatureInput = document.getElementById("signatureField1");
+    const signatureAsterisk = document.getElementById("signature_asterisk1");
+    const signaturePreview = document.getElementById("signature_preview1");
+    const signatureFilename = document.getElementById("signature_filename1");
+    const signatureMessage = document.getElementById("signatureMessage1");
+
+    signatureInput.addEventListener("change", function () {
+        const file = this.files[0];
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/bmp",
+            "image/tiff",
+        ];
+        const maxSize = 4 * 1024 * 1024;
+
+        signaturePreview.style.display = "none";
+        signatureFilename.textContent = "";
+        signatureMessage.textContent = "";
+        signatureMessage.classList.add("hidden");
+        signatureAsterisk.style.display = "block";
+        signatureLabel.classList.remove("text-red-700", "text-green-700");
+        signatureLabel.classList.add("text-gray-800");
+        signatureInput.classList.remove(
+            "bg-red-50",
+            "border-red-500",
+            "text-red-900"
+        );
+        signatureInput.classList.remove(
+            "bg-green-50",
+            "border-green-500",
+            "text-green-900"
+        );
+
+        if (file) {
+            signatureFilename.textContent = `Selected File: ${file.name}`;
+
+            if (!allowedTypes.includes(file.type)) {
+                signatureAsterisk.style.display = "block";
+                signatureMessage.textContent =
+                    "Invalid file type. Accepted formats: JPEG, PNG, BMP, TIFF.";
+                signatureMessage.classList.remove("hidden", "text-green-500");
+                signatureMessage.classList.add("text-red-500");
+                signatureLabel.classList.add("text-red-700");
+                signatureInput.classList.add(
+                    "bg-red-50",
+                    "border-red-500",
+                    "text-red-900"
+                );
+                return;
+            }
+
+            if (file.size > maxSize) {
+                signatureAsterisk.style.display = "block";
+                signatureMessage.textContent =
+                    "File size exceeds the 4MB limit.";
+                signatureMessage.classList.remove("hidden", "text-green-500");
+                signatureMessage.classList.add("text-red-500");
+                signatureLabel.classList.add("text-red-700");
+                signatureInput.classList.add(
+                    "bg-red-50",
+                    "border-red-500",
+                    "text-red-900"
+                );
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                signaturePreview.src = e.target.result;
+                signaturePreview.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+
+            signatureAsterisk.style.display = "none";
+            signatureMessage.textContent = "Looks good!";
+            signatureMessage.classList.remove("hidden", "text-red-500");
+            signatureMessage.classList.add("text-green-500");
+            signatureLabel.classList.add("text-green-700");
+            signatureInput.classList.add(
+                "bg-green-50",
+                "border-green-500",
+                "text-green-900"
+            );
+        }
+    });
 });
 </script>

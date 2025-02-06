@@ -13,6 +13,8 @@ Route::controller(SeniorsController::class)->group(function () {
     Route::get('/contact-us', 'contact_us');
     Route::post('/request-tracker', 'track_request')->name('track-request');
     Route::get('/register', 'create');
+    Route::get('/validate-osca-id', 'validateOscaID')->name('validate-osca-id');
+    Route::get('/validate-email', 'validateEmail')->name('validate-email');
     Route::get('/verify-email', 'showVerificationFormRegister')->name('verify-email');
     Route::get('/verify-email-login', 'showVerificationFormLogin')->name('verify-email-login');
     Route::get('/update-signature', 'showSignatureUpdateModal')->name('update-signature');
@@ -115,6 +117,9 @@ Route::controller(AdminController::class)->group(function () {
 
     Route::middleware('auth:admin')->group(function () {
         Route::get('/admin/profile/{admin}', 'showAdminProfile');
+
+        Route::get('/admin/messages', 'showAdminMessages');
+        Route::post('/admin/messages/filter-messages', 'filterAdminMessages');
 
         Route::get('/admin/dashboard', 'showAdminDashboard');
         Route::post('/admin/dashboard/filter-dashboard-beneficiaries', 'filterSeniorsDashboardBeneficiaries');

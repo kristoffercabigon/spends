@@ -46,7 +46,7 @@
                     </span>
                 </a>
 
-                <div class="hidden md:flex flex-1 justify-start">
+                {{-- <div class="hidden md:flex flex-1 justify-start">
                   <div class="relative w-[50%] ml-8">
                       <input type="search" id="search-dropdown-nav" class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border-l-2 border-r-2 border-[#1AA514] focus:ring-[#1AA514] focus:border-[#1AA514]" placeholder="Search" required />
                       <button type="button" class="absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white bg-white rounded-r-lg border border-[#1AA514] hover:bg-[#169f11] focus:ring-4 focus:outline-none focus:ring-[#1AA514] pointer-events-none cursor-not-allowed">
@@ -56,7 +56,7 @@
                           <span class="sr-only">Search</span>
                       </button>
                   </div>
-                </div>
+                </div> --}}
 
                 <div class="hidden md:block items-center">
                     @auth('admin')
@@ -91,6 +91,16 @@
                                                 class="w-5 h-5"
                                                 aria-hidden="true"/>
                                             <span class="ml-2">Home</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/admin/messages" class="block px-4 py-2 hover:bg-gray-100 flex items-center">
+                                        <img 
+                                                src="{{ asset('images/email.png') }}" 
+                                                alt="Messages Icon" 
+                                                class="w-5 h-5"
+                                                aria-hidden="true"/>
+                                            <span class="ml-2">Messages</span>
                                         </a>
                                     </li>
                                     <li>
@@ -287,7 +297,7 @@
             </div>
           </div>
 
-          <div x-data="{ isActive: false, open: false}">
+          {{-- <div x-data="{ isActive: false, open: false}">
             <a
               href="#"
               @click="$event.preventDefault(); open = !open"
@@ -403,7 +413,7 @@
                 Income Source
               </a>
             </div>
-          </div>
+          </div> --}}
         </nav>
 
         <aside
@@ -517,6 +527,18 @@
                       class="w-5 h-5"
                       aria-hidden="true"/>
                   <span class="ml-2">Home</span>
+                  </a>
+                  <a
+                    href="/admin/messages"
+                    role="menuitem"
+                    class="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 flex items-center"
+                  >
+                  <img 
+                      src="{{ asset('images/email.png') }}" 
+                      alt="Home Icon" 
+                      class="w-5 h-5"
+                      aria-hidden="true"/>
+                  <span class="ml-2">Messages</span>
                   </a>
                   <a
                     href="/admin/profile/{{$admin->id}}"

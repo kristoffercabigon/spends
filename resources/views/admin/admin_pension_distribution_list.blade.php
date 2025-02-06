@@ -96,6 +96,29 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                         </div>
                     </div>
 
+                    <button onclick="printTable()" 
+                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100">
+                        <img src="../images/print.png" title="Print" alt="Print" class="h-4 w-4">
+                    </button>
+
+                    <button onclick="exportToPDF()" 
+                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
+                        title="Export as PDF">
+                        <img src="../images/export-pdf.png" alt="Export PDF" class="h-4 w-4">
+                    </button>
+
+                    <button onclick="exportToExcel()" 
+                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
+                        title="Export as Excel">
+                        <img src="../images/export-excel.png" alt="Export Excel" class="h-4 w-4">
+                    </button>
+
+                    <button onclick="exportToImage()" 
+                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
+                        title="Export as Image">
+                        <img src="../images/export-image.png" alt="Export Image" class="h-4 w-4">
+                    </button>
+
                     <div class="overflow-x-auto drop-shadow-lg">
                         <table class="min-w-full table-auto relative bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 leading-8" data-aos="zoom-in">
                             <thead>
@@ -254,6 +277,9 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
 </div>
 </section>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
     const currentPage = {{ $pension_distributions->currentPage() }};
@@ -495,6 +521,56 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
 
 </script>
 
+<script>
+    const adminFirstName = "{{ $adminFirstName }}";
+    const adminLastName = "{{ $adminLastName }}";
+    const userRole = "{{ $userRole }}";
+    const currentDate = new Date().toLocaleString(); 
+
+    function printTable() {
+        const table = document.querySelector('table').cloneNode(true);
+        
+        table.querySelectorAll('img').forEach(img => img.remove());
+
+        const newWindow = window.open('', '', 'height=800,width=600');
+        newWindow.document.write('<html><head><title>Print</title></head><body>');
+        newWindow.document.write(table.outerHTML);
+        newWindow.document.write('<footer>');
+        newWindow.document.write(`<p>Exported by: ${adminFirstName} ${adminLastName} (${userRole})</p>`);
+        newWindow.document.write(`<p>Date Exported: ${currentDate}</p>`);
+        newWindow.document.write('</footer>');
+        newWindow.document.write('</body></html>');
+        newWindow.document.close();
+        newWindow.print();
+    }
+
+    function exportToPDF() {
+        const element = document.querySelector('table');
+        const opt = {
+            margin: 1,
+            filename: `beneficiary_${adminFirstName}_${adminLastName}_${userRole}_${currentDate}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 4 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+        };
+        html2pdf().from(element).set(opt).save();
+    }
+
+    function exportToExcel() {
+        const table = document.querySelector('table');
+        const wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet 1' });
+        XLSX.writeFile(wb, `beneficiary_${adminFirstName}_${adminLastName}_${userRole}_${currentDate}.xlsx`);
+    }
+
+    function exportToImage() {
+        html2canvas(document.querySelector('table')).then(canvas => {
+            let link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `beneficiary_${adminFirstName}_${adminLastName}_${userRole}_${currentDate}.png`;
+            link.click();
+        });
+    }
+</script>
 
 </body>
 </html>

@@ -24,7 +24,7 @@
                     <div class="w-full">
                         <div class="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                             <p class="text-center">
-                                Sign In History
+                                Messages
                             </p>
                         </div>
                     </div>
@@ -36,7 +36,7 @@
 
                             <div class="flex justify-start max-w-2xl mb-4">
                                 <div class="relative w-full">
-                                    <input type="search" id="search-dropdown" class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border-l-2 border-r-2 border-[#1AA514] focus:ring-[#1AA514] focus:border-[#1AA514]" placeholder="Search by Email" required />
+                                    <input type="search" id="search-dropdown" class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border-l-2 border-r-2 border-[#1AA514] focus:ring-[#1AA514] focus:border-[#1AA514]" placeholder="Search name in here.." required />
                                     <button type="button" class="absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white bg-[#1AA514] rounded-r-lg border border-[#1AA514] hover:bg-[#169f11] focus:ring-4 focus:outline-none focus:ring-[#1AA514] pointer-events-none cursor-not-allowed">
                                         <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
@@ -84,45 +84,13 @@
                         <div>
                             <div class="flex relative justify-start md:justify-end">
                                 <div class="relative w-[50%]">
-                                    <select id="user-type-dropdown" class="bg-gray-50 mb-4 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full p-2.5">
-                                        <option value="all" selected>Show All User Type</option>
-                                        <option value="null">Non-Registered User</option>
-                                        @foreach ($user_type_lists as $user_type_list)
-                                            <option value="{{ $user_type_list->id }}">{{ $user_type_list->user_type }}</option>
+                                    <select id="message-type-dropdown" class="bg-gray-50 mb-4 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full p-2.5">
+                                        <option value="all" selected>Show All Message Type</option>
+                                        @foreach ($message_types as $message_type)
+
+                                                <option value="{{ $message_type->id }}">{{ $message_type->message_type }}</option>
                                         @endforeach
                                     </select>
-                                </div>
-                            </div>
-
-                            <div class="flex relative mb-4 justify-start md:justify-end">
-                                <button id="dropdownCheckboxButton" data-dropdown-toggle="dropdownDefaultCheckbox" class="text-white bg-[#1AA514] hover:bg-[#148e10] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-md px-5 py-2 text-center inline-flex items-center" type="button">
-                                    Login Status
-                                    <svg class="w-2.5 h-2.5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
-                                    </svg>
-                                </button>
-
-                                <div id="dropdownDefaultCheckbox" class="z-10 hidden animate-drop-in w-48 bg-white divide-y shadow-lg divide-gray-100 rounded-lg shadow absolute top-12 lg:right-0">
-                                    <ul class="p-3 space-y-3 text-sm text-gray-700" aria-labelledby="dropdownCheckboxButton">
-                                        <li>
-                                            <div class="flex items-center">
-                                                <input id="checkbox-item-successful" type="checkbox" value="successful" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
-                                                <label for="checkbox-item-successful" class="ms-2 text-sm font-medium text-gray-900">Successful</label>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="flex items-center">
-                                                <input id="checkbox-item-failed" type="checkbox" value="failed" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
-                                                <label for="checkbox-item-failed" class="ms-2 text-sm font-medium text-gray-900">Failed</label>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="flex items-center">
-                                                <input id="checkbox-item-throttled" type="checkbox" value="throttled" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
-                                                <label for="checkbox-item-throttled" class="ms-2 text-sm font-medium text-gray-900">Throttled</label>
-                                            </div>
-                                        </li>
-                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -158,27 +126,31 @@
                                 <tr class="bg-[#FF4802] text-white">
                                     
                                     <th class="px-4 py-2 font-semibold rounded-t-md text-left">#</th>
-                                    <th class="px-4 py-2 font-semibold text-left">Email</th>
-                                    <th class="px-4 py-2 font-semibold text-left">User Type</th>
-                                    <th class="px-4 py-2 font-semibold text-left">Login Status</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Name</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Sent by</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Sent to</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Subject</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Message</th>
                                     <th class="px-4 py-2 font-semibold text-left">Date</th>
                                     <th class="px-4 py-2 font-semibold text-left">Time</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($user_login_attempts as $key => $user_login_attempt)
-                                <tr class="{{ $key % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]' }}">
-                                    <td class="px-4 py-2">{{ $user_login_attempt->id }}</td>
-                                    <td class="px-4 py-2">{{ $user_login_attempt->email }}</td>
-                                    <td class="px-4 py-2">{{ $user_login_attempt->user_type }}</td>
-                                    <td class="px-4 py-2">{{ $user_login_attempt->status }}</td>
-                                    <td class="px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($user_login_attempt->created_at)->setTimezone('Asia/Manila')->format('F j, Y g:i A') }}
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($user_login_attempt->created_at)->setTimezone('Asia/Manila')->format('g:i A') }}
-                                    </td>
-                                </tr>
+                                @foreach ($messages as $key => $message)
+                                    <tr class="{{ $key % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]' }}">
+                                        <td class="px-4 py-2">{{ $message->id }}</td>
+                                        <td class="px-4 py-2">{{ $message->name }}</td>
+                                        <td class="px-4 py-2">{{ $message->sent_by_email }}</td>
+                                        <td class="px-4 py-2">{{ $message->sent_to_email }}</td>
+                                        <td class="px-4 py-2">{{ $message->subject }}</td>
+                                        <td class="px-4 py-2">{{ $message->message }}</td>
+                                        <td class="px-4 py-2">
+                                            {{ \Carbon\Carbon::parse($message->created_at)->setTimezone('Asia/Manila')->format('F j, Y') }}
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            {{ \Carbon\Carbon::parse($message->created_at)->setTimezone('Asia/Manila')->format('g:i A') }}
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -187,9 +159,9 @@
                     <div class="mt-4 flex items-center justify-between">
                         <nav aria-label="Page navigation example" class="w-full">
                             <ul class="flex flex-wrap justify-center">
-                                @if (!$user_login_attempts->onFirstPage())
+                                @if (!$messages->onFirstPage())
                                 <li>
-                                    <a href="{{ $user_login_attempts->url(1) }}" class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-[#30ae2b] rounded-s-lg hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $messages->url(1) }}" class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-[#30ae2b] rounded-s-lg hover:bg-gray-100 hover:text-gray-700">
                                         &laquo;&laquo;
                                     </a>
                                 </li>
@@ -201,9 +173,9 @@
                                 </li>
                                 @endif
 
-                                @if ($user_login_attempts->previousPageUrl())
+                                @if ($messages->previousPageUrl())
                                 <li>
-                                    <a href="{{ $user_login_attempts->previousPageUrl() }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $messages->previousPageUrl() }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
                                         &laquo;
                                     </a>
                                 </li>
@@ -216,27 +188,27 @@
                                 @endif
 
                                 @php
-                                    $start = max(1, $user_login_attempts->currentPage() - 2);
-                                    $end = min($user_login_attempts->lastPage(), $user_login_attempts->currentPage() + 2);
+                                    $start = max(1, $messages->currentPage() - 2);
+                                    $end = min($messages->lastPage(), $messages->currentPage() + 2);
                                 @endphp
 
                                 @for ($i = $start; $i <= $end; $i++)
                                 <li>
-                                    @if ($i == $user_login_attempts->currentPage())
-                                    <a href="{{ $user_login_attempts->url($i) }}" class="flex items-center justify-center px-4 h-10 text-white bg-[#1AA514] border border-[#30ae2b] hover:bg-green-600">
+                                    @if ($i == $messages->currentPage())
+                                    <a href="{{ $messages->url($i) }}" class="flex items-center justify-center px-4 h-10 text-white bg-[#1AA514] border border-[#30ae2b] hover:bg-green-600">
                                         {{ $i }}
                                     </a>
                                     @else
-                                    <a href="{{ $user_login_attempts->url($i) }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $messages->url($i) }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
                                         {{ $i }}
                                     </a>
                                     @endif
                                 </li>
                                 @endfor
 
-                                @if ($user_login_attempts->nextPageUrl())
+                                @if ($messages->nextPageUrl())
                                 <li>
-                                    <a href="{{ $user_login_attempts->nextPageUrl() }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $messages->nextPageUrl() }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] hover:bg-gray-100 hover:text-gray-700">
                                         &raquo;
                                     </a>
                                 </li>
@@ -248,9 +220,9 @@
                                 </li>
                                 @endif
 
-                                @if ($user_login_attempts->hasMorePages())
+                                @if ($messages->hasMorePages())
                                 <li>
-                                    <a href="{{ $user_login_attempts->url($user_login_attempts->lastPage()) }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] rounded-e-lg hover:bg-gray-100 hover:text-gray-700">
+                                    <a href="{{ $messages->url($messages->lastPage()) }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-[#30ae2b] rounded-e-lg hover:bg-gray-100 hover:text-gray-700">
                                         &raquo;&raquo;
                                     </a>
                                 </li>
@@ -272,40 +244,28 @@
 </div>
 </section>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<script>
-document.getElementById('dropdownCheckboxButton').addEventListener('click', function () {
-    var dropdown = document.getElementById('dropdownDefaultCheckbox');
-    dropdown.classList.toggle('hidden');
-});
-</script>
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    const currentPage = {{ $user_login_attempts->currentPage() }};
+    const currentPage = {{ $messages->currentPage() }};
     const startInput = document.getElementById("datepicker-range-start");
     const endInput = document.getElementById("datepicker-range-end");
     const searchDropdown = document.getElementById("search-dropdown");
-    const userTypeDropdown = document.getElementById("user-type-dropdown");
+    const messageTypeDropdown = document.getElementById("message-type-dropdown");
     const paginationContainer = document.querySelector("nav[aria-label='Page navigation example'] ul");
 
     const savedStartDate = localStorage.getItem('startDate');
     const savedEndDate = localStorage.getItem('endDate');
     const orderDropdown = document.getElementById("order-dropdown");
     const savedSearchQuery = localStorage.getItem('SearchQuery') || '';
-    const SelectedStatuses = JSON.parse(localStorage.getItem('SelectedStatuses')) || [];
-    const savedUserTypeId = localStorage.getItem('userTypeId');
+    const savedMessageTypeId = localStorage.getItem('messageTypeId');
     const savedOrder = localStorage.getItem('order') || 'asc';
 
     orderDropdown.value = savedOrder;
 
     searchDropdown.value = savedSearchQuery;
 
-    if (savedUserTypeId) {
-        userTypeDropdown.value = savedUserTypeId;
+    if (savedMessageTypeId) {
+        messageTypeDropdown.value = savedMessageTypeId;
     }
 
     const startPicker = flatpickr(startInput, {
@@ -334,18 +294,6 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         }
     });
 
-    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-        if (SelectedStatuses.includes(checkbox.value)) {
-            checkbox.checked = true;
-        }
-        checkbox.addEventListener('change', function () {
-            const updatedStatuses = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-                .map(checkbox => checkbox.value);
-            localStorage.setItem('SelectedStatuses', JSON.stringify(updatedStatuses));
-            updateTable(1);
-        });
-    });
-
     document.getElementById("clear-start").addEventListener("click", function () {
         startInput.value = '';
         localStorage.removeItem('startDate');
@@ -360,9 +308,9 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         updateTable(1);
     });
 
-    userTypeDropdown.addEventListener("change", function () {
-        const userTypeId = this.value;
-        localStorage.setItem('userTypeId', userTypeId);
+    messageTypeDropdown.addEventListener("change", function () {
+        const messageTypeId = this.value;
+        localStorage.setItem('messageTypeId', messageTypeId);
         updateTable(1);
     });
 
@@ -379,23 +327,21 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
     });
 
     function updateTable(page) {
-        const userTypeId = userTypeDropdown.value === 'all' ? null : userTypeDropdown.value;
+        const messageTypeId = messageTypeDropdown.value === 'all' ? null : messageTypeDropdown.value;
         const SearchQuery = searchDropdown.value.toLowerCase();
         const startDate = startInput.value;
         const endDate = endInput.value;
-        const SelectedStatuses = JSON.parse(localStorage.getItem('SelectedStatuses')) || [];
         const order = orderDropdown.value;
 
-        fetch('/admin/sign-in-history/filter-sign-in-history?page=' + page, {
+        fetch('/admin/messages/filter-messages?page=' + page, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             },
             body: JSON.stringify({
-                user_type_id: userTypeId,
+                message_type_id: messageTypeId,
                 search_query: SearchQuery,
-                status_ids: SelectedStatuses,
                 start_date: startDate,
                 end_date: endDate,
                 order: order,
@@ -409,12 +355,13 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
             .catch(error => console.error('Error:', error));
     }
 
-    function renderTable(userLoginAttempts) {
+    function renderTable(messages) {
         const tbody = document.querySelector('tbody');
         tbody.innerHTML = '';
 
-        userLoginAttempts.forEach((attempt, index) => {
-            const utcDate = new Date(attempt.created_at + 'Z');
+        messages.forEach((message, index) => {
+
+            const utcDate = new Date(message.created_at + 'Z');
 
             const formattedDate = new Intl.DateTimeFormat('en-US', {
                 timeZone: 'Asia/Manila', 
@@ -432,13 +379,16 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
 
             const row = `
                 <tr class="${index % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]'}">
-                    <td class="px-4 py-2">${attempt.id}</td>
-                    <td class="px-4 py-2">${attempt.email}</td>
-                    <td class="px-4 py-2">${attempt.user_type ? attempt.user_type : 'Non-Registered User'}</td>
-                    <td class="px-4 py-2">${attempt.status}</td>
+                    <td class="px-4 py-2">${message.id}</td>
+                    <td class="px-4 py-2">${message.name}</td>
+                    <td class="px-4 py-2">${message.sent_by_email}</td>
+                    <td class="px-4 py-2">${message.sent_to_email}</td>
+                    <td class="px-4 py-2">${message.subject}</td>
+                    <td class="px-4 py-2">${message.message}</td>
                     <td class="px-4 py-2">${formattedDate}</td>
                     <td class="px-4 py-2">${formattedTime}</td>
                 </tr>`;
+
             tbody.innerHTML += row;
         });
     }
@@ -503,57 +453,6 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
     updateTable(currentPage);
 });
 
-</script>
-
-<script>
-    const adminFirstName = "{{ $adminFirstName }}";
-    const adminLastName = "{{ $adminLastName }}";
-    const userRole = "{{ $userRole }}";
-    const currentDate = new Date().toLocaleString(); 
-
-    function printTable() {
-        const table = document.querySelector('table').cloneNode(true);
-        
-        table.querySelectorAll('img').forEach(img => img.remove());
-
-        const newWindow = window.open('', '', 'height=800,width=600');
-        newWindow.document.write('<html><head><title>Print</title></head><body>');
-        newWindow.document.write(table.outerHTML);
-        newWindow.document.write('<footer>');
-        newWindow.document.write(`<p>Exported by: ${adminFirstName} ${adminLastName} (${userRole})</p>`);
-        newWindow.document.write(`<p>Date Exported: ${currentDate}</p>`);
-        newWindow.document.write('</footer>');
-        newWindow.document.write('</body></html>');
-        newWindow.document.close();
-        newWindow.print();
-    }
-
-    function exportToPDF() {
-        const element = document.querySelector('table');
-        const opt = {
-            margin: 1,
-            filename: `beneficiary_${adminFirstName}_${adminLastName}_${userRole}_${currentDate}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 4 },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
-        };
-        html2pdf().from(element).set(opt).save();
-    }
-
-    function exportToExcel() {
-        const table = document.querySelector('table');
-        const wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet 1' });
-        XLSX.writeFile(wb, `beneficiary_${adminFirstName}_${adminLastName}_${userRole}_${currentDate}.xlsx`);
-    }
-
-    function exportToImage() {
-        html2canvas(document.querySelector('table')).then(canvas => {
-            let link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
-            link.download = `beneficiary_${adminFirstName}_${adminLastName}_${userRole}_${currentDate}.png`;
-            link.click();
-        });
-    }
 </script>
 
 </body>

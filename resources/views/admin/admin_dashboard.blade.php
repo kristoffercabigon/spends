@@ -101,13 +101,24 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 mt-8 space-y-8 lg:gap-8 lg:space-y-0 lg:grid-cols-3">
-                        <div class="col-span-2 bg-[#F7F9FB] shadow-lg rounded-md" style="overflow-x: auto; width: 100%;" x-data="{ isOn: false }">
+                    <div class="grid grid-cols-1 mt-8 space-y-8 lg:gap-8 lg:space-y-0">
+                        <div class="bg-[#F7F9FB] shadow-lg rounded-md" style="overflow-x: auto; width: 100%;" x-data="{ isOn: false }">
                             <div class="flex items-center justify-between p-4 border-b" style="min-width: 1500px;">
                                 <h4 class="text-md font-semibold leading-none tracking-wider text-gray-700 uppercase">Beneficiaries per Barangay</h4>
                             </div>
                             <div class="relative p-4 h-72" style="min-width: 1500px;">
                                 <canvas id="barChart"></canvas>
+                            </div>
+                        </div> 
+                    </div>
+
+                    <div class="grid grid-cols-1 mt-8 space-y-8 lg:gap-8 lg:space-y-0 lg:grid-cols-2">
+                        <div class="bg-[#F7F9FB] shadow-lg rounded-md" x-data="{ isOn: false }">
+                            <div class="flex items-center justify-between p-4 border-b">
+                                <h4 class="text-md font-semibold leading-none tracking-wider text-gray-700 uppercase">Application Status</h4>
+                            </div>
+                            <div class="relative p-4 h-72">
+                                <canvas id="doughnutChart"></canvas>
                             </div>
                         </div>
 
@@ -116,7 +127,7 @@
                                 <h4 class="text-md font-semibold leading-none tracking-wider text-gray-700 uppercase">Account Status</h4>
                             </div>
                             <div class="relative p-4 h-72">
-                                <canvas id="doughnutChart"></canvas>
+                                <canvas id="doughnutChart1"></canvas>
                             </div>
                         </div>
                     </div>
@@ -321,6 +332,22 @@
                 }
             };
 
+            const updateDoughnutChart1 = (on) => {
+                const data = random()
+                const color = 'rgb(207, 250, 254)'
+                if (on) {
+                doughnutChart1.data.labels.unshift('Seb')
+                doughnutChart1.data.datasets[0].data.unshift(data)
+                doughnutChart1.data.datasets[0].backgroundColor.unshift(color)
+                doughnutChart1.update()
+                } else {
+                doughnutChart1.data.labels.splice(0, 1)
+                doughnutChart1.data.datasets[0].data.splice(0, 1)
+                doughnutChart1.data.datasets[0].backgroundColor.splice(0, 1)
+                doughnutChart1.update()
+                }
+            }
+
             const loading = true;
             const color = getColor();
             const selectedColor = 'green';
@@ -332,6 +359,7 @@
                 setColors,
                 updateBarChart,
                 updateDoughnutChart,
+                updateDoughnutChart1,
             }));
         });
     </script>
@@ -421,18 +449,66 @@
             },
         });
 
-        const accountStatusData = @json($accountStatusData);
+        const applicationStatusData = @json($applicationStatusData);
 
-        const labels = accountStatusData.map(item => item.status); 
-        const data = accountStatusData.map(item => item.total); 
+        const appLabels = applicationStatusData.map(item => item.status); 
+        const appData = applicationStatusData.map(item => item.total);  
 
         const doughnutChart = new Chart(document.getElementById("doughnutChart"), {
             type: "doughnut",
             data: {
-                labels: labels,
+                labels: appLabels,
                 datasets: [
                     {
-                        data: data,  
+                        data: appData,
+                        backgroundColor: [
+                            'rgb(107, 114, 128)',
+                            'rgb(255, 159, 28)',
+                            'rgb(34, 197, 94)',
+                            'rgb(239, 68, 68)',
+                        ],
+                        hoverBackgroundColor: [
+                            'rgb(75, 85, 99)',
+                            'rgb(255, 132, 32)',
+                            'rgb(22, 163, 74)',
+                            'rgb(220, 38, 38)',
+                        ],
+                        borderWidth: 0,
+                        weight: 0.5,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    position: "bottom",
+                    labels: {
+                        fontColor: "#4B5563",
+                    },
+                },
+                title: {
+                    display: false,
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true,
+                },
+            },
+        });
+
+        const accountStatusData = @json($accountStatusData);
+
+        const accLabels = accountStatusData.map(item => item.status); 
+        const accData = accountStatusData.map(item => item.total);   
+
+        const doughnutChart1 = new Chart(document.getElementById("doughnutChart1"), {
+            type: "doughnut",
+            data: {
+                labels: accLabels,
+                datasets: [
+                    {
+                        data: accData,
                         backgroundColor: [
                             'rgb(34, 197, 94)',
                             'rgb(249, 115, 22)',
@@ -456,7 +532,7 @@
                 legend: {
                     position: "bottom",
                     labels: {
-                        fontColor: "#4B5563", 
+                        fontColor: "#4B5563",
                     },
                 },
                 title: {

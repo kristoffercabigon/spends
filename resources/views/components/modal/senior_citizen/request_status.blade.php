@@ -65,11 +65,11 @@ document.addEventListener('DOMContentLoaded', function () {
                             </div>
                         @elseif ($currentStatusId == 3)
                             <div id="Approved" class="flex justify-center items-center">
-                                <dotlottie-player src="https://lottie.host/2d69ead6-8369-43cb-a206-1126561b3839/TulSTip19Y.lottie" background="transparent" speed=".5" style="width: 150px; height: 150px" loop autoplay></dotlottie-player>
+                                <dotlottie-player src="https://lottie.host/19bccf91-71aa-44e7-8d3e-fd09f8306ece/SubEG32C2L.lottie" background="transparent" speed=".5" style="width: 150px; height: 150px" loop autoplay></dotlottie-player>
                             </div>
                         @elseif ($currentStatusId == 4)
-                            <div id="Rejected" class="flex justify-center items-center">
-                                <dotlottie-player src="https://lottie.host/d01ed634-8d66-47ed-82b0-3aa3d7608e7f/yJWlIN3ynB.lottie" background="transparent" speed=".5" style="width: 150px; height: 150px" loop autoplay></dotlottie-player>
+                            <div id="Disapproved" class="flex justify-center items-center">
+                                <dotlottie-player src="https://lottie.host/dc98cc5b-e4e7-4e35-b48f-8aabe5bf1de3/Wii2XGlEw1.lottie" background="transparent" speed="1.5" style="width: 150px; height: 150px" loop autoplay></dotlottie-player>
                             </div>
                         @endif
 

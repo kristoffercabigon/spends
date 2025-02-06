@@ -12,7 +12,7 @@
 </style>
 
 <section class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
-    <ul class="circles ">
+    <ul id="circles" class="circles ">
         <li></li>
         <li></li>
         <li></li>
@@ -140,10 +140,10 @@
                                         <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                     @enderror
 
-                                    <input type="email" name="email" placeholder="Email"
+                                    <input type="email" name="sent_by_email" placeholder="Email"
                                         class="w-full rounded-lg py-3 px-4 text-gray-800 text-sm outline-[#a91079]" 
-                                        value="{{ old('email') }}" />
-                                    @error('email')
+                                        value="{{ old('sent_by_email') }}" />
+                                    @error('sent_by_email')
                                         <p class="text-red-500 text-xs mt-2 p-1">{{ $message }}</p>
                                     @enderror
 

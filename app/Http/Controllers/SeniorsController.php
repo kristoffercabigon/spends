@@ -149,16 +149,16 @@ class SeniorsController extends Controller
     {
         $request->validate([
             'name' => 'required|max:50',
-            'email' => 'required|email|max:40',
+            'sent_by_email' => 'required|email|max:40',
             'subject' => 'required|max:100',
             'message' => 'required',
         ], [
             'name.required' => 'Please enter your name.',
             'name.max' => 'The name should not exceed 50 characters.',
 
-            'email.required' => 'Please enter your email address.',
-            'email.email' => 'Please enter a valid email address.',
-            'email.max' => 'The email should not exceed 40 characters.',
+            'sent_by_email.required' => 'Please enter your email address.',
+            'sent_by_email.email' => 'Please enter a valid email address.',
+            'sent_by_email.max' => 'The email should not exceed 40 characters.',
 
             'subject.required' => 'Please enter a subject for your message.',
             'subject.max' => 'The subject should not exceed 100 characters.',
@@ -237,6 +237,24 @@ class SeniorsController extends Controller
         ]);
     }
 
+    public function validateOscaID(Request $request)
+    {
+        $osca_id = $request->query('osca_id');
+
+        $exists = Seniors::where('osca_id', $osca_id)->exists();
+
+        return response()->json(['exists' => $exists]);
+    }
+
+    public function validateEmail(Request $request)
+    {
+        $email = $request->query('email');
+
+        $exists = Seniors::where('email', $email)->exists();
+
+        return response()->json(['exists' => $exists]);
+    }
+
     public function store(StoreSeniorRequest $request)
     {
         //dd($request->all());
@@ -249,9 +267,13 @@ class SeniorsController extends Controller
         unset($seniorData['confirm-checkbox']);
         unset($seniorData['g-recaptcha-response']);
 
-        do {
-            $osca_id = rand(10000, 99999);
-        } while (DB::table('seniors')->where('osca_id', $osca_id)->exists());
+        if (!empty($seniorData['osca_id'])) {
+            $osca_id = $seniorData['osca_id'];
+        } else {
+            do {
+                $osca_id = rand(10000, 99999);
+            } while (DB::table('seniors')->where('osca_id', $osca_id)->exists());
+        }
 
         $user_type_id = 1;
         $application_status_id = 1;
@@ -337,6 +359,15 @@ class SeniorsController extends Controller
             file_put_contents($path . $signatureFilename, $signatureData);
 
             $seniorData['signature_data'] = $signatureFilename;
+        }
+
+        if ($request->hasFile('signature')) {
+            $signatureFilename = $osca_id;
+            $signatureExtension = $request->file('signature')->getClientOriginalExtension();
+            $signatureFilenameToStore = $signatureFilename . '.' . $signatureExtension;
+
+            $request->file('signature')->storeAs('images/senior_citizen/signature_upload', $signatureFilenameToStore);
+            $seniorData['signature'] = $signatureFilenameToStore;
         }
 
         $seniorData['contact_no'] = '+63' . $seniorData['contact_no'];
@@ -440,6 +471,7 @@ class SeniorsController extends Controller
             'email' => $seniors->email,
             'code' => $seniors->verification_code,
             'showVerificationModal' => true,
+            'clearSignatureField' => true,
             'message-header' => 'Registration successful',
             'message-body' => 'Please verify your email.'
         ]);
@@ -578,7 +610,7 @@ class SeniorsController extends Controller
             ]);
         }
 
-        return redirect()->to(url()->previous() . '?email=' . urlencode(session('email')))->with([
+        return redirect()->to('/?email=' . urlencode(session('email')))->with([
             'showSignatureModal' => true,
             'clearLoginModal' => true,
             'email' => session('email'),
@@ -589,31 +621,51 @@ class SeniorsController extends Controller
 
     public function submitSignatureUpdateModal(Request $request)
     {
-        if (!$request->has('signature_data1') || empty($request->signature_data1)) {
+        $request->validate([
+            "signature" => "required_if:signature_data,null|mimes:jpeg,png,bmp,tiff|max:4096",
+            "signature_data" => ["required_if:signature,null"],
+        ]);
+
+        $email = $request->input('email', session('email'));
+
+        if (!$email) {
+            return back()->with([
+                'error-message-header' => 'Failed',
+                'error-message-body' => 'Email is required.',
+            ]);
+        }
+
+        $senior = Seniors::where('email', $email)->first();
+
+        if (!$senior) {
+            return back()->with([
+                'error-message-header' => 'Failed',
+                'error-message-body' => "Senior record not found for email: $email",
+            ]);
+        }
+
+        $osca_id = $senior->osca_id;
+        $path = storage_path('app/public/images/senior_citizen/signatures/');
+
+        if ($request->hasFile('signature')) {
+            $file = $request->file('signature');
+            $signatureFilename = $osca_id . '.' . $file->getClientOriginalExtension();
+            $file->move($path, $signatureFilename);
+            $senior->signature = $signatureFilename;
+        } elseif ($request->filled('signature_data')) {
+            $signatureData = str_replace(['data:image/png;base64,', ' '], ['', '+'], $request->input('signature_data'));
+            $signatureData = base64_decode($signatureData);
+            $signatureFilename = $osca_id . '.png';
+            file_put_contents($path . $signatureFilename, $signatureData);
+            $senior->signature_data = $signatureFilename;
+        } else {
             return back()->with([
                 'error-message-header' => 'Failed',
                 'error-message-body' => 'Please provide your signature.',
             ]);
         }
 
-        $email = $request->input('email', session('email'));
-        $signatureData = $request->input('signature_data1');
-
-        $signatureData = str_replace('data:image/png;base64,', '', $signatureData);
-        $signatureData = str_replace(' ', '+', $signatureData);
-        $signatureData = base64_decode($signatureData);
-
-        $senior = Seniors::where('email', $email)->first();
-
-        if ($senior) {
-            $osca_id = $senior->osca_id;
-            $signatureFilename = $osca_id . '.png';
-            $path = storage_path('app/public/images/senior_citizen/signatures/');
-            file_put_contents($path . $signatureFilename, $signatureData);
-
-            $senior->signature_data = $signatureFilename;
-            $senior->save();
-        }
+        $senior->save();
 
         return back()->with([
             'message-header' => 'Success',

@@ -47,7 +47,7 @@
         <li></li>
     </ul>
     
-    <div class="relative flex items-center justify-center font-poppins lg:mt-[80px] lg:pl-[255px]">
+    <div id="Senior_Profile" class="relative flex items-center justify-center font-poppins lg:mt-[80px] lg:pl-[255px]">
         <div class="w-full mx-auto font-[poppins]">
             <div class="bg-white mt-4 ml-4 mr-4 mb-4 rounded-md">              
                 <div class="px-6 py-4 lg:px-12">
@@ -58,6 +58,7 @@
                     </div>
 
                     <hr style="height: 2.5px; background: linear-gradient(to right, transparent, #1AA514, transparent); margin-top: 16px; margin-bottom: 32px;">
+
                     <div x-data="{ 
                             @php
                                 $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$senior->first_name."-".$senior->last_name;
@@ -631,6 +632,10 @@
 </div>
 </section>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const button = document.getElementById('statusDropdownButton');
@@ -665,6 +670,67 @@
     });
 </script>
 
+{{-- <script>
+    const encoderFirstName = "{{ $encoderFirstName }}";
+    const encoderLastName = "{{ $encoderLastName }}";
+    const userRole = "{{ $userRole }}";
+    const currentDate = new Date().toLocaleString(); 
+
+    function printTable() {
+        const profile = document.querySelector('#Senior_Profile').cloneNode(true);
+        
+        profile.querySelectorAll('img').forEach(img => img.remove());
+
+        const newWindow = window.open('', '', 'height=800,width=600');
+        newWindow.document.write('<html><head><title>Print</title></head><body>');
+        newWindow.document.write(profile.outerHTML);
+        newWindow.document.write('<footer>');
+        newWindow.document.write(`<p>Exported by: ${encoderFirstName} ${encoderLastName} (${userRole})</p>`);
+        newWindow.document.write(`<p>Date Exported: ${currentDate}</p>`);
+        newWindow.document.write('</footer>');
+        newWindow.document.write('</body></html>');
+        newWindow.document.close();
+        newWindow.print();
+    }
+
+    function exportToPDF() {
+        const profile = document.querySelector('#Senior_Profile').cloneNode(true);
+        
+        profile.querySelectorAll('img').forEach(img => img.remove());
+        profile.querySelectorAll('*').forEach(el => {
+            el.style.color = 'black';
+            el.style.background = 'white';
+        });
+
+        const wrapper = document.createElement('div');
+        wrapper.appendChild(profile);
+        wrapper.innerHTML += `<footer><p>Exported by: ${encoderFirstName} ${encoderLastName} (${userRole})</p><p>Date Exported: ${currentDate}</p></footer>`;
+
+        const opt = {
+            margin: 1,
+            filename: `senior_profile_${encoderFirstName}_${encoderLastName}_${userRole}_${currentDate}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 4 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+        html2pdf().from(wrapper).set(opt).save();
+    }
+
+    function exportToExcel() {
+        const profile = document.querySelector('#Senior_Profile');
+        const wb = XLSX.utils.table_to_book(profile, { sheet: 'Sheet 1' });
+        XLSX.writeFile(wb, `senior_profile_${encoderFirstName}_${encoderLastName}_${userRole}_${currentDate}.xlsx`);
+    }
+
+    function exportToImage() {
+        html2canvas(document.querySelector('#Senior_Profile')).then(canvas => {
+            let link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `senior_profile_${encoderFirstName}_${encoderLastName}_${userRole}_${currentDate}.png`;
+            link.click();
+        });
+    }
+</script> --}}
 
 </body>
 </html>

@@ -30,6 +30,8 @@ use Database\Seeders\EventsImagesSeeder;
 use Database\Seeders\ActivityTypesSeeder;
 use Database\Seeders\ActivityLogSeeder;
 use Database\Seeders\SignInHistorySeeder;
+use Database\Seeders\MessageType;
+use Database\Seeders\Messages;
 
 class DatabaseSeeder extends Seeder
 {
@@ -50,6 +52,8 @@ class DatabaseSeeder extends Seeder
         $this->call(IncomeSourceSeeder::class);
         $this->call(EncoderSeeder::class);
         $this->call(AdminSeeder::class);
+        $this->call(MessageType::class);
+        $this->call(Messages::class);
         $this->call(PensionDistributionSeeder::class);
         $this->call(EventsSeeder::class);
         $this->call(EventsImagesSeeder::class);

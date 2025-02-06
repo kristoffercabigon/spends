@@ -125,16 +125,31 @@ class EncoderController extends Controller
 
         $application_status_list = DB::table('senior_application_status_list')->pluck('senior_application_status', 'id');
 
+        $account_status_list = DB::table('senior_account_status_list')->pluck('senior_account_status', 'id');
+
         $applicationStatusCounts = DB::table('seniors')
         ->select('application_status_id', DB::raw('count(*) as total'))
         ->groupBy('application_status_id')
         ->pluck('total', 'application_status_id');
+
+        $accountStatusCounts = DB::table('seniors')
+        ->select('account_status_id', DB::raw('count(*) as total'))
+        ->groupBy('account_status_id')
+        ->pluck('total', 'account_status_id');
 
         $applicationStatusData = [];
         foreach ($application_status_list as $id => $status) {
             $applicationStatusData[] = [
                 'status' => $status,
                 'total' => $applicationStatusCounts[$id] ?? 0
+            ];
+        }
+
+        $accountStatusData = [];
+        foreach ($account_status_list as $id => $status) {
+            $accountStatusData[] = [
+                'status' => $status,
+                'total' => $accountStatusCounts[$id] ?? 0
             ];
         }
 
@@ -172,7 +187,8 @@ class EncoderController extends Controller
         return view('encoder.encoder_dashboard', [
             'title' => 'Dashboard',
             'application_status_list' => $application_status_list,
-            'applicationStatusData' => $applicationStatusData,  
+            'applicationStatusData' => $applicationStatusData,
+            'accountStatusData' => $accountStatusData,  
             'barangay_list' => $barangayData,
             'seniors' => $seniors,
             'accountStatuses' => $accountStatuses,
@@ -231,11 +247,22 @@ class EncoderController extends Controller
         $applicationStatuses = DB::table('senior_application_status_list')->get();
         $barangayList = DB::table('barangay_list')->get();
 
+        $encoderUser = auth()->guard('encoder')->user();
+        $encoderFirstName = $encoderUser->encoder_first_name;
+        $encoderLastName = $encoderUser->encoder_last_name;
+
+        $userRole = DB::table('user_type_list')
+        ->where('id', $encoderUser->encoder_user_type_id)
+        ->value('user_type');
+
         return view('encoder.encoder_application_requests', [
             'title' => 'Application Requests',
             'seniors' => $seniors,
             'applicationStatuses' => $applicationStatuses,
             'barangayList' => $barangayList,
+            'encoderFirstName' => $encoderFirstName,
+            'encoderLastName' => $encoderLastName,
+            'userRole' => $userRole,
         ]);
     }
 
@@ -353,6 +380,14 @@ class EncoderController extends Controller
 
         $lastLivingArrangementId = $living_arrangement_list->last()->id ?? null;
 
+        $encoderUser = auth()->guard('encoder')->user();
+        $encoderFirstName = $encoderUser->encoder_first_name;
+        $encoderLastName = $encoderUser->encoder_last_name;
+
+        $userRole = DB::table('user_type_list')
+        ->where('id', $encoderUser->encoder_user_type_id)
+        ->value('user_type');
+
         return view('encoder.encoder_senior_profile', [
             'senior' => $seniors,
             'title' => 'Profile: ' . $seniors->first_name . ' ' . $seniors->last_name,
@@ -372,6 +407,9 @@ class EncoderController extends Controller
             'application_status' => $selectedApplication_Status,
             'senior_application_status_list' => $senior_application_status_list,
             'encoderId' => $encoderId,
+            'encoderFirstName' => $encoderFirstName,
+            'encoderLastName' => $encoderLastName,
+            'userRole' => $userRole,
         ]);
     }
 
@@ -501,11 +539,22 @@ class EncoderController extends Controller
         $accountStatuses = DB::table('senior_account_status_list')->get();
         $barangayList = DB::table('barangay_list')->get();
 
+        $encoderUser = auth()->guard('encoder')->user();
+        $encoderFirstName = $encoderUser->encoder_first_name;
+        $encoderLastName = $encoderUser->encoder_last_name;
+
+        $userRole = DB::table('user_type_list')
+        ->where('id', $encoderUser->encoder_user_type_id)
+            ->value('user_type');
+
         return view('encoder.encoder_beneficiaries_list', [
             'title' => 'Beneficiaries List',
             'seniors' => $seniors,
             'accountStatuses' => $accountStatuses,
             'barangayList' => $barangayList,
+            'encoderFirstName' => $encoderFirstName,
+            'encoderLastName' => $encoderLastName,
+            'userRole' => $userRole,
         ]);
     }
 
@@ -1044,7 +1093,6 @@ class EncoderController extends Controller
 
     public function showEncoderPensionDistributionList()
     {
-
         $barangayList = DB::table('barangay_list')->get();
 
         $pension_distributions = DB::table('pension_distribution_list')
@@ -1057,10 +1105,21 @@ class EncoderController extends Controller
             ->orderBy('pension_distribution_list.id', 'asc')
             ->paginate(10);
 
+        $encoderUser = auth()->guard('encoder')->user();
+        $encoderFirstName = $encoderUser->encoder_first_name;
+        $encoderLastName = $encoderUser->encoder_last_name;
+
+        $userRole = DB::table('user_type_list')
+        ->where('id', $encoderUser->encoder_user_type_id)
+            ->value('user_type');
+
         return view('encoder.encoder_pension_distribution_list', [
             'title' => 'Pension Distribution List',
             'barangayList' => $barangayList,
             'pension_distributions' => $pension_distributions,
+            'encoderFirstName' => $encoderFirstName,
+            'encoderLastName' => $encoderLastName,
+            'userRole' => $userRole, 
         ]);
     }
 
@@ -1348,6 +1407,14 @@ class EncoderController extends Controller
     {
         $barangayList = DB::table('barangay_list')->get();
 
+        $encoderUser = auth()->guard('encoder')->user();
+        $encoderFirstName = $encoderUser->encoder_first_name;
+        $encoderLastName = $encoderUser->encoder_last_name;
+
+        $userRole = DB::table('user_type_list')
+        ->where('id', $encoderUser->encoder_user_type_id)
+            ->value('user_type');
+
         $events = DB::table('events_list')
         ->leftJoin('barangay_list', 'events_list.barangay_id', '=', 'barangay_list.id')
         ->leftJoin('user_type_list', 'events_list.event_user_type_id', '=', 'user_type_list.id')
@@ -1371,6 +1438,9 @@ class EncoderController extends Controller
         return view('encoder.encoder_events_list', [
             'title' => 'Events List',
             'barangayList' => $barangayList,
+            'encoderFirstName' => $encoderFirstName,
+            'encoderLastName' => $encoderLastName,
+            'userRole' => $userRole,
             'events' => $events,
         ]);
     }
@@ -1757,7 +1827,7 @@ class EncoderController extends Controller
             'created_at' => now(),
         ]);
 
-        return redirect('/encoder')->with([
+        return redirect('/encoder/dashboard')->with([
             'encoder-message-header' => 'Welcome back!',
             'encoder-message-body' => 'Successfully logged in.',
             'clearEncoderLoginModal' => true,

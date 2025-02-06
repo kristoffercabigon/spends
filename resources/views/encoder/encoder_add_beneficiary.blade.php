@@ -156,7 +156,7 @@
                                     @else text-gray-800 @enderror">
                                     Birthdate
                                 </label>
-                                <input name="birthdate" type="text" id="datepicker" 
+                                <input name="birthdate" type="text" id="datepicker1" 
                                     class="bg-gray-100 focus:bg-transparent w-full text-sm px-4 py-3 rounded-md cursor-pointer transition-all 
                                     @error('birthdate') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 
                                     @elseif(old('birthdate')) bg-green-50 border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500
@@ -600,9 +600,7 @@
                                                 </td>
                                                 <td class="border border-gray-300 px-4 py-2 hidden" id="removeCell-{{ $index }}">
                                                     <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                                            <path fill-rule="evenodd" d="M4 5a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm1 3a1 1 0 00-1 1v7a1 1 0 001 1h10a1 1 0 001-1v-7a1 1 0 00-1-1H5zm3 2a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm5 0a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                                        </svg>
+                                                        <img src="../../../images/trashbin.png" alt="Delete" class="h-5 w-5" />
                                                     </button>
                                                 </td>
                                             </tr>
@@ -643,7 +641,7 @@
                                                 </td>
                                                 <td class="border border-gray-300 px-4 py-2 hidden flex items-center justify-center" id="removeCell-0">
                                                     <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
-                                                        <img src="../../images/trashbin.png" alt="Delete" class="h-5 w-5" />
+                                                        <img src="../../../images/trashbin.png" alt="Delete" class="h-5 w-5" />
                                                     </button>
                                                 </td>
                                             </tr>
@@ -652,6 +650,8 @@
                                 </table>
                             </div>
                         </div>
+
+                        <p id="family-composition-error" class="text-red-500 text-sm mt-2"></p>
 
                         <div class="mt-4 flex justify-center">
                             <button type="button" onclick="addRow()" class="py-3 px-6 flex justify-center items-center md:w-auto flex justify-center items-center text-sm tracking-wider font-light rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
@@ -1525,54 +1525,68 @@
     let rowCount = @if(old('relative_name')) {{ count(old('relative_name')) }} @else 1 @endif;
 
     function addRow() {
-    rowCount++;
-    
-    let newRow = `
-        <tr>
-            <td class="border border-gray-300 px-4 py-2">
-                <input type="text" name="relative_name[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter name" style="min-width: 150px;">
-            </td>
-            <td class="border border-gray-300 px-4 py-2">
-                <select name="relative_relationship_id[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
-                    <option value="" disabled selected>Select relationship</option>
-                    @foreach ($relationship_list as $relationship)
-                        <option value="{{ $relationship->id }}">{{ $relationship->relationship }}</option>
-                    @endforeach
-                </select>
-            </td>
-            <td class="border border-gray-300 px-4 py-2">
-                <input type="number" name="relative_age[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter age" style="min-width: 150px;">
-            </td>
-            <td class="border border-gray-300 px-4 py-2">
-                <select name="relative_civil_status_id[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
-                    <option value="" disabled selected>Select status</option>
-                    @foreach ($civil_status_list as $status)
-                        <option value="{{ $status->id }}">{{ $status->civil_status }}</option>
-                    @endforeach
-                </select>
-            </td>
-            <td class="border border-gray-300 px-4 py-2">
-                <input type="text" name="relative_occupation[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter occupation" style="min-width: 150px;">
-            </td>
-            <td class="border border-gray-300 px-4 py-2">
-                <input type="text" name="relative_income[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter income" style="min-width: 150px;">
-            </td>
-            <td class="border border-gray-300 px-4 py-2 hidden flex items-center justify-center" id="removeCell-${rowCount}">
-                <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
-                    <img src="../../images/trashbin.png" alt="Delete" class="h-5 w-5" />
-                </button>
-            </td>
-        </tr>
-    `;
+        const errorContainer = document.getElementById('family-composition-error');
 
-        $('#familyTable tbody').append(newRow);
-        updateRemoveIconVisibility();
+        if (rowCount < 5) {
+            if (errorContainer) errorContainer.textContent = '';
+
+            rowCount++;
+
+            let newRow = `
+            <tr>
+                <td class="border border-gray-300 px-4 py-2">
+                    <input type="text" name="relative_name[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter name" style="min-width: 150px;">
+                </td>
+                <td class="border border-gray-300 px-4 py-2">
+                    <select name="relative_relationship_id[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
+                        <option value="" disabled selected>Select relationship</option>
+                        @foreach ($relationship_list as $relationship)
+                            <option value="{{ $relationship->id }}">{{ $relationship->relationship }}</option>
+                        @endforeach
+                    </select>
+                </td>
+                <td class="border border-gray-300 px-4 py-2">
+                    <input type="number" name="relative_age[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter age" style="min-width: 150px;">
+                </td>
+                <td class="border border-gray-300 px-4 py-2">
+                    <select name="relative_civil_status_id[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" style="min-width: 150px;">
+                        <option value="" disabled selected>Select status</option>
+                        @foreach ($civil_status_list as $status)
+                            <option value="{{ $status->id }}">{{ $status->civil_status }}</option>
+                        @endforeach
+                    </select>
+                </td>
+                <td class="border border-gray-300 px-4 py-2">
+                    <input type="text" name="relative_occupation[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter occupation" style="min-width: 150px;">
+                </td>
+                <td class="border border-gray-300 px-4 py-2">
+                    <input type="text" name="relative_income[]" class="w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Enter income" style="min-width: 150px;">
+                </td>
+                <td class="border border-gray-300 px-4 py-2 hidden flex items-center justify-center" id="removeCell-${rowCount}">
+                    <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700">
+                        <img src="../../../images/trashbin.png" alt="Delete" class="h-5 w-5" />
+                    </button>
+                </td>
+            </tr>
+            `;
+
+            $('#familyTable tbody').append(newRow);
+            updateRemoveIconVisibility();
+        } else {
+            if (errorContainer) {
+                errorContainer.textContent = 'Maximum of 5 members only.';
+            }
+        }
     }
 
     function removeRow(button) {
-        const row = button.closest('tr'); 
-        row.parentNode.removeChild(row); 
-        updateRemoveIconVisibility(); 
+        const row = button.closest('tr');
+        row.parentNode.removeChild(row);
+        rowCount--;
+        updateRemoveIconVisibility();
+
+        const errorContainer = document.getElementById('family-composition-error');
+        if (errorContainer) errorContainer.textContent = '';
     }
 
     function updateRemoveIconVisibility() {
@@ -1580,7 +1594,7 @@
         const rows = tableBody.getElementsByTagName('tr');
 
         const removeHeader = document.getElementById('remove-header');
-        removeHeader.style.display = rows.length > 1 ? '' : 'none';
+        if (removeHeader) removeHeader.style.display = rows.length > 1 ? '' : 'none';
 
         for (let i = 0; i < rows.length; i++) {
             const removeCell = rows[i].querySelector(`[id^='removeCell-']`);
@@ -1590,37 +1604,7 @@
         }
     }
 
-    updateRemoveIconVisibility(); 
-
-    function togglePassword(fieldId, iconId) {
-        const passwordField = document.getElementById(fieldId);
-        const icon = document.getElementById(iconId);
-        if (passwordField.type === "password") {
-            passwordField.type = "text";
-            icon.src = "../images/show.png"; 
-        } else {
-            passwordField.type = "password";
-            icon.src = "../images/hide.png"; 
-        }
-    }
-
-    function updatePasswordCriteria(password) {
-        document.getElementById("minLength").innerHTML = 
-            password.length >= 8 ? '<i class="fas fa-check text-green-500"></i> Minimum 8 characters' : 
-            '<i class="fas fa-times text-red-500"></i> Minimum 8 characters';
-        
-        document.getElementById("uppercase").innerHTML = 
-            /[A-Z]/.test(password) ? '<i class="fas fa-check text-green-500"></i> At least one uppercase letter' : 
-            '<i class="fas fa-times text-red-500"></i> At least one uppercase letter';
-        
-        document.getElementById("lowercase").innerHTML = 
-            /[a-z]/.test(password) ? '<i class="fas fa-check text-green-500"></i> At least one lowercase letter' : 
-            '<i class="fas fa-times text-red-500"></i> At least one lowercase letter';
-        
-        document.getElementById("symbol").innerHTML = 
-            /[@$!%*?&]/.test(password) ? '<i class="fas fa-check text-green-500"></i> At least one symbol (@$!%*?&)' : 
-            '<i class="fas fa-times text-red-500"></i> At least one symbol (@$!%*?&)';
-    }
+    updateRemoveIconVisibility();
 
     const tooltipIcon = document.getElementById('tooltip-icon');
     const tooltipText = document.getElementById('tooltip-text');

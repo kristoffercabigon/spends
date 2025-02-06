@@ -16,10 +16,27 @@ class StoreSeniorRequest extends FormRequest
     public function rules()
     {
         return [
-            "first_name" => ['required', 'max:64'],
-            "last_name" => ['required', 'max:32'],
-            "middle_name" => ['nullable'],
-            "suffix" => ['nullable'],
+            "osca_id" => ['nullable', 'min:4', 'max:6', Rule::unique('seniors', 'osca_id')],
+            "first_name" => [
+                'required',
+                'max:64',
+                'regex:/^[a-zA-Z\s\-.\'áéíóúàèùãõç]+$/'
+            ],
+            "last_name" => [
+                'required',
+                'max:32',
+                'regex:/^[a-zA-Z\s\-.\'áéíóúàèùãõç]+$/'
+            ],
+            "middle_name" => [
+                'nullable',
+                'max:32',
+                'regex:/^[a-zA-Z\s\-.\'áéíóúàèùãõç]+$/'
+            ],
+            "suffix" => [
+                'nullable',
+                'max:10',
+                'regex:/^[a-zA-Z\s\-.\'áéíóúàèùãõç]+$/'
+            ],
             "birthdate" => ['required', function ($attribute, $value, $fail) {
                 $age = Carbon::parse($value)->age;
                 if ($age < 60) {
@@ -27,10 +44,17 @@ class StoreSeniorRequest extends FormRequest
                 }
             }],
             "age" => ['required'],
-            "birthplace" => ['required'],
+            "birthplace" => [
+                'required',
+                'max:32',
+                'regex:/^[a-zA-Z\s\-.\']+$/'
+            ],
             "sex_id" => ['required'],
             "civil_status_id" => ['required'],
-            "contact_no" => ['required'],
+            "contact_no" => [
+                'required',
+                'regex:/^9\d{9}$/'
+            ],
             "address" => ['required', 'min:10', 'max:100', 'regex:/\bCaloocan\b/i'],
             "barangay_id" => ['required'],
             "email" => ['required', 'email', Rule::unique('seniors', 'email')],
@@ -48,7 +72,7 @@ class StoreSeniorRequest extends FormRequest
             "indigency" => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
             "birth_certificate" => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
             "type_of_living_arrangement" => ['required'],
-            "other_arrangement_remark" => 'required_if:type_of_living_arrangement,5',
+            "other_arrangement_remark" => 'required_if:type_of_living_arrangement,5|max:32',
             "pensioner" => ['required'],
             "if_pensioner_yes" => 'required_if:pensioner,1',
             'source' => ['required_if:pensioner,1', 'array'],
@@ -62,13 +86,23 @@ class StoreSeniorRequest extends FormRequest
             "if_illness_yes" => 'required_if:has_illness,1',
             "has_disability" => ['required'],
             "if_disability_yes" => 'required_if:has_disability,1',
-            "relative_name.*" => 'nullable|string|max:255',
+            "guardian_first_name" => 'nullable|max:64',
+            "guardian_middle_name" => 'nullable|max:32',
+            "guardian_last_name" => 'nullable|max:32',
+            "guardian_suffix" => 'nullable|max:32',
+            "guardian_relationship_id" => 'nullable|string|max:255',
+            "guardian_contact_no" => [
+                'nullable',
+                'regex:/^9\d{9}$/'
+            ],
+            "relative_name.*" => 'nullable|string|max:100',
             "relative_relationship.*" => 'nullable|string|max:255',
             "relative_age.*" => 'nullable|integer|min:0',
             "relative_civil_status.*" => 'nullable|string|max:255',
             "relative_occupation.*" => 'nullable|string|max:255',
             "relative_income.*" => 'nullable|string|max:255',
-            "signature_data" => ['required'],
+            "signature" => 'required_if:signature_data,null|mimes:jpeg,png,bmp,tiff|max:4096',
+            "signature_data" => ['required_if:signature,null'],
             "confirm-checkbox" => ['required'],
             "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) {
                 $secret = env('RECAPTCHA_SECRET_KEY');
@@ -83,15 +117,70 @@ class StoreSeniorRequest extends FormRequest
         ];
     }
 
+    public function attributes()
+    {
+        return [
+            'osca_id' => 'OSCA ID',
+            'first_name' => 'First Name',
+            'last_name' => 'Last Name',
+            'middle_name' => 'Middle Name',
+            'suffix' => 'Suffix',
+            'birthdate' => 'Birthdate',
+            'age' => 'Age',
+            'birthplace' => 'Birthplace',
+            'sex_id' => 'Sex',
+            'civil_status_id' => 'Civil Status',
+            'contact_no' => 'Contact Number',
+            'address' => 'Address',
+            'barangay_id' => 'Barangay',
+            'email' => 'Email',
+            'password' => 'Password',
+            'valid_id' => 'Valid ID',
+            'profile_picture' => 'Profile Picture',
+            'indigency' => 'Indigency Document',
+            'birth_certificate' => 'Birth Certificate',
+            'type_of_living_arrangement' => 'Living Arrangement',
+            'other_arrangement_remark' => 'Other Arrangement Remark',
+            'pensioner' => 'Pensioner Status',
+            'if_pensioner_yes' => 'Pension Details',
+            'source' => 'Source of Pension',
+            'other_source_remark' => 'Other Source Remark',
+            'permanent_source' => 'Permanent Source of Income',
+            'income_source' => 'Income Source',
+            'if_permanent_yes_income' => 'Permanent Income Details',
+            'has_illness' => 'Illness Status',
+            'if_illness_yes' => 'Illness Details',
+            'has_disability' => 'Disability Status',
+            'if_disability_yes' => 'Disability Details',
+            'guardian_first_name' => 'Guardian First Name',
+            'guardian_middle_name' => 'Guardian Middle Name',
+            'guardian_last_name' => 'Guardian Last Name',
+            'guardian_suffix' => 'Guardian Suffix',
+            'guardian_relationship_id' => 'Guardian Relationship',
+            'guardian_contact_no' => 'Guardian Contact Number',
+            'relative_name.*' => 'Relative Name',
+            'relative_relationship.*' => 'Relative Relationship',
+            'relative_age.*' => 'Relative Age',
+            'relative_civil_status.*' => 'Relative Civil Status',
+            'relative_occupation.*' => 'Relative Occupation',
+            'relative_income.*' => 'Relative Income',
+            'signature' => 'Signature',
+            'signature_data' => 'Signature Data',
+            'confirm-checkbox' => 'Agreement Checkbox',
+            'g-recaptcha-response' => 'ReCaptcha Verification',
+        ];
+    }
+
     public function messages()
     {
         return [
+            'osca_id.unique' => 'This OSCA ID is already registered.',
             'first_name.required' => 'First name is required.',
             'first_name.max' => 'First name cannot exceed 64 characters.',
             'last_name.required' => 'Last name is required.',
             'last_name.max' => 'Last name cannot exceed 32 characters.',
             'birthdate.required' => 'Birthdate is required to calculate your age.',
-            'age.required' => 'specify your birthdate to show your age.',
+            'age.required' => 'Specify your birthdate to show your age.',
             'birthplace.required' => 'Birthplace is required.',
             'sex_id.required' => 'Sex is required.',
             'civil_status_id.required' => 'Civil status is required.',

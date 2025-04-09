@@ -10,7 +10,7 @@ class SeniorApplicationStatusSeeder extends Seeder
 {
     public function run(): void
     {
-        $statuses = ['Under Evaluation', 'On Hold', 'Approved', 'Disapproved'];
+        $statuses = ['Under Evaluation', 'On Hold', 'Approved', 'Rejected'];
 
         foreach ($statuses as $status) {
             DB::table('senior_application_status_list')->insert([

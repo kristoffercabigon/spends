@@ -10,7 +10,7 @@ class SeniorAccountStatusSeeder extends Seeder
 {
     public function run(): void
     {
-        $statuses = ['Active', 'Inactive', 'Disqualified', 'Deactivated'];
+        $statuses = ['Active', 'Inactive'];
 
         foreach ($statuses as $status) {
             DB::table('senior_account_status_list')->insert([

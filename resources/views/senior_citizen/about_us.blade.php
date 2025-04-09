@@ -23,7 +23,9 @@
             <span class="text-8xl mt-4 font-bold" style="color: #FF4802;">Office of the Senior Citizen Affairs Staff</span>
             <p class="text-lg mt-8 pb-8 leading-relaxed text-black">
                 The Office of the Senior Citizen Affairs (OSCA) is a government body established to cater to the needs of senior citizens in the community. It was created in line with the government’s efforts to ensure the welfare, health, and social security of elderly citizens.
+                   <br>"Distribution of Social Pension to Senior Citizens," by Municipality of San Andres, via [https://municipalityofsanandres.gov.ph/news/osca-distributes-social-pension-to-senior-citizens/]. Used for academic/capstone purposes only.
             </p>
+           
         </div>
     </div>
     <div class="mx-4 overflow-hidden lg:mx-[48px]">
@@ -49,7 +51,8 @@
                 <p class="text-gray-700 text-xl leading-relaxed" data-aos="fade-right"
                     data-aos-offset="300"
                     data-aos-easing="ease-in-sine">
-                    Programs like birthday cash gifts, free wheelchairs, and medicine booklets, along with pension benefits, showcase OSCA’s commitment to improving the lives of seniors in Caloocan City. The office also educates citizens about new pension laws like House Bill 10423, which proposes additional monthly stipends for non-indigent seniors.
+                    Programs like birthday cash gifts, free wheelchairs, and medicine booklets, along with pension benefits, showcase OSCA’s commitment to improving the lives of seniors in Caloocan City. The office also educates citizens about new pension laws like House Bill 10423, which proposes additional monthly stipends for non-indigent seniors.<br><br>
+                    "Awarding and Turn-Over Ceremony of Farm Machinery and Equipment Below Image" by Municipality of San Nicolas, via [https://sannicolaspangasinan.gov.ph/sannicolas2/awarding-and-turn-over-ceremony-of-farm-machinery-and-equipment/]. Used for academic/capstone purposes only.
                 </p>
             </div>
         </div>

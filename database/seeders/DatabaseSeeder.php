@@ -30,8 +30,9 @@ use Database\Seeders\EventsImagesSeeder;
 use Database\Seeders\ActivityTypesSeeder;
 use Database\Seeders\ActivityLogSeeder;
 use Database\Seeders\SignInHistorySeeder;
-use Database\Seeders\MessageType;
-use Database\Seeders\Messages;
+use Database\Seeders\MessageTypeSeeder;
+use Database\Seeders\MessagesSeeder;
+use Database\Seeders\MessageTemplateSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -52,8 +53,9 @@ class DatabaseSeeder extends Seeder
         $this->call(IncomeSourceSeeder::class);
         $this->call(EncoderSeeder::class);
         $this->call(AdminSeeder::class);
-        $this->call(MessageType::class);
-        $this->call(Messages::class);
+        $this->call(MessageTypeSeeder::class);
+        $this->call(MessageTemplateSeeder::class);
+        $this->call(MessagesSeeder::class);
         $this->call(PensionDistributionSeeder::class);
         $this->call(EventsSeeder::class);
         $this->call(EventsImagesSeeder::class);
@@ -62,7 +64,7 @@ class DatabaseSeeder extends Seeder
 
         $uniqueOscaIds = collect();
 
-        while ($uniqueOscaIds->count() < 50) {
+        while ($uniqueOscaIds->count() < 500) {
             $oscaId = fake()->numberBetween(10000, 99999);
             $uniqueOscaIds->add($oscaId);
         }

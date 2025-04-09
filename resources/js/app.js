@@ -4,7 +4,6 @@ import 'aos/dist/aos.css';
 import Swiper from "swiper";
 import "swiper/swiper-bundle.css";
 
-
 document.addEventListener("DOMContentLoaded", function () {
 
     flatpickr("#datepicker1", {
@@ -571,6 +570,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
+
+    
+
     if (window.location.pathname === "/register") {
         const firstNameInput = document.getElementById("first_name");
         const middleNameInput = document.getElementById("middle_name");
@@ -703,7 +705,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         "focus:ring-red-500",
                         "focus:border-red-500"
                     );
-                    oscaMessage.textContent = "Looks good!";
+                    oscaMessage.textContent = "Tama ang iyong nilagay";
                     oscaMessage.classList.remove("text-red-500", "hidden");
                     oscaMessage.classList.add("text-green-500");
                     validIconOsca.classList.remove("hidden");
@@ -780,7 +782,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "focus:ring-green-500",
                 "focus:border-green-500"
             );
-            firstNameMessage.textContent = "Looks good!";
+            firstNameMessage.textContent = "Tama ang iyong nilagay";
             firstNameMessage.classList.remove("text-red-500", "hidden");
             firstNameMessage.classList.add("text-green-500");
             validIconFirstName.classList.remove("hidden");
@@ -904,7 +906,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "focus:ring-green-500",
                 "focus:border-green-500"
             );
-            middleNameMessage.textContent = "Looks good!";
+            middleNameMessage.textContent = "Tama ang iyong nilagay";
             middleNameMessage.classList.remove("text-red-500", "hidden");
             middleNameMessage.classList.add("text-green-500");
             validIconMiddleName.classList.remove("hidden");
@@ -1027,7 +1029,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "focus:ring-green-500",
                 "focus:border-green-500"
             );
-            lastNameMessage.textContent = "Looks good!";
+            lastNameMessage.textContent = "Tama ang iyong nilagay";
             lastNameMessage.classList.remove("text-red-500", "hidden");
             lastNameMessage.classList.add("text-green-500");
             validIconLastName.classList.remove("hidden");
@@ -1149,7 +1151,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "focus:ring-green-500",
                 "focus:border-green-500"
             );
-            suffixMessage.textContent = "Looks good!";
+            suffixMessage.textContent = "Tama ang iyong nilagay";
             suffixMessage.classList.remove("text-red-500", "hidden");
             suffixMessage.classList.add("text-green-500");
             validIconSuffix.classList.remove("hidden");
@@ -1272,7 +1274,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "focus:ring-green-500",
                 "focus:border-green-500"
             );
-            birthplaceMessage.textContent = "Looks good!";
+            birthplaceMessage.textContent = "Tama ang iyong nilagay";
             birthplaceMessage.classList.remove("text-red-500", "hidden");
             birthplaceMessage.classList.add("text-green-500");
             validIconBirthplace.classList.remove("hidden");
@@ -1390,7 +1392,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "focus:ring-green-500",
                 "focus:border-green-500"
             );
-            sexMessage.textContent = "Looks good!";
+            sexMessage.textContent = "Tama ang iyong nilagay";
             sexMessage.classList.remove("text-red-500", "hidden");
             sexMessage.classList.add("text-green-500");
             validIconSex.classList.remove("hidden");
@@ -1490,7 +1492,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "focus:ring-green-500",
                 "focus:border-green-500"
             );
-            civilStatusMessage.textContent = "Looks good!";
+            civilStatusMessage.textContent = "Tama ang iyong nilagay";
             civilStatusMessage.classList.remove("text-red-500", "hidden");
             civilStatusMessage.classList.add("text-green-500");
             validIconCivilStatus.classList.remove("hidden");
@@ -1648,7 +1650,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "focus:ring-green-500",
             "focus:border-green-500"
         );
-        contactNoMessage.textContent = "Looks good!";
+        contactNoMessage.textContent = "Tama ang iyong nilagay";
         contactNoMessage.classList.remove("text-red-500", "hidden");
         contactNoMessage.classList.add("text-green-500");
         validIconContactNo.classList.remove("hidden");
@@ -1765,7 +1767,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "focus:ring-green-500",
                 "focus:border-green-500"
             );
-            addressMessage.textContent = "Looks good!";
+            addressMessage.textContent = "Tama ang iyong nilagay";
             addressMessage.classList.remove("hidden", "text-red-500");
             addressMessage.classList.add("text-green-500");
             validIconAddress.classList.remove("hidden");
@@ -1859,7 +1861,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "focus:ring-green-500",
             "focus:border-green-500"
         );
-        barangayMessage.textContent = "Looks good!";
+        barangayMessage.textContent = "Tama ang iyong nilagay";
         barangayMessage.classList.remove("text-red-500", "hidden");
         barangayMessage.classList.add("text-green-500");
         validIconBarangay.classList.remove("hidden");
@@ -1938,7 +1940,7 @@ document.addEventListener("DOMContentLoaded", function () {
             livingArrangementAsterisk.style.display = "none";
             livingArrangementLabel.classList.remove("text-red-700");
             livingArrangementLabel.classList.add("text-green-700");
-            livingArrangementMessage.textContent = "Looks good!";
+            livingArrangementMessage.textContent = "Tama ang iyong nilagay";
             livingArrangementMessage.classList.remove("hidden", "text-red-500");
             livingArrangementMessage.classList.add("text-green-500");
             otherArrangementRemark.classList.add("hidden");
@@ -1968,7 +1970,7 @@ document.addEventListener("DOMContentLoaded", function () {
             otherArrangementRemarkLabel.classList.remove("text-green-500");
         } else if (remarkValue) {
             otherArrangementRemarkAsterisk.style.display = "none";
-            livingArrangementMessage.textContent = "Looks good!";
+            livingArrangementMessage.textContent = "Tama ang iyong nilagay";
             livingArrangementMessage.classList.remove("hidden", "text-red-500");
             livingArrangementMessage.classList.add("text-green-500");
             otherArrangementRemark.classList.add(
@@ -2090,7 +2092,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "focus:ring-green-500",
                 "focus:border-green-500"
             );
-            guardianFirstNameMessage.textContent = "Looks good!";
+            guardianFirstNameMessage.textContent = "Tama ang iyong nilagay";
             guardianFirstNameMessage.classList.remove("text-red-500", "hidden");
             guardianFirstNameMessage.classList.add("text-green-500");
             validIconGuardianFirstName.classList.remove("hidden");
@@ -2241,7 +2243,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "focus:ring-green-500",
                 "focus:border-green-500"
             );
-            guardianMiddleNameMessage.textContent = "Looks good!";
+            guardianMiddleNameMessage.textContent = "Tama ang iyong nilagay";
             guardianMiddleNameMessage.classList.remove(
                 "text-red-500",
                 "hidden"
@@ -2397,7 +2399,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "focus:ring-green-500",
                 "focus:border-green-500"
             );
-            guardianLastNameMessage.textContent = "Looks good!";
+            guardianLastNameMessage.textContent = "Tama ang iyong nilagay";
             guardianLastNameMessage.classList.remove("text-red-500", "hidden");
             guardianLastNameMessage.classList.add("text-green-500");
             validIconGuardianLastName.classList.remove("hidden");
@@ -2539,7 +2541,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "focus:ring-green-500",
                 "focus:border-green-500"
             );
-            guardianSuffixMessage.textContent = "Looks good!";
+            guardianSuffixMessage.textContent = "Tama ang iyong nilagay";
             guardianSuffixMessage.classList.remove("text-red-500", "hidden");
             guardianSuffixMessage.classList.add("text-green-500");
             validIconGuardianSuffix.classList.remove("hidden");
@@ -2680,7 +2682,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "focus:ring-green-500",
                 "focus:border-green-500"
             );
-            guardianRelationshipMessage.textContent = "Looks good!";
+            guardianRelationshipMessage.textContent = "Tama ang iyong nilagay";
             guardianRelationshipMessage.classList.remove(
                 "text-red-500",
                 "hidden"
@@ -2869,7 +2871,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "focus:ring-green-500",
             "focus:border-green-500"
         );
-        guardianContactNoMessage.textContent = "Looks good!";
+        guardianContactNoMessage.textContent = "Tama ang iyong nilagay";
         guardianContactNoMessage.classList.remove("text-red-500", "hidden");
         guardianContactNoMessage.classList.add("text-green-500");
         validIconGuardianContactNo.classList.remove("hidden");
@@ -2981,7 +2983,7 @@ document.addEventListener("DOMContentLoaded", function () {
             pensionerAsterisk.style.display = "none";
             pensionerLabel.classList.remove("text-red-700");
             pensionerLabel.classList.add("text-green-700");
-            pensionerMessage.textContent = "Looks good!";
+            pensionerMessage.textContent = "Tama ang iyong nilagay";
             pensionerMessage.classList.remove("hidden", "text-red-500");
             pensionerMessage.classList.add("text-green-500");
             ifPensionerDropdown.parentElement.classList.remove("hidden");
@@ -2991,7 +2993,7 @@ document.addEventListener("DOMContentLoaded", function () {
             pensionerAsterisk.style.display = "none";
             pensionerLabel.classList.remove("text-red-700");
             pensionerLabel.classList.add("text-green-700");
-            pensionerMessage.textContent = "Looks good!";
+            pensionerMessage.textContent = "Tama ang iyong nilagay";
             pensionerMessage.classList.remove("hidden", "text-red-500");
             pensionerMessage.classList.add("text-green-500");
             ifPensionerDropdown.parentElement.classList.add("hidden");
@@ -3265,7 +3267,7 @@ document.addEventListener("DOMContentLoaded", function () {
             permanentSourceAsterisk.style.display = "none";
             permanentSourceLabel.classList.remove("text-red-700");
             permanentSourceLabel.classList.add("text-green-700");
-            permanentSourceMessage.textContent = "Looks good!";
+            permanentSourceMessage.textContent = "Tama ang iyong nilagay";
             permanentSourceMessage.classList.remove("hidden", "text-red-500");
             permanentSourceMessage.classList.add("text-green-500");
             ifPermanentIncomeCheckbox.parentElement.classList.remove("hidden");
@@ -3275,7 +3277,7 @@ document.addEventListener("DOMContentLoaded", function () {
             permanentSourceAsterisk.style.display = "none";
             permanentSourceLabel.classList.remove("text-red-700");
             permanentSourceLabel.classList.add("text-green-700");
-            permanentSourceMessage.textContent = "Looks good!";
+            permanentSourceMessage.textContent = "Tama ang iyong nilagay";
             permanentSourceMessage.classList.remove("hidden", "text-red-500");
             permanentSourceMessage.classList.add("text-green-500");
             ifPermanentIncomeCheckbox.parentElement.classList.add("hidden");
@@ -3498,7 +3500,7 @@ document.addEventListener("DOMContentLoaded", function () {
             illnessAsterisk.style.display = "none";
             hasIllnessLabel.classList.add("hidden");
             ifIllnessYes.classList.add("hidden");
-            illnessMessage.textContent = "Looks good!";
+            illnessMessage.textContent = "Tama ang iyong nilagay";
             illnessMessage.classList.remove("hidden", "text-red-500");
             illnessMessage.classList.add("text-green-500");
         }
@@ -3509,7 +3511,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (illnessDetails) {
             hasIllnessAsterisk.style.display = "none";
-            illnessMessage.textContent = "Looks good!";
+            illnessMessage.textContent = "Tama ang iyong nilagay";
             illnessMessage.classList.remove("hidden", "text-red-500");
             illnessMessage.classList.add("text-green-500");
             ifIllnessYes.classList.add("border-green-500", "bg-green-50");
@@ -3589,7 +3591,7 @@ document.addEventListener("DOMContentLoaded", function () {
             disabilityAsterisk.style.display = "none";
             hasDisabilityLabel.classList.add("hidden");
             ifDisabilityYes.classList.add("hidden");
-            disabilityMessage.textContent = "Looks good!";
+            disabilityMessage.textContent = "Tama ang iyong nilagay";
             disabilityMessage.classList.remove("hidden", "text-red-500");
             disabilityMessage.classList.add("text-green-500");
         }
@@ -3600,7 +3602,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (disabilityDetails) {
             hasDisabilityAsterisk.style.display = "none";
-            disabilityMessage.textContent = "Looks good!";
+            disabilityMessage.textContent = "Tama ang iyong nilagay";
             disabilityMessage.classList.remove("hidden", "text-red-500");
             disabilityMessage.classList.add("text-green-500");
             ifDisabilityYes.classList.add("border-green-500", "bg-green-50");
@@ -3700,7 +3702,7 @@ document.addEventListener("DOMContentLoaded", function () {
             reader.readAsDataURL(file);
 
             validIdAsterisk.style.display = "none";
-            validIdMessage.textContent = "Looks good!";
+            validIdMessage.textContent = "Tama ang iyong nilagay";
             validIdMessage.classList.remove("hidden", "text-red-500");
             validIdMessage.classList.add("text-green-500");
             validIdLabel.classList.add("text-green-700");
@@ -3795,7 +3797,7 @@ document.addEventListener("DOMContentLoaded", function () {
             };
             reader.readAsDataURL(file);
 
-            profilePictureMessage.textContent = "Looks good!";
+            profilePictureMessage.textContent = "Tama ang iyong nilagay";
             profilePictureMessage.classList.remove("hidden", "text-red-500");
             profilePictureMessage.classList.add("text-green-500");
             profilePictureLabel.classList.add("text-green-700");
@@ -3877,7 +3879,7 @@ document.addEventListener("DOMContentLoaded", function () {
             reader.readAsDataURL(file);
 
             indigencyAsterisk.style.display = "none";
-            indigencyMessage.textContent = "Looks good!";
+            indigencyMessage.textContent = "Tama ang iyong nilagay";
             indigencyMessage.classList.remove("hidden", "text-red-500");
             indigencyMessage.classList.add("text-green-500");
             indigencyLabel.classList.add("text-green-700");
@@ -3986,7 +3988,7 @@ document.addEventListener("DOMContentLoaded", function () {
             reader.readAsDataURL(file);
 
             birthCertificateAsterisk.style.display = "none";
-            birthCertificateMessage.textContent = "Looks good!";
+            birthCertificateMessage.textContent = "Tama ang iyong nilagay";
             birthCertificateMessage.classList.remove("hidden", "text-red-500");
             birthCertificateMessage.classList.add("text-green-500");
             birthCertificateLabel.classList.add("text-green-700");
@@ -4074,7 +4076,7 @@ document.addEventListener("DOMContentLoaded", function () {
             reader.readAsDataURL(file);
 
             signatureAsterisk.style.display = "none";
-            signatureMessage.textContent = "Looks good!";
+            signatureMessage.textContent = "Tama ang iyong nilagay";
             signatureMessage.classList.remove("hidden", "text-red-500");
             signatureMessage.classList.add("text-green-500");
             signatureLabel.classList.add("text-green-700");
@@ -4120,7 +4122,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "focus:border-green-500"
             );
 
-            emailMessage.textContent = "Looks good!";
+            emailMessage.textContent = "Tama ang iyong nilagay";
             emailMessage.classList.remove("text-red-500", "hidden");
             emailMessage.classList.add("text-green-500");
 

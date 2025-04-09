@@ -163,24 +163,68 @@
               </a>
           </div>
 
-          <div>
+          <div x-data="{ open: false }">
               <a
-              href="/encoder/beneficiaries"
-              role="menuitem"
-              class="flex items-center p-2 mb-2 text-gray-500 transition-colors duration-200 rounded-md hover:text-gray-700 hover:bg-primary-100
-              {{ request()->is('encoder/beneficiaries') || request()->is('encoder/beneficiaries/view-senior-profile/*') || request()->is('encoder/beneficiaries/add-beneficiary') || request()->is('encoder/beneficiaries/edit-senior-profile/*') ? 'text-gray-700 bg-primary-100' : 'text-gray-500' }}"
+                  href="#"
+                  @click.prevent="open = !open"
+                  :class="{
+                      'flex items-center p-2 mb-2 rounded-md transition-colors duration-200': true,
+                      'hover:bg-primary-100 bg-primary-100 text-gray-700': open || 
+                        '{{ request()->is('encoder/beneficiaries') }}' === '1' || 
+                        '{{ request()->is('encoder/beneficiaries/add-beneficiary') }}' === '1' || 
+                        '{{ request()->is('encoder/beneficiaries/view-senior-profile/*') }}' === '1' || 
+                        '{{ request()->is('encoder/beneficiaries/edit-senior-profile/*') }}' === '1',
+                      'text-gray-500': !open && 
+                        '{{ request()->is('encoder/beneficiaries') }}' !== '1' && 
+                        '{{ request()->is('encoder/beneficiaries/add-beneficiary') }}' !== '1' && 
+                        '{{ request()->is('encoder/beneficiaries/view-senior-profile/*') }}' !== '1' && 
+                        '{{ request()->is('encoder/beneficiaries/edit-senior-profile/*') }}' !== '1'
+                  }"
+                  role="button"
+                  aria-haspopup="true"
+                  :aria-expanded="open ? 'true' : 'false'"
               >
-                <img 
-                    src="{{ asset('images/user.png') }}" 
-                    alt="Dashboard Icon" 
-                    class="w-5 h-5"
-                    aria-hidden="true"
-                />
-                <span class="ml-2 text-sm">Beneficiaries</span>
+                  <img 
+                      src="{{ asset('images/user.png') }}" 
+                      alt="Beneficiaries Icon" 
+                      class="w-5 h-5"
+                      aria-hidden="true"
+                  />
+                  <span class="ml-2 text-sm"> Beneficiaries </span>
+                  <span class="ml-auto" aria-hidden="true">
+                      <svg
+                          class="w-4 h-4 transition-transform transform"
+                          :class="{ 'rotate-180': open }"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                      >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                  </span>
               </a>
+
+              <div role="menu" x-show="open" class="mt-2 space-y-2 px-7 animate-custom-fade-in-right" aria-label="Beneficiaries">
+                  <a
+                      href="/encoder/beneficiaries"
+                      role="menuitem"
+                      class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700 
+                      {{ request()->is('encoder/beneficiaries') ? 'text-gray-700 bg-primary-100' : 'text-gray-500' }}"
+                  >
+                      Beneficiaries List
+                  </a>
+                  <a
+                      href="/encoder/beneficiaries/add-beneficiary"
+                      role="menuitem"
+                      class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700 
+                      {{ request()->is('encoder/beneficiaries/add-beneficiary') ? 'text-gray-700 bg-primary-100' : 'text-gray-500' }}"
+                  >
+                      Add Beneficiary
+                  </a>
+              </div>
           </div>
 
-          <!-- Dashboards links -->
           <div x-data="{ isActive: false, open: false}">
             <a
               href="#"
@@ -235,13 +279,20 @@
                 href="/encoder/events-list"
                 role="menuitem"
                 class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700 
-                  {{ request()->is('encoder/events-list') || 
-                    request()->is('encoder/events-list/add-event') || 
+                  {{ request()->is('encoder/events-list') ||
                     request()->is('encoder/events-list/edit-event/*') 
                     ? 'text-gray-700 bg-primary-100' 
                     : 'text-gray-500' }}"
               >
                 Events List
+              </a>
+              <a
+                href="{{ route('encoder-add-event') }}"
+                role="menuitem"
+                class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700
+                {{ request()->is('encoder/events-list/add-event') ? 'text-gray-700 bg-primary-100' : 'text-gray-500' }}"
+              >
+                Add Event
               </a>
             </div>
           </div>
@@ -449,24 +500,69 @@
                 </a>
             </div>
 
-            <div>
+            <div x-data="{ open: false }">
                 <a
-                href="/encoder/beneficiaries"
-                role="menuitem"
-                class="flex items-center p-2 mb-2 text-gray-500 transition-colors duration-200 rounded-md hover:text-gray-700 hover:bg-primary-100
-                {{ request()->is('encoder/beneficiaries') || request()->is('encoder/beneficiaries/view-senior-profile/*') || request()->is('encoder/beneficiaries/add-beneficiary') || request()->is('encoder/beneficiaries/edit-senior-profile/*') ? 'text-gray-700 bg-primary-100' : 'text-gray-500' }}"
+                    href="#"
+                    @click.prevent="open = !open"
+                    :class="{
+                        'flex items-center p-2 mb-2 rounded-md transition-colors duration-200': true,
+                        'hover:bg-primary-100 bg-primary-100 text-gray-700': open || 
+                          '{{ request()->is('encoder/beneficiaries') }}' === '1' || 
+                          '{{ request()->is('encoder/beneficiaries/add-beneficiary') }}' === '1' || 
+                          '{{ request()->is('encoder/beneficiaries/view-senior-profile/*') }}' === '1' || 
+                          '{{ request()->is('encoder/beneficiaries/edit-senior-profile/*') }}' === '1',
+                        'text-gray-500': !open && 
+                          '{{ request()->is('encoder/beneficiaries') }}' !== '1' && 
+                          '{{ request()->is('encoder/beneficiaries/add-beneficiary') }}' !== '1' && 
+                          '{{ request()->is('encoder/beneficiaries/view-senior-profile/*') }}' !== '1' && 
+                          '{{ request()->is('encoder/beneficiaries/edit-senior-profile/*') }}' !== '1'
+                    }"
+                    role="button"
+                    aria-haspopup="true"
+                    :aria-expanded="open ? 'true' : 'false'"
                 >
-                  <img 
-                      src="{{ asset('images/user.png') }}" 
-                      alt="Dashboard Icon" 
-                      class="w-5 h-5"
-                      aria-hidden="true"
-                  />
-                  <span class="ml-2 text-sm">Beneficiaries</span>
+                    <img 
+                        src="{{ asset('images/user.png') }}" 
+                        alt="Beneficiaries Icon" 
+                        class="w-5 h-5"
+                        aria-hidden="true"
+                    />
+                    <span class="ml-2 text-sm"> Beneficiaries </span>
+                    <span class="ml-auto" aria-hidden="true">
+                        <svg
+                            class="w-4 h-4 transition-transform transform"
+                            :class="{ 'rotate-180': open }"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </span>
                 </a>
+
+                <div role="menu" x-show="open" class="mt-2 space-y-2 px-7 animate-custom-fade-in-right" aria-label="Beneficiaries">
+                    <a
+                        href="/encoder/beneficiaries"
+                        role="menuitem"
+                        class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700 
+                        {{ request()->is('encoder/beneficiaries') ? 'text-gray-700 bg-primary-100' : 'text-gray-500' }}"
+                    >
+                        Beneficiaries List
+                    </a>
+                    <a
+                        href="/encoder/beneficiaries/add-beneficiary"
+                        role="menuitem"
+                        class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700 
+                        {{ request()->is('encoder/beneficiaries/add-beneficiary') ? 'text-gray-700 bg-primary-100' : 'text-gray-500' }}"
+                    >
+                        Add Beneficiary
+                    </a>
+                </div>
             </div>
 
-            <!-- Dashboards links -->
+
             <div x-data="{ isActive: false, open: false}">
               <a
                 href="#"
@@ -522,12 +618,19 @@
                   role="menuitem"
                   class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700 
                     {{ request()->is('encoder/events-list') || 
-                      request()->is('encoder/events-list/add-event') || 
                       request()->is('encoder/events-list/edit-event/*') 
                       ? 'text-gray-700 bg-primary-100' 
                       : 'text-gray-500' }}"
                 >
                   Events List
+                </a>
+                <a
+                  href="{{ route('encoder-add-event') }}"
+                  role="menuitem"
+                  class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md hover:text-gray-700
+                  {{ request()->is('/encoder/events-list/add-event') ? 'text-gray-700 bg-primary-100' : 'text-gray-500' }}"
+                >
+                  Add Event
                 </a>
               </div>
             </div>

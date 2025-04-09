@@ -45,11 +45,15 @@
             right: 10px;
             z-index: 9999;
             background: #fff;
-            padding: 10px 2px;
+            width: 50px; 
+            height: 160px; 
+            padding: 5px 2px; 
             border: 1px solid #ccc;
             border-radius: 5px;
             display: none;
             flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
         }
 
         #floating-button {
@@ -222,9 +226,7 @@
                             <div class="w-full md:w-3/12 md:mx-2">
                                 <div class="bg-white p-3 shadow-lg border-t-4 border-b-4 rounded-md 
                                     {{ $account_status && $account_status->senior_account_status == 'Active' ? 'border-green-500' : 
-                                    ($account_status && $account_status->senior_account_status == 'Inactive' ? 'border-orange-500' : 
-                                    ($account_status && $account_status->senior_account_status == 'Disqualified' ? 'border-yellow-500' : 
-                                    ($account_status && $account_status->senior_account_status == 'Deactivated' ? 'border-red-500' : 'border-gray-500'))) }}">
+                                    ($account_status && $account_status->senior_account_status == 'Inactive' ? 'border-gray-500' : 'border-gray-500') }}">
                                     <div class="flex items-center hover:animate-scale cursor-pointer justify-center image overflow-hidden"
                                         @click="showRegisteredProfilePicModal = true">
                                         @php
@@ -232,9 +234,7 @@
                                         @endphp
                                         <img class="w-48 h-48 rounded-full border-4 
                                             {{ $account_status && $account_status->senior_account_status == 'Active' ? 'border-green-500' : 
-                                            ($account_status && $account_status->senior_account_status == 'Inactive' ? 'border-orange-500' : 
-                                            ($account_status && $account_status->senior_account_status == 'Disqualified' ? 'border-yellow-500' : 
-                                            ($account_status && $account_status->senior_account_status == 'Deactivated' ? 'border-red-500' : 'border-gray-500'))) }}"
+                                            ($account_status && $account_status->senior_account_status == 'Inactive' ? 'border-gray-500' : 'border-gray-500') }}"
                                             src="{{ $senior->profile_picture ? asset('storage/images/senior_citizen/profile_picture/'.$senior->profile_picture) : $default_profile }}"
                                             alt="">
                                     </div>
@@ -248,9 +248,7 @@
                                                     <span 
                                                         class="py-1 px-2 rounded text-white text-sm truncate w-32 text-center 
                                                         {{ $account_status && $account_status->senior_account_status == 'Active' ? 'bg-green-500' : 
-                                                        ($account_status && $account_status->senior_account_status == 'Inactive' ? 'bg-orange-500' : 
-                                                        ($account_status && $account_status->senior_account_status == 'Disqualified' ? 'bg-yellow-500' : 
-                                                        ($account_status && $account_status->senior_account_status == 'Deactivated' ? 'bg-red-500' : 'bg-gray-500'))) }} "
+                                                        ($account_status && $account_status->senior_account_status == 'Inactive' ? 'bg-gray-500' : 'bg-gray-500') }} "
                                                         id="accountStatusDropdownButton">
                                                         {{ $account_status ? ucfirst($account_status->senior_account_status) : '--' }}
                                                     </span>

@@ -37,12 +37,7 @@ class StoreSeniorRequest extends FormRequest
                 'max:10',
                 'regex:/^[a-zA-Z\s\-.\'áéíóúàèùãõç]+$/'
             ],
-            "birthdate" => ['required', function ($attribute, $value, $fail) {
-                $age = Carbon::parse($value)->age;
-                if ($age < 60) {
-                    $fail('The age must be 60 years old or above.');
-                }
-            }],
+            "birthdate" => ['required'],
             "age" => ['required'],
             "birthplace" => [
                 'required',
@@ -67,10 +62,10 @@ class StoreSeniorRequest extends FormRequest
                 'regex:/[!@#$%^&*(),.?":{}|<>]/',
                 'confirmed'
             ],
-            "valid_id" => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
-            "profile_picture" => 'nullable|mimes:jpeg,png,bmp,tiff|max:4096',
-            "indigency" => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
-            "birth_certificate" => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
+            "valid_id" => 'required|mimes:jpg,jpeg,png,bmp,tiff|max:4096',
+            "profile_picture" => 'nullable|mimes:jpg,jpeg,png,bmp,tiff|max:4096',
+            "indigency" => 'required|mimes:jpg,jpeg,png,bmp,tiff|max:4096',
+            "birth_certificate" => 'required|mimes:jpg,jpeg,png,bmp,tiff|max:4096',
             "type_of_living_arrangement" => ['required'],
             "other_arrangement_remark" => 'required_if:type_of_living_arrangement,5|max:32',
             "pensioner" => ['required'],
@@ -101,75 +96,75 @@ class StoreSeniorRequest extends FormRequest
             "relative_civil_status.*" => 'nullable|string|max:255',
             "relative_occupation.*" => 'nullable|string|max:255',
             "relative_income.*" => 'nullable|string|max:255',
-            "signature" => 'required_if:signature_data,null|mimes:jpeg,png,bmp,tiff|max:4096',
-            "signature_data" => ['required_if:signature,null'],
+            "signature_upload" => 'nullable',
+            "signature_data" => 'nullable',
             "confirm-checkbox" => ['required'],
-            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) {
-                $secret = env('RECAPTCHA_SECRET_KEY');
-                $response = request()->input('g-recaptcha-response');
-                $remoteip = request()->ip();
-                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
-                $captcha_success = json_decode($verify);
-                if (!$captcha_success->success) {
-                    $fail('ReCaptcha verification failed, please try again.');
-                }
-            }],
+            // "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) {
+            //     $secret = env('RECAPTCHA_SECRET_KEY');
+            //     $response = request()->input('g-recaptcha-response');
+            //     $remoteip = request()->ip();
+            //     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+            //     $captcha_success = json_decode($verify);
+            //     if (!$captcha_success->success) {
+            //         $fail('ReCaptcha verification failed, please try again.');
+            //     }
+            // }],
         ];
     }
 
-    public function attributes()
-    {
-        return [
-            'osca_id' => 'OSCA ID',
-            'first_name' => 'First Name',
-            'last_name' => 'Last Name',
-            'middle_name' => 'Middle Name',
-            'suffix' => 'Suffix',
-            'birthdate' => 'Birthdate',
-            'age' => 'Age',
-            'birthplace' => 'Birthplace',
-            'sex_id' => 'Sex',
-            'civil_status_id' => 'Civil Status',
-            'contact_no' => 'Contact Number',
-            'address' => 'Address',
-            'barangay_id' => 'Barangay',
-            'email' => 'Email',
-            'password' => 'Password',
-            'valid_id' => 'Valid ID',
-            'profile_picture' => 'Profile Picture',
-            'indigency' => 'Indigency Document',
-            'birth_certificate' => 'Birth Certificate',
-            'type_of_living_arrangement' => 'Living Arrangement',
-            'other_arrangement_remark' => 'Other Arrangement Remark',
-            'pensioner' => 'Pensioner Status',
-            'if_pensioner_yes' => 'Pension Details',
-            'source' => 'Source of Pension',
-            'other_source_remark' => 'Other Source Remark',
-            'permanent_source' => 'Permanent Source of Income',
-            'income_source' => 'Income Source',
-            'if_permanent_yes_income' => 'Permanent Income Details',
-            'has_illness' => 'Illness Status',
-            'if_illness_yes' => 'Illness Details',
-            'has_disability' => 'Disability Status',
-            'if_disability_yes' => 'Disability Details',
-            'guardian_first_name' => 'Guardian First Name',
-            'guardian_middle_name' => 'Guardian Middle Name',
-            'guardian_last_name' => 'Guardian Last Name',
-            'guardian_suffix' => 'Guardian Suffix',
-            'guardian_relationship_id' => 'Guardian Relationship',
-            'guardian_contact_no' => 'Guardian Contact Number',
-            'relative_name.*' => 'Relative Name',
-            'relative_relationship.*' => 'Relative Relationship',
-            'relative_age.*' => 'Relative Age',
-            'relative_civil_status.*' => 'Relative Civil Status',
-            'relative_occupation.*' => 'Relative Occupation',
-            'relative_income.*' => 'Relative Income',
-            'signature' => 'Signature',
-            'signature_data' => 'Signature Data',
-            'confirm-checkbox' => 'Agreement Checkbox',
-            'g-recaptcha-response' => 'ReCaptcha Verification',
-        ];
-    }
+    // public function attributes()
+    // {
+    //     return [
+    //         'osca_id' => 'OSCA ID',
+    //         'first_name' => 'First Name',
+    //         'last_name' => 'Last Name',
+    //         'middle_name' => 'Middle Name',
+    //         'suffix' => 'Suffix',
+    //         'birthdate' => 'Birthdate',
+    //         'age' => 'Age',
+    //         'birthplace' => 'Birthplace',
+    //         'sex_id' => 'Sex',
+    //         'civil_status_id' => 'Civil Status',
+    //         'contact_no' => 'Contact Number',
+    //         'address' => 'Address',
+    //         'barangay_id' => 'Barangay',
+    //         'email' => 'Email',
+    //         'password' => 'Password',
+    //         'valid_id' => 'Valid ID',
+    //         'profile_picture' => 'Profile Picture',
+    //         'indigency' => 'Indigency Document',
+    //         'birth_certificate' => 'Birth Certificate',
+    //         'type_of_living_arrangement' => 'Living Arrangement',
+    //         'other_arrangement_remark' => 'Other Arrangement Remark',
+    //         'pensioner' => 'Pensioner Status',
+    //         'if_pensioner_yes' => 'Pension Details',
+    //         'source' => 'Source of Pension',
+    //         'other_source_remark' => 'Other Source Remark',
+    //         'permanent_source' => 'Permanent Source of Income',
+    //         'income_source' => 'Income Source',
+    //         'if_permanent_yes_income' => 'Permanent Income Details',
+    //         'has_illness' => 'Illness Status',
+    //         'if_illness_yes' => 'Illness Details',
+    //         'has_disability' => 'Disability Status',
+    //         'if_disability_yes' => 'Disability Details',
+    //         'guardian_first_name' => 'Guardian First Name',
+    //         'guardian_middle_name' => 'Guardian Middle Name',
+    //         'guardian_last_name' => 'Guardian Last Name',
+    //         'guardian_suffix' => 'Guardian Suffix',
+    //         'guardian_relationship_id' => 'Guardian Relationship',
+    //         'guardian_contact_no' => 'Guardian Contact Number',
+    //         'relative_name.*' => 'Relative Name',
+    //         'relative_relationship.*' => 'Relative Relationship',
+    //         'relative_age.*' => 'Relative Age',
+    //         'relative_civil_status.*' => 'Relative Civil Status',
+    //         'relative_occupation.*' => 'Relative Occupation',
+    //         'relative_income.*' => 'Relative Income',
+    //         'signature' => 'Signature',
+    //         'signature_data' => 'Signature Data',
+    //         'confirm-checkbox' => 'Agreement Checkbox',
+    //         'g-recaptcha-response' => 'ReCaptcha Verification',
+    //     ];
+    // }
 
     public function messages()
     {
@@ -179,7 +174,6 @@ class StoreSeniorRequest extends FormRequest
             'first_name.max' => 'First name cannot exceed 64 characters.',
             'last_name.required' => 'Last name is required.',
             'last_name.max' => 'Last name cannot exceed 32 characters.',
-            'birthdate.required' => 'Birthdate is required to calculate your age.',
             'age.required' => 'Specify your birthdate to show your age.',
             'birthplace.required' => 'Birthplace is required.',
             'sex_id.required' => 'Sex is required.',
@@ -205,7 +199,7 @@ class StoreSeniorRequest extends FormRequest
             'indigency.mimes' => 'Indigency must be a file of type: jpeg, png, bmp, tiff.',
             'indigency.max' => 'Indigency must not exceed 4096 kilobytes.',
             'birth_certificate.required' => 'Birth certificate is required.',
-            'birth_certificate.mimes' => 'Birth certificate must be a file of type: jpeg, png, bmp, tiff.',
+            'birth_certificate.mimes' => 'Birth certificate must be a file of type: jpg,jpeg, png, bmp, tiff.',
             'birth_certificate.max' => 'Birth certificate must not exceed 4096 kilobytes.',
             'type_of_living_arrangement.required' => 'Type of living arrangement is required.',
             'pensioner.required' => 'Pensioner status is required.',

@@ -24,10 +24,10 @@
     <x-messages.senior_citizen.error_messages />
 
     <div id="accessibility-toolbar" class="animate-drop-in transition-opacity" style="position: fixed; top: 220px; bottom: 330px; right: 10px; z-index: 9999; background: #fff; padding-top: 10px; padding-left: 2px; padding-right: 2px; padding-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; display: none; flex-direction: column;">
-        <button id="increase-font" class="flex items-center justify-center"><img id="increase-font" src="images/add.png" class="w-4 h-4" alt="Increase Font" style="cursor: pointer;" /></button>
-        <button id="decrease-font" class="flex items-center justify-center"><img id="decrease-font" src="images/minus.png" class="w-4 h-4" alt="Decrease Font" style="cursor: pointer;" /></button>
-        <button id="grayscale-toggle" class="flex items-center justify-center"><img id="grayscale-toggle" src="images/droplet.png" class="w-4 h-4" alt="Grayscale" style="cursor: pointer;" /></button>
-        <button id="reset-settings" class="flex items-center justify-center"><img id="reset-settings" src="images/undo.png" class="w-4 h-4" alt="Reset Settings" style="cursor: pointer;" /></button>
+        <button id="increase-font" class="flex items-center justify-center"><img id="increase-font" src="../images/add.png" class="w-4 h-4" alt="Increase Font" style="cursor: pointer;" /></button>
+        <button id="decrease-font" class="flex items-center justify-center"><img id="decrease-font" src="../images/minus.png" class="w-4 h-4" alt="Decrease Font" style="cursor: pointer;" /></button>
+        <button id="grayscale-toggle" class="flex items-center justify-center"><img id="grayscale-toggle" src="../images/droplet.png" class="w-4 h-4" alt="Grayscale" style="cursor: pointer;" /></button>
+        <button id="reset-settings" class="flex items-center justify-center"><img id="reset-settings" src="../images/undo.png" class="w-4 h-4" alt="Reset Settings" style="cursor: pointer;" /></button>
     </div>
 
     <div id="floating-button" style="position: fixed; top: 170px; right: 10px; z-index: 9999; background-color: #2196F3; width: 50px; height: 50px; color: #fff; border-radius: 5px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">
@@ -45,11 +45,15 @@
             right: 10px;
             z-index: 9999;
             background: #fff;
-            padding: 10px 2px;
+            width: 50px; 
+            height: 160px; 
+            padding: 5px 2px; 
             border: 1px solid #ccc;
             border-radius: 5px;
             display: none;
             flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
         }
 
         #floating-button {
@@ -180,3 +184,5 @@
             });
         });
     </script>
+</body>
+</html>

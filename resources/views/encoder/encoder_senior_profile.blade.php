@@ -18,7 +18,13 @@
         previewEncoderApplicantBirthCertificateUrl: '{{ $senior->birth_certificate ? asset("storage/images/senior_citizen/birth_certificate/".$senior->birth_certificate) : ''}}',
         previewEncoderApplicantIndigencyUrl: '{{ $senior->indigency ? asset("storage/images/senior_citizen/indigency/".$senior->indigency) : ''}}',
         previewEncoderApplicantValidIDUrl: '{{ $senior->valid_id ? asset("storage/images/senior_citizen/valid_id/".$senior->valid_id) : ''}}',
-        previewEncoderApplicantSignatureUrl: '{{ $senior->signature_data ? asset("storage/images/senior_citizen/signatures/".$senior->signature_data) : ''}}',
+        previewEncoderApplicantSignatureUrl: '{{ 
+            $senior->signature 
+                ? asset("storage/images/senior_citizen/signature_upload/".$senior->signature) 
+                : ($senior->signature_data 
+                    ? asset("storage/images/senior_citizen/signatures/".$senior->signature_data) 
+                    : "") 
+        }}',
         previewEncoderImage(event) {
             const input = event.target;
             if (input.files && input.files[0]) {
@@ -66,13 +72,11 @@
                             showEncoderApplicantRegisteredProfilePicModal: false,
                             previewUrlEncoderApplicantRegisteredProfilePic: '{{ $senior->profile_picture ? asset("storage/images/senior_citizen/profile_picture/".$senior->profile_picture) : $default_profile }}'
                         }">
-                        <div class="md:flex no-wrap ">
+                        <div class="mt-4 md:flex no-wrap ">
                             <div class="w-full md:w-3/12 md:mx-2">
                                 <div class="bg-white p-3 shadow-lg border-t-4 border-b-4 rounded-md 
                                     {{ $account_status && $account_status->senior_account_status == 'Active' ? 'border-green-500' : 
-                                    ($account_status && $account_status->senior_account_status == 'Inactive' ? 'border-orange-500' : 
-                                    ($account_status && $account_status->senior_account_status == 'Disqualified' ? 'border-yellow-500' : 
-                                    ($account_status && $account_status->senior_account_status == 'Deactivated' ? 'border-red-500' : 'border-gray-500'))) }}">
+                                    ($account_status && $account_status->senior_account_status == 'Inactive' ? 'border-gray-500' : 'border-gray-500') }}">
                                     <div class="flex items-center hover:animate-scale cursor-pointer justify-center image overflow-hidden"
                                         @click="showEncoderApplicantRegisteredProfilePicModal = true">
                                         @php
@@ -80,9 +84,7 @@
                                         @endphp
                                         <img class="w-48 h-48 rounded-full border-4 
                                             {{ $account_status && $account_status->senior_account_status == 'Active' ? 'border-green-500' : 
-                                            ($account_status && $account_status->senior_account_status == 'Inactive' ? 'border-orange-500' : 
-                                            ($account_status && $account_status->senior_account_status == 'Disqualified' ? 'border-yellow-500' : 
-                                            ($account_status && $account_status->senior_account_status == 'Deactivated' ? 'border-red-500' : 'border-gray-500'))) }}"
+                                            ($account_status && $account_status->senior_account_status == 'Inactive' ? 'border-gray-500' : 'border-gray-500') }}"
                                             src="{{ $senior->profile_picture ? asset('storage/images/senior_citizen/profile_picture/'.$senior->profile_picture) : $default_profile }}"
                                             alt="">
                                     </div>
@@ -96,9 +98,7 @@
                                                     <button 
                                                         class="py-1 px-2 rounded text-white text-sm truncate w-32 text-center 
                                                         {{ $account_status && $account_status->senior_account_status == 'Active' ? 'bg-green-500' : 
-                                                        ($account_status && $account_status->senior_account_status == 'Inactive' ? 'bg-orange-500' : 
-                                                        ($account_status && $account_status->senior_account_status == 'Disqualified' ? 'bg-yellow-500' : 
-                                                        ($account_status && $account_status->senior_account_status == 'Deactivated' ? 'bg-red-500' : 'bg-gray-500'))) }} "
+                                                        ($account_status && $account_status->senior_account_status == 'Inactive' ? 'bg-gray-500' : 'bg-gray-500') }} "
                                                         id="accountStatusDropdownButton">
                                                         {{ $account_status ? ucfirst($account_status->senior_account_status) : '--' }}
                                                     </button>
@@ -207,20 +207,36 @@
 
                                 <div class="my-4"></div>
 
-                                <div class="bg-white p-3 shadow-lg border-t-4 border-b-4 rounded-md">
+                                <div class="bg-white p-3 shadow-lg border-t-4 mb-4 border-b-4 rounded-md">
                                     <h1 class="text-gray-900 font-bold text-lg leading-8 my-1">Signature</h1>
 
                                     <div class="flex items-center hover:animate-scale cursor-pointer justify-center image overflow-hidden"
                                         @click="showEncoderApplicantSignatureModal = true">
-                                        @if ($senior->signature_data)
+                                        @if($senior->signature)
+                                            <img class="w-64 h-24 my-5 rounded-md shadow-lg"
+                                                src="{{ asset('storage/images/senior_citizen/signature_upload/' . $senior->signature) }}"
+                                                alt="Applicant's Signature">
+                                        @elseif($senior->signature_data)
                                             <img class="w-64 h-24 my-5 rounded-md shadow-lg"
                                                 src="{{ asset('storage/images/senior_citizen/signatures/' . $senior->signature_data) }}"
                                                 alt="Applicant's Signature">
                                         @else
-                                            <span class="text-gray-500 text-center my-5" @click.stop>No signature yet.</span>
+                                            <span class="text-gray-500 text-center my-5" @click.stop>No Signature Yet.</span>
                                         @endif
                                     </div>
                                 </div>
+
+                                <button onclick="printTable()" 
+                                    class="p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100">
+                                    <img src="../../../images/print.png" title="Print" alt="Print" class="h-4 w-4">
+                                </button>
+
+                                <button onclick="exportToPDF()" 
+                                    class="p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
+                                    title="Export as PDF">
+                                    <img src="../../../images/export-pdf.png" alt="Export PDF" class="h-4 w-4">
+                                </button>
+
                             </div>
 
                             <div class="my-4 mx-2"></div>
@@ -636,6 +652,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const button = document.getElementById('statusDropdownButton');
@@ -670,67 +689,58 @@
     });
 </script>
 
-{{-- <script>
+<script>
     const encoderFirstName = "{{ $encoderFirstName }}";
     const encoderLastName = "{{ $encoderLastName }}";
     const userRole = "{{ $userRole }}";
     const currentDate = new Date().toLocaleString(); 
 
     function printTable() {
-        const profile = document.querySelector('#Senior_Profile').cloneNode(true);
-        
-        profile.querySelectorAll('img').forEach(img => img.remove());
+        const profile = document.querySelector('#Senior_Profile');
 
-        const newWindow = window.open('', '', 'height=800,width=600');
-        newWindow.document.write('<html><head><title>Print</title></head><body>');
-        newWindow.document.write(profile.outerHTML);
-        newWindow.document.write('<footer>');
-        newWindow.document.write(`<p>Exported by: ${encoderFirstName} ${encoderLastName} (${userRole})</p>`);
-        newWindow.document.write(`<p>Date Exported: ${currentDate}</p>`);
-        newWindow.document.write('</footer>');
-        newWindow.document.write('</body></html>');
-        newWindow.document.close();
-        newWindow.print();
+        html2canvas(profile, {
+            scale: 2,
+            useCORS: true
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+
+            const newWindow = window.open('', '', 'height=800,width=600');
+            newWindow.document.write(`
+                <html><head><title>Print</title></head><body style="margin:0; text-align:center;">
+                    <img src="${imgData}" style="width:100%;">
+                </body></html>
+            `);
+            newWindow.document.close();
+            newWindow.print();
+        });
     }
 
     function exportToPDF() {
-        const profile = document.querySelector('#Senior_Profile').cloneNode(true);
-        
-        profile.querySelectorAll('img').forEach(img => img.remove());
-        profile.querySelectorAll('*').forEach(el => {
-            el.style.color = 'black';
-            el.style.background = 'white';
-        });
+        const { jsPDF } = window.jspdf;
 
-        const wrapper = document.createElement('div');
-        wrapper.appendChild(profile);
-        wrapper.innerHTML += `<footer><p>Exported by: ${encoderFirstName} ${encoderLastName} (${userRole})</p><p>Date Exported: ${currentDate}</p></footer>`;
-
-        const opt = {
-            margin: 1,
-            filename: `senior_profile_${encoderFirstName}_${encoderLastName}_${userRole}_${currentDate}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 4 },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-        };
-        html2pdf().from(wrapper).set(opt).save();
-    }
-
-    function exportToExcel() {
         const profile = document.querySelector('#Senior_Profile');
-        const wb = XLSX.utils.table_to_book(profile, { sheet: 'Sheet 1' });
-        XLSX.writeFile(wb, `senior_profile_${encoderFirstName}_${encoderLastName}_${userRole}_${currentDate}.xlsx`);
-    }
 
-    function exportToImage() {
-        html2canvas(document.querySelector('#Senior_Profile')).then(canvas => {
-            let link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
-            link.download = `senior_profile_${encoderFirstName}_${encoderLastName}_${userRole}_${currentDate}.png`;
-            link.click();
+        html2canvas(profile, {
+            scale: 2, 
+            useCORS: true 
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/jpeg', 0.7); 
+
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const imgWidth = 210;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+
+            pdf.save(`senior_profile_${encoderFirstName}_${encoderLastName}_${userRole}_${currentDate}.pdf`);
         });
     }
-</script> --}}
+</script>
 
 </body>
 </html>

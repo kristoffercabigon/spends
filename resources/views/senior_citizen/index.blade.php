@@ -9,10 +9,18 @@
             <div class="mr-auto place-self-center lg:col-span-7">
                 <h1 class="max-w-2xl animate-fade-in-bounce-right font-extrabold tracking-tight leading-none text-customOrange text-[90px] lg:text-[120px]">SPENDS</h1>
                 <p class="max-w-2xl font-semibold text-black text-[40px] lg:text-[50px]">Social Pension Network of DSWD for Senior Citizens</p>
-                <p class="max-w-2xl mb-6 font-semibold text-black text-[20px] lg:text-[30px]">North Caloocan City</p>
+                <p class="max-w-2xl mb-6 font-semibold text-black text-[20px] lg:text-[30px]">North Caloocan City
+                </p>
+                 <p class="max-w-1xl mb-6 font-light text-black text-[10px] lg:text-[17px]">"DSWD Senior Citizen Program Image," by Department of Social Welfare and Development, Public Domain, via [https://www.dswd.gov.ph/]. Used for academic purposes only.
+                </p>
                 @guest
-                <a href="/register" class="hover:animate-scale inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center bg-white bg-opacity-50 text-gray-900 border border-gray-600 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100">
-                    Apply Now
+                <!--<a href="#" download class="hover:animate-scale inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center bg-[#1AA514] text-white border border-gray-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300">-->
+                <!--    Download App-->
+                <!--    <img src="{{ asset('images/download.png') }}" alt="Download Icon" class="w-5 h-5 ml-2">-->
+                <!--</a>-->
+                <a href="{{ url('files/SPENDS.apk') }}" download class="hover:animate-scale inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center bg-[#1AA514] text-white border border-gray-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300">
+                    Download App
+                    <img src="{{ asset('images/download.png') }}" alt="Download Icon" class="w-5 h-5 ml-2">
                 </a>
                 @endguest
             </div>

@@ -21,8 +21,11 @@ class Guest extends Model implements AuthenticatableContract
     protected $table = 'contact_us';
 
     protected $fillable = [
+        'message_id',
+        'message_type_id',
         'name',
-        'email',
+        'sent_by_email',
+        'sent_to_email',
         'subject',
         'message',
     ];

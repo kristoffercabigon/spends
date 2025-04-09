@@ -55,8 +55,6 @@ class EncoderController extends Controller
         $barangay_list = DB::table('barangay_list')->get();
 
         $encoder = Encoder::leftJoin('barangay_list', 'encoder.encoder_barangay_id', '=', 'barangay_list.id')
-        ->leftJoin('encoder_roles', 'encoder_roles.encoder_user_id', '=', 'encoder.id')
-        ->leftJoin('encoder_roles_list', 'encoder_roles.encoder_roles_id', '=', 'encoder_roles_list.id')
         ->select(
             'encoder.id',
             'encoder.encoder_id',
@@ -71,7 +69,6 @@ class EncoderController extends Controller
             'encoder.encoder_profile_picture',
             'encoder.encoder_barangay_id',
             'barangay_list.barangay_no',
-            DB::raw('GROUP_CONCAT(encoder_roles_list.encoder_role) as roles')
         )
         ->where('encoder.id', $encoder_id)
         ->groupBy(
@@ -91,30 +88,9 @@ class EncoderController extends Controller
         )
         ->firstOrFail();
 
-        $categories = ['view', 'create', 'update', 'delete'];
-        $roles = collect(explode(',', $encoder->roles))
-            ->groupBy(function ($role) use ($categories) {
-                foreach ($categories as $category) {
-                    if (str_contains(strtolower($role), $category)) {
-                        return $category;
-                    }
-                }
-                return 'other';
-            });
-
-        $categoryColors = [
-            'view' => 'green-500',
-            'create' => 'blue-500',
-            'update' => 'orange-500',
-            'delete' => 'red-500',
-        ];
-
         return view('encoder.encoder_profile', [
             'encoder' => $encoder,
             'title' => 'Profile',
-            'categories' => $categories,
-            'roles' => $roles,
-            'categoryColors' => $categoryColors,
             'barangay_list' => $barangay_list
         ]);
     }
@@ -140,6 +116,14 @@ class EncoderController extends Controller
         $applicationStatusData = [];
         foreach ($application_status_list as $id => $status) {
             $applicationStatusData[] = [
+                'status' => $status,
+                'total' => $applicationStatusCounts[$id] ?? 0
+            ];
+        }
+
+        $applicationStatusDataforDoughnut = [];
+        foreach ($application_status_list as $id => $status) {
+            $applicationStatusDataforDoughnut[] = [
                 'status' => $status,
                 'total' => $applicationStatusCounts[$id] ?? 0
             ];
@@ -184,17 +168,26 @@ class EncoderController extends Controller
         $accountStatuses = DB::table('senior_account_status_list')->get();
         $barangayList = DB::table('barangay_list')->get();
 
+        $applicationStatusData = [
+            'under_evaluation' => \App\Models\Seniors::where('application_status_id', 1)->count(),
+            'on_hold' => \App\Models\Seniors::where('application_status_id', 2)->count(),
+            'approved' => \App\Models\Seniors::where('application_status_id', 3)->count(),
+            'rejected' => \App\Models\Seniors::where('application_status_id', 4)->count(),
+        ];
+
         return view('encoder.encoder_dashboard', [
             'title' => 'Dashboard',
             'application_status_list' => $application_status_list,
             'applicationStatusData' => $applicationStatusData,
+            'applicationStatusDataforDoughnut' => $applicationStatusDataforDoughnut,
             'accountStatusData' => $accountStatusData,  
             'barangay_list' => $barangayData,
             'seniors' => $seniors,
             'accountStatuses' => $accountStatuses,
             'barangayList' => $barangayList,
-            'totalApplicationRequests' => \App\Models\Seniors::where('application_status_id', '!=', 3)->count(),
+            'totalApplicationRequests' => \App\Models\Seniors::whereNotIn('application_status_id', [3, 4])->count(),
             'totalApplicationsApproved' => \App\Models\Seniors::where('application_status_id', 3)->count(),
+            'totalApplicationsRejected' => \App\Models\Seniors::where('application_status_id', 4)->count(),
         ]);
     }
 
@@ -274,6 +267,7 @@ class EncoderController extends Controller
         $endDate = $request->input('end_date');
         $searchQuery = $request->input('search_query', '');
         $orderDirection = $request->input('order', 'asc');
+        $archived = $request->input('is_archived');
         $perPage = 10;
 
         $query = DB::table('seniors')
@@ -313,6 +307,10 @@ class EncoderController extends Controller
             })->orWhere('seniors.osca_id', 'LIKE', '%' . $searchQuery . '%');
         }
 
+        if (isset($archived)) {
+            $query->where('seniors.is_application_archived', $archived);
+        }
+
         if ($startDate || $endDate) {
             $query->orderBy('seniors.date_applied', $orderDirection);
         } else {
@@ -322,6 +320,88 @@ class EncoderController extends Controller
         $seniors = $query->paginate($perPage);
 
         return response()->json($seniors);
+    }
+
+    public function getApplicationDataForArchive($id)
+    {
+        $senior = Seniors::find($id);
+
+        if ($senior) {
+
+            return response()->json([
+                'id' => $senior->id,
+                'first_name' => $senior->first_name,
+                'middle_name' => $senior->middle_name,
+                'last_name' => $senior->last_name,
+                'suffix' => $senior->suffix,
+                'osca_id' => $senior->osca_id,
+            ]);
+        } else {
+            return response()->json(['error' => 'Senior not found'], 404);
+        }
+    }
+
+    public function submitEncoderArchiveApplication(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:seniors,id',
+        ]);
+
+        try {
+            Seniors::where('id', $request->id)->update(['is_application_archived' => 1]);
+
+            return redirect()->back()->with([
+                'encoder-message-header' => 'Success',
+                'encoder-message-body' => 'Senior profile archived successfully.',
+                'clearEncoderArchiveSeniorApplicationModal' => true,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Failed',
+                'encoder-error-message-body' => 'An error occurred while archiving senior profile.',
+            ]);
+        }
+    }
+
+    public function getApplicationDataForRestore($id)
+    {
+        $senior = Seniors::find($id);
+
+        if ($senior) {
+
+            return response()->json([
+                'id' => $senior->id,
+                'first_name' => $senior->first_name,
+                'middle_name' => $senior->middle_name,
+                'last_name' => $senior->last_name,
+                'suffix' => $senior->suffix,
+                'osca_id' => $senior->osca_id,
+            ]);
+        } else {
+            return response()->json(['error' => 'Senior not found'], 404);
+        }
+    }
+
+    public function submitEncoderRestoreApplication(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:seniors,id',
+        ]);
+
+        try {
+            Seniors::where('id', $request->id)->update(['is_application_archived' => 0]);
+
+            return redirect()->back()->with([
+                'encoder-message-header' => 'Success',
+                'encoder-message-body' => 'Senior Application restored successfully.',
+                'clearEncoderRestoreApplicationModal' => true,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Failed',
+                'encoder-error-message-body' => 'An error occurred while restoring the senior application.',
+            ]);
+        }
     }
 
     public function showEncoderSeniorProfile($id)
@@ -566,6 +646,7 @@ class EncoderController extends Controller
         $endDate = $request->input('end_date');
         $searchQuery = $request->input('search_query', '');
         $order = $request->input('order', 'asc');
+        $archived = $request->input('is_archived');
         $perPage = 10;
 
         $query = DB::table('seniors')
@@ -606,11 +687,97 @@ class EncoderController extends Controller
             })->orWhere('seniors.osca_id', 'LIKE', '%' . $searchQuery . '%');
         }
 
+        if (isset($archived)) {
+            $query->where('seniors.is_beneficiary_archived', $archived);
+        }
+
         $query->orderBy('seniors.id', $order);
 
         $seniors = $query->paginate($perPage);
 
         return response()->json($seniors);
+    }
+
+    public function getBeneficiaryDataForArchive($id)
+    {
+        $senior = Seniors::find($id);
+
+        if ($senior) {
+
+            return response()->json([
+                'id' => $senior->id,
+                'first_name' => $senior->first_name,
+                'middle_name' => $senior->middle_name,
+                'last_name' => $senior->last_name,
+                'suffix' => $senior->suffix,
+                'osca_id' => $senior->osca_id,
+            ]);
+        } else {
+            return response()->json(['error' => 'Beneficiary not found'], 404);
+        }
+    }
+
+    public function submitEncoderArchiveBeneficiary(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:seniors,id',
+        ]);
+
+        try {
+            Seniors::where('id', $request->id)->update(['is_beneficiary_archived' => 1]);
+
+            return redirect()->back()->with([
+                'encoder-message-header' => 'Success',
+                'encoder-message-body' => 'Beneficiary archived successfully.',
+                'clearEncoderArchiveBeneficiaryModal' => true,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Failed',
+                'encoder-error-message-body' => 'An error occurred while archiving beneficiary.',
+            ]);
+        }
+    }
+
+    public function getBeneficiaryDataForRestore($id)
+    {
+        $senior = Seniors::find($id);
+
+        if ($senior) {
+
+            return response()->json([
+                'id' => $senior->id,
+                'first_name' => $senior->first_name,
+                'middle_name' => $senior->middle_name,
+                'last_name' => $senior->last_name,
+                'suffix' => $senior->suffix,
+                'osca_id' => $senior->osca_id,
+            ]);
+        } else {
+            return response()->json(['error' => 'Beneficiary not found'], 404);
+        }
+    }
+
+    public function submitEncoderRestoreBeneficiary(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:seniors,id',
+        ]);
+
+        try {
+            Seniors::where('id', $request->id)->update(['is_beneficiary_archived' => 0]);
+
+            return redirect()->back()->with([
+                'encoder-message-header' => 'Success',
+                'encoder-message-body' => 'Beneficiary restored successfully.',
+                'clearEncoderRestoreBeneficiaryModal' => true,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Failed',
+                'encoder-error-message-body' => 'An error occurred while restoring the beneficiary.',
+            ]);
+        }
     }
 
     public function showEncoderAddBeneficiary()
@@ -1229,7 +1396,7 @@ class EncoderController extends Controller
                 'activity' => 'Add Pension Distribution Program',
                 'activity_type_id' => 1,
                 'changes' => "Encoder {$encoderFirstName} {$encoderLastName} attempted to add Pension Distribution Programs.",
-                'status' => 'Failed',
+                'status' => 'Cancelled',
                 'activity_user_type_id' => 2,
                 'activity_encoder_id' => $encoderId,
                 'activity_admin_id' => null,
@@ -1346,7 +1513,7 @@ class EncoderController extends Controller
                     'activity' => 'Delete Pension Distribution Program',
                     'activity_type_id' => 3,
                     'changes' => "Encoder {$encoderFirstName} {$encoderLastName} attempted to delete Pension Distribution Program for Barangay {$barangayNo} scheduled on {$distributionDate}",
-                    'status' => 'Failed',
+                    'status' => 'Cancelled',
                     'activity_user_type_id' => 2,
                     'activity_encoder_id' => $encoderId,
                     'activity_admin_id' => null,
@@ -1591,7 +1758,7 @@ class EncoderController extends Controller
                     'activity' => 'Delete Event',
                     'activity_type_id' => 3,
                     'changes' => "Encoder {$encoderFirstName} {$encoderLastName} attempted to delete the event titled '{$eventTitle}' scheduled on {$eventDate}",
-                    'status' => 'Failed',
+                    'status' => 'Cancelled',
                     'activity_user_type_id' => 2,
                     'activity_encoder_id' => $encoderId,
                     'activity_admin_id' => null,

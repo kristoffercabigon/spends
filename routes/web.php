@@ -5,9 +5,17 @@ use App\Http\Controllers\SeniorsController;
 use App\Http\Controllers\EncoderController;
 use App\Http\Controllers\AdminController;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\Process\Process;
+
+
 Route::controller(SeniorsController::class)->group(function () {
     Route::get('/', 'index')->name('/');
     Route::get('/announcements', 'announcements');
+    Route::get('/announcements/events/{event}', 'event');
     Route::post('/filter-announcements', 'filterAnnouncements');
     Route::get('/about-us', 'about_us');
     Route::get('/contact-us', 'contact_us');
@@ -61,6 +69,10 @@ Route::controller(EncoderController::class)->group(function () {
         Route::get('/encoder/application-requests', 'showEncoderApplicationRequests');
         Route::post('/encoder/application-requests/filter-application-requests', 'filterSeniorsApplicationRequests');
         Route::get('/encoder/application-requests/view-senior-profile/{senior}', 'showEncoderSeniorProfile');
+        Route::get('/encoder/application-requests/getApplicationDataForArchive/{id}', 'getApplicationDataForArchive');
+        Route::get('/encoder/application-requests/getApplicationDataForRestore/{id}', 'getApplicationDataForRestore');
+        Route::post('/encoder/application-requests/submit-archive-application', 'submitEncoderArchiveApplication')->name('encoder-submit-archive-application');
+        Route::post('/encoder/application-requests/submit-restore-application', 'submitEncoderRestoreApplication')->name('encoder-submit-restore-application');
 
         Route::put('/encoder/view-senior-profile/{id}/update-application-status', 'updateEncoderSeniorApplicationStatus')->name('encoder-update-application-status');
         Route::post('/encoder/view-senior-profile/{id}/send-approved-email', 'EncoderSendApprovedEmail')->name('EncoderSendApprovedEmail');
@@ -73,6 +85,10 @@ Route::controller(EncoderController::class)->group(function () {
         Route::post('/encoder/beneficiaries/add-beneficiary/submit-beneficiary', 'submitEncoderAddBeneficiary')->name('encoder-submit-add-beneficiary');
         Route::get('/encoder/beneficiaries/edit-senior-profile/{senior}', 'showEncoderEditSeniorProfile');
         Route::put('/encoder/beneficiaries/edit-senior-profile/{senior}', 'updateEncoderEditBeneficiary')->name('encoder-submit-edit-beneficiary');
+        Route::get('/encoder/beneficiaries/getBeneficiaryDataForArchive/{id}', 'getBeneficiaryDataForArchive');
+        Route::get('/encoder/beneficiaries/getBeneficiaryDataForRestore/{id}', 'getBeneficiaryDataForRestore');
+        Route::post('/encoder/beneficiaries/submit-archive-beneficiary', 'submitEncoderArchiveBeneficiary')->name('encoder-submit-archive-beneficiary');
+        Route::post('/encoder/beneficiaries/submit-restore-beneficiary', 'submitEncoderRestoreBeneficiary')->name('encoder-submit-restore-beneficiary');
 
         Route::get('/encoder/pension-distribution-list', 'showEncoderPensionDistributionList');
         Route::post('/encoder/pension-distribution-list/filter-pension-distribution-list', 'filterPensionDistributionList');
@@ -118,16 +134,34 @@ Route::controller(AdminController::class)->group(function () {
     Route::middleware('auth:admin')->group(function () {
         Route::get('/admin/profile/{admin}', 'showAdminProfile');
 
+        Route::get('/admin/blockchain/pension-data', 'getPensionData');
+
+        Route::post('/admin/blockchain/store-pension-data', 'storePensionData');
+
+        Route::get('/admin/getAllBeneficiaries', 'viewBeneficiaries');
+
         Route::get('/admin/messages', 'showAdminMessages');
         Route::post('/admin/messages/filter-messages', 'filterAdminMessages');
+        Route::get('/admin/messages/getMessageDataForView/{id}', 'getMessageDataForView');
+        Route::get('/admin/messages/getMessageDataForTrash/{id}', 'getMessageDataForTrash');
+        Route::get('/admin/messages/getMessageDataForRestore/{id}', 'getMessageDataForRestore');
+        Route::post('/admin/messages/submit-trash-message', 'submitAdminTrashMessage')->name('admin-submit-trash-message');
+        Route::post('/admin/messages/submit-restore-message', 'submitAdminRestoreMessage')->name('admin-submit-restore-message');
+        Route::post('/admin/messages/submit-compose-message', 'submitAdminComposeMessage')->name('admin-submit-compose-message');
 
         Route::get('/admin/dashboard', 'showAdminDashboard');
         Route::post('/admin/dashboard/filter-dashboard-beneficiaries', 'filterSeniorsDashboardBeneficiaries');
 
+        Route::get('/admin/blockchain', 'showAdminBlockchain');
+        
         Route::get('/admin/application-requests', 'showAdminApplicationRequests');
         Route::post('/admin/application-requests/filter-application-requests', 'filterSeniorsApplicationRequests');
         Route::get('/admin/application-requests/view-senior-profile/{senior}', 'showAdminSeniorProfile');
-
+        Route::get('/admin/application-requests/getApplicationDataForArchive/{id}', 'getApplicationDataForArchive');
+        Route::get('/admin/application-requests/getApplicationDataForRestore/{id}', 'getApplicationDataForRestore');
+        Route::post('/admin/application-requests/submit-archive-application', 'submitAdminArchiveApplication')->name('admin-submit-archive-application');
+        Route::post('/admin/application-requests/submit-restore-application', 'submitAdminRestoreApplication')->name('admin-submit-restore-application');
+        
         Route::put('/admin/view-senior-profile/{id}/update-application-status', 'updateAdminSeniorApplicationStatus')->name('admin-update-application-status');
         Route::post('/admin/view-senior-profile/{id}/send-approved-email', 'AdminSendApprovedEmail')->name('AdminSendApprovedEmail');
         Route::put('/admin/view-senior-profile/{id}/update-account-status', 'updateAdminSeniorAccountStatus')->name('admin-update-account-status');
@@ -142,6 +176,10 @@ Route::controller(AdminController::class)->group(function () {
         Route::post('/admin/beneficiaries/filter-beneficiaries', 'filterSeniorsBeneficiaries');
         Route::get('/admin/beneficiaries/view-senior-profile/{senior}', 'showAdminSeniorProfile');
         Route::get('/admin/beneficiaries/add-beneficiary', 'showAdminAddBeneficiary');
+        Route::get('/admin/beneficiaries/getBeneficiaryDataForArchive/{id}', 'getBeneficiaryDataForArchive');
+        Route::get('/admin/beneficiaries/getBeneficiaryDataForRestore/{id}', 'getBeneficiaryDataForRestore');
+        Route::post('/admin/beneficiaries/submit-archive-beneficiary', 'submitAdminArchiveBeneficiary')->name('admin-submit-archive-beneficiary');
+        Route::post('/admin/beneficiaries/submit-restore-beneficiary', 'submitAdminRestoreBeneficiary')->name('admin-submit-restore-beneficiary');
         
         Route::post('/admin/beneficiaries/submit-beneficiary', 'submitAdminAddBeneficiary')->name('admin-submit-add-beneficiary');
         Route::get('/admin/beneficiaries/edit-senior-profile/{senior}', 'showAdminEditSeniorProfile');
@@ -154,6 +192,16 @@ Route::controller(AdminController::class)->group(function () {
         Route::put('/admin/pension-distribution-list/submit-edit-pension', 'submitAdminEditPensionDistribution')->name('admin-submit-edit-pension-distribution');
         Route::get('/admin/pension-distribution-list/getPensionDistributionDataForDelete/{id}', 'getPensionDataForDelete');
         Route::post('/admin/pension-distribution-list/submit-delete-pension', 'submitAdminDeletePensionDistribution')->name('admin-submit-delete-pension-distribution');
+
+        Route::get('/admin/events-list', 'showAdminEventsList');
+        Route::post('/admin/events-list/filter-events-list', 'filterEventsList');
+        Route::get('/admin/events-list/getEventDataForView/{id}', 'getEventDataForView');
+        Route::get('/admin/events-list/getEventDataForDelete/{id}', 'getEventDataForDelete');
+        Route::post('/admin/events-list/submit-delete-event', 'submitAdminDeleteEvent')->name('admin-submit-delete-event');
+        Route::get('/admin/events-list/add-event', 'showAdminAddEvent')->name('admin-add-event');
+        Route::post('/admin/events-list/submit-add-event', 'submitAdminAddEvent')->name('admin-submit-add-event');
+        Route::get('/admin/events-list/edit-event/{id}', 'showAdminEditEvent')->name('admin-edit-event');
+        Route::post('/admin/events-list/submit-edit-event/{id}', 'submitAdminEditEvent')->name('admin-submit-edit-event');
 
         Route::get('/admin/sign-in-history', 'showAdminLoginAttempts');
         Route::post('/admin/sign-in-history/filter-sign-in-history', 'filterAdminLoginAttempts');

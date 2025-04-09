@@ -29,7 +29,7 @@
 
                     <hr style="height: 2.5px; background: linear-gradient(to right, transparent, #1AA514, transparent); margin-top: 16px; margin-bottom: 32px;">
 
-                    <div class="grid grid-cols-1 gap-8 lg:grid-cols-2 xl:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-8 lg:grid-cols-2 xl:grid-cols-3">
                         <div class="flex items-center shadow-md p-4 bg-[#F7F9FB] rounded-md">
                             <div class="mr-4">
                                 <span>
@@ -41,13 +41,46 @@
                                 </span>
                             </div>
 
+                            <div x-data="{ showTooltip: false }" class="relative">
+                                <h6 class="text-md font-semibold mb-2 leading-none tracking-wider text-gray-700 uppercase">
+                                    Pending Application Requests
+                                </h6>
+                                <span 
+                                    class="text-4xl text-[#ff4802] font-bold cursor-pointer" 
+                                    @mouseenter="showTooltip = true" 
+                                    @mouseleave="showTooltip = false"
+                                >
+                                    {{ number_format($totalApplicationRequests) }}
+                                </span>
+
+                                <div 
+                                    x-show="showTooltip" 
+                                    class="absolute left-0 mt-2 p-2 bg-gray-800 text-white text-sm rounded shadow-lg"
+                                    style="white-space: nowrap;"
+                                >
+                                    Under Evaluation: {{ number_format($applicationStatusData['under_evaluation'] ?? 0) }} <br>
+                                    On Hold: {{ number_format($applicationStatusData['on_hold'] ?? 0) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center shadow-md p-4 bg-[#F7F9FB] rounded-md">
+                            <div class="mr-4">
+                                <span>
+                                    <img 
+                                        src="{{ asset('images/list.png') }}" 
+                                        alt="Approved Icon" 
+                                        class="w-10 h-10 mx-auto"
+                                    />
+                                </span>
+                            </div>
                             <div>
                                 <h6
                                     class="text-md font-semibold mb-2 leading-none tracking-wider text-gray-700 uppercase"
                                 >
-                                    Total Application Requests
+                                    Rejected Application Requests
                                 </h6>
-                                <span class="text-4xl text-[#ff4802] font-bold">{{ number_format($totalApplicationRequests) }}</span>
+                                <span class="text-4xl text-[#ff4802] font-bold">{{ number_format($totalApplicationsRejected) }}</span>
                             </div>
                         </div>
 
@@ -65,14 +98,14 @@
                                 <h6
                                     class="text-md font-semibold mb-2 leading-none tracking-wider text-gray-700 uppercase"
                                 >
-                                    Total Application Requests Approved
+                                    Approved Applications 
                                 </h6>
                                 <span class="text-4xl text-[#ff4802] font-bold">{{ number_format($totalApplicationsApproved) }}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 mt-8 space-y-8 lg:gap-8 lg:space-y-0">
+                    {{-- <div class="grid grid-cols-1 mt-8 space-y-8 lg:gap-8 lg:space-y-0">
                         <div class="bg-[#F7F9FB] shadow-lg rounded-md" style="overflow-x: auto; width: 100%;" x-data="{ isOn: false }">
                             <div class="flex items-center justify-between p-4 border-b" style="min-width: 1500px;">
                                 <h4 class="text-md font-semibold leading-none tracking-wider text-gray-700 uppercase">Beneficiaries per Barangay</h4>
@@ -81,7 +114,7 @@
                                 <canvas id="barChart"></canvas>
                             </div>
                         </div> 
-                    </div>
+                    </div> --}}
 
                     <div class="grid grid-cols-1 mt-8 space-y-8 lg:gap-8 lg:space-y-0 lg:grid-cols-2">
                         <div class="bg-[#F7F9FB] shadow-lg rounded-md" x-data="{ isOn: false }">
@@ -419,10 +452,10 @@
         },
     });
 
-    const applicationStatusData = @json($applicationStatusData);
+    const applicationStatusDataforDoughnut = @json($applicationStatusDataforDoughnut);
 
-    const labels = applicationStatusData.map(item => item.status);
-    const data = applicationStatusData.map(item => item.total);
+    const labels = applicationStatusDataforDoughnut.map(item => item.status);
+    const data = applicationStatusDataforDoughnut.map(item => item.total);
 
     const doughnutChart = new Chart(document.getElementById("doughnutChart"), {
         type: "doughnut",
@@ -481,15 +514,11 @@
                     data: data1, 
                     backgroundColor: [
                         'rgb(34, 197, 94)',
-                        'rgb(249, 115, 22)',
-                        'rgb(234, 179, 8)',
-                        'rgb(239, 68, 68)',
+                        'rgb(107, 114, 128)',
                     ],
                     hoverBackgroundColor: [
                         'rgb(22, 163, 74)',
-                        'rgb(234, 88, 12)',
-                        'rgb(202, 138, 4)',
-                        'rgb(220, 38, 38)',
+                        'rgb(75, 85, 99)',
                     ],
                     borderWidth: 0,
                     weight: 0.5,

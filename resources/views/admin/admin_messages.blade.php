@@ -3,7 +3,11 @@
 @php $array = array('title' => 'SPENDS') @endphp
 <x-admin_dashboard_nav :data="$array"/>
 
-<section class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
+<section x-data="{ showAdminViewMessageModal: localStorage.getItem('showAdminViewMessageModal') === 'true',
+showAdminTrashMessageModal: localStorage.getItem('showAdminTrashMessageModal') === 'true',
+showAdminRestoreMessageModal: localStorage.getItem('showAdminRestoreMessageModal') === 'true',
+showAdminComposeMessageModal: localStorage.getItem            ('showAdminComposeMessageModal') === 'true',
+}" class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
     <ul class="circles">
         <li></li>
         <li></li>
@@ -73,52 +77,73 @@
                             </div>
                             <div class="flex justify-start relative">
                                 <div class="relative w-[50%] lg:w-[30%]">
-                                    <select id="order-dropdown" class="bg-gray-50 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full  p-2.5">
+                                    <select id="order-dropdown" class="bg-gray-50 mb-4 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full  p-2.5">
                                         <option value="asc" selected>Ascending</option>
                                         <option value="desc">Descending</option>
                                     </select>
                                 </div>
                             </div>
+
+                            <button onclick="printTable()" 
+                                class="p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100">
+                                <img src="../images/print.png" title="Print" alt="Print" class="h-4 w-4">
+                            </button>
+
+                            <button onclick="exportToPDF()" 
+                                class="p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
+                                title="Export as PDF">
+                                <img src="../images/export-pdf.png" alt="Export PDF" class="h-4 w-4">
+                            </button>
+
+                            <button onclick="exportToExcel()" 
+                                class="p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
+                                title="Export as Excel">
+                                <img src="../images/export-excel.png" alt="Export Excel" class="h-4 w-4">
+                            </button>
+
+                            <button onclick="exportToImage()" 
+                                class="p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
+                                title="Export as Image">
+                                <img src="../images/export-image.png" alt="Export Image" class="h-4 w-4">
+                            </button>
                         </div>
 
                         <div>
+                            <div class="mb-4 mt-4 flex relative justify-start md:justify-end">
+                                <div class="relative w-[50%]">
+                                    <div class="flex space-x-4"> 
+                                        @foreach ($message_types as $index => $message_type)
+                                            <label class="inline-flex items-center space-x-2">
+                                                <input type="radio" name="message_type_table" value="{{ $message_type->id }}" class="form-radio h-4 w-4 text-blue-600" 
+                                                    {{ $index == 0 || $message_type->id == old('message_type') ? 'checked' : '' }} />
+                                                <span class="text-gray-900">{{ $message_type->message_type }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="flex relative justify-start md:justify-end">
                                 <div class="relative w-[50%]">
-                                    <select id="message-type-dropdown" class="bg-gray-50 mb-4 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full p-2.5">
-                                        <option value="all" selected>Show All Message Type</option>
-                                        @foreach ($message_types as $message_type)
-
-                                                <option value="{{ $message_type->id }}">{{ $message_type->message_type }}</option>
-                                        @endforeach
+                                    <select id="message-medium-dropdown" class="bg-gray-50 mb-4 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full p-2.5">
+                                        <option value="all" selected>All</option>
+                                        <option value="email">Email</option>
+                                        <option value="sms">SMS</option>
                                     </select>
                                 </div>
+                            </div>
+
+                            <div class="flex relative justify-start md:justify-end">
+                                <button 
+                                @click.prevent="showAdminComposeMessageModal = true; localStorage.setItem('showAdminComposeMessageModal', 'true')"
+                                class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-md px-5 py-2 text-center inline-flex items-center">
+                                    Compose Message
+                                </button>
                             </div>
                         </div>
 
                     </div>
 
-                    <button onclick="printTable()" 
-                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100">
-                        <img src="../images/print.png" title="Print" alt="Print" class="h-4 w-4">
-                    </button>
-
-                    <button onclick="exportToPDF()" 
-                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
-                        title="Export as PDF">
-                        <img src="../images/export-pdf.png" alt="Export PDF" class="h-4 w-4">
-                    </button>
-
-                    <button onclick="exportToExcel()" 
-                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
-                        title="Export as Excel">
-                        <img src="../images/export-excel.png" alt="Export Excel" class="h-4 w-4">
-                    </button>
-
-                    <button onclick="exportToImage()" 
-                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
-                        title="Export as Image">
-                        <img src="../images/export-image.png" alt="Export Image" class="h-4 w-4">
-                    </button>
 
                     <div class="overflow-x-auto drop-shadow-lg">
                         <table class="min-w-full table-auto relative bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 leading-8" data-aos="zoom-in">
@@ -126,29 +151,48 @@
                                 <tr class="bg-[#FF4802] text-white">
                                     
                                     <th class="px-4 py-2 font-semibold rounded-t-md text-left">#</th>
-                                    <th class="px-4 py-2 font-semibold text-left">Name</th>
-                                    <th class="px-4 py-2 font-semibold text-left">Sent by</th>
-                                    <th class="px-4 py-2 font-semibold text-left">Sent to</th>
+                                    <th class="px-4 py-2 sent-by font-semibold text-left">Sent by</th>
+                                    <th class="px-4 py-2 sent-to font-semibold text-left">Sent to</th>
                                     <th class="px-4 py-2 font-semibold text-left">Subject</th>
                                     <th class="px-4 py-2 font-semibold text-left">Message</th>
                                     <th class="px-4 py-2 font-semibold text-left">Date</th>
                                     <th class="px-4 py-2 font-semibold text-left">Time</th>
+                                    <th class="px-4 py-2 font-semibold text-left">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($messages as $key => $message)
                                     <tr class="{{ $key % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]' }}">
                                         <td class="px-4 py-2">{{ $message->id }}</td>
-                                        <td class="px-4 py-2">{{ $message->name }}</td>
-                                        <td class="px-4 py-2">{{ $message->sent_by_email }}</td>
-                                        <td class="px-4 py-2">{{ $message->sent_to_email }}</td>
-                                        <td class="px-4 py-2">{{ $message->subject }}</td>
-                                        <td class="px-4 py-2">{{ $message->message }}</td>
+                                        <td class="px-4 py-2 truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ $message->sent_by_email }}</td>
+                                        <td class="px-4 py-2 truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ $message->sent_to_email }}</td>
+                                        <td class="px-4 py-2 truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ $message->subject }}</td>
+                                        <td class="px-4 py-2 truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ $message->message }}</td>
                                         <td class="px-4 py-2">
                                             {{ \Carbon\Carbon::parse($message->created_at)->setTimezone('Asia/Manila')->format('F j, Y') }}
                                         </td>
                                         <td class="px-4 py-2">
                                             {{ \Carbon\Carbon::parse($message->created_at)->setTimezone('Asia/Manila')->format('g:i A') }}
+                                        </td>
+                                        <td class="px-4 py-2 flex justify-start items-center whitespace-nowrap w-[150px] shrink-0">
+                                            <a 
+                                                href="javascript:void(0)" 
+                                                class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer"
+                                            >
+                                                <img src="../images/view-senior.png" alt="View Message" class="w-4 h-4">
+                                            </a>
+                                            <a 
+                                                href="javascript:void(0)" 
+                                                class="bg-orange-500 ml-1 animate-pop hover:bg-orange-600 rounded-md p-2 cursor-pointer"
+                                            >
+                                                <img src="../images/reply.png" alt="Reply Message" class="w-4 h-4">
+                                            </a>
+                                            <a 
+                                                href="javascript:void(0)" 
+                                                class="bg-red-500 ml-1 animate-pop hover:bg-red-600 rounded-md p-2 cursor-pointer"
+                                            >
+                                                <img src="../images/trashbin-white.png" alt="Move to Trash" class="w-4 h-4">
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -242,6 +286,18 @@
         </div>
     </div>
 </div>
+<div x-show="showAdminViewMessageModal" @click.away="showAdminViewMessageModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_view_message')
+</div>
+<div x-show="showAdminTrashMessageModal" @click.away="showAdminTrashMessageModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_trash_message')
+</div>
+<div x-show="showAdminRestoreMessageModal" @click.away="showAdminRestoreMessageModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_restore_message')
+</div>
+<div x-show="showAdminComposeMessageModal" @click.away="showAdminComposeMessageModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_compose_message')
+</div>
 </section>
 
 <script>
@@ -250,22 +306,23 @@
     const startInput = document.getElementById("datepicker-range-start");
     const endInput = document.getElementById("datepicker-range-end");
     const searchDropdown = document.getElementById("search-dropdown");
-    const messageTypeDropdown = document.getElementById("message-type-dropdown");
+    const messageMediumDropdown = document.getElementById("message-medium-dropdown");
     const paginationContainer = document.querySelector("nav[aria-label='Page navigation example'] ul");
 
     const savedStartDate = localStorage.getItem('startDate');
     const savedEndDate = localStorage.getItem('endDate');
     const orderDropdown = document.getElementById("order-dropdown");
+    const messageTypeRadios = document.getElementsByName("message_type_table");
     const savedSearchQuery = localStorage.getItem('SearchQuery') || '';
-    const savedMessageTypeId = localStorage.getItem('messageTypeId');
+    const savedMessageMediumId = localStorage.getItem('messageMediumId');
     const savedOrder = localStorage.getItem('order') || 'asc';
 
     orderDropdown.value = savedOrder;
 
     searchDropdown.value = savedSearchQuery;
 
-    if (savedMessageTypeId) {
-        messageTypeDropdown.value = savedMessageTypeId;
+    if (savedMessageMediumId) {
+        messageMediumDropdown.value = savedMessageMediumId;
     }
 
     const startPicker = flatpickr(startInput, {
@@ -308,9 +365,17 @@
         updateTable(1);
     });
 
-    messageTypeDropdown.addEventListener("change", function () {
-        const messageTypeId = this.value;
-        localStorage.setItem('messageTypeId', messageTypeId);
+    messageTypeRadios.forEach(radio => {
+        radio.addEventListener("change", function () {
+            const messageTypeId = this.value;
+            localStorage.setItem('messageTypeId', messageTypeId);
+            updateTable(1);
+        });
+    });
+
+    messageMediumDropdown.addEventListener("change", function () {
+        const messageMediumId = this.value;
+        localStorage.setItem('messageMediumId', messageMediumId);
         updateTable(1);
     });
 
@@ -327,7 +392,8 @@
     });
 
     function updateTable(page) {
-        const messageTypeId = messageTypeDropdown.value === 'all' ? null : messageTypeDropdown.value;
+        const messageMediumId = messageMediumDropdown.value;
+        const messageTypeId = localStorage.getItem('messageTypeId') || null;
         const SearchQuery = searchDropdown.value.toLowerCase();
         const startDate = startInput.value;
         const endDate = endInput.value;
@@ -340,6 +406,7 @@
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             },
             body: JSON.stringify({
+                message_medium_id: messageMediumId,
                 message_type_id: messageTypeId,
                 search_query: SearchQuery,
                 start_date: startDate,
@@ -360,33 +427,77 @@
         tbody.innerHTML = '';
 
         messages.forEach((message, index) => {
-
             const utcDate = new Date(message.created_at + 'Z');
 
             const formattedDate = new Intl.DateTimeFormat('en-US', {
-                timeZone: 'Asia/Manila', 
+                timeZone: 'Asia/Manila',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
             }).format(utcDate);
 
             const formattedTime = new Intl.DateTimeFormat('en-US', {
-                timeZone: 'Asia/Manila', 
+                timeZone: 'Asia/Manila',
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: true,
             }).format(utcDate);
 
+            const actionButton = message.message_type_id === 3 ? `
+                <a 
+                    href="javascript:void(0)" 
+                    class="bg-green-500 ml-1 animate-pop hover:bg-green-600 rounded-md p-2 cursor-pointer" 
+                    @click="showAdminRestoreMessageModal = true; 
+                    localStorage.setItem('showAdminRestoreMessageModal', 'true');
+                    loadMessageDataForRestore(${message.id})"
+                >
+                    <img src="../images/restore.png" alt="Restore Message" class="w-4 h-4">
+                </a>` : `
+                <a 
+                    href="javascript:void(0)" 
+                    class="bg-red-500 ml-1 animate-pop hover:bg-red-600 rounded-md p-2 cursor-pointer" 
+                    @click="showAdminTrashMessageModal = true; 
+                    localStorage.setItem('showAdminTrashMessageModal', 'true');
+                    loadMessageDataForTrash(${message.id})"
+                >
+                    <img src="../images/trashbin-white.png" alt="Move to Trash" class="w-4 h-4">
+                </a>`;
+
+            const sentBy = message.sent_by_email?.trim() || message.sent_by_contact?.trim() || '-';
+            const sentTo = message.sent_to_email?.trim() || message.sent_to_contact?.trim() || '-';
+
+            // <a 
+            //                 href="javascript:void(0)" 
+            //                 class="bg-orange-500 ml-1 animate-pop hover:bg-orange-600 rounded-md p-2 cursor-pointer" 
+            //                 @click="showAdminReplyMessageModal = true; 
+            //                 localStorage.setItem('showAdminReplyMessageModal', 'true');
+            //                 loadMessageDataForReply(${message.id})"
+            //             >
+            //                 <img src="../images/reply.png" alt="Reply Message" class="w-4 h-4">
+            //             </a>
+
             const row = `
                 <tr class="${index % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]'}">
                     <td class="px-4 py-2">${message.id}</td>
-                    <td class="px-4 py-2">${message.name}</td>
-                    <td class="px-4 py-2">${message.sent_by_email}</td>
-                    <td class="px-4 py-2">${message.sent_to_email}</td>
-                    <td class="px-4 py-2">${message.subject}</td>
-                    <td class="px-4 py-2">${message.message}</td>
+                    <td class="px-4 py-2 truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${sentBy}</td>
+                    <td class="px-4 py-2 truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${sentTo}</td>
+                    <td class="px-4 py-2 truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${message.subject}</td>
+                    <td class="px-4 py-2 truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${message.message}</td>
                     <td class="px-4 py-2">${formattedDate}</td>
                     <td class="px-4 py-2">${formattedTime}</td>
+                    <td class="px-4 py-2 flex justify-start items-center whitespace-nowrap w-[150px] shrink-0">
+                        <a 
+                            href="javascript:void(0)" 
+                            class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer" 
+                            @click="showAdminViewMessageModal = true; 
+                            localStorage.setItem('showAdminViewMessageModal', 'true');
+                            loadMessageDataForView(${message.id})"
+                        >
+                            <img src="../images/view-senior.png" alt="View Message" class="w-4 h-4">
+                        </a>
+                        
+                        ${actionButton}
+                    </td>
                 </tr>`;
 
             tbody.innerHTML += row;
@@ -453,6 +564,57 @@
     updateTable(currentPage);
 });
 
+</script>
+
+<script>
+    const adminFirstName = "{{ $adminFirstName }}";
+    const adminLastName = "{{ $adminLastName }}";
+    const userRole = "{{ $userRole }}";
+    const currentDate = new Date().toLocaleString(); 
+
+    function printTable() {
+        const table = document.querySelector('table').cloneNode(true);
+        
+        table.querySelectorAll('img').forEach(img => img.remove());
+
+        const newWindow = window.open('', '', 'height=800,width=600');
+        newWindow.document.write('<html><head><title>Print</title></head><body>');
+        newWindow.document.write(table.outerHTML);
+        newWindow.document.write('<footer>');
+        newWindow.document.write(`<p>Exported by: ${adminFirstName} ${adminLastName} (${userRole})</p>`);
+        newWindow.document.write(`<p>Date Exported: ${currentDate}</p>`);
+        newWindow.document.write('</footer>');
+        newWindow.document.write('</body></html>');
+        newWindow.document.close();
+        newWindow.print();
+    }
+
+    function exportToPDF() {
+        const element = document.querySelector('table');
+        const opt = {
+            margin: 1,
+            filename: `beneficiary_${adminFirstName}_${adminLastName}_${userRole}_${currentDate}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 4 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+        };
+        html2pdf().from(element).set(opt).save();
+    }
+
+    function exportToExcel() {
+        const table = document.querySelector('table');
+        const wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet 1' });
+        XLSX.writeFile(wb, `beneficiary_${adminFirstName}_${adminLastName}_${userRole}_${currentDate}.xlsx`);
+    }
+
+    function exportToImage() {
+        html2canvas(document.querySelector('table')).then(canvas => {
+            let link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `beneficiary_${adminFirstName}_${adminLastName}_${userRole}_${currentDate}.png`;
+            link.click();
+        });
+    }
 </script>
 
 </body>

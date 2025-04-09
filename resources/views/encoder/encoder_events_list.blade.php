@@ -3,9 +3,7 @@
 @php $array = array('title' => 'SPENDS') @endphp
 <x-encoder_dashboard_nav :data="$array"/>
 
-<section x-data="{ showEncoderAddPensionDistributionModal: localStorage.getItem            ('showEncoderAddPensionDistributionModal') === 'true',
-showEncoderEditPensionDistributionModal: localStorage.getItem            ('showEncoderEditPensionDistributionModal') === 'true',
-showEncoderDeletePensionDistributionModal: localStorage.getItem            ('showEncoderDeletePensionDistributionModal') === 'true',
+<section x-data="{
 showEncoderViewEventModal: localStorage.getItem('showEncoderViewEventModal') === 'true',
 showEncoderDeleteEventModal: localStorage.getItem('showEncoderDeleteEventModal') === 'true',
 }"
@@ -65,20 +63,13 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                                     </button>
                                 </div>
                             </div>
-                            <div class="flex justify-start mb-4 relative">
+                            <div class="flex justify-start relative">
                                 <div class="relative w-[50%] lg:w-[30%]">
                                     <select id="order-dropdown" class="bg-gray-50 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full  p-2.5">
                                         <option value="asc" selected>Ascending</option>
                                         <option value="desc">Descending</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="relative sm:w-full">
-                                <label class="inline-flex items-center cursor-pointer">
-                                <span class="text-sm font-medium text-gray-900">Featured Only</span>
-                                <input type="checkbox" id="featured" value="" class="sr-only peer">
-                                <div class="relative ml-2 w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1AA514]"></div>
-                                </label>
                             </div>
                         </div>
 
@@ -94,13 +85,13 @@ class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: ur
                                 </div>
                             </div>
 
-                            <div class="flex relative justify-start md:justify-end">
-                                <a href="{{ route('encoder-add-event') }}"
-                                class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-md px-5 py-2 text-center inline-flex items-center">
-                                    Add Event
-                                </a>
+                            <div class="relative flex sm:justify-start md:justify-end w-full">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <span class="text-sm font-medium text-gray-900">Featured Only</span>
+                                    <input type="checkbox" id="featured" value="" class="sr-only peer">
+                                    <div class="relative ml-2 w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1AA514]"></div>
+                                </label>
                             </div>
-
                         </div>
                     </div>
 

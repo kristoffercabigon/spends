@@ -1731,7 +1731,7 @@ class SeniorsFactory extends Factory
 
         $baseTimestamp = strtotime('-5 years');
         $nowTimestamp = time();
-        $totalUsers = 50;
+        $totalUsers = 500;
         $usersLeft = $totalUsers;
 
         $usersPerDay = [];
@@ -1764,6 +1764,12 @@ class SeniorsFactory extends Factory
             }
         }
 
+        $randomSignatureChoice = rand(0, 1);
+        $signature = $randomSignatureChoice ? 'sample7.jpg' : null;
+        $signature_data = !$randomSignatureChoice ? 'sample6.png' : null;
+
+        $is_application_archived = (rand(1, 100) <= 5) ? 1 : 0;
+        $is_beneficiary_archived = ($is_application_archived === 0 && rand(1, 100) <= 5) ? 1 : 0;
         $has_illness = $this->faker->numberBetween(0, 1);
         $has_disability = $this->faker->randomElement([0, 0, 0, 1]);
         $permanent_source = $this->faker->randomElement([0, 1]);
@@ -1823,10 +1829,8 @@ class SeniorsFactory extends Factory
 
             'account_status_id' => function (array $attributes) {
                 return $attributes['application_status_id'] === 3
-                ? (rand(1, 100) <= 75
-                    ? 1
-                    : $this->faker->numberBetween(2, 4))
-                    : null;
+                ? (rand(1, 100) <= 75 ? 1 : 2)
+                : null;
             },
 
             'application_assistant_id' => function (array $attributes) use ($application_assistant_id) {
@@ -1927,7 +1931,8 @@ class SeniorsFactory extends Factory
             'profile_picture' => $profile_picture,
             'indigency' => 'sample5.jpg',
             'birth_certificate' => 'sample3.jpg',
-            'signature_data' => 'sample6.png',
+            'signature' => $signature,
+            'signature_data' => $signature_data,
             'type_of_living_arrangement' => $type_of_living_arrangement,
             'other_arrangement_remark' => $type_of_living_arrangement == 5 ? $this->faker->randomElement($otherArrangements) : null,
             'pensioner' => $pensioner,
@@ -1947,6 +1952,8 @@ class SeniorsFactory extends Factory
 
                 return $email;
             },
+            'is_application_archived' => $is_application_archived,
+            'is_beneficiary_archived' => $is_beneficiary_archived,
             'password' => Hash::make('password'),
             'verified_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];

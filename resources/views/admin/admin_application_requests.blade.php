@@ -3,7 +3,8 @@
 @php $array = array('title' => 'SPENDS') @endphp
 <x-admin_dashboard_nav :data="$array"/>
 
-<section class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
+<section x-data="{ showAdminArchiveSeniorApplicationModal: localStorage.getItem('showAdminArchiveSeniorApplicationModal') === 'true',
+showAdminRestoreApplicationModal: localStorage.getItem('showAdminRestoreApplicationModal') === 'true' }" class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
     <ul class="circles">
         <li></li>
         <li></li>
@@ -93,7 +94,7 @@
                             </div>
 
                             <div class="flex relative justify-start md:justify-end">
-                                <button id="dropdownCheckboxButton" data-dropdown-toggle="dropdownDefaultCheckbox" class="text-white bg-[#1AA514] hover:bg-[#148e10] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-md px-5 py-2 text-center inline-flex items-center" type="button">
+                                <button id="dropdownCheckboxButton" data-dropdown-toggle="dropdownDefaultCheckbox" class="text-white bg-[#1AA514] hover:bg-[#148e10] mb-4 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-md px-5 py-2 text-center inline-flex items-center" type="button">
                                     Application Status
                                     <svg class="w-2.5 h-2.5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
@@ -112,6 +113,14 @@
                                         @endforeach
                                     </ul>
                                 </div>
+                            </div>
+
+                            <div class="flex relative justify-start md:justify-end">
+                                <label class="inline-flex items-center cursor-pointer">
+                                <span class="text-sm font-medium text-gray-900">Archived Only</span>
+                                <input type="checkbox" id="archived" value="" class="sr-only peer">
+                                <div class="relative ml-2 w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1AA514]"></div>
+                                </label>
                             </div>
 
                         </div>
@@ -274,6 +283,12 @@
         </div>
     </div>
 </div>
+<div x-show="showAdminArchiveSeniorApplicationModal" @click.away="showAdminArchiveSeniorApplicationModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_archive_application')
+</div>
+<div x-show="showAdminRestoreApplicationModal" @click.away="showAdminRestoreApplicationModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_restore_application')
+</div>
 </section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -294,12 +309,14 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
     const startInput = document.getElementById("datepicker-range-start");
     const endInput = document.getElementById("datepicker-range-end");
     const searchDropdown = document.getElementById("search-dropdown");
+    const archivedCheckbox = document.getElementById("archived");
     const paginationContainer = document.querySelector("nav[aria-label='Page navigation example'] ul");
 
     const savedBarangayId = localStorage.getItem('barangayId');
     const savedStartDate = localStorage.getItem('startDate');
     const savedEndDate = localStorage.getItem('endDate');
     const savedSearchQuery = localStorage.getItem('searchQuery') || '';
+    const savedIsArchived = localStorage.getItem('archived');
     const selectedStatuses = JSON.parse(localStorage.getItem('selectedStatuses')) || [];
     const orderDropdown = document.getElementById("order-dropdown");
     const savedOrder = localStorage.getItem('order') || 'asc';
@@ -307,6 +324,10 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
     orderDropdown.value = savedOrder;
 
     searchDropdown.value = savedSearchQuery;
+
+    if (savedIsArchived) {
+        archivedCheckbox.checked = savedIsArchived === '1';
+    }
 
     if (savedBarangayId) {
         barangayDropdown.value = savedBarangayId;
@@ -338,12 +359,12 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         }
     });
 
-    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    document.querySelectorAll('#dropdownDefaultCheckbox input[type="checkbox"]').forEach(checkbox => {
         if (selectedStatuses.includes(checkbox.value)) {
             checkbox.checked = true;
         }
         checkbox.addEventListener('change', function () {
-            const updatedStatuses = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+            const updatedStatuses = Array.from(document.querySelectorAll('#dropdownDefaultCheckbox input[type="checkbox"]:checked'))
                 .map(checkbox => checkbox.value);
             localStorage.setItem('selectedStatuses', JSON.stringify(updatedStatuses));
             updateTable(1);
@@ -376,6 +397,12 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         updateTable(1);
     });
 
+    archivedCheckbox.addEventListener("change", function () {
+        const archived = this.checked ? 1 : 0;
+        localStorage.setItem('archived', archived);
+        updateTable(1);
+    });
+
     orderDropdown.addEventListener("change", function () {
         const order = this.value;
         localStorage.setItem('order', order);
@@ -387,6 +414,7 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         const startDate = startInput.value;
         const endDate = endInput.value;
         const searchQuery = searchDropdown.value.toLowerCase();
+        const archived = archivedCheckbox.checked ? 1 : 0;
         const selectedStatuses = JSON.parse(localStorage.getItem('selectedStatuses')) || [];
         const order = orderDropdown.value;
 
@@ -397,6 +425,7 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             },
             body: JSON.stringify({
+                is_archived: archived,
                 barangay_id: barangayId,
                 start_date: startDate,
                 end_date: endDate,
@@ -418,16 +447,41 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         const tbody = document.querySelector('tbody');
         tbody.innerHTML = '';
         data.forEach((senior, index) => {
+
             const defaultProfile = `https://api.dicebear.com/9.x/initials/svg?seed=${senior.first_name}-${senior.last_name}`;
+
             const profilePicture = senior.profile_picture
                 ? `/storage/images/senior_citizen/thumbnail_profile/${senior.profile_picture}`
                 : defaultProfile;
+
             const fullName = `${senior.first_name} ${senior.middle_name || ''} ${senior.last_name}${senior.suffix ? `, ${senior.suffix}` : ''}`;
+
             const formattedDate = new Date(senior.date_applied).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
             });
+
+            const actionButton = senior.is_application_archived === 0 ? `
+                <a 
+                    href="javascript:void(0)" 
+                    class="bg-gray-500 ml-1 animate-pop hover:bg-gray-600 rounded-md p-2 cursor-pointer" 
+                    @click="showAdminArchiveSeniorApplicationModal = true; 
+                    localStorage.setItem('showAdminArchiveSeniorApplicationModal', 'true');
+                    loadSeniorDataForArchive(${senior.id})"
+                >
+                    <img src="../images/archive.png" alt="Archive Senior" class="w-4 h-4">
+                </a>` : `
+                <a 
+                    href="javascript:void(0)" 
+                    class="bg-green-500 ml-1 animate-pop hover:bg-green-600 rounded-md p-2 cursor-pointer" 
+                    @click="showAdminRestoreApplicationModal = true; 
+                    localStorage.setItem('showAdminRestoreApplicationModal', 'true');
+                    loadSeniorDataForRestore(${senior.id})"
+                >
+                    <img src="../images/restore.png" alt="Restore Senior" class="w-4 h-4">
+                </a>`;
+
             const row = `
                 <tr class="${index % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]'}">
                     <td class="px-4 py-2">${senior.id}</td>
@@ -441,10 +495,11 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
                     <td class="px-4 py-2">${senior.senior_application_status || 'Unknown'}</td>
                     <td class="px-4 py-2">${senior.barangay_no}</td>
                     <td class="px-4 py-2">${formattedDate}</td>
-                    <td class="px-3 py-2 flex justify-center items-center">
+                    <td class="px-4 py-2 flex justify-start items-center whitespace-nowrap w-[150px] shrink-0">
                         <a href="/admin/application-requests/view-senior-profile/${senior.id}" class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer">
                             <img src="../images/view-senior.png" alt="View Senior" class="w-4 h-4">
                         </a>
+                        ${actionButton}
                     </td>
                 </tr>`;
             tbody.innerHTML += row;

@@ -107,7 +107,7 @@
                             @enderror
                         </div>
 
-                        <div>
+                        {{-- <div>
                             <div class="flex justify-center mt-8">
                             {!! htmlFormSnippet() !!}
                             </div>
@@ -116,7 +116,7 @@
                                     {{ $errors->first('g-recaptcha-response') }}
                                 </div>
                             @endif
-                        </div>
+                        </div> --}}
 
                         <button type="submit" class="hover:scale-105 transition duration-150 ease-in-out relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                             <span x-show="!isLoadingResetPassword">Reset Password</span>

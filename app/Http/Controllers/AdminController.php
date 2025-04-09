@@ -6,9 +6,12 @@ use App\Models\Admin;
 use App\Models\Seniors;
 use App\Models\Encoder;
 use App\Models\PensionDistribution;
+use App\Models\Events;
+use App\Models\EventsImages;
 use App\Mail\AdminResendCodeEmail;
 use App\Mail\AdminForgotPassword;
 use App\Mail\AdminLoginAttempt;
+use App\Mail\AdminComposeMessageEmail;
 use App\Mail\AdminPasswordChangeVerificationCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -39,9 +42,260 @@ use App\Models\AccountStatus;
 use App\Models\ApplicationStatus;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Http;
+use App\Models\Messages;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class AdminController extends Controller
 {
+
+    public function getPensionData(Request $request)
+    {
+        $year = $request->query('year', date('Y'));
+        $nodeScript = base_path('resources/js/fetchPension.js');
+        $output = shell_exec("node $nodeScript");
+
+        if (!$output) {
+            Log::error('No pension data found on blockchain.');
+            return response()->json(['success' => false, 'message' => 'No pension data found on blockchain']);
+        }
+
+        $pensionData = json_decode($output, true);
+
+        if (!$pensionData || !$pensionData['success']) {
+            Log::error('Error fetching pension data.', ['output' => $output]);
+            return response()->json(['success' => false, 'message' => 'Error fetching pension data']);
+        }
+
+        $oldestYear = DB::table('seniors')
+            ->whereIn('id', $pensionData['senior_ids'])
+            ->whereNotNull('date_approved')
+            ->orderBy('date_approved', 'asc')
+            ->value(DB::raw('YEAR(date_approved)'));
+
+        $oldestYear = $oldestYear ?? 2015;
+
+        $beneficiariesPerMonth = DB::table('seniors')
+            ->whereIn('id', $pensionData['senior_ids'])
+            ->whereYear('date_approved', $year)
+            ->select(DB::raw('DATE_FORMAT(date_approved, "%Y-%m") as month, COUNT(*) as total_beneficiaries'))
+            ->groupBy(DB::raw('DATE_FORMAT(date_approved, "%Y-%m")'))
+            ->get();
+
+        $chartData = $beneficiariesPerMonth->map(function ($item) {
+            return [
+                'month' => $item->month,
+                'total_beneficiaries' => $item->total_beneficiaries,
+            ];
+        });
+
+        $beneficiariesPerBarangay = DB::table('seniors')
+            ->join('barangay_list', 'seniors.barangay_id', '=', 'barangay_list.id')
+            ->whereIn('seniors.id', $pensionData['senior_ids'])
+            ->whereIn('account_status_id', [1, 2])
+            ->where('application_status_id', 3)
+            ->groupBy('barangay_list.id', 'barangay_list.barangay_no')
+            ->select(
+                'barangay_list.id as barangay_id',
+                'barangay_list.barangay_no as barangay_name',
+                DB::raw('COUNT(seniors.id) as total_beneficiaries')
+            )
+            ->get();
+
+        $seniors = DB::table('seniors')
+            ->leftJoin('sex_list', 'seniors.sex_id', '=', 'sex_list.id')
+            ->leftJoin('barangay_list', 'seniors.barangay_id', '=', 'barangay_list.id')
+            ->whereIn('seniors.id', $pensionData['senior_ids'])
+            ->whereIn('account_status_id', [1, 2])
+            ->where('application_status_id', 3)
+            ->select(
+                'seniors.*',
+                'sex_list.sex as sex_name',
+                'barangay_list.barangay_no as barangay_no'
+            )
+            ->orderBy('seniors.date_approved', 'desc')
+            ->paginate(10);
+
+        return response()->json([
+            'success' => true,
+            'total_beneficiaries' => $pensionData['total_beneficiaries'],
+            'total_pension_amount' => $pensionData['total_pension_amount'],
+            'timestamp' => $pensionData['timestamp'],
+            'current_block_hash' => $pensionData['current_block_hash'],
+            'previous_block_hash' => $pensionData['previous_block_hash'],
+            'senior_ids' => $pensionData['senior_ids'],
+            'chart_data' => $chartData,
+            'oldest_year' => $oldestYear,
+            'seniors' => $seniors,
+            'beneficiaries_per_barangay' => $beneficiariesPerBarangay,
+        ]);
+    }
+
+    public function storePensionData()
+    {
+        $seniorIds = DB::table('seniors')
+            ->where('application_status_id', 3)
+            ->whereIn('account_status_id', [1, 2])
+            ->pluck('id')
+            ->toArray();
+
+        $totalBeneficiaries = count($seniorIds);
+
+        if ($totalBeneficiaries == 0) {
+            Log::error("No verified seniors found.");
+            return response()->json(['success' => false, 'message' => 'No verified seniors found.']);
+        }
+
+        $totalPensionAmount = $totalBeneficiaries * 1000;
+
+        $pensionData = [
+            'total_beneficiaries' => $totalBeneficiaries,
+            'total_pension_amount' => $totalPensionAmount,
+            'senior_ids' => $seniorIds, 
+        ];
+
+        $tempFilePath = storage_path('pension_data.json');
+        file_put_contents($tempFilePath, json_encode($pensionData, JSON_PRETTY_PRINT));
+
+        $nodeScript = base_path('resources/js/storePension.js');
+        $command = "node " . escapeshellarg($nodeScript) . " " . escapeshellarg($tempFilePath);
+
+        Log::info("Executing command: $command");
+
+        $output = shell_exec("$command 2>&1");
+        Log::info("Node.js Output: " . print_r($output, true));
+
+        if (!$output) {
+            Log::error("Error executing pension storage script.");
+            return response()->json(['success' => false, 'message' => 'Error executing pension storage script.']);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Pension data stored successfully.']);
+    }
+
+    public function detectFraudulentActivity()
+    {
+        $year = date('Y');
+
+        // Fetch beneficiaries per month for the past 12 months
+        $beneficiariesPerMonth = DB::table('seniors')
+            ->where('application_status_id', 3)
+            ->whereYear('date_approved', '>=', $year - 1)
+            ->select(
+                DB::raw('DATE_FORMAT(date_approved, "%Y-%m") as month'),
+                DB::raw('COUNT(*) as total_beneficiaries')
+            )
+            ->groupBy(DB::raw('DATE_FORMAT(date_approved, "%Y-%m")'))
+            ->orderBy('month', 'asc')
+            ->get();
+
+        if ($beneficiariesPerMonth->isEmpty()) {
+            return response()->json(['success' => false, 'message' => 'No data available for analysis']);
+        }
+
+        // Convert data to array
+        $growthData = [];
+        $previousMonthBeneficiaries = null;
+        foreach ($beneficiariesPerMonth as $data) {
+            $currentMonth = $data->month;
+            $currentTotal = $data->total_beneficiaries;
+
+            // Calculate percentage increase
+            $growthRate = null;
+            if ($previousMonthBeneficiaries !== null && $previousMonthBeneficiaries > 0) {
+                $growthRate = (($currentTotal - $previousMonthBeneficiaries) / $previousMonthBeneficiaries) * 100;
+            }
+
+            // Store data
+            $growthData[] = [
+                'month' => $currentMonth,
+                'total_beneficiaries' => $currentTotal,
+                'growth_rate' => $growthRate ? round($growthRate, 2) : 0
+            ];
+
+            $previousMonthBeneficiaries = $currentTotal;
+        }
+
+        // Detect spikes (Threshold: >50% growth)
+        $fraudDetected = array_filter($growthData, function ($item) {
+            return $item['growth_rate'] > 50;
+        });
+
+        return response()->json([
+            'success' => true,
+            'growth_data' => $growthData,
+            'suspicious_months' => array_values($fraudDetected)
+        ]);
+    }
+
+
+    public function verifyPasswordHash(Request $request)
+    {
+        $request->validate([
+            'password' => 'required'
+        ]);
+
+        $admin = auth()->guard('admin')->user();
+
+        if (!$admin || !Hash::check($request->password, $admin->admin_password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid password. Please try again.'
+            ], 403);
+        }
+
+        $nodeScript = base_path('resources/js/fetchPension.js');
+        $command = "node $nodeScript";
+        $output = shell_exec($command);
+
+        if (!$output) {
+            return response()->json(['success' => false, 'message' => 'No pension data found on blockchain']);
+        }
+
+        $pensionData = json_decode($output, true);
+
+        if (!$pensionData || !$pensionData['success']) {
+            return response()->json(['success' => false, 'message' => 'Error fetching pension data']);
+        }
+
+
+        return response()->json([
+            'success' => true,
+            'current_block_hash' => $pensionData['current_block_hash'],
+            'previous_block_hash' => $pensionData['previous_block_hash'],
+        ]);
+    }
+
+    public function showAdminBlockchain()
+    {
+        $sex_list = DB::table('sex_list')->get();
+        $civil_status_list = DB::table('civil_status_list')->get();
+        $barangayList = DB::table('barangay_list')->get();
+        $user_type_list = DB::table('user_type_list')->get();
+        $living_arrangement_list = DB::table('living_arrangement_list')->get();
+        $how_much_pension_list = DB::table('how_much_pension_list')->get();
+        $how_much_income_list = DB::table('how_much_income_list')->get();
+        $senior_account_status_list = DB::table('senior_account_status_list')->get();
+        $senior_application_status_list = DB::table('senior_application_status_list')->get();
+        $accountStatuses = DB::table('senior_account_status_list')->get();
+
+        return view('admin.admin_blockchain')->with([
+            'title' => 'Blockchain',
+            '$sex_list' => $sex_list,
+            'civil_status_list' => $civil_status_list,
+            'barangayList' => $barangayList,
+            'accountStatuses' => $accountStatuses,
+            'living_arrangement_list' => $living_arrangement_list,
+            'user_type_list' => $user_type_list,
+            'how_much_pension_list' => $how_much_pension_list,
+            'how_much_income_list' => $how_much_income_list,
+            'senior_account_status_list' => $senior_account_status_list,
+            'senior_application_status_list' => $senior_application_status_list,
+        ]);
+    }
+
     public function showAdminIndex()
     {
         return view('admin.admin_index')->with('title', 'Home ');
@@ -73,6 +327,14 @@ class AdminController extends Controller
         $applicationStatusData = [];
         foreach ($application_status_list as $id => $status) {
             $applicationStatusData[] = [
+                'status' => $status,
+                'total' => $applicationStatusCounts[$id] ?? 0
+            ];
+        }
+
+        $applicationStatusDataforDoughnut = [];
+        foreach ($application_status_list as $id => $status) {
+            $applicationStatusDataforDoughnut[] = [
                 'status' => $status,
                 'total' => $applicationStatusCounts[$id] ?? 0
             ];
@@ -147,20 +409,18 @@ class AdminController extends Controller
             ];
         }
 
-        $response = Http::post('http://127.0.0.1:5000/admin/dashboard', [
-            'features' => $features
-        ]);
-
-        if ($response->successful()) {
-            $chartData = $response->json();
-        } else {
-            $chartData = [];
-        }
+        $applicationStatusData = [
+            'under_evaluation' => \App\Models\Seniors::where('application_status_id', 1)->count(),
+            'on_hold' => \App\Models\Seniors::where('application_status_id', 2)->count(),
+            'approved' => \App\Models\Seniors::where('application_status_id', 3)->count(),
+            'rejected' => \App\Models\Seniors::where('application_status_id', 4)->count(),
+        ];
 
         return view('admin.admin_dashboard', [
             'title' => 'Dashboard',
             'application_status_list' => $application_status_list,
             'applicationStatusData' => $applicationStatusData,
+            'applicationStatusDataforDoughnut' => $applicationStatusDataforDoughnut,
             'accountStatusData' => $accountStatusData,
             'barangay_list' => $barangayData,
             'seniors' => $seniors,
@@ -168,19 +428,24 @@ class AdminController extends Controller
             'barangayList' => $barangayList,
             'chartData' => $chartData ?? [],
             'total_Beneficiaries' => $total_Beneficiaries,
-            'totalApplicationRequests' => \App\Models\Seniors::where('application_status_id', '!=', 3)->count(),
+            'totalApplicationRequests' => \App\Models\Seniors::whereIn('application_status_id', [1, 2])->count(),
             'totalApplicationsApproved' => \App\Models\Seniors::where('application_status_id', 3)->count(),
+            'totalApplicationsRejected' => \App\Models\Seniors::where('application_status_id', 4)->count(),
             'totalBeneficiaries' => \App\Models\Seniors::where('application_status_id', 3)
-            ->where(function ($query) {
-                $query->where('account_status_id', 1)
-                ->orWhere('account_status_id', 2);
-            })
-                ->count(),
+                ->where(function ($query) {
+                    $query->where('account_status_id', 1)
+                        ->orWhere('account_status_id', 2);
+                })->count(),
         ]);
     }
 
     public function showAdminMessages()
     {
+        $barangayList = DB::table('barangay_list')->get();
+        $messageTemplate = DB::table('message_template')->get();
+        $applicationStatusList = DB::table('senior_application_status_list')->get();
+        $accountStatusList = DB::table('senior_account_status_list')->get();
+
         $messages = DB::table('contact_us')
         ->leftJoin('message_type_list', 'contact_us.message_type_id', '=', 'message_type_list.id')
         ->select(
@@ -207,6 +472,10 @@ class AdminController extends Controller
             'adminFirstName' => $adminFirstName,
             'adminLastName' => $adminLastName,
             'userRole' => $userRole,
+            'barangayList' => $barangayList,
+            'applicationStatusList' => $applicationStatusList,
+            'accountStatusList' => $accountStatusList,
+            'messageTemplate' => $messageTemplate,
         ]);
     }
 
@@ -217,14 +486,12 @@ class AdminController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $orderDirection = $request->input('order', 'desc');
+        $messageMedium = $request->input('message_medium_id', 'all');
         $perPage = 10;
 
         $query = DB::table('contact_us')
         ->leftJoin('message_type_list', 'contact_us.message_type_id', '=', 'message_type_list.id')
-        ->select(
-            'contact_us.*',
-            'message_type_list.message_type',
-        );
+        ->select('contact_us.*', 'message_type_list.message_type');
 
         if (!empty($messageTypeId)) {
             $query->where('contact_us.message_type_id', $messageTypeId);
@@ -246,7 +513,6 @@ class AdminController extends Controller
 
         if (!empty($searchQuery)) {
             $terms = array_filter(explode(' ', strtolower($searchQuery)));
-
             $query->where(function ($q) use ($terms) {
                 foreach ($terms as $term) {
                     $q->whereRaw("LOWER(contact_us.name) LIKE ?", ['%' . $term . '%']);
@@ -254,9 +520,343 @@ class AdminController extends Controller
             })->orWhere('contact_us.name', 'LIKE', '%' . $searchQuery . '%');
         }
 
+        if ($messageMedium === 'email') {
+            $query->where(function ($q) {
+                $q->whereNotNull('contact_us.sent_by_email')
+                ->orWhereNotNull('contact_us.sent_to_email');
+            });
+        } elseif ($messageMedium === 'sms') {
+            $query->where(function ($q) {
+                $q->whereNotNull('contact_us.sent_by_contact')
+                ->orWhereNotNull('contact_us.sent_to_contact');
+            });
+        }
+
         $messages = $query->paginate($perPage);
 
         return response()->json($messages);
+    }
+
+    public function submitAdminComposeMessage(Request $request)
+    {
+        $request->validate([
+            'message' => 'required|string',
+            'message_type' => 'required|in:email,sms',
+            'email_subject' => $request->message_type === 'email' ? 'required|string|max:255' : 'nullable|string|max:255',
+            'email_to' => $request->message_type === 'email' && !$request->has('bulk_message') ? 'required|string' : 'nullable|string',
+            'attachment' => $request->message_type === 'email' ? 'nullable|file|max:5120' : 'nullable',
+            'number' => $request->message_type === 'sms' && !$request->has('bulk_message') ? 'required|string' : 'nullable|string',
+            'barangay_id' => ['nullable', function ($attribute, $value, $fail) {
+                if ($value !== 'none' && !ctype_digit($value)) {
+                    $fail('The ' . $attribute . ' field must be an integer or "none".');
+                }
+            }],
+            'application_status_id' => ['nullable', function ($attribute, $value, $fail) {
+                if ($value !== 'none' && !ctype_digit($value)) {
+                    $fail('The ' . $attribute . ' field must be an integer or "none".');
+                }
+            }],
+            'account_status_id' => ['nullable', function ($attribute, $value, $fail) {
+                if ($value !== 'none' && !ctype_digit($value)) {
+                    $fail('The ' . $attribute . ' field must be an integer or "none".');
+                }
+            }],
+        ]);
+
+        if ($request->message_type === 'email') {
+            $emails = [];
+
+            if ($request->has('bulk_message')) {
+                $query = Seniors::query();
+
+                if ($request->barangay_id !== 'none') {
+                    $query->where('barangay_id', $request->barangay_id);
+                }
+                if ($request->application_status_id !== 'none') {
+                    $query->where('application_status_id', $request->application_status_id);
+                }
+                if ($request->account_status_id !== 'none') {
+                    $query->where('account_status_id', $request->account_status_id);
+                }
+
+                $emails = $query->pluck('email')->filter()->toArray();
+            } else {
+                $emails = explode(',', $request->email_to);
+                $emails = array_map('trim', $emails);
+                $emails = array_filter($emails, function ($email) {
+                    return filter_var($email, FILTER_VALIDATE_EMAIL);
+                });
+            }
+
+            if (empty($emails)) {
+                return redirect()->back()->with([
+                    'admin-error-message-header' => 'Error',
+                    'admin-error-message-body' => 'No valid email addresses provided.',
+                ]);
+            }
+
+            do {
+                $message_id = rand(10000, 99999);
+            } while (DB::table('contact_us')->where('message_id', $message_id)->exists());
+
+            $attachmentPath = null;
+            if ($request->hasFile('attachment')) {
+                $attachmentExtension = $request->file('attachment')->getClientOriginalExtension();
+                $attachmentFilenameToStore = $message_id . '.' . $attachmentExtension;
+                $request->file('attachment')->storeAs('images/admin/admin_message_attachments', $attachmentFilenameToStore, 'public');
+                $attachmentPath =
+                'images/admin/admin_message_attachments/' . $attachmentFilenameToStore;
+            }
+
+            Mail::to(array_shift($emails))
+                ->cc($emails)
+                ->send(new AdminComposeMessageEmail($request->email_subject, $request->message, $attachmentPath));
+
+            $adminUser = auth()->guard('admin')->user();
+            $adminEmail = $adminUser->admin_email;
+
+            DB::table('contact_us')->insert([
+                'message_id' => $message_id,
+                'message_type_id' => 2,
+                'is_favorite' => 0,
+                'sent_by_email' => $adminEmail,
+                'sent_to_email' => $request->email_to, 
+                'message_attachment' => $attachmentPath,
+                'subject' => $request->email_subject,
+                'message' => $request->message,
+                'created_at' => now(),
+            ]);
+
+            foreach ($emails as $email) {
+                do {
+                    $unique_message_id = rand(10000, 99999);
+                } while (DB::table('contact_us')->where('message_id', $unique_message_id)->exists());
+
+                DB::table('contact_us')->insert([
+                    'message_id' => $unique_message_id, 
+                    'message_type_id' => 2,
+                    'is_favorite' => 0,
+                    'sent_by_email' => $adminEmail,
+                    'sent_to_email' => $email,
+                    'message_attachment' => $attachmentPath,
+                    'subject' => $request->email_subject,
+                    'message' => $request->message,
+                    'created_at' => now(),
+                ]);
+            }
+
+            return redirect()->back()->with([
+                'admin-message-header' => 'Success',
+                'admin-message-body' => 'Email Message sent successfully.',
+                'clearAdminComposeMessageModal' => true,
+            ]);
+        } elseif ($request->message_type === 'sms') {
+            $numbers = [];
+
+            if ($request->has('bulk_message')) {
+                $query = Seniors::query();
+
+                if ($request->barangay_id !== 'none') {
+                    $query->where('barangay_id', $request->barangay_id);
+                }
+                if ($request->application_status_id !== 'none') {
+                    $query->where('application_status_id', $request->application_status_id);
+                }
+                if ($request->account_status_id !== 'none') {
+                    $query->where('account_status_id', $request->account_status_id);
+                }
+
+                $numbers = $query->pluck('contact_no')->filter()->toArray();
+            } else {
+                $numbers = explode(',', $request->number);
+                $numbers = array_map('trim', $numbers);
+            }
+
+            if (empty($numbers)) {
+                return redirect()->back()->with([
+                    'admin-error-message-header' => 'Error',
+                    'admin-error-message-body' => 'No valid phone numbers provided.',
+                ]);
+            }
+
+            do {
+                $message_id = rand(10000, 99999);
+            } while (DB::table('contact_us')->where('message_id', $message_id)->exists());
+
+            $apiKey = "881470b412b45a924eac9ef6ed6a3f13";
+            $senderName = "SPENDS";
+
+            $response = Http::post('https://api.semaphore.co/api/v4/messages', [
+                'apikey' => $apiKey,
+                'number' => implode(',', $numbers),
+                'message' => $request->message,
+                'sendername' => $senderName,
+            ]);
+
+            if (!$response->successful()) {
+                return redirect()->back()->with([
+                    'admin-error-message-header' => 'Error',
+                    'admin-error-message-body' => 'Failed to send SMS message.',
+                ]);
+            }
+
+            $adminUser = auth()->guard('admin')->user();
+            $adminContact = "SPENDS";
+
+            DB::table('contact_us')->insert([
+                'message_id' => $message_id,
+                'message_type_id' => 2,
+                'is_favorite' => 0,
+                'sent_by_email' => null,
+                'sent_to_email' => null,
+                'sent_by_contact' => $adminContact,
+                'sent_to_contact' => implode(',', $numbers),
+                'message_attachment' => null,
+                'subject' => null,
+                'message' => $request->message,
+                'created_at' => now(),
+            ]);
+
+            foreach ($numbers as $number) {
+                do {
+                    $unique_message_id = rand(10000, 99999);
+                } while (DB::table('contact_us')->where('message_id', $unique_message_id)->exists());
+
+                DB::table('contact_us')->insert([
+                    'message_id' => $unique_message_id,
+                    'message_type_id' => 2,
+                    'is_favorite' => 0,
+                    'sent_by_email' => null,
+                    'sent_to_email' => null,
+                    'sent_by_contact' => $adminContact,
+                    'sent_to_contact' => $number,
+                    'message_attachment' => null,
+                    'subject' => null,
+                    'message' => $request->message,
+                    'created_at' => now(),
+                ]);
+            }
+
+            return redirect()->back()->with([
+                'admin-message-header' => 'Success',
+                'admin-message-body' => 'SMS Message sent successfully.',
+                'clearAdminComposeMessageModal' => true,
+            ]);
+        }
+    }
+
+    public function getMessageDataForView($id)
+    {
+        $messages = Messages::find($id);
+
+        if ($messages) {
+            return response()->json([
+                'id' => $messages->id,
+                'name' => $messages->name,
+                'sent_by_email' => $messages->sent_by_email,
+                'sent_to_email' => $messages->sent_to_email,
+                'sent_by_contact' => $messages->sent_by_contact,
+                'sent_to_contact' => $messages->sent_to_contact,
+                'subject' => $messages->subject,
+                'message' => $messages->message,
+                'message_attachment' => $messages->message_attachment,
+                'created_at' => $messages->created_at
+            ]);
+        } else {
+            return response()->json(['error' => 'Message not found'], 404);
+        }
+    }
+
+    public function getMessageDataForTrash($id)
+    {
+        $messages = Messages::find($id);
+
+        if ($messages) {
+            $dateOfMessage = Carbon::parse($messages->created_at)
+                ->setTimezone('Asia/Manila');
+
+            return response()->json([
+                'id' => $messages->id,
+                'sent_by_email' => $messages->sent_by_email,
+                'sent_to_email' => $messages->sent_to_email,
+                'sent_by_contact' => $messages->sent_by_contact,
+                'sent_to_contact' => $messages->sent_to_contact,
+                'subject' => $messages->subject,
+                'created_at' => $dateOfMessage->format('Y-m-d\TH:i'),
+            ]);
+        } else {
+            return response()->json(['error' => 'Message not found'], 404);
+        }
+    }
+
+    public function getMessageDataForRestore($id)
+    {
+        $messages = Messages::find($id);
+
+        if ($messages) {
+            $dateOfMessage = Carbon::parse($messages->created_at)
+                ->setTimezone('Asia/Manila');
+
+            return response()->json([
+                'id' => $messages->id,
+                'sent_by_email' => $messages->sent_by_email,
+                'sent_to_email' => $messages->sent_to_email,
+                'sent_by_contact' => $messages->sent_by_contact,
+                'sent_to_contact' => $messages->sent_to_contact,
+                'subject' => $messages->subject,
+                'created_at' => $dateOfMessage->format('Y-m-d\TH:i'),
+            ]);
+        } else {
+            return response()->json(['error' => 'Message not found'], 404);
+        }
+    }
+
+    public function submitAdminTrashMessage(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:contact_us,id',
+        ]);
+
+        try {
+            Messages::where('id', $request->id)->update(['message_type_id' => 3]);
+
+            return redirect()->back()->with([
+                'admin-message-header' => 'Success',
+                'admin-message-body' => 'Message moved to trash successfully.',
+                'clearAdminTrashMessageModal' => true,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'admin-error-message-header' => 'Failed',
+                'admin-error-message-body' => 'An error occurred while moving the message to trash.',
+            ]);
+        }
+    }
+
+    public function submitAdminRestoreMessage(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:contact_us,id',
+        ]);
+
+        try {
+            $message = Messages::findOrFail($request->id);
+
+            $messageTypeId = empty($message->sent_to_email) && empty($message->sent_to_contact) ? 1 : 2;
+
+            $message->update(['message_type_id' => $messageTypeId]);
+
+            return redirect()->back()->with([
+                'admin-message-header' => 'Success',
+                'admin-message-body' => 'Message restored successfully.',
+                'clearAdminRestoreMessageModal' => true,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'admin-error-message-header' => 'Failed',
+                'admin-error-message-body' => 'An error occurred while restoring the message.',
+            ]);
+        }
     }
 
     public function filterSeniorsDashboardBeneficiaries(Request $request)
@@ -329,12 +929,14 @@ class AdminController extends Controller
 
     public function filterSeniorsApplicationRequests(Request $request)
     {
+
         $barangayId = $request->input('barangay_id');
         $statusIds = $request->input('status_ids', []);
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $searchQuery = $request->input('search_query', '');
-        $orderDirection = $request->input('order', 'asc'); 
+        $orderDirection = $request->input('order', 'asc');
+        $archived = $request->input('is_archived');
         $perPage = 10;
 
         $query = DB::table('seniors')
@@ -367,11 +969,15 @@ class AdminController extends Controller
         if (!empty($searchQuery)) {
             $terms = array_filter(explode(' ', strtolower($searchQuery)));
 
-            $query->where(function ($q) use ($terms) {
+            $query->where(function ($q) use ($terms, $searchQuery) {
                 foreach ($terms as $term) {
                     $q->whereRaw("LOWER(CONCAT_WS(' ', seniors.first_name, seniors.middle_name, seniors.last_name, seniors.suffix)) LIKE ?", ['%' . $term . '%']);
                 }
             })->orWhere('seniors.osca_id', 'LIKE', '%' . $searchQuery . '%');
+        }
+
+        if (isset($archived)) {
+            $query->where('seniors.is_application_archived', $archived);
         }
 
         if ($startDate || $endDate) {
@@ -383,6 +989,88 @@ class AdminController extends Controller
         $seniors = $query->paginate($perPage);
 
         return response()->json($seniors);
+    }
+
+    public function getApplicationDataForArchive($id)
+    {
+        $senior = Seniors::find($id);
+
+        if ($senior) {
+
+            return response()->json([
+                'id' => $senior->id,
+                'first_name' => $senior->first_name,
+                'middle_name' => $senior->middle_name,
+                'last_name' => $senior->last_name,
+                'suffix' => $senior->suffix,
+                'osca_id' => $senior->osca_id,
+            ]);
+        } else {
+            return response()->json(['error' => 'Senior not found'], 404);
+        }
+    }
+
+    public function submitAdminArchiveApplication(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:seniors,id',
+        ]);
+
+        try {
+            Seniors::where('id', $request->id)->update(['is_application_archived' => 1]);
+
+            return redirect()->back()->with([
+                'admin-message-header' => 'Success',
+                'admin-message-body' => 'Senior profile archived successfully.',
+                'clearAdminArchiveSeniorApplicationModal' => true,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'admin-error-message-header' => 'Failed',
+                'admin-error-message-body' => 'An error occurred while archiving senior profile.',
+            ]);
+        }
+    }
+
+    public function getApplicationDataForRestore($id)
+    {
+        $senior = Seniors::find($id);
+
+        if ($senior) {
+
+            return response()->json([
+                'id' => $senior->id,
+                'first_name' => $senior->first_name,
+                'middle_name' => $senior->middle_name,
+                'last_name' => $senior->last_name,
+                'suffix' => $senior->suffix,
+                'osca_id' => $senior->osca_id,
+            ]);
+        } else {
+            return response()->json(['error' => 'Senior not found'], 404);
+        }
+    }
+
+    public function submitAdminRestoreApplication(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:seniors,id',
+        ]);
+
+        try {
+            Seniors::where('id', $request->id)->update(['is_application_archived' => 0]);
+
+            return redirect()->back()->with([
+                'admin-message-header' => 'Success',
+                'admin-message-body' => 'Senior Application restored successfully.',
+                'clearAdminRestoreApplicationModal' => true,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'admin-error-message-header' => 'Failed',
+                'admin-error-message-body' => 'An error occurred while restoring the senior application.',
+            ]);
+        }
     }
 
     public function showAdminSeniorProfile($id)
@@ -398,8 +1086,6 @@ class AdminController extends Controller
         $how_much_income_list = DB::table('how_much_income_list')->get();
         $senior_account_status_list = DB::table('senior_account_status_list')->get();
         $senior_application_status_list = DB::table('senior_application_status_list')->get();
-
-        
 
         $family_composition = DB::table('family_composition')
         ->leftJoin('seniors', 'family_composition.senior_id', '=', 'seniors.id')
@@ -630,6 +1316,7 @@ class AdminController extends Controller
         $endDate = $request->input('end_date');
         $searchQuery = $request->input('search_query', '');
         $order = $request->input('order', 'asc');
+        $archived = $request->input('is_archived');
         $perPage = 10;
 
         $query = DB::table('seniors')
@@ -670,11 +1357,97 @@ class AdminController extends Controller
             })->orWhere('seniors.osca_id', 'LIKE', '%' . $searchQuery . '%');
         }
 
+        if (isset($archived)) {
+            $query->where('seniors.is_beneficiary_archived', $archived);
+        }
+
         $query->orderBy('seniors.id', $order);
 
         $seniors = $query->paginate($perPage);
 
         return response()->json($seniors);
+    }
+
+    public function getBeneficiaryDataForArchive($id)
+    {
+        $senior = Seniors::find($id);
+
+        if ($senior) {
+
+            return response()->json([
+                'id' => $senior->id,
+                'first_name' => $senior->first_name,
+                'middle_name' => $senior->middle_name,
+                'last_name' => $senior->last_name,
+                'suffix' => $senior->suffix,
+                'osca_id' => $senior->osca_id,
+            ]);
+        } else {
+            return response()->json(['error' => 'Beneficiary not found'], 404);
+        }
+    }
+
+    public function submitAdminArchiveBeneficiary(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:seniors,id',
+        ]);
+
+        try {
+            Seniors::where('id', $request->id)->update(['is_beneficiary_archived' => 1]);
+
+            return redirect()->back()->with([
+                'encoder-message-header' => 'Success',
+                'encoder-message-body' => 'Beneficiary archived successfully.',
+                'clearAdminArchiveBeneficiaryModal' => true,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Failed',
+                'encoder-error-message-body' => 'An error occurred while archiving beneficiary.',
+            ]);
+        }
+    }
+
+    public function getBeneficiaryDataForRestore($id)
+    {
+        $senior = Seniors::find($id);
+
+        if ($senior) {
+
+            return response()->json([
+                'id' => $senior->id,
+                'first_name' => $senior->first_name,
+                'middle_name' => $senior->middle_name,
+                'last_name' => $senior->last_name,
+                'suffix' => $senior->suffix,
+                'osca_id' => $senior->osca_id,
+            ]);
+        } else {
+            return response()->json(['error' => 'Beneficiary not found'], 404);
+        }
+    }
+
+    public function submitAdminRestoreBeneficiary(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:seniors,id',
+        ]);
+
+        try {
+            Seniors::where('id', $request->id)->update(['is_beneficiary_archived' => 0]);
+
+            return redirect()->back()->with([
+                'encoder-message-header' => 'Success',
+                'encoder-message-body' => 'Beneficiary restored successfully.',
+                'clearAdminRestoreBeneficiaryModal' => true,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'encoder-error-message-header' => 'Failed',
+                'encoder-error-message-body' => 'An error occurred while restoring the beneficiary.',
+            ]);
+        }
     }
 
     public function showAdminEncodersList()
@@ -1079,7 +1852,7 @@ class AdminController extends Controller
         if (!Hash::check($validated['admin_password'], $admin_login->admin_password)) {
             DB::table('user_login_attempts')->insert([
                 'email' => $admin_email,
-                'status' => 'Failed',
+                'status' => 'Cancelled',
                 'user_type_id' => $adminUserTypeId,
                 'created_at' => now(),
             ]);
@@ -1462,33 +2235,27 @@ class AdminController extends Controller
 
         $verificationCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
         $hashedVerificationCode = Hash::make($verificationCode);
-
         $expirationTime = now()->addHour()->setTimezone('Asia/Manila');
-
-        $originalEmail = $senior->email; 
+        $originalEmail = $senior->email;
         $newEmail = $seniorData['email'];
 
         if ($newEmail !== $originalEmail) {
-
             $seniorData['verification_code'] = $hashedVerificationCode;
             $seniorData['verification_expires_at'] = $expirationTime;
-            $seniorData['verified_at'] = null; 
-
+            $seniorData['verified_at'] = null;
             Mail::to($newEmail)->send(new SeniorChangedEmail($verificationCode, $expirationTime));
         }
 
-        $senior->fill($seniorData); 
+        $senior->fill($seniorData);
         $senior->save();
 
         if ($request->input('pensioner') == 1) {
             DB::table('source')->where('senior_id', $senior->id)->delete();
-
             $lastSourceId = DB::table('source_list')->latest('id')->value('id');
             $sourceInputs = $request->input('source') ?? [];
 
             foreach ($sourceInputs as $source) {
-                $source = (int) $source; 
-
+                $source = (int) $source;
                 $otherSourceRemark = $source == $lastSourceId && $request->has("other_source_remark.{$source}")
                     ? $request->input("other_source_remark.{$source}")
                     : null;
@@ -1503,20 +2270,17 @@ class AdminController extends Controller
 
         if ($request->input('permanent_source') == 1) {
             DB::table('income_source')->where('senior_id', $senior->id)->delete();
-
             $lastIncomeSourceId = DB::table('where_income_source_list')->latest('id')->value('id');
-
             $incomeSourceInputs = $request->input('income_source') ?? [];
 
             foreach ($incomeSourceInputs as $incomeSource) {
                 $incomeSource = (int) $incomeSource;
-
                 DB::table('income_source')->insert([
                     'senior_id' => $senior->id,
                     'income_source_id' => $incomeSource,
                     'other_income_source_remark' => ($incomeSource == $lastIncomeSourceId && $request->has('other_income_source_remark'))
-                    ? $request->input('other_income_source_remark')
-                    : null,
+                        ? $request->input('other_income_source_remark')
+                        : null,
                 ]);
             }
         }
@@ -1548,9 +2312,16 @@ class AdminController extends Controller
             }
         }
 
+        $process = new Process(['C:\Program Files\nodejs\node.exe', base_path('resources/js/updateSeniorOnBlockchain.mjs'), $senior->id]);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
         return back()->with([
             'admin-message-header' => 'Update Successful',
-            'admin-message-body' => 'The beneficiary details have been successfully updated.',
+            'admin-message-body' => 'The beneficiary details have been successfully updated, including blockchain data.',
         ]);
     }
 
@@ -1712,7 +2483,7 @@ class AdminController extends Controller
                 'activity' => 'Add Pension Distribution Program',
                 'activity_type_id' => 1,
                 'changes' => "Admin {$adminFirstName} {$adminLastName} attempted to add Pension Distribution Programs.",
-                'status' => 'Failed',
+                'status' => 'Cancelled',
                 'activity_user_type_id' => 3,
                 'activity_encoder_id' => null,
                 'activity_admin_id' => $adminId,
@@ -1828,7 +2599,7 @@ class AdminController extends Controller
                     'activity' => 'Delete Pension Distribution Program',
                     'activity_type_id' => 3,
                     'changes' => "Admin {$adminFirstName} {$adminLastName} attempted to delete Pension Distribution Program for Barangay {$barangayNo} scheduled on {$distributionDate}",
-                    'status' => 'Failed',
+                    'status' => 'Cancelled',
                     'activity_user_type_id' => 3,
                     'activity_encoder_id' => null,
                     'activity_admin_id' => $adminId,
@@ -1883,6 +2654,335 @@ class AdminController extends Controller
         } else {
             return response()->json(['error' => 'Pension distribution not found'], 404);
         }
+    }
+
+    public function showAdminEventsList()
+    {
+        $barangayList = DB::table('barangay_list')->get();
+
+        $adminUser = auth()->guard('admin')->user();
+        $adminFirstName = $adminUser->admin_first_name;
+        $adminLastName = $adminUser->admin_last_name;
+
+        $userRole = DB::table('user_type_list')
+            ->where('id', $adminUser->admin_user_type_id)
+            ->value('user_type');
+
+        $events = DB::table('events_list')
+            ->leftJoin('barangay_list', 'events_list.barangay_id', '=', 'barangay_list.id')
+            ->leftJoin('user_type_list', 'events_list.event_user_type_id', '=', 'user_type_list.id')
+            ->leftJoin('encoder', 'events_list.event_encoder_id', '=', 'encoder.id')
+            ->leftJoin('admin', 'events_list.event_admin_id', '=', 'admin.id')
+            ->select(
+                'events_list.*',
+                'barangay_list.barangay_locality as barangay_locality',
+                'barangay_list.barangay_no as barangay_no',
+                'encoder.encoder_first_name',
+                'encoder.encoder_last_name',
+                'encoder_profile_picture',
+                'admin.admin_first_name',
+                'admin.admin_last_name',
+                'admin_profile_picture',
+                'user_type_list.user_type'
+            )
+            ->orderBy('events_list.id', 'asc')
+            ->paginate(10);
+
+        return view('admin.admin_events_list', [
+            'title' => 'Events List',
+            'barangayList' => $barangayList,
+            'adminFirstName' => $adminFirstName,
+            'adminLastName' => $adminLastName,
+            'userRole' => $userRole,
+            'events' => $events,
+        ]);
+    }
+
+    public function filterEventsList(Request $request)
+    {
+        $barangayId = $request->input('barangay_id');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $orderDirection = $request->input('order', 'asc');
+        $isFeatured = $request->input('is_featured');
+        $perPage = 10;
+
+        $query = DB::table('events_list')
+            ->leftJoin('barangay_list', 'events_list.barangay_id', '=', 'barangay_list.id')
+            ->leftJoin('user_type_list', 'events_list.event_user_type_id', '=', 'user_type_list.id')
+            ->leftJoin('encoder', 'events_list.event_encoder_id', '=', 'encoder.id')
+            ->leftJoin('admin', 'events_list.event_admin_id', '=', 'admin.id')
+            ->select(
+                'events_list.*',
+                'barangay_list.barangay_locality as barangay_locality',
+                'barangay_list.barangay_no as barangay_no',
+                'encoder.encoder_first_name',
+                'encoder.encoder_last_name',
+                'encoder_profile_picture',
+                'admin.admin_first_name',
+                'admin.admin_last_name',
+                'admin_profile_picture',
+                'user_type_list.user_type'
+            );
+
+        if (!empty($barangayId)) {
+            $query->where('events_list.barangay_id', $barangayId);
+        }
+
+        if ($startDate) {
+            $query->whereDate('events_list.event_date', '>=', $startDate);
+        }
+
+        if ($endDate) {
+            $query->whereDate('events_list.event_date', '<=', $endDate);
+        }
+
+        if (isset($isFeatured)) {
+            $query->where('events_list.is_featured', $isFeatured);
+        }
+
+        if ($startDate || $endDate) {
+            $query->orderBy('events_list.event_date', $orderDirection);
+        } else {
+            $query->orderBy('events_list.id', $orderDirection);
+        }
+
+        $events = $query->paginate($perPage);
+
+        return response()->json($events);
+    }
+
+    public function getEventDataForView($id)
+    {
+        $events = Events::find($id);
+
+        if ($events) {
+            return response()->json([
+                'id' => $events->id,
+                'barangay_id' => $events->barangay_id,
+                'title' => $events->title,
+                'description' => $events->description,
+                'event_date' => $events->event_date
+            ]);
+        } else {
+            return response()->json(['error' => 'Event not found'], 404);
+        }
+    }
+
+    public function getEventDataForDelete($id)
+    {
+        $events = Events::find($id);
+
+        if ($events) {
+            $dateOfEvent = Carbon::parse($events->event_date)
+                ->setTimezone('Asia/Manila');
+
+            return response()->json([
+                'id' => $events->id,
+                'title' => $events->title,
+                'event_date' => $dateOfEvent->format('Y-m-d\TH:i'),
+            ]);
+        } else {
+            return response()->json(['error' => 'Event not found'], 404);
+        }
+    }
+
+    public function submitAdminDeleteEvent(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:events_list,id',
+        ]);
+
+        $eventId = $request->id;
+        $event = Events::find($eventId);
+
+        if ($event) {
+            $eventTitle = $event->title;
+            $eventDate = Carbon::parse($event->date_of_event)->translatedFormat('F j, Y h:i A');
+
+            $adminUser = auth()->guard('admin')->user();
+            $adminId = $adminUser->id;
+            $adminFirstName = $adminUser->admin_first_name;
+            $adminLastName = $adminUser->admin_last_name;
+
+            try {
+                DB::beginTransaction();
+
+                $eventImages = EventsImages::where('event_id', $eventId)->get();
+                foreach ($eventImages as $image) {
+                    $imagePath = public_path('storage/images/events/' . $image->image);
+                    if (file_exists($imagePath)) {
+                        @unlink($imagePath);
+                    }
+                }
+                EventsImages::where('event_id', $eventId)->delete();
+
+                $event->delete();
+
+                DB::table('activity_log')->insert([
+                    'activity' => 'Delete Event',
+                    'activity_type_id' => 3,
+                    'changes' => "Admin {$adminFirstName} {$adminLastName} deleted the event titled '{$eventTitle}' scheduled on {$eventDate}",
+                    'status' => 'Successful',
+                    'activity_user_type_id' => 2,
+                    'activity_admin_id' => $adminId,
+                    'activity_encoder_id' => null,
+                    'created_at' => now(),
+                ]);
+
+                DB::commit();
+
+                return redirect()->back()->with([
+                    'admin-message-header' => 'Success',
+                    'admin-message-body' => 'Event and associated images deleted successfully.',
+                    'clearAdminDeleteEventModal' => true,
+                ]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+
+                DB::table('activity_log')->insert([
+                    'activity' => 'Delete Event',
+                    'activity_type_id' => 3,
+                    'changes' => "Admin {$adminFirstName} {$adminLastName} attempted to delete the event titled '{$eventTitle}' scheduled on {$eventDate}",
+                    'status' => 'Cancelled',
+                    'activity_user_type_id' => 2,
+                    'activity_admin_id' => $adminId,
+                    'activity_encoder_id' => null,
+                    'created_at' => now(),
+                ]);
+
+                return redirect()->back()->with([
+                    'admin-error-message-header' => 'Deletion Failed',
+                    'admin-error-message-body' => 'An error occurred while deleting the event. Please try again.',
+                ]);
+            }
+        }
+
+        return redirect()->back()->with([
+            'admin-error-message-header' => 'Event Not Found',
+            'admin-error-message-body' => 'The requested event does not exist.',
+        ]);
+    }
+
+    public function showAdminAddEvent()
+    {
+
+        $barangayList = DB::table('barangay_list')->get();
+
+        return view('admin.admin_add_event', [
+            'title' => 'Add Event',
+            'barangayList' => $barangayList,
+        ]);
+    }
+
+    public function submitAdminAddEvent(Request $request)
+    {
+
+        $validatedData = $request->validate([
+            'title' => 'required|min:20',
+            'description' => 'required|min:100',
+            'barangay_id' => 'required',
+            'is_featured' => 'required',
+            'video' => 'nullable|file|mimes:mp4,avi,mov,mkv,wmv,webm,flv|max:102400',
+            'images' => 'required|array',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
+        ], [
+            'title.required' => 'Please enter title.',
+            'title.min' => 'Please make title longer.',
+            'description.required' => 'Please enter description.',
+            'description.min' => 'Please make description longer.',
+            'barangay_id.required' => 'Please select a barangay.',
+            'is_featured.required' => 'Please specify if the event will be featured or not.',
+            'video.max' => 'The maximum size for video is 100 MB.',
+            'video.mimes' => 'The video must be a file of type: mp4, avi, mov, mkv, wmv, webm, flv.',
+            'images.required' => 'Please upload images.',
+            'images.*.image' => 'Each file must be an image.',
+            'images.*.mimes' => 'Allowed image types are jpeg, png, jpg, gif, svg.',
+        ]);
+
+        $adminUser = auth()->guard('admin')->user();
+        $adminUserTypeId = $adminUser->admin_user_type_id;
+        $adminId = $adminUser->id;
+        $adminFirstName = $adminUser->admin_first_name;
+        $adminLastName = $adminUser->admin_last_name;
+
+        $videoFilenameToStore = null;
+        if ($request->hasFile('video')) {
+            $videoFile = $request->file('video');
+            $videoFilenameToStore = $videoFile->getClientOriginalName();
+            $videoFile->storeAs('videos/events', $videoFilenameToStore);
+        }
+
+        $event = new Events([
+            'title' => $validatedData['title'],
+            'description' => $validatedData['description'],
+            'barangay_id' => $validatedData['barangay_id'],
+            'event_date' => now(),
+            'is_featured' => $validatedData['is_featured'],
+            'video' => $videoFilenameToStore,
+            'event_user_type_id' => $adminUserTypeId,
+            'event_encoder_id' => null,
+            'event_admin_id' => $adminId,
+        ]);
+        $event->save();
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imageFilename = $image->getClientOriginalName();
+                $image->storeAs('images/events', $imageFilename);
+
+                $isHighlighted = 0;
+                if ($request->highlighted_image && $request->highlighted_image === $imageFilename) {
+                    $isHighlighted = 1;
+                }
+
+                $eventImage = new EventsImages([
+                    'event_id' => $event->id,
+                    'image' => $imageFilename,
+                    'is_highlighted' => $isHighlighted,
+                ]);
+                $eventImage->save();
+            }
+        }
+
+        $barangay = Barangay::find($validatedData['barangay_id']);
+        $barangayNo = $barangay ? $barangay->barangay_no : 'Unknown Barangay';
+
+        DB::table('activity_log')->insert([
+            'activity' => 'Add Event',
+            'activity_type_id' => 1,
+            'changes' => "Admin {$adminFirstName} {$adminLastName} added event titled '{$validatedData['title']}' for {$barangayNo} on {$event->event_date->toFormattedDateString()}",
+            'status' => 'Successful',
+            'activity_user_type_id' => 2,
+            'activity_admin_id' => $adminId,
+            'activity_encoder_id' => null,
+            'created_at' => now(),
+        ]);
+
+        return redirect()->route('admin-add-event')->with([
+            'admin-message-header' => 'Success',
+            'admin-message-body' => 'Event created successfully.',
+        ]);
+    }
+
+    public function showAdminEditEvent($id)
+    {
+        $events = Events::findOrFail($id);
+
+        $barangayList = DB::table('barangay_list')->get();
+
+        $event_images = DB::table('events_images')
+            ->leftJoin('events_list', 'events_images.event_id', '=', 'events_list.id')
+            ->where('events_list.id', $id)
+            ->select('events_images.image', 'events_images.is_highlighted', 'events_images.event_id')
+            ->get();
+
+        return view('admin.admin_edit_event', [
+            'title' => 'Edit Event',
+            'event' => $events,
+            'event_images' => $event_images,
+            'barangayList' => $barangayList,
+        ]);
     }
 
     public function showAdminLoginAttempts()

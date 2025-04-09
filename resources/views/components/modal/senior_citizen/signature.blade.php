@@ -250,7 +250,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         function loadSignature() {
-            var savedSignature = localStorage.getItem("signature");
+            var savedSignature = localStorage.getItem("signature1");
             if (savedSignature) {
                 var img = new Image();
                 img.src = savedSignature;

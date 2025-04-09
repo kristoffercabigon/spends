@@ -60,7 +60,8 @@
         <div class="z-[1] animate-fade-in-up duration-[2000ms] delay-[1000ms] flex flex-col justify-center items-end text-right pr-4 pl-4 h-full">
             <span class="text-4xl mt-4 font-bold lg:text-6xl" style="color: #FF4802 ;">Stay Informed: OSCA Pension Announcements & Events.</span>
             <p class="text-black text-lg mt-8 pb-8 leading-relaxed">
-                This is where you'll find the latest updates and essential information on OSCA Social Pension distribution, including schedules, eligibility, and more. Our Events section also keeps you informed about activities and gatherings in your community. Check back regularly to stay up-to-date!
+                This is where you'll find the latest updates and essential information on OSCA Social Pension distribution, including schedules, eligibility, and more. Our Events section also keeps you informed about activities and gatherings in your community. Check back regularly to stay up-to-date!<br>
+                "DSWD Senior Citizen Program Image," by Department of Social Welfare and Development, Public Domain, via [https://www.dswd.gov.ph/]. Used for academic/capstone purposes only.
             </p>
         </div>
     </div>
@@ -243,52 +244,61 @@
                                     <div class="absolute bottom-6 left-12 right-12 p-5 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                         <h3 class="font-bold mb-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl">{{ $event->title }}</h3>
 
-                                        <!-- Profile Picture, Author Name, Date, and Time -->
-                                        <div class="flex items-center mb-2">
-                                            @php
-                                                // Check if the event is created by an encoder or an admin and set the profile picture
-                                                if ($event->event_user_type_id == 2) {
-                                                    $profilePicture = $event->encoder_profile_picture
-                                                        ? asset('storage/images/encoder/encoder_thumbnail_profile/' . $event->encoder_profile_picture)
-                                                        : "https://api.dicebear.com/9.x/initials/svg?seed={$event->encoder_first_name}-{$event->encoder_last_name}";
-                                                    $authorName = $event->encoder_first_name . ' ' . $event->encoder_last_name;
-                                                } elseif ($event->event_user_type_id == 3) {
-                                                    $profilePicture = $event->admin_profile_picture
-                                                        ? asset('storage/images/admin/admin_thumbnail_profile/' . $event->admin_profile_picture)
-                                                        : "https://api.dicebear.com/9.x/initials/svg?seed={$event->admin_first_name}-{$event->admin_last_name}";
-                                                    $authorName = $event->admin_first_name . ' ' . $event->admin_last_name;
-                                                } else {
-                                                    $profilePicture = "https://api.dicebear.com/9.x/initials/svg?seed=Unknown";
-                                                    $authorName = "Unknown";
-                                                }
-                                            @endphp
+                                        <div class="flex flex-wrap lg:flex-row items-center gap-4 text-sm sm:text-base md:text-lg lg:text-xl">
+                                            <div>
+                                                {{ \Carbon\Carbon::parse($event->event_date)->format('F j, Y') }}
+                                            </div>
 
-                                            <img class="w-10 h-10 rounded-full ring-2 ring-white mr-2" src="{{ $profilePicture }}" alt="Profile Picture">
-                                            <span>{{ $authorName }}</span>
+                                            <span class="hidden lg:block">|</span> 
+
+                                            <div>
+                                                {{ \Carbon\Carbon::parse($event->event_date)->format('g:i A') }}
+                                            </div>
+
+                                            <span class="hidden lg:block">|</span> 
+
+                                            <div class="flex items-center">
+                                                @php
+                                                    if ($event->event_user_type_id == 2) {
+                                                        $profilePicture = $event->encoder_profile_picture
+                                                            ? asset('storage/images/encoder/encoder_thumbnail_profile/' . $event->encoder_profile_picture)
+                                                            : "https://api.dicebear.com/9.x/initials/svg?seed={$event->encoder_first_name}-{$event->encoder_last_name}";
+                                                        $authorName = $event->encoder_first_name . ' ' . $event->encoder_last_name;
+                                                    } elseif ($event->event_user_type_id == 3) {
+                                                        $profilePicture = $event->admin_profile_picture
+                                                            ? asset('storage/images/admin/admin_thumbnail_profile/' . $event->admin_profile_picture)
+                                                            : "https://api.dicebear.com/9.x/initials/svg?seed={$event->admin_first_name}-{$event->admin_last_name}";
+                                                        $authorName = $event->admin_first_name . ' ' . $event->admin_last_name;
+                                                    } else {
+                                                        $profilePicture = "https://api.dicebear.com/9.x/initials/svg?seed=Unknown";
+                                                        $authorName = "Unknown";
+                                                    }
+                                                @endphp
+
+                                                <img class="w-10 h-10 rounded-full ring-2 ring-white mr-2" src="{{ $profilePicture }}" alt="Profile Picture">
+                                                <span>{{ $authorName }}</span>
+                                            </div>
                                         </div>
 
-                                        <!-- Event Date -->
-                                        <div class="px-4 py-2 text-sm sm:text-base md:text-lg lg:text-xl">
-                                            {{ \Carbon\Carbon::parse($event->event_date)->format('F j, Y') }}
-                                        </div>
-
-                                        <!-- Event Time -->
-                                        <div class="px-4 py-2 text-sm sm:text-base md:text-lg lg:text-xl">
-                                            {{ \Carbon\Carbon::parse($event->event_date)->format('g:i A') }}
-                                        </div>
-
-                                        <!-- Description -->
-                                        <p class="text-sm sm:text-base md:text-lg lg:text-xl" style="max-width: 100%;">
-                                            {{ \Illuminate\Support\Str::words($event->description, 75, '...') }}
+                                        <p class="mt-4 text-sm sm:text-base md:text-lg lg:text-xl" style="max-width: 100%;">
+                                            {{ \Illuminate\Support\Str::words($event->description, 20, '...') }}
                                         </p>
+
+                                        <a href="/announcements/events/{{ $event->id }}" class="cursor-pointer flex items-center gap-2 text-lg text-indigo-700 font-semibold mt-2">
+                                            Read more
+                                            <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M1.25 6L13.25 6M9.5 10.5L13.4697 6.53033C13.7197 6.28033 13.8447 6.15533 13.8447 6C13.8447 5.84467 13.7197 5.71967 13.4697 5.46967L9.5 1.5" 
+                                                    stroke="#4338CA" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                        </a>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     @endforeach
                 </div>
 
-                <!-- Carousel indicators -->
                 <div class="absolute z-5 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
                     @foreach ($featured_events as $index => $event)
                         <button type="button" 
@@ -300,7 +310,6 @@
                     @endforeach
                 </div>
 
-                <!-- Carousel navigation buttons -->
                 <button type="button" 
                         class="absolute top-0 left-0 z-5 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" 
                         data-carousel-prev>
@@ -351,7 +360,7 @@
                                     <p id="description" class="text-gray-500 leading-6 transition-all duration-500 mb-8">
                                         {{ Str::limit($event->description, 100, '...') }}
                                     </p>
-                                    <a href="javascript:;" class="cursor-pointer flex items-center gap-2 text-lg text-indigo-700 font-semibold">
+                                    <a href="/announcements/events/{{ $event->id }}" class="cursor-pointer flex items-center gap-2 text-lg text-indigo-700 font-semibold">
                                         Read more
                                         <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M1.25 6L13.25 6M9.5 10.5L13.4697 6.53033C13.7197 6.28033 13.8447 6.15533 13.8447 6C13.8447 5.84467 13.7197 5.71967 13.4697 5.46967L9.5 1.5" 

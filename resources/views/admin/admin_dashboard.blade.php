@@ -41,13 +41,46 @@
                                 </span>
                             </div>
 
+                            <div x-data="{ showTooltip: false }" class="relative">
+                                <h6 class="text-md font-semibold mb-2 leading-none tracking-wider text-gray-700 uppercase">
+                                    Pending Application Requests
+                                </h6>
+                                <span 
+                                    class="text-4xl text-[#ff4802] font-bold cursor-pointer" 
+                                    @mouseenter="showTooltip = true" 
+                                    @mouseleave="showTooltip = false"
+                                >
+                                    {{ number_format($totalApplicationRequests) }}
+                                </span>
+
+                                <div 
+                                    x-show="showTooltip" 
+                                    class="absolute left-0 mt-2 p-2 bg-gray-800 text-white text-sm rounded shadow-lg"
+                                    style="white-space: nowrap;"
+                                >
+                                    Under Evaluation: {{ number_format($applicationStatusData['under_evaluation'] ?? 0) }} <br>
+                                    On Hold: {{ number_format($applicationStatusData['on_hold'] ?? 0) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center shadow-md p-4 bg-[#F7F9FB] rounded-md">
+                            <div class="mr-4">
+                                <span>
+                                    <img 
+                                        src="{{ asset('images/list.png') }}" 
+                                        alt="Approved Icon" 
+                                        class="w-10 h-10 mx-auto"
+                                    />
+                                </span>
+                            </div>
                             <div>
                                 <h6
                                     class="text-md font-semibold mb-2 leading-none tracking-wider text-gray-700 uppercase"
                                 >
-                                    Total Application Requests
+                                    Rejected Application Requests
                                 </h6>
-                                <span class="text-4xl text-[#ff4802] font-bold">{{ number_format($totalApplicationRequests) }}</span>
+                                <span class="text-4xl text-[#ff4802] font-bold">{{ number_format($totalApplicationsRejected) }}</span>
                             </div>
                         </div>
 
@@ -65,39 +98,10 @@
                                 <h6
                                     class="text-md font-semibold mb-2 leading-none tracking-wider text-gray-700 uppercase"
                                 >
-                                    Total Application Requests Approved
+                                    Approved Applications
                                 </h6>
                                 <span class="text-4xl text-[#ff4802] font-bold">{{ number_format($totalApplicationsApproved) }}</span>
                             </div>
-                        </div>
-
-                        <div class="flex items-center shadow-md p-4 bg-[#F7F9FB] rounded-md">
-                            <div class="mr-4">
-                                <span>
-                                    <img 
-                                        src="{{ asset('images/team.png') }}" 
-                                        alt="Approved Icon" 
-                                        class="w-10 h-10 mx-auto"
-                                    />
-                                </span>
-                            </div>
-                            <div>
-                                <h6
-                                    class="text-md font-semibold mb-2 leading-none tracking-wider text-gray-700 uppercase"
-                                >
-                                    Total Beneficiaries
-                                </h6>
-                                <span class="text-4xl text-[#ff4802] font-bold">{{ number_format($totalBeneficiaries) }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-8 bg-[#F7F9FB] shadow-lg rounded-md overflow-x-auto" style="width: 100%; max-width: 100%; height: auto;">
-                        <div class="flex items-center justify-between p-4 border-b">
-                            <h4 class="text-md font-semibold leading-none tracking-wider text-gray-700 uppercase">Budget over the years</h4>
-                        </div>
-                        <div class="relative p-4" style="width: 100%; height: 500px;">
-                            <canvas id="lineRegression" class="w-full h-full"></canvas>
                         </div>
                     </div>
 
@@ -449,7 +453,7 @@
             },
         });
 
-        const applicationStatusData = @json($applicationStatusData);
+        const applicationStatusData = @json($applicationStatusDataforDoughnut);
 
         const appLabels = applicationStatusData.map(item => item.status); 
         const appData = applicationStatusData.map(item => item.total);  
@@ -511,15 +515,11 @@
                         data: accData,
                         backgroundColor: [
                             'rgb(34, 197, 94)',
-                            'rgb(249, 115, 22)',
-                            'rgb(234, 179, 8)',
-                            'rgb(239, 68, 68)',
+                            'rgb(107, 114, 128)',
                         ],
                         hoverBackgroundColor: [
                             'rgb(22, 163, 74)',
-                            'rgb(234, 88, 12)',
-                            'rgb(202, 138, 4)',
-                            'rgb(220, 38, 38)',
+                            'rgb(75, 85, 99)',
                         ],
                         borderWidth: 0,
                         weight: 0.5,
@@ -543,80 +543,6 @@
                     animateRotate: true,
                 },
             },
-        });
-
-        const chartData = @json($chartData);
-        const regressionLabels = chartData.map(data => data.year);
-        const predictions = chartData.map(data => data.prediction);
-        const cumulativeBeneficiaries = chartData.map(data => data.cumulative_beneficiaries);
-
-        const ctx = document.getElementById('lineRegression').getContext('2d');
-        const lineRegression = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: regressionLabels,
-                datasets: [{
-                    label: 'Budget',
-                    data: predictions,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: '#1aa514',
-                    borderWidth: 2,
-                    pointRadius: 6,
-                    pointBackgroundColor: '#1aa514',
-                    fill: false
-                }]
-            },
-            options: {
-                responsive: true, 
-                maintainAspectRatio: false, 
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            title: function(tooltipItem) {
-                                return `Year: ${tooltipItem[0].label}`;
-                            },
-                            label: function(tooltipItem) {
-                                const yearIndex = tooltipItem.dataIndex;
-                                const prediction = tooltipItem.raw;
-                                const beneficiaries = cumulativeBeneficiaries[yearIndex];
-
-                                const formattedPrediction = prediction.toLocaleString();
-                                const formattedBeneficiaries = beneficiaries.toLocaleString();
-
-                                return [
-                                    `Budget: ${formattedPrediction}`,
-                                    `Beneficiaries: ${formattedBeneficiaries}`
-                                ];
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Year',
-                            font: {
-                                size: 14
-                            }
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Budget',
-                            font: {
-                                size: 14
-                            }
-                        },
-                        beginAtZero: true
-                    }
-                }
-            }
         });
     </script>
     

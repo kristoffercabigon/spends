@@ -18,7 +18,13 @@
         previewAdminApplicantBirthCertificateUrl: '{{ $senior->birth_certificate ? asset("storage/images/senior_citizen/birth_certificate/".$senior->birth_certificate) : ''}}',
         previewAdminApplicantIndigencyUrl: '{{ $senior->indigency ? asset("storage/images/senior_citizen/indigency/".$senior->indigency) : ''}}',
         previewAdminApplicantValidIDUrl: '{{ $senior->valid_id ? asset("storage/images/senior_citizen/valid_id/".$senior->valid_id) : ''}}',
-        previewAdminApplicantSignatureUrl: '{{ $senior->signature_data ? asset("storage/images/senior_citizen/signatures/".$senior->signature_data) : ''}}',
+        previewAdminApplicantSignatureUrl: '{{ 
+            $senior->signature 
+                ? asset("storage/images/senior_citizen/signature_upload/".$senior->signature) 
+                : ($senior->signature_data 
+                    ? asset("storage/images/senior_citizen/signatures/".$senior->signature_data) 
+                    : "") 
+        }}',
         previewAdminImage(event) {
             const input = event.target;
             if (input.files && input.files[0]) {
@@ -47,9 +53,9 @@
         <li></li>
     </ul>
     
-    <div class="relative flex items-center justify-center font-poppins lg:mt-[80px] lg:pl-[255px]">
+    <div id="Senior_Profile" class="relative flex items-center justify-center font-poppins lg:mt-[80px] lg:pl-[255px]">
         <div class="w-full mx-auto font-[poppins]">
-            <div class="bg-white mt-4 ml-4 mr-4 mb-4 rounded-md">              
+            <div  class="bg-white mt-4 ml-4 mr-4 mb-4 rounded-md">              
                 <div class="px-6 py-4 lg:px-12">
                     <div class="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                         <p class="text-center">
@@ -57,7 +63,8 @@
                         </p>
                     </div>
 
-                    <hr style="height: 2.5px; background: linear-gradient(to right, transparent, #1AA514, transparent); margin-top: 16px; margin-bottom: 32px;">
+                    <hr style="height: 2.5px; background: linear-gradient(to right, transparent, #1AA514, transparent); margin-top: 16px; margin-bottom: 32px;">   
+
                     <div x-data="{ 
                             @php
                                 $default_profile = "https://api.dicebear.com/9.x/initials/svg?seed=".$senior->first_name."-".$senior->last_name;
@@ -69,9 +76,7 @@
                             <div class="w-full md:w-3/12 md:mx-2">
                                 <div class="bg-white p-3 shadow-lg border-t-4 border-b-4 rounded-md 
                                     {{ $account_status && $account_status->senior_account_status == 'Active' ? 'border-green-500' : 
-                                    ($account_status && $account_status->senior_account_status == 'Inactive' ? 'border-orange-500' : 
-                                    ($account_status && $account_status->senior_account_status == 'Disqualified' ? 'border-yellow-500' : 
-                                    ($account_status && $account_status->senior_account_status == 'Deactivated' ? 'border-red-500' : 'border-gray-500'))) }}">
+                                    ($account_status && $account_status->senior_account_status == 'Inactive' ? 'border-gray-500' : 'border-gray-500') }}">
                                     <div class="flex items-center hover:animate-scale cursor-pointer justify-center image overflow-hidden"
                                         @click="showAdminApplicantRegisteredProfilePicModal = true">
                                         @php
@@ -79,9 +84,7 @@
                                         @endphp
                                         <img class="w-48 h-48 rounded-full border-4 
                                             {{ $account_status && $account_status->senior_account_status == 'Active' ? 'border-green-500' : 
-                                            ($account_status && $account_status->senior_account_status == 'Inactive' ? 'border-orange-500' : 
-                                            ($account_status && $account_status->senior_account_status == 'Disqualified' ? 'border-yellow-500' : 
-                                            ($account_status && $account_status->senior_account_status == 'Deactivated' ? 'border-red-500' : 'border-gray-500'))) }}"
+                                            ($account_status && $account_status->senior_account_status == 'Inactive' ? 'border-gray-500' : 'border-gray-500') }}"
                                             src="{{ $senior->profile_picture ? asset('storage/images/senior_citizen/profile_picture/'.$senior->profile_picture) : $default_profile }}"
                                             alt="">
                                     </div>
@@ -95,9 +98,7 @@
                                                     <button 
                                                         class="py-1 px-2 rounded text-white text-sm truncate w-32 text-center 
                                                         {{ $account_status && $account_status->senior_account_status == 'Active' ? 'bg-green-500' : 
-                                                        ($account_status && $account_status->senior_account_status == 'Inactive' ? 'bg-orange-500' : 
-                                                        ($account_status && $account_status->senior_account_status == 'Disqualified' ? 'bg-yellow-500' : 
-                                                        ($account_status && $account_status->senior_account_status == 'Deactivated' ? 'bg-red-500' : 'bg-gray-500'))) }} "
+                                                        ($account_status && $account_status->senior_account_status == 'Inactive' ? 'bg-gray-500' : 'bg-gray-500') }} "
                                                         id="accountStatusDropdownButton">
                                                         {{ $account_status ? ucfirst($account_status->senior_account_status) : '--' }}
                                                     </button>
@@ -233,20 +234,35 @@
 
                                 <div class="my-4"></div>
 
-                                <div class="bg-white p-3 shadow-lg border-t-4 border-b-4 rounded-md">
+                                <div class="bg-white p-3 shadow-lg mb-4 border-t-4 border-b-4 rounded-md">
                                     <h1 class="text-gray-900 font-bold text-lg leading-8 my-1">Signature</h1>
 
                                     <div class="flex items-center hover:animate-scale cursor-pointer justify-center image overflow-hidden"
                                         @click="showAdminApplicantSignatureModal = true">
-                                        @if ($senior->signature_data)
+                                        @if($senior->signature)
+                                            <img class="w-64 h-24 my-5 rounded-md shadow-lg"
+                                                src="{{ asset('storage/images/senior_citizen/signature_upload/' . $senior->signature) }}"
+                                                alt="Applicant's Signature">
+                                        @elseif($senior->signature_data)
                                             <img class="w-64 h-24 my-5 rounded-md shadow-lg"
                                                 src="{{ asset('storage/images/senior_citizen/signatures/' . $senior->signature_data) }}"
                                                 alt="Applicant's Signature">
                                         @else
-                                            <span class="text-gray-500 text-center my-5" @click.stop>No signature yet.</span>
+                                            <span class="text-gray-500 text-center my-5" @click.stop>No Signature Yet.</span>
                                         @endif
                                     </div>
                                 </div>
+
+                                <button onclick="printTable()" class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100">
+                                    <img src="../../../images/print.png" title="Print" alt="Print" class="h-4 w-4">
+                                </button>
+
+                                <button onclick="exportToPDF()" 
+                                    class="p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
+                                    title="Export as PDF">
+                                    <img src="../../../images/export-pdf.png" alt="Export PDF" class="h-4 w-4">
+                                </button>
+
                             </div>
 
                             <div class="my-4 mx-2"></div>
@@ -658,6 +674,9 @@
 </div>
 </section>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const button = document.getElementById('statusDropdownButton');
@@ -690,6 +709,59 @@
             }
         });
     });
+</script>
+
+<script>
+    const adminFirstName = "{{ $adminFirstName }}";
+    const adminLastName = "{{ $adminLastName }}";
+    const userRole = "{{ $userRole }}";
+    const currentDate = new Date().toLocaleString(); 
+
+    function printTable() {
+        const profile = document.querySelector('#Senior_Profile');
+
+        html2canvas(profile, {
+            scale: 2,
+            useCORS: true
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+
+            const newWindow = window.open('', '', 'height=800,width=600');
+            newWindow.document.write(`
+                <html><head><title>Print</title></head><body style="margin:0; text-align:center;">
+                    <img src="${imgData}" style="width:100%;">
+                </body></html>
+            `);
+            newWindow.document.close();
+            newWindow.print();
+        });
+    }
+
+    function exportToPDF() {
+        const { jsPDF } = window.jspdf;
+
+        const profile = document.querySelector('#Senior_Profile');
+
+        html2canvas(profile, {
+            scale: 2, 
+            useCORS: true 
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/jpeg', 0.7); 
+
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const imgWidth = 210;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+
+            pdf.save(`senior_profile_${adminFirstName}_${adminLastName}_${userRole}_${currentDate}.pdf`);
+        });
+    }
 </script>
 
 

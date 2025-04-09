@@ -23,7 +23,9 @@ use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use App\Http\Requests\StoreSeniorRequest;
+use App\Models\Events;
 use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Log;
 
 class SeniorsController extends Controller
 {
@@ -166,9 +168,16 @@ class SeniorsController extends Controller
             'message.required' => 'Please enter your message.',
         ]);
 
+        do {
+            $message_id = rand(10000, 99999);
+        } while (DB::table('contact_us')->where('message_id', $message_id)->exists());
+
         Guest::create([
+            'message_id' => $message_id,
+            'message_type_id' => 2,
             'name' => $request->input('name'),
-            'email' => $request->input('email'),
+            'sent_by_email' => $request->input('sent_by_email'),
+            'sent_to_email' => "SPENDS",
             'subject' => $request->input('subject'),
             'message' => $request->input('message'),
         ]);
@@ -177,6 +186,69 @@ class SeniorsController extends Controller
             'message-header' => 'Success',
             'message-body' => 'Your message has been sent successfully!'
         ]);
+    }
+
+    public function event($event_id)
+    {
+
+        $event = DB::table('events_list')
+            ->leftJoin('barangay_list', 'events_list.barangay_id', '=', 'barangay_list.id')
+            ->leftJoin('user_type_list', 'events_list.event_user_type_id', '=', 'user_type_list.id')
+            ->leftJoin('encoder', 'events_list.event_encoder_id', '=', 'encoder.id')
+            ->leftJoin('admin', 'events_list.event_admin_id', '=', 'admin.id')
+            ->leftJoin('events_images', 'events_list.id', '=', 'events_images.event_id')
+            ->select(
+                'events_list.*',
+                'barangay_list.barangay_locality as barangay_locality',
+                'barangay_list.barangay_no as barangay_no',
+                'encoder.encoder_first_name',
+                'encoder.encoder_last_name',
+                'encoder.encoder_profile_picture',
+                'admin.admin_first_name',
+                'admin.admin_last_name',
+                'admin.admin_profile_picture',
+                'user_type_list.user_type',
+                'events_images.image',
+                'events_images.is_highlighted'
+            )
+            ->where('events_list.id', $event_id)
+            ->where('events_images.is_highlighted', '=', 1)
+            ->first();
+
+        $eventImages = DB::table('events_images')->where('event_id', $event_id)->get();
+
+        $events = DB::table('events_list')
+            ->leftJoin('barangay_list', 'events_list.barangay_id', '=', 'barangay_list.id')
+            ->leftJoin('user_type_list', 'events_list.event_user_type_id', '=', 'user_type_list.id')
+            ->leftJoin('encoder', 'events_list.event_encoder_id', '=', 'encoder.id')
+            ->leftJoin('admin', 'events_list.event_admin_id', '=', 'admin.id')
+            ->leftJoin('events_images', 'events_list.id', '=', 'events_images.event_id')
+            ->select(
+                'events_list.*',
+                'barangay_list.barangay_locality as barangay_locality',
+                'barangay_list.barangay_no as barangay_no',
+                'encoder.encoder_first_name',
+                'encoder.encoder_last_name',
+                'encoder_profile_picture',
+                'admin.admin_first_name',
+                'admin.admin_last_name',
+                'admin_profile_picture',
+                'user_type_list.user_type',
+                'events_images.image',
+                'events_images.is_highlighted'
+            )
+            ->where('events_images.is_highlighted', '=', 1)
+            ->orderBy('events_list.id', 'asc')
+            ->paginate(10);
+
+        return view(
+            'senior_citizen.event',
+            [
+                'title' => 'Event Details',
+                'events' => $events,
+                'event' => $event,
+                'eventImages' => $eventImages,
+            ]);
     }
 
     public function about_us()
@@ -259,13 +331,14 @@ class SeniorsController extends Controller
     {
         //dd($request->all());
 
-        $validated = $request->validated();
+        Log::info('Request Data:', $request->all());
 
+        $validated = $request->validated();
         $seniorData = $validated;
+
         unset($seniorData['source'], $seniorData['other_source_remark']);
         unset($seniorData['income_source'], $seniorData['other_income_source_remark']);
-        unset($seniorData['confirm-checkbox']);
-        unset($seniorData['g-recaptcha-response']);
+        unset($seniorData['confirm-checkbox'], $seniorData['g-recaptcha-response']);
 
         if (!empty($seniorData['osca_id'])) {
             $osca_id = $seniorData['osca_id'];
@@ -361,12 +434,12 @@ class SeniorsController extends Controller
             $seniorData['signature_data'] = $signatureFilename;
         }
 
-        if ($request->hasFile('signature')) {
-            $signatureFilename = $osca_id;
-            $signatureExtension = $request->file('signature')->getClientOriginalExtension();
-            $signatureFilenameToStore = $signatureFilename . '.' . $signatureExtension;
+        if ($request->hasFile('signature_upload')) {
+            $signatureFilenameToStore = $osca_id;
+            $signatureExtension = $request->file('signature_upload')->getClientOriginalExtension();
+            $signatureFilenameToStore = $signatureFilenameToStore . '.' . $signatureExtension;
 
-            $request->file('signature')->storeAs('images/senior_citizen/signature_upload', $signatureFilenameToStore);
+            $request->file('signature_upload')->storeAs('images/senior_citizen/signature_upload', $signatureFilenameToStore);
             $seniorData['signature'] = $signatureFilenameToStore;
         }
 
@@ -622,8 +695,8 @@ class SeniorsController extends Controller
     public function submitSignatureUpdateModal(Request $request)
     {
         $request->validate([
-            "signature" => "required_if:signature_data,null|mimes:jpeg,png,bmp,tiff|max:4096",
-            "signature_data" => ["required_if:signature,null"],
+            "signature_upload" => "required_if:signature_data,null|mimes:jpeg,png,bmp,tiff|max:4096",
+            "signature_data" => ["required_if:signature_upload,null"],
         ]);
 
         $email = $request->input('email', session('email'));
@@ -647,17 +720,17 @@ class SeniorsController extends Controller
         $osca_id = $senior->osca_id;
         $path = storage_path('app/public/images/senior_citizen/signatures/');
 
-        if ($request->hasFile('signature')) {
-            $file = $request->file('signature');
-            $signatureFilename = $osca_id . '.' . $file->getClientOriginalExtension();
-            $file->move($path, $signatureFilename);
-            $senior->signature = $signatureFilename;
+        if ($request->hasFile('signature_upload')) {
+            $file = $request->file('signature_upload');
+            $signatureFilename1 = $osca_id . '.' . $file->getClientOriginalExtension();
+            $file->move($path, $signatureFilename1);
+            $senior->signature = $signatureFilename1;
         } elseif ($request->filled('signature_data')) {
             $signatureData = str_replace(['data:image/png;base64,', ' '], ['', '+'], $request->input('signature_data'));
             $signatureData = base64_decode($signatureData);
-            $signatureFilename = $osca_id . '.png';
-            file_put_contents($path . $signatureFilename, $signatureData);
-            $senior->signature_data = $signatureFilename;
+            $signatureFilename2 = $osca_id . '.png';
+            file_put_contents($path . $signatureFilename2, $signatureData);
+            $senior->signature_data = $signatureFilename2;
         } else {
             return back()->with([
                 'error-message-header' => 'Failed',
@@ -678,44 +751,36 @@ class SeniorsController extends Controller
     public function login(Request $request)
     {
         $loginMessages = [
-            'email.required' => 'Enter your email.',
+            'login.required' => 'Enter your email or contact number.',
             'password.required' => 'Enter your password.',
             'g-recaptcha-response' => 'Recaptcha field is required',
         ];
 
         $validated = $request->validate([
-            'email' => ['required', 'email'],
+            'login' => ['required'],
             'password' => 'required',
-            'g-recaptcha-response' => ['required', function ($attribute, $value, $fail) use ($request) {
-                $secret = env('RECAPTCHA_SECRET_KEY');
-                $response = $request->input('g-recaptcha-response');
-                $remoteip = $request->ip();
-
-                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
-                $captcha_success = json_decode($verify);
-
-                if (!$captcha_success->success) {
-                    $fail('ReCaptcha verification failed, please try again.');
-                }
-            }],
         ], $loginMessages);
 
-        $email = $validated['email'];
+        $loginInput = $validated['login'];
         $throttleTime = Carbon::now()->format('Y-m-d H:i:s');
 
-        $senior_login = Seniors::where('email', $email)->first();
+        $senior_login = Seniors::where('email', $loginInput)
+            ->orWhere('contact_no', $loginInput)
+            ->first();
 
         $seniorUserTypeId = $senior_login ? $senior_login->user_type_id : null;
 
         if (RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
             DB::table('user_login_attempts')->insert([
-                'email' => $email,
+                'email' => $loginInput,
                 'status' => 'Throttled',
                 'user_type_id' => $seniorUserTypeId,
                 'created_at' => now(),
             ]);
 
-            Mail::to($email)->send(new SeniorLoginAttempt($email, $throttleTime));
+            if (filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
+                Mail::to($loginInput)->send(new SeniorLoginAttempt($loginInput, $throttleTime));
+            }
 
             return redirect('/')->with([
                 'error-message-header' => 'Too many attempts',
@@ -725,13 +790,15 @@ class SeniorsController extends Controller
 
         if (!$senior_login) {
             DB::table('user_login_attempts')->insert([
-                'email' => $email,
+                'email' => $loginInput,
                 'status' => 'Failed',
                 'user_type_id' => $seniorUserTypeId,
                 'created_at' => now(),
             ]);
 
-            return back()->withErrors(['email' => "This email doesn't exist."])->onlyInput('email');
+            return back()->withErrors([
+                'login' => "This email or contact number doesn't exist. If you're entering a contact number, ensure it starts with +639."
+            ])->onlyInput('login');
         }
 
         if (is_null($senior_login->verified_at)) {
@@ -744,26 +811,9 @@ class SeniorsController extends Controller
             ]);
         }
 
-        if (is_null($senior_login->signature_data)) {
-            return redirect()->route('update-signature')->with([
-                'email' => $senior_login->email,
-                'showSignatureModal' => true,
-                'clearLoginModal' => true,
-                'error-message-header' => 'Signature Required',
-                'error-message-body' => 'Please provide your e-signature to continue.',
-            ]);
-        }
-
-        // if ($senior_login->application_status_id !== 3) {
-        //     return back()->with([
-        //         'error-message-header' => 'Login Failed',
-        //         'error-message-body' => 'Your account is not approved yet.',
-        //     ])->onlyInput('email');
-        // }
-
         if (!Hash::check($validated['password'], $senior_login->password)) {
             DB::table('user_login_attempts')->insert([
-                'email' => $email,
+                'email' => $loginInput,
                 'status' => 'Failed',
                 'user_type_id' => $seniorUserTypeId,
                 'created_at' => now(),
@@ -771,7 +821,7 @@ class SeniorsController extends Controller
 
             RateLimiter::hit($this->throttleKey($request), 300);
 
-            return back()->withErrors(['password' => 'Password incorrect.'])->onlyInput('email');
+            return back()->withErrors(['password' => 'Password incorrect.'])->onlyInput('login');
         }
 
         $remember = $request->has('remember');
@@ -781,7 +831,7 @@ class SeniorsController extends Controller
         $request->session()->put('senior', $senior_login);
 
         DB::table('user_login_attempts')->insert([
-            'email' => $email,
+            'email' => $loginInput,
             'status' => 'Successful',
             'user_type_id' => $seniorUserTypeId,
             'created_at' => now(),
@@ -881,18 +931,18 @@ class SeniorsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:seniors,email',
-            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
-                $secret = env('RECAPTCHA_SECRET_KEY');
-                $response = $request->input('g-recaptcha-response');
-                $remoteip = $request->ip();
+            // "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+            //     $secret = env('RECAPTCHA_SECRET_KEY');
+            //     $response = $request->input('g-recaptcha-response');
+            //     $remoteip = $request->ip();
 
-                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
-                $captcha_success = json_decode($verify);
+            //     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+            //     $captcha_success = json_decode($verify);
 
-                if (!$captcha_success->success) {
-                    $fail('ReCaptcha verification failed, please try again.');
-                }
-            }],
+            //     if (!$captcha_success->success) {
+            //         $fail('ReCaptcha verification failed, please try again.');
+            //     }
+            // }],
             'password' => [
                 'required',
                 'min:8',
@@ -973,18 +1023,18 @@ class SeniorsController extends Controller
         $request->validate([
             'email' => 'required|email|exists:seniors,email',
             'old_password' => 'required',
-            "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
-                $secret = env('RECAPTCHA_SECRET_KEY');
-                $response = $request->input('g-recaptcha-response');
-                $remoteip = $request->ip();
+            // "g-recaptcha-response" => ['required', function ($attribute, $value, $fail) use ($request) {
+            //     $secret = env('RECAPTCHA_SECRET_KEY');
+            //     $response = $request->input('g-recaptcha-response');
+            //     $remoteip = $request->ip();
 
-                $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
-                $captcha_success = json_decode($verify);
+            //     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$remoteip}");
+            //     $captcha_success = json_decode($verify);
 
-                if (!$captcha_success->success) {
-                    $fail('ReCaptcha verification failed, please try again.');
-                }
-            }],
+            //     if (!$captcha_success->success) {
+            //         $fail('ReCaptcha verification failed, please try again.');
+            //     }
+            // }],
             'password' => [
                 'required',
                 'min:8',

@@ -29,10 +29,10 @@
                         $nextTick(() => $el.submit());" class="space-y-4 md:space-y-6" method="POST" action="{{ route('login') }}">
                         @csrf
                         <div>
-                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
-                            <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="email@example.com">
+                            <label for="login" class="block mb-2 text-sm font-medium text-gray-900">Email or Contact No.</label>
+                            <input type="text" name="login" id="login" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Enter Email or Contact No.">
                             
-                            @error('email')
+                            @error('login')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
@@ -66,7 +66,7 @@
                                 Forgot password?
                             </a>
                         </div>
-                        <div>
+                        {{-- <div>
                             <div class="flex justify-center mt-8">
                             {!! htmlFormSnippet() !!}
                             </div>
@@ -75,7 +75,7 @@
                                     {{ $errors->first('g-recaptcha-response') }}
                                 </div>
                             @endif
-                        </div>
+                        </div> --}}
                         <button type="submit"
                                 class="hover:scale-105 transition duration-150 ease-in-out relative w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4">
                             <span x-show="!isLoadingSignIn">Sign in</span>

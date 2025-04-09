@@ -53,6 +53,7 @@ class Seniors extends Authenticatable
         'profile_picture',
         'indigency',
         'birth_certificate',
+        'signature',
         'signature_data',
         'type_of_living_arrangement',
         'other_arrangement_remark',

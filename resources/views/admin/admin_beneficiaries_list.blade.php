@@ -3,7 +3,8 @@
 @php $array = array('title' => 'SPENDS') @endphp
 <x-admin_dashboard_nav :data="$array"/>
 
-<section class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
+<section x-data="{ showAdminArchiveBeneficiaryModal: localStorage.getItem('showAdminArchiveBeneficiaryModal') === 'true',
+showAdminRestoreBeneficiaryModal: localStorage.getItem('showAdminRestoreBeneficiaryModal') === 'true' }" class="bg-cover bg-center bg-no-repeat min-h-screen" style="background-image: url('{{ asset('images/background2.png') }}'); background-attachment: fixed;">
     <ul class="circles">
         <li></li>
         <li></li>
@@ -72,12 +73,35 @@
                             </div>
                             <div class="flex justify-start relative">
                                 <div class="relative w-[50%] lg:w-[30%]">
-                                    <select id="order-dropdown" class="bg-gray-50 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full  p-2.5">
+                                    <select id="order-dropdown" class="bg-gray-50 mb-4 border border-[#1AA514] text-gray-900 text-sm rounded-lg focus:ring-[#1AA514] focus:border-[#1AA514] block w-full  p-2.5">
                                         <option value="asc" selected>Ascending</option>
                                         <option value="desc">Descending</option>
                                     </select>
                                 </div>
                             </div>
+
+                            <button onclick="printTable()" 
+                                class="p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100">
+                                <img src="../images/print.png" title="Print" alt="Print" class="h-4 w-4">
+                            </button>
+
+                            <button onclick="exportToPDF()" 
+                                class="p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
+                                title="Export as PDF">
+                                <img src="../images/export-pdf.png" alt="Export PDF" class="h-4 w-4">
+                            </button>
+
+                            <button onclick="exportToExcel()" 
+                                class="p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
+                                title="Export as Excel">
+                                <img src="../images/export-excel.png" alt="Export Excel" class="h-4 w-4">
+                            </button>
+
+                            <button onclick="exportToImage()" 
+                                class="p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
+                                title="Export as Image">
+                                <img src="../images/export-image.png" alt="Export Image" class="h-4 w-4">
+                            </button>
                         </div>
 
                         <div>
@@ -115,37 +139,15 @@
                             </div>
 
                             <div class="flex relative justify-start md:justify-end">
-                                <a href="/admin/beneficiaries/add-beneficiary" 
-                                    class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-md px-5 py-2 text-center inline-flex items-center">
-                                    Add Beneficiary
-                                </a>
+                                <label class="inline-flex items-center cursor-pointer">
+                                <span class="text-sm font-medium text-gray-900">Archived Only</span>
+                                <input type="checkbox" id="beneficiary_archived" value="" class="sr-only peer">
+                                <div class="relative ml-2 w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1AA514]"></div>
+                                </label>
                             </div>
 
                         </div>
                     </div>
-
-                    <button onclick="printTable()" 
-                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100">
-                        <img src="../images/print.png" title="Print" alt="Print" class="h-4 w-4">
-                    </button>
-
-                    <button onclick="exportToPDF()" 
-                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
-                        title="Export as PDF">
-                        <img src="../images/export-pdf.png" alt="Export PDF" class="h-4 w-4">
-                    </button>
-
-                    <button onclick="exportToExcel()" 
-                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
-                        title="Export as Excel">
-                        <img src="../images/export-excel.png" alt="Export Excel" class="h-4 w-4">
-                    </button>
-
-                    <button onclick="exportToImage()" 
-                        class="mb-4 p-2 bg-white border border-gray-800 rounded-md hover:bg-gray-100" 
-                        title="Export as Image">
-                        <img src="../images/export-image.png" alt="Export Image" class="h-4 w-4">
-                    </button>
 
                     <div class="overflow-x-auto drop-shadow-lg">
                         <table class="min-w-full table-auto relative bg-[#FF4802] pl-3 items-center rounded-t-md space-x-2 leading-8" data-aos="zoom-in">
@@ -281,6 +283,12 @@
         </div>
     </div>
 </div>
+<div x-show="showAdminArchiveBeneficiaryModal" @click.away="showAdminArchiveBeneficiaryModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_archive_beneficiary')
+</div>
+<div x-show="showAdminRestoreBeneficiaryModal" @click.away="showAdminRestoreBeneficiaryModal = false" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    @include('components.modal.admin.admin_restore_beneficiary')
+</div>
 </section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -302,11 +310,13 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
     const endInput = document.getElementById("datepicker-range-end");
     const searchDropdown = document.getElementById("search-dropdown");
     const orderDropdown = document.getElementById("order-dropdown");
+    const archivedCheckbox = document.getElementById("beneficiary_archived");
     const paginationContainer = document.querySelector("nav[aria-label='Page navigation example'] ul");
 
     const savedBarangayId = localStorage.getItem('beneficiaryBarangayId');
     const savedStartDate = localStorage.getItem('beneficiaryStartDate');
     const savedEndDate = localStorage.getItem('beneficiaryEndDate');
+    const savedIsArchived = localStorage.getItem('beneficiary_archived');
     const savedSearchQuery = localStorage.getItem('beneficiarySearchQuery') || '';
     const beneficiarySelectedStatuses = JSON.parse(localStorage.getItem('beneficiarySelectedStatuses')) || [];
     const savedOrder = localStorage.getItem('beneficiaryOrder') || 'asc';
@@ -314,6 +324,10 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
     orderDropdown.value = savedOrder;
 
     searchDropdown.value = savedSearchQuery;
+
+    if (savedIsArchived) {
+        archivedCheckbox.checked = savedIsArchived === '1';
+    }
 
     if (savedBarangayId) {
         barangayDropdown.value = savedBarangayId;
@@ -345,12 +359,12 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         }
     });
 
-    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    document.querySelectorAll('#dropdownDefaultCheckbox input[type="checkbox"]').forEach(checkbox => {
         if (beneficiarySelectedStatuses.includes(checkbox.value)) {
             checkbox.checked = true;
         }
         checkbox.addEventListener('change', function () {
-            const updatedStatuses = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+            const updatedStatuses = Array.from(document.querySelectorAll('#dropdownDefaultCheckbox input[type="checkbox"]:checked'))
                 .map(checkbox => checkbox.value);
             localStorage.setItem('beneficiarySelectedStatuses', JSON.stringify(updatedStatuses));
             updateTable(1);
@@ -383,6 +397,12 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         updateTable(1);
     });
 
+    archivedCheckbox.addEventListener("change", function () {
+        const beneficiary_archived = this.checked ? 1 : 0;
+        localStorage.setItem('beneficiary_archived', beneficiary_archived);
+        updateTable(1);
+    });
+
     orderDropdown.addEventListener("change", function () {
         const beneficiaryOrder = this.value;
         localStorage.setItem('beneficiaryOrder', beneficiaryOrder);
@@ -394,6 +414,7 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         const beneficiaryStartDate = startInput.value;
         const beneficiaryEndDate = endInput.value;
         const beneficiarySearchQuery = searchDropdown.value.toLowerCase();
+        const beneficiary_archived = archivedCheckbox.checked ? 1 : 0;
         const beneficiarySelectedStatuses = JSON.parse(localStorage.getItem('beneficiarySelectedStatuses')) || [];
         const beneficiaryOrder = orderDropdown.value;
 
@@ -404,6 +425,7 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             },
             body: JSON.stringify({
+                is_archived: beneficiary_archived,
                 barangay_id: beneficiaryBarangayId,
                 start_date: beneficiaryStartDate,
                 end_date: beneficiaryEndDate,
@@ -424,16 +446,41 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
         const tbody = document.querySelector('tbody');
         tbody.innerHTML = '';
         data.forEach((senior, index) => {
+
             const defaultProfile = `https://api.dicebear.com/9.x/initials/svg?seed=${senior.first_name}-${senior.last_name}`;
+
             const profilePicture = senior.profile_picture
                 ? `/storage/images/senior_citizen/thumbnail_profile/${senior.profile_picture}`
                 : defaultProfile;
+
             const fullName = `${senior.first_name} ${senior.middle_name || ''} ${senior.last_name}${senior.suffix ? `, ${senior.suffix}` : ''}`;
+
             const formattedDate = new Date(senior.date_applied).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
             });
+
+            const actionButton = senior.is_beneficiary_archived === 0 ? `
+                <a 
+                    href="javascript:void(0)" 
+                    class="bg-gray-500 ml-1 animate-pop hover:bg-gray-600 rounded-md p-2 cursor-pointer" 
+                    @click="showAdminArchiveBeneficiaryModal = true; 
+                    localStorage.setItem('showAdminArchiveBeneficiaryModal', 'true');
+                    loadBeneficiaryDataForArchive(${senior.id})"
+                >
+                    <img src="../images/archive.png" alt="Archive Senior" class="w-4 h-4">
+                </a>` : `
+                <a 
+                    href="javascript:void(0)" 
+                    class="bg-green-500 ml-1 animate-pop hover:bg-green-600 rounded-md p-2 cursor-pointer" 
+                    @click="showAdminRestoreBeneficiaryModal = true; 
+                    localStorage.setItem('showAdminRestoreBeneficiaryModal', 'true');
+                    loadBeneficiaryDataForRestore(${senior.id})"
+                >
+                    <img src="../images/restore.png" alt="Restore Senior" class="w-4 h-4">
+                </a>`;
+
             const row = `
                 <tr class="${index % 2 === 0 ? 'bg-[#ffece5]' : 'bg-[#ffc8b3]'}">
                     <td class="px-4 py-2">${senior.id}</td>
@@ -447,13 +494,14 @@ document.getElementById('dropdownCheckboxButton').addEventListener('click', func
                     <td class="px-4 py-2">${senior.senior_account_status || 'Not yet approved.'}</td>
                     <td class="px-4 py-2">${senior.barangay_no}</td>
                     <td class="px-4 py-2">${formattedDate}</td>
-                    <td class="px-3 py-2 flex justify-center items-center">
+                    <td class="px-4 py-2 flex justify-start items-center whitespace-nowrap w-[150px] shrink-0">
                         <a href="/admin/beneficiaries/view-senior-profile/${senior.id}" class="bg-blue-500 animate-pop hover:bg-blue-600 rounded-md p-2 cursor-pointer">
                             <img src="../images/view-senior.png" alt="View Senior" class="w-4 h-4">
                         </a>
                         <a href="/admin/beneficiaries/edit-senior-profile/${senior.id}" class="bg-orange-500 ml-1 animate-pop hover:bg-orange-600 rounded-md p-2 cursor-pointer">
                             <img src="../images/pencil.png" alt="View Senior" class="w-4 h-4">
                         </a>
+                        ${actionButton}
                     </td>
                 </tr>`;
             tbody.innerHTML += row;

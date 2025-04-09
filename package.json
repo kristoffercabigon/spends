@@ -1,6 +1,9 @@
 {
     "private": true,
     "type": "module",
+    "experiments": {
+        "jsonModules": true
+    },
     "scripts": {
         "dev": "vite",
         "build": "vite build && move public\\build\\.vite\\manifest.json public\\build\\manifest.json"
@@ -20,6 +23,9 @@
         "@preline/stepper": "^2.5.1",
         "aos": "^2.3.4",
         "chart.js": "^4.4.7",
-        "swiper": "^11.1.15"
+        "dotenv": "^16.4.7",
+        "mysql2": "^3.13.0",
+        "swiper": "^11.1.15",
+        "web3": "^4.16.0"
     }
 }

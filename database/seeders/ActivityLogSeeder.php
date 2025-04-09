@@ -25,7 +25,7 @@ class ActivityLogSeeder extends Seeder
             3 => ['Archive Beneficiary', 'Archive Application Request', 'Delete Pension Distribution Program', 'Delete Events'],
         ];
 
-        $statuses = ['Successful', 'Failed'];
+        $statuses = ['Successful', 'Cancelled'];
         $usedBeneficiaryIds = [];
         $usedProgramIds = [];
         $usedEventIds = [];

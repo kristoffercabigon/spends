@@ -103,22 +103,12 @@
                                         <li class="flex items-center py-3">
                                             <span>Encoder Roles</span>
                                             <div class="flex flex-wrap items-center justify-end my-2 mx-2 gap-2">
-                                                @foreach ($categories as $category)
-                                                    @if (!empty($roles[$category]))
-                                                        <div class="relative group">
-                                                            <span class=" bg-{{ $categoryColors[$category] }} py-1 px-2 rounded text-white text-sm">
-                                                                {{ ucfirst($category) }}
-                                                            </span>
-                                                            <div class="hidden group-hover:block absolute z-10 bg-white border border-gray-200 shadow-lg rounded-md p-2 w-max right-0 md:left-0">
-                                                                <ul class="text-sm text-gray-700">
-                                                                    @foreach ($roles[$category] as $role)
-                                                                        <li class="list-disc ml-4">{{ $role }}</li>
-                                                                    @endforeach
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                @endforeach
+
+                                                <span class="bg-green-500 py-1 px-2 rounded text-white text-sm">View</span>
+                                                <span class="bg-blue-500 py-1 px-2 rounded text-white text-sm">Create</span>
+                                                <span class="bg-orange-500 py-1 px-2 rounded text-white text-sm">Update</span>
+                                                <span class="bg-red-500 py-1 px-2 rounded text-white text-sm">Delete</span>
+
                                             </div>
                                         </li>
                                         <li class="flex items-center py-3">
